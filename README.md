@@ -4,7 +4,7 @@
 
 - **Uvindu Seneviratne**
 - **Dulhara Kaushalya**
-- **Dewmini Navodya**
+- **Dewmini Nawodya**
 - **Dewdu Sendanayake**
 - **Senuvi Layathma**
 - **Piyushi Ranasinghe**
