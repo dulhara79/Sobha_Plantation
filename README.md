@@ -8,7 +8,7 @@
 - **Dewdu Sendanayake**
 - **Senuvi Layathma**
 - **Piyushi Ranasinghe**
-- **Dulmi Kaushalya**
+- **Dulmi  Kaushalya**
 - **Maheesha Liyanage**
 
 ---
