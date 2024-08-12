@@ -28,3 +28,6 @@ robots.txt
 *.png
 *.ico
 *.md
+
+/node_modules
+package-lock.json
