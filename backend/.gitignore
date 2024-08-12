@@ -2,3 +2,5 @@
 package-lock.json
 *.svg
 *.png
+
+.env
