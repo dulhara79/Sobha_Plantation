@@ -5,6 +5,7 @@ const express = require("express");
 const connectDB = require("./config/db");
 const cropVarietiesRoutes = require("./routes/cropVarieties");
 const employeeRoutes = require("./routes/employee");
+const salesRoutes = require("./routes/sales");
 
 const app = express();
 
@@ -17,8 +18,9 @@ connectDB();
 // Routes
 app.use("/api/crop-varieties", cropVarietiesRoutes);
 app.use("/api/employee", employeeRoutes);
+app.use("/api/sales", salesRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = 5000 || process.env.PORT;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
