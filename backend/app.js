@@ -1,6 +1,5 @@
-//pass:  5nnsrO2tPt9w60ou
-//http://localhost:5000/api/crop-varieties
-
+const dotenv = require("dotenv");
+dotenv.config();
 const express = require("express");
 const connectDB = require("./config/db");
 const cropVarietiesRoutes = require("./routes/cropVarieties");
