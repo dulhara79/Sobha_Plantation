@@ -6,6 +6,7 @@ const connectDB = require("./config/db");
 const cropVarietiesRoutes = require("./routes/cropVarieties");
 const employeeRoutes = require("./routes/employee");
 const salesRoutes = require("./routes/sales");
+const productionRoutes = require('./routes/productionRoute.js');
 
 const app = express();
 
@@ -19,6 +20,7 @@ connectDB();
 app.use("/api/crop-varieties", cropVarietiesRoutes);
 app.use("/api/employee", employeeRoutes);
 app.use("/api/sales", salesRoutes);
+app.use('/api/production', productionRoutes);
 
 const PORT = 5000 || process.env.PORT;
 app.listen(PORT, () => {
