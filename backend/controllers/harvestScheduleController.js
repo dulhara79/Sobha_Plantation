@@ -1,6 +1,6 @@
 const HarvestSchedule = require('../models/Harvest.js');
 
-// Controller for creating a new production schedule
+// Controller for creating a new  Harvest schedule
 exports.createHarvestSchedule= async (req, res) => {
     try {
         const { harvestId, cropType, harvestDate, startTime, endTime, fieldNumber, estimatedYield,harvestMethod,numberOfworkers} = req.body;
@@ -31,7 +31,7 @@ exports.createHarvestSchedule= async (req, res) => {
     }
 };
 
-// Controller for getting all production schedules
+// Controller for getting all  Harvest schedules
 exports.getAllHarvestSchedule = async (req, res) => {
     try {
         const schedules = await HarvestSchedule.find({});
@@ -45,7 +45,7 @@ exports.getAllHarvestSchedule = async (req, res) => {
     }
 };
 
-// Controller for getting a single production schedule by ID
+// Controller for getting a single  Harvest schedule by ID
 exports.getHarvestScheduleById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -62,7 +62,7 @@ exports.getHarvestScheduleById = async (req, res) => {
     }
 };
 
-// Controller for updating a production schedule
+// Controller for updating a  Harvest schedule
 exports.updateHarvestSchedule = async (req, res) => {
     try {
         const { harvestId, cropType, harvestDate, startTime, endTime, fieldNumber,estimatedYield,harvestMethod,numberOfworkers } = req.body;
@@ -88,7 +88,7 @@ exports.updateHarvestSchedule = async (req, res) => {
     }
 };
 
-// Controller for deleting a production schedule
+// Controller for deleting a  Harvest schedule
 exports.deleteHarvestSchedule = async (req, res) => {
     try {
         const { id } = req.params;
