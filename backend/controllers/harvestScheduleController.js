@@ -1,9 +1,9 @@
 const HarvestSchedule = require('../models/Harvest.js');
 
-// Controller for creating a new  Harvest schedule
-exports.createHarvestSchedule= async (req, res) => {
+// Controller for creating a new Harvest schedule
+exports.createHarvestSchedule = async (req, res) => {
     try {
-        const { harvestId, cropType, harvestDate, startTime, endTime, fieldNumber, estimatedYield,harvestMethod,numberOfworkers} = req.body;
+        const { harvestId, cropType, harvestDate, startTime, endTime, fieldNumber, estimatedYield, harvestMethod, numberOfworkers } = req.body;
 
         if (!harvestId || !cropType || !harvestDate || !startTime || !endTime || !fieldNumber || !estimatedYield || !harvestMethod || !numberOfworkers) {
             return res.status(400).send({
@@ -31,7 +31,7 @@ exports.createHarvestSchedule= async (req, res) => {
     }
 };
 
-// Controller for getting all  Harvest schedules
+// Controller for getting all Harvest schedules
 exports.getAllHarvestSchedule = async (req, res) => {
     try {
         const schedules = await HarvestSchedule.find({});
@@ -45,11 +45,13 @@ exports.getAllHarvestSchedule = async (req, res) => {
     }
 };
 
-// Controller for getting a single  Harvest schedule by ID
+// Controller for getting a single Harvest schedule by harvestId (custom ID)
 exports.getHarvestScheduleById = async (req, res) => {
     try {
         const { id } = req.params;
-        const schedule = await HarvestSchedule.findById(id);
+        
+        // Use harvestId instead of _id
+        const schedule = await HarvestSchedule.findOne({ harvestId: id });
 
         if (!schedule) {
             return res.status(404).json({ message: 'Schedule not found' });
@@ -62,38 +64,40 @@ exports.getHarvestScheduleById = async (req, res) => {
     }
 };
 
-// Controller for updating a  Harvest schedule
+// Controller for updating a Harvest schedule by harvestId
 exports.updateHarvestSchedule = async (req, res) => {
     try {
-        const { harvestId, cropType, harvestDate, startTime, endTime, fieldNumber,estimatedYield,harvestMethod,numberOfworkers } = req.body;
+        const { harvestId, cropType, harvestDate, startTime, endTime, fieldNumber, estimatedYield, harvestMethod, numberOfworkers } = req.body;
 
-        if (!harvestId || !cropType || !harvestDate || !startTime || !endTime || fieldNumber,estimatedYield,harvestMethod,numberOfworkers) {
+        if (!harvestId || !cropType || !harvestDate || !startTime || !endTime || !fieldNumber || !estimatedYield || !harvestMethod || !numberOfworkers) {
             return res.status(400).send({
-                message: 'Send all required fields: harvestId, cropType, harvestDate, startTime, endTime, fieldNumber,estimatedYield, harvestMethod, numberOfworkers',
+                message: 'Send all required fields: harvestId, cropType, harvestDate, startTime, endTime, fieldNumber, estimatedYield, harvestMethod, numberOfworkers',
             });
         }
 
         const { id } = req.params;
-
-        const result = await HarvestSchedule.findByIdAndUpdate(id, req.body);
+        
+        // Update by harvestId instead of _id
+        const result = await HarvestSchedule.findOneAndUpdate({ harvestId: id }, req.body, { new: true });
 
         if (!result) {
             return res.status(404).json({ message: 'Harvest schedule not found' });
         }
 
-        return res.status(200).send({ message: 'Harvest schedule updated successfully' });
+        return res.status(200).send({ message: 'Harvest schedule updated successfully', data: result });
     } catch (error) {
         console.log(error.message);
         res.status(500).send({ message: error.message });
     }
 };
 
-// Controller for deleting a  Harvest schedule
+// Controller for deleting a Harvest schedule by harvestId
 exports.deleteHarvestSchedule = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const deletedSchedule = await HarvestSchedule.findByIdAndDelete(id);
+        // Delete by harvestId instead of _id
+        const deletedSchedule = await HarvestSchedule.findOneAndDelete({ harvestId: id });
 
         if (!deletedSchedule) {
             return res.status(404).json({ message: 'Schedule not found' });

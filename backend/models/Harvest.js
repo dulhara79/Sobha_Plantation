@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const harvestScheduleSchema = mongoose.Schema({
     harvestId: {
-        type: Number,
+        type: String,
         required: [true, 'Harvest ID is required'],
         unique: true,
         trim: true, // Removes whitespace from both ends of the string
