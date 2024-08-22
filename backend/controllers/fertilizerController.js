@@ -107,3 +107,4 @@ exports.addFertilizers = addFertilizers;
 exports.getById = getById;
 exports.updateFertilizer = updateFertilizer;
 exports.deleteFertilizer=deleteFertilizer;
+dddddddddddddddddddddddddddddddddddddddddddd
