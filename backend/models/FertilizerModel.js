@@ -29,6 +29,6 @@ const fertilizeSchema = new Schema({
 });
 
 module.exports = mongoose.model(
-    "FertilizerModel",
+    "fertilizerModel",
     fertilizeSchema
 )
