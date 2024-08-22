@@ -1,14 +1,54 @@
-import { Route, Routes } from 'react-router-dom'
+import React from "react";
+import { Route, Routes } from "react-router-dom";
 
-import Test from './pages/Test.jsx'
+// landing page and dashboard
+import Home from "./pages/Home.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
 
-import PageError from './pages/PageError.jsx'
+// finance
+
+// inventory
+
+// employee
+
+// harvest
+
+// crop care
+
+// product
+
+// field view
+
+// buyers
+
+import Test from "./pages/Test.jsx";
+import PageError from "./pages/PageError.jsx";
 export default function App() {
   return (
     <Routes>
-         <Route path='test' element={<Test />} />
+      {/* landing page and dashboard */}
+      <Route path="/" element={<Home />} />
+      <Route path="/dashboard" element={<Dashboard />} />
 
-         <Route path='*' element={<PageError />} />
-      </Routes>
-  )
+      {/* finance */}
+
+      {/* inventory */}
+
+      {/* employee */}
+
+      {/* harvest */}
+
+      {/* crop care */}
+
+      {/* product */}
+
+      {/* field view  */}
+
+      {/* buyers */}
+
+      {/* page not found & error page */}
+      <Route path="/test" element={<Test />} />
+      <Route path="*" element={<PageError />} />
+    </Routes>
+  );
 }
