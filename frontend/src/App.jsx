@@ -16,6 +16,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 // crop care
 
 // product
+import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
 
 // field view
 
@@ -41,6 +42,7 @@ export default function App() {
       {/* crop care */}
 
       {/* product */}
+      <Route path="/products/productdashboard" element={<ProductsDashboard />} />
 
       {/* field view  */}
 
