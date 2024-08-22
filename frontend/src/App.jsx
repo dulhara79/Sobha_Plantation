@@ -17,6 +17,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 
 // product
 import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
+import ProductionScheduleOverview from "./pages/Products/ProductionScheduleOverview.jsx";
 
 // field view
 
@@ -43,6 +44,7 @@ export default function App() {
 
       {/* product */}
       <Route path="/products/productdashboard" element={<ProductsDashboard />} />
+      <Route path="/products/production-overview" element={<ProductionScheduleOverview />} />
 
       {/* field view  */}
 
