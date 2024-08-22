@@ -1,4 +1,4 @@
-const Fertilizer = require("../Model/FertilizerModel");
+const Fertilizer = require("../Model/fertilizerModel");
 
 const getAllFertilizers = async (req, res, next) => {
 
