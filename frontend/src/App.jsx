@@ -18,6 +18,8 @@ import Dashboard from "./pages/Dashboard.jsx";
 // product
 
 // field view
+import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
+
 
 // buyers
 
@@ -44,6 +46,7 @@ export default function App() {
       {/* product */}
 
       {/* field view  */}
+      <Route path="cultivationDashboard" element={<CultivationDashboard />} />
 
       {/* buyers */}
 
