@@ -23,6 +23,8 @@ app.use("/api/employee", employeeRoutes);
 app.use("/api/sales", salesRoutes);
 app.use('/api/production', productionRoutes);
 app.use('/api/harvest',harvestRoutes);
+app.use('/api/fertilizer',fertilizerRoutes);
+
 
 const PORT = 5000 || process.env.PORT;
 app.listen(PORT, () => {
