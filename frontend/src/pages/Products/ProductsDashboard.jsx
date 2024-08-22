@@ -6,13 +6,14 @@ import { HomeOutlined, ErrorOutline } from "@mui/icons-material";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Breadcrumb } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 
 const ProductsDashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const onGroupContainerClick = useCallback(() => {
-    navigate("/production");
+    navigate("/products/production-overview");
   }, [navigate]);
 
   const onGroupContainerClick1 = useCallback(() => {
@@ -24,8 +25,10 @@ const ProductsDashboard = () => {
   }, [navigate]);
 
   const onHomeClick = useCallback(() => {
-    navigate("/");
-  }, [navigate]);
+    if (location.pathname !== "/") {
+      navigate("/");
+    }
+  }, [navigate, location]);
 
   const onBackClick = useCallback(() => {
     navigate(-1); // Navigate back to the previous page
@@ -53,7 +56,7 @@ const ProductsDashboard = () => {
             </div>
             <div
               className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#1D6660] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-              
+              onClick={onHomeClick}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
                 Home
