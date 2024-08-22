@@ -22,6 +22,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 // buyers
 
 
+// import Test from "./pages/Test.jsx";
 import PageError from "./pages/PageError.jsx";
 export default function App() {
   return (
@@ -47,7 +48,8 @@ export default function App() {
       {/* buyers */}
 
       {/* page not found & error page */}
-    
+      {/* <Route path="/test" element={<Test />} /> */}
+
       <Route path="*" element={<PageError />} />
     </Routes>
   );
