@@ -1,5 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
+require('dotenv').config();
+
 
 // landing page and dashboard
 import Home from "./pages/Home.jsx";
