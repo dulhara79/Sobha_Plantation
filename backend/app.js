@@ -7,6 +7,7 @@ const employeeRoutes = require("./routes/employee");
 const salesRoutes = require("./routes/sales");
 const productionRoutes = require('./routes/productionRoute.js');
 const harvestRoutes = require('./routes/harvest');
+const fertilizerRoutes = require('./routes/fertilizerRoute.js');
 
 const app = express();
 
@@ -22,6 +23,8 @@ app.use("/api/employee", employeeRoutes);
 app.use("/api/sales", salesRoutes);
 app.use('/api/production', productionRoutes);
 app.use('/api/harvest',harvestRoutes);
+app.use('/api/fertilizer',fertilizerRoutes);
+
 
 const PORT = 5000 || process.env.PORT;
 app.listen(PORT, () => {

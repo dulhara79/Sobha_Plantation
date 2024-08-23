@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-require('dotenv').config();
+
 
 
 // landing page and dashboard
@@ -20,6 +20,8 @@ import Dashboard from "./pages/Dashboard.jsx";
 // product
 
 // field view
+import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
+
 
 // buyers
 
@@ -46,6 +48,7 @@ export default function App() {
       {/* product */}
 
       {/* field view  */}
+      <Route path="cultivationDashboard" element={<CultivationDashboard />} />
 
       {/* buyers */}
 
