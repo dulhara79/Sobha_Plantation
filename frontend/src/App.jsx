@@ -1,6 +1,8 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
+
+
 // landing page and dashboard
 import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -18,7 +20,8 @@ import Dashboard from "./pages/Dashboard.jsx";
 // product
 
 // field view
-
+import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
+import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
 // buyers
 
 
@@ -44,7 +47,8 @@ export default function App() {
       {/* product */}
 
       {/* field view  */}
-
+      <Route path="cultivationDashboard" element={<CultivationDashboard />} />
+      <Route path="varietyCrop" element={<VarietyCrop />} />
       {/* buyers */}
 
       {/* page not found & error page */}

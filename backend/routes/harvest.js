@@ -5,7 +5,7 @@ const {
     getHarvestScheduleById,
     updateHarvestSchedule,
     deleteHarvestSchedule,
-} = require('../controllers/harvestScheduleController.js');
+} = require('../controllers/harvestScheduleController');
 
 const router = express.Router();
 
@@ -16,3 +16,4 @@ router.put('/:id', updateHarvestSchedule);
 router.delete('/:id', deleteHarvestSchedule);
 
 module.exports = router;
+
