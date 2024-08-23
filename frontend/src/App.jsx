@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 // finance
 import FinanceDashboard from "./pages/Finance/FinanceDashboard.jsx";
 
+
 // inventory
 
 // employee
@@ -22,7 +23,7 @@ import FinanceDashboard from "./pages/Finance/FinanceDashboard.jsx";
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
-
+import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
 
 // buyers
 
@@ -51,6 +52,7 @@ export default function App() {
 
       {/* field view  */}
       <Route path="cultivationDashboard" element={<CultivationDashboard />} />
+      <Route path="varietyCrop" element={<VarietyCrop />} />
 
       {/* buyers */}
 
