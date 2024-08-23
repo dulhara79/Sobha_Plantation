@@ -2,10 +2,11 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 
 // landing page and dashboard
-import Home from "./pages/Home.jsx";
+// import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 
 // finance
+import FinanceDashboard from "./pages/Finance/FinanceDashboard.jsx";
 
 // inventory
 
@@ -27,11 +28,11 @@ export default function App() {
   return (
     <Routes>
       {/* landing page and dashboard */}
-      <Route path="/" element={<Home />} />
+      {/* <Route path="/" element={<Home />} /> */}
       <Route path="/dashboard" element={<Dashboard />} />
 
       {/* finance */}
-
+      <Route path="/finance/dashboard" element={<FinanceDashboard />} />
       {/* inventory */}
 
       {/* employee */}
