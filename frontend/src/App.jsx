@@ -12,6 +12,9 @@ import Dashboard from "./pages/Dashboard.jsx";
 // inventory
 
 // employee
+import Edashboard from "./pages/employee/Edashboard.jsx";
+import Eregistration from "./pages/employee/Eregistration.jsx";
+
 
 // harvest
 
@@ -40,6 +43,9 @@ export default function App() {
       {/* inventory */}
 
       {/* employee */}
+      <Route path="/employee/dashboard" element={<Edashboard/>}/>
+      <Route path= "/employee/registration" element= {<Eregistration/>}/>
+
 
       {/* harvest */}
 
