@@ -7,7 +7,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Breadcrumb } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
-import WeatherComponent from "../../components/WeatherInf"; 
+import WeatherComponent from "../../components/WeatherInf"; // Ensure the path is correct
 
 const HarvestDashboard = () => {
   const navigate = useNavigate();
@@ -18,18 +18,16 @@ const HarvestDashboard = () => {
   }, [navigate]);
 
   const onGroupContainerClick1 = useCallback(() => {
-    navigate("/yield");
+    navigate("/harvest/yield");
   }, [navigate]);
 
   const onGroupContainerClick2 = useCallback(() => {
-    navigate("/task");
+    navigate("/harvest/task");
   }, [navigate]);
 
   const onHomeClick = useCallback(() => {
-    if (location.pathname !== "/") {
-      navigate("/");
-    }
-  }, [navigate, location]);
+    navigate("/harvest/harvestdashboard"); // Navigate to HarvestDashboard
+  }, [navigate]);
 
   const onBackClick = useCallback(() => {
     navigate(-1); // Navigate back to the previous page
@@ -76,7 +74,7 @@ const HarvestDashboard = () => {
               onClick={onGroupContainerClick1}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Yeild Records
+                Yield Records
               </a>
             </div>
             <div
@@ -84,7 +82,7 @@ const HarvestDashboard = () => {
               onClick={onGroupContainerClick2}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Task Assing
+                Task Assign
               </a>
             </div>
           </div>
@@ -119,10 +117,10 @@ const HarvestDashboard = () => {
               </div>
             </div>
           </div>
-            {/* Weather Component Section */}
-            <div className="mt-5 flex justify-center">
-               <WeatherComponent />
-            </div>
+          {/* Weather Component Section */}
+          <div className="mt-5 flex justify-center">
+            <WeatherComponent />
+          </div>
 
           <div className="grid grid-cols-2 gap-10 mt-5">
             <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform bg-green-500 rounded-lg shadow-lg hover:scale-105">
