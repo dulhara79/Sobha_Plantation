@@ -8,7 +8,7 @@ import "../index.css";
 import { HomeOutlined, UserOutlined } from '@ant-design/icons';
 import { Breadcrumb } from 'antd';
 
-const Test = () => {
+const Dashboard = () => {
   return (
     <div>
       <Header />
@@ -29,4 +29,4 @@ const Test = () => {
   );
 };
 
-export default Test;
+export default Dashboard;

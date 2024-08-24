@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
@@ -12,10 +13,11 @@ import Dashboard from "./pages/Dashboard.jsx";
 // inventory
 
 // employee
+import Edashboard from "./pages/employee/Edashboard.jsx";
+import Eregistration from "./pages/employee/Eregistration.jsx";
 
 // harvest
-import HarvestDashboard from "./pages/Harvest/HarvestDashboard.jsx"; 
-import HarvestSchedule from "./pages/Harvest/HarvestSchedule.jsx";
+
 // crop care
 
 // product
@@ -40,10 +42,11 @@ export default function App() {
       {/* inventory */}
 
       {/* employee */}
+      <Route path="/employee/dashboard" element={<Edashboard/>}/>
+      <Route path= "/employee/registration" element= {<Eregistration/>}/>
 
       {/* harvest */}
-        <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
-        <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
+
       {/* crop care */}
 
       {/* product */}
@@ -60,3 +63,4 @@ export default function App() {
     </Routes>
   );
 }
+
