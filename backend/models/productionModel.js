@@ -2,11 +2,6 @@ const mongoose = require("mongoose");
 
 const productionScheduleSchema = mongoose.Schema(
   {
-    scheduleId: {
-      type: String,
-      required: true,
-      unique: true,
-    },
     productType: {
       type: String,
       required: true,
