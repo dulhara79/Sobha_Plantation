@@ -8,12 +8,12 @@ import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 
 // finance
-import FinanceDashboard from "./pages/Finance/FinanceDashboard.jsx";
-
 
 // inventory
 
 // employee
+import Edashboard from "./pages/employee/Edashboard.jsx";
+import Eregistration from "./pages/employee/Eregistration.jsx";
 
 // harvest
 
@@ -24,7 +24,6 @@ import FinanceDashboard from "./pages/Finance/FinanceDashboard.jsx";
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
 import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
-
 // buyers
 
 
@@ -38,11 +37,12 @@ export default function App() {
       <Route path="/dashboard" element={<Dashboard />} />
 
       {/* finance */}
-      <Route path="/finance/dashboard" element={<FinanceDashboard />} />
 
       {/* inventory */}
 
       {/* employee */}
+      <Route path="/employee/dashboard" element={<Edashboard/>}/>
+      <Route path= "/employee/registration" element= {<Eregistration/>}/>
 
       {/* harvest */}
 
@@ -53,7 +53,6 @@ export default function App() {
       {/* field view  */}
       <Route path="cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="varietyCrop" element={<VarietyCrop />} />
-
       {/* buyers */}
 
       {/* page not found & error page */}
