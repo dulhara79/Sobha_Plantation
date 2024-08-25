@@ -5,7 +5,7 @@ const {
     getYieldRecordsById,
     updateYieldRecords,
     deleteYieldRecords,
-} = require('../controllers/yeildController');
+} = require('../../controllers/Harvest/yeildController');
 
 const router = express.Router();
 
