@@ -7,7 +7,7 @@ const cropVarietiesRoutes = require("./routes/cropVarieties");
 const employeeRoutes = require("./routes/employee");
 const salesRoutes = require("./routes/sales");
 const productionRoutes = require('./routes/productionRoute.js');
-const diseasesRoutes = require("./routes/diseases");
+const diseasesRoutes = require("./routes/diseasesRoute");
 const harvestRoutes = require('./routes/harvest');
 const fertilizerRoutes = require('./routes/fertilizerRoute.js');
 
@@ -15,6 +15,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+
 
 // Connect to MongoDB
 connectDB();
@@ -24,7 +25,7 @@ app.use("/api/crop-varieties", cropVarietiesRoutes);
 app.use("/api/employee", employeeRoutes);
 app.use("/api/sales", salesRoutes);
 app.use('/api/production', productionRoutes);
-app.use("/api/diseases", diseasesRoutes);
+app.use("/diseases", diseasesRoutes);
 app.use('/api/harvest',harvestRoutes);
 app.use('/api/fertilizer',fertilizerRoutes);
 
