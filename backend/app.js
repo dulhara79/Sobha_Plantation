@@ -1,15 +1,15 @@
-const dotenv = require("dotenv");
-dotenv.config();
-const express = require("express");
-const connectDB = require("./config/db");
+require('dotenv').config(); // Load environment variables from .env file
+const express = require('express');
 const cors = require("cors");
+const connectDB = require('./config/db'); // Import MongoDB connection function
 
-const cropVarietiesRoutes = require("./routes/cropVarieties");
-const employeeRoutes = require("./routes/employee");
-const productionRoutes = require('./routes/productionRoute.js');
-const diseasesRoutes = require("./routes/diseases");
-const harvestRoutes = require('./routes/harvest');
-const fertilizerRoutes = require('./routes/fertilizerRoute.js');
+const cropVarietiesRoutes = require('./routes/cropVarieties');
+const employeeRoutes = require('./routes/employee');
+const salesRoutes = require('./routes/sales');
+const productionRoutes = require('./routes/productionRoute');
+const fertilizerRoutes = require('./routes/fertilizerRoute');
+const yieldRoutes = require('./routes/Harvest/yield');
+const harvestRoutes = require('./routes/Harvest/harvest');
 
 // const salesAndFinanceRoutes = require('./routes/SalesAndFinance/Routes.js');
 const FinancialTransactionRoutes = require('./routes/SalesAndFinance/financialTransactionRoutes.js');
@@ -19,20 +19,20 @@ const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoute
 
 const app = express();
 
-// Middleware
+// Middleware to parse JSON request bodies
 app.use(express.json());
 app.use(cors());
 
 // Connect to MongoDB
 connectDB();
 
-// Routes
-app.use("/api/crop-varieties", cropVarietiesRoutes);
-app.use("/api/employee", employeeRoutes);
+// Define routes
+app.use('/api/crop-varieties', cropVarietiesRoutes);
+app.use('/api/employee', employeeRoutes);
 app.use('/api/production', productionRoutes);
-app.use("/api/diseases", diseasesRoutes);
-app.use('/api/harvest',harvestRoutes);
-app.use('/api/fertilizer',fertilizerRoutes);
+app.use('/api/harvest', harvestRoutes);
+app.use('/api/fertilizer', fertilizerRoutes);
+app.use('/api/yield', yieldRoutes);
 
 /**
  * Sales and Finance Routes
