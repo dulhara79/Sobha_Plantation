@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
@@ -12,19 +13,25 @@ import Dashboard from "./pages/Dashboard.jsx";
 // inventory
 
 // employee
+import Edashboard from "./pages/employee/Edashboard.jsx";
+import Eregistration from "./pages/employee/Eregistration.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
 import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
-import YieldRecords from "./pages/Harvest/YieldRecords"
-
 // crop care
 
 // product
+import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
+import ProductionScheduleOverview from "./pages/Products/ProductionScheduleOverview.jsx";
+import QualityControl from "./pages/Products/QualityControl.jsx";
+import AddSchedule from "./pages/Products/AddSchedule.jsx";
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
 import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
+import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
+
 // buyers
 
 
@@ -42,19 +49,25 @@ export default function App() {
       {/* inventory */}
 
       {/* employee */}
+      <Route path="/employee/dashboard" element={<Edashboard/>}/>
+      <Route path= "/employee/registration" element= {<Eregistration/>}/>
 
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
-      <Route path="harvest/yield" element={<YieldRecords />} />
-
       {/* crop care */}
 
       {/* product */}
+      <Route path="/products/productdashboard" element={<ProductsDashboard />} />
+      <Route path="/products/production-overview" element={<ProductionScheduleOverview />} />
+      <Route path="/products/quality-control" element={<QualityControl />} />
+      <Route path="/products/addschedule" element={<AddSchedule />} />
 
       {/* field view  */}
       <Route path="cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="varietyCrop" element={<VarietyCrop />} />
+      <Route path="cvForm" element={<CropVarietyForm />} />
+
       {/* buyers */}
 
       {/* page not found & error page */}

@@ -37,6 +37,10 @@ const CultivationDashboard = () => {
         href: '',
         title: 'Field View',
       },
+      {
+        href: '',
+        title: 'Dashboard',
+      },
     ]}
   />
 {/* Welcome Message */}
