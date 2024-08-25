@@ -4,6 +4,28 @@ import Sidebar from '../../components/Sidebar'
 import { HomeOutlined, UserOutlined } from '@ant-design/icons';
 import { Breadcrumb } from 'antd';
 import { Link } from 'react-router-dom';
+import { Pie } from 'react-chartjs-2';
+
+// Include the necessary chart.js elements
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+
+// Register the chart.js components
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+// Import images
+import diseaseIdentificationImg from '../../assets/DiseasesImages/disease.jpg';
+import applicationOfTreatmentsImg from '../../assets/DiseasesImages/treatment.jpg';
+import maintenanceActivitiesImg from '../../assets/DiseasesImages/maintenance.jpg';
+import trendAnalysisImg from '../../assets/DiseasesImages/trend.jpg';
+
+
+
 const DiseasesDashboard = () => {
     
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -20,6 +42,17 @@ const DiseasesDashboard = () => {
   // Format the date
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = currentDate.toLocaleDateString(undefined, options);
+
+  // Data for the pie chart
+  const pieData = {
+    labels: ['Healthy', 'Maintenance Needed', 'Concerned'],
+    datasets: [
+      {
+        data: [82, 10, 8], // Corresponding data for each section
+        backgroundColor: ['#28a745', '#ffc107', '#dc3545'], // Colors: green, yellow, red
+      },
+    ],
+  };
 
   return (
     <div>
@@ -41,40 +74,65 @@ const DiseasesDashboard = () => {
   />
 {/* Welcome Message */}
     <div className="bg-white shadow-md rounded-lg p-4 my-4">
-          <h2 className="text-xl font-semibold">Welcome Dewdu,</h2>
+          <h2 className="text-xl font-semibold">Welcome Dewdu!</h2>
           <p>Today is {formattedDate}</p>
     </div>
 
-    {/* Summary Section */}
-    {/* <div className="grid grid-cols-2 gap-6">
-          <Link to="/varietyCrop" className="bg-[#8fd68b] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block">
-            <img src="/path/to/crop-variety-icon.png" alt="Crop Variety" className="mx-auto mb-4 w-16 h-16" />
-            <h3 className="text-lg font-semibold">Crop Variety</h3>
+ 
+  {/* Summary Section */}
+  <div className="bg-white shadow-md rounded-lg p-4 my-4 grid grid-cols-3 gap-6">
+          {/* Left Section: Health Overview */}
+          <div className="col-span-1">
+            <h3 className="text-lg font-semibold mb-4">Health Overview</h3>
+            <Pie data={pieData} />
+
+            <h3 className="text-lg font-semibold mt-6">Recent Alerts</h3>
+            <div className="mt-2">
+              <div className="bg-red-500 text-white p-2 rounded-lg mb-2">
+                <p>Critical Alert</p>
+                <p>12/07/2024 at 11:30 am</p>
+                <p>Ms. Rasanjalee Silva discovered that during the...</p>
+              </div>
+              <div className="bg-yellow-500 text-white p-2 rounded-lg mb-2">
+                <p>Maintenance Alert</p>
+                <p>15/07/2024 at 09:00 am</p>
+                <p>Fertilization needed for the section A and B of...</p>
+              </div>
+              <div className="bg-green-500 text-white p-2 rounded-lg">
+                <p>Health Reminder</p>
+                <p>10/08/2024 at 8:30 am</p>
+                <p>No current issues detected</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Section: Functions Overview */}
+          <div className="col-span-2 grid grid-cols-2 gap-4">
+          <Link to="/CoconutInspections" className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block flex-col h-100">
+          <h1 className="text-3xl font-bold mb-2">Disease Identification</h1>
+          <img src={diseaseIdentificationImg} alt="Disease Identification" className="w-full h-80 object-cover rounded-lg" />
           </Link>
-          <Link to="/landPreparation" className="bg-[#8fd68b] p-8 rounded-xl text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block">
-    <img src="/path/to/land-preparation-icon.png" alt="Land Preparation" className="mx-auto mb-4 w-16 h-16" />
-    <h3 className="text-lg font-semibold">Land Preparation</h3>
-  </Link>
 
-  <Link to="/plantGrowth" className="bg-[#8fd68b] p-8 rounded-xl text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block">
-    <img src="/path/to/plant-growth-icon.png" alt="Plant Growth" className="mx-auto mb-4 w-16 h-16" />
-    <h3 className="text-lg font-semibold">Plant Growth</h3>
-  </Link>
+            <Link to="/application-of-treatments" className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block flex-col h-100">
+              <h1 className="text-3xl font-bold mb-2">Application of Treatments</h1>
+              <img src={applicationOfTreatmentsImg} alt="Application of Treatments" className="w-full h-80 object-cover rounded-lg" />
+            </Link>
 
-  <Link to="/seedlingDistribution" className="bg-[#8fd68b] p-8 rounded-xl text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block">
-    <img src="/path/to/seedling-distribution-icon.png" alt="Seedling Distribution" className="mx-auto mb-4 w-16 h-16" />
-    <h3 className="text-lg font-semibold">Seedling Distribution</h3>
-  </Link>
+            <Link to="/maintenance-activities" className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block flex-col h-100">
+              <h1 className="text-3xl font-bold mb-2">Maintenance Activities</h1>
+              <img src={maintenanceActivitiesImg} alt="Maintenance Activities" className="w-full h-80 object-cover rounded-lg" />
+            </Link>
 
-  <Link to="/schedules" className="bg-[#8fd68b] p-8 rounded-xl text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block">
-    <img src="/path/to/schedule-icon.png" alt="Schedules" className="mx-auto mb-4 w-16 h-16" />
-    <h3 className="text-lg font-semibold">Schedules</h3>
-  </Link>
-        </div> */}
+            <Link to="/trend-analysis" className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block flex-col h-100">
+              <h1 className="text-3xl font-bold mb-2">Trend Analysis</h1>
+              <img src={trendAnalysisImg} alt="Trend Analysis" className="w-full h-80 object-cover rounded-lg" />
+            </Link>
 
-  </div>
+          </div>
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
 export default DiseasesDashboard
