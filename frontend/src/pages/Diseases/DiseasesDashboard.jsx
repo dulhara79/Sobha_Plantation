@@ -1,7 +1,7 @@
 import React, { useState, useEffect }from 'react'
 import Header from '../../components/Header'
 import Sidebar from '../../components/Sidebar'
-import { HomeOutlined, UserOutlined } from '@ant-design/icons';
+import { HomeOutlined, LeftOutlined } from '@ant-design/icons';
 import { Breadcrumb } from 'antd';
 import { Link } from 'react-router-dom';
 import { Pie } from 'react-chartjs-2';
@@ -58,6 +58,32 @@ const DiseasesDashboard = () => {
     <div>
       <Header/>
       <Sidebar/>
+
+      {/* Navigation Bar */}
+      <nav className="flex items-center justify-between p-4 bg-transparent">
+        {/* Go Back Icon */}
+        <button onClick={() => window.history.back()} className="text-gray-600 hover:text-gray-800">
+          <LeftOutlined className="text-xl" />
+        </button>
+        {/* Navigation Items */}
+        <div className="flex space-x-4">
+          <Link to="/diseases" className="text-[#236A64] font-semibold">
+            Summary
+          </Link>
+          <Link to="/CoconutInspections" className="text-[#3CCD65] hover:text-[#2b8f57]">
+            Inspections
+          </Link>
+          <Link to="/treatments" className="text-[#3CCD65] hover:text-[#2b8f57]">
+            Treatments
+          </Link>
+          <Link to="/pests-diseases" className="text-[#3CCD65] hover:text-[#2b8f57]">
+            Pests and Diseases
+          </Link>
+          <Link to="/maintenance" className="text-[#3CCD65] hover:text-[#2b8f57]">
+            Maintenance
+          </Link>
+        </div>
+      </nav>
 
       <div className={`ml-[300px]`}>
       <Breadcrumb
