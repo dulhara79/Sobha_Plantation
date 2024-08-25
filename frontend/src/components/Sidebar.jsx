@@ -25,11 +25,7 @@ const Sidebar = ({ className = "" }) => {
 
   const menuItems = [
     { name: "Home", icon: <HomeOutlined />, path: "/dashboard" },
-
-    { name: "Finances", icon: <AccountBalanceOutlined />, path: "/finance/finance/dashboard" },
-
     { name: "Finances", icon: <AccountBalanceOutlined />, path: "/finance/dashboard" },
-
     { name: "Inventory", icon: <InventoryOutlined />, path: "/inventory/dashboard" },
     { name: "Employees", icon: <BadgeOutlined />, path: "/employees/dashboard" },
     { name: "Harvest", icon: <ForestOutlined />, path: "/harvest/dashboard" },
@@ -71,6 +67,3 @@ Sidebar.propTypes = {
 };
 
 export default Sidebar;
-
-
-

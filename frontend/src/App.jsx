@@ -12,13 +12,12 @@ import Dashboard from "./pages/Dashboard.jsx";
 // inventory
 
 // employee
-
 import Edashboard from "./pages/employee/Edashboard.jsx";
 import Eregistration from "./pages/employee/Eregistration.jsx";
 
-
 // harvest
-
+import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
+import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
 // crop care
 
 // product
@@ -30,6 +29,8 @@ import AddSchedule from "./pages/Products/AddSchedule.jsx";
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
 import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
+import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
+
 // buyers
 
 
@@ -51,7 +52,8 @@ export default function App() {
       <Route path= "/employee/registration" element= {<Eregistration/>}/>
 
       {/* harvest */}
-
+      <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
+      <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
       {/* crop care */}
 
       {/* product */}
@@ -63,6 +65,8 @@ export default function App() {
       {/* field view  */}
       <Route path="cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="varietyCrop" element={<VarietyCrop />} />
+      <Route path="cvForm" element={<CropVarietyForm />} />
+
       {/* buyers */}
 
       {/* page not found & error page */}

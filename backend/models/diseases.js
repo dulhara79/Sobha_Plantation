@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose");
 
 const DiseasesSchema = new mongoose.Schema({
@@ -25,7 +26,6 @@ const DiseasesSchema = new mongoose.Schema({
         required: true,
         enum: ['A', 'B', 'C', 'D'],
         default: 'Complicated',
-
     },
     inspector: {
         type: String,
@@ -41,4 +41,4 @@ const DiseasesSchema = new mongoose.Schema({
     }
 );
 
-module.exports = mongoose.model("diseases", DiseasesSchema);
+module.exports = mongoose.model("Diseases", DiseasesSchema);
