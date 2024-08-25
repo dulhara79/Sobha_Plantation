@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
+import EmployeeNavbar from "../../components/EmployeeNavbar";
 
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
@@ -19,7 +20,7 @@ const Esalary = () => {
             },
           ]}
         />
-
+<EmployeeNavbar/>
 <EmployeeSalary /> 
         
         
