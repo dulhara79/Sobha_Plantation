@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 
-// Styled Components
+// Styled Components (same as before)
 const Container = styled.div`
   padding: 20px;
 `;
@@ -112,31 +112,14 @@ const SaveButton = styled.button`
   }
 `;
 
-const NavigationWrapper = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 20px;
-`;
-
-const NavigationButton = styled.button`
-  background-color: #61b356;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  margin: 0 5px;
-  border-radius: 5px;
-  cursor: pointer;
-  &:hover {
-    background-color: #4a9e45;
-  }
-`;
 
 const EmployeeSalary = () => {
   const [formData, setFormData] = useState({
     employeeName: '',
     nic: '',
     type: '',
-    dateRange: '',
+    startDate: '',  // Changed field name
+    endDate: '',    // Changed field name
     basicDays: '',
     basicRate: '',
     designation: '',
@@ -174,10 +157,23 @@ const EmployeeSalary = () => {
       newErrors.type = 'Type is required.';
     }
 
-    // Date Range
-    const [fromDate, toDate] = formData.dateRange.split(' to ');
-    if (new Date(fromDate) >= new Date(toDate)) {
-      newErrors.dateRange = 'Start date must be before end date.';
+    // Start Date and End Date validation
+    const startDate = new Date(formData.startDate);
+    const endDate = new Date(formData.endDate);
+    if (!formData.startDate) {
+      newErrors.startDate = 'Start Date is required.';
+    } else if (isNaN(startDate.getTime())) {
+      newErrors.startDate = 'Start Date is not valid.';
+    }
+
+    if (!formData.endDate) {
+      newErrors.endDate = 'End Date is required.';
+    } else if (isNaN(endDate.getTime())) {
+      newErrors.endDate = 'End Date is not valid.';
+    } else if (startDate > endDate) {
+      newErrors.endDate = 'End Date must be after Start Date.';
+    } else if (endDate < new Date()) {
+      newErrors.endDate = 'End Date cannot be in the past.';
     }
 
     // Basic Days
@@ -234,13 +230,7 @@ const EmployeeSalary = () => {
 
   return (
     <Container>
-      <NavigationWrapper>
-        <NavigationButton>Home</NavigationButton>
-        <NavigationButton>Attendance</NavigationButton>
-        <NavigationButton>Salary</NavigationButton>
-        <NavigationButton>Registration</NavigationButton>
-        <NavigationButton>Assign Task</NavigationButton>
-      </NavigationWrapper>
+      
 
       <FormContainer>
         <FormHeader>
@@ -274,9 +264,14 @@ const EmployeeSalary = () => {
               {errors.type && <Error>{errors.type}</Error>}
             </InputField>
             <InputField>
-              <Label>Date Range</Label>
-              <Input type="text" name="dateRange" value={formData.dateRange} onChange={handleChange} placeholder="YYYY-MM-DD to YYYY-MM-DD" />
-              {errors.dateRange && <Error>{errors.dateRange}</Error>}
+              <Label>Start Date</Label>
+              <Input type="date" name="startDate" value={formData.startDate} onChange={handleChange} />
+              {errors.startDate && <Error>{errors.startDate}</Error>}
+            </InputField>
+            <InputField>
+              <Label>End Date</Label>
+              <Input type="date" name="endDate" value={formData.endDate} onChange={handleChange} />
+              {errors.endDate && <Error>{errors.endDate}</Error>}
             </InputField>
             <InputField>
               <Label>Basic Days</Label>
