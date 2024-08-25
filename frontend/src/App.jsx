@@ -20,7 +20,6 @@ import EaddTask from "./pages/employee/EaddTask.jsx";
 import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
 
-
 // harvest
 
 // crop care
@@ -29,8 +28,7 @@ import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
-
-
+import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
 // buyers
 
 
@@ -59,7 +57,6 @@ export default function App() {
       <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
 
 
-
       {/* harvest */}
 
       {/* crop care */}
@@ -68,7 +65,7 @@ export default function App() {
 
       {/* field view  */}
       <Route path="cultivationDashboard" element={<CultivationDashboard />} />
-
+      <Route path="varietyCrop" element={<VarietyCrop />} />
       {/* buyers */}
 
       {/* page not found & error page */}

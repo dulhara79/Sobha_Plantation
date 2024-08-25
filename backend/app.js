@@ -3,11 +3,13 @@ dotenv.config();
 const express = require("express");
 const mongoose = require("mongoose");
 const connectDB = require("./config/db");
+
 const cropVarietiesRoutes = require("./routes/cropVarieties");
 const employeeRoutes = require('./routes/employee');
 const salaryEmployeeRoutes = require("./routes/salaryEmployeeRoutes");
 const salesRoutes = require("./routes/sales");
 const productionRoutes = require('./routes/productionRoute.js');
+const diseasesRoutes = require("./routes/diseases");
 const harvestRoutes = require('./routes/harvest');
 const fertilizerRoutes = require('./routes/fertilizerRoute.js');
 const cors = require('cors');
@@ -26,6 +28,7 @@ app.use("/api/crop-varieties", cropVarietiesRoutes);
 app.use("/api/employee", employeeRoutes);
 app.use("/api/sales", salesRoutes);
 app.use('/api/production', productionRoutes);
+app.use("/api/diseases", diseasesRoutes);
 app.use('/api/harvest',harvestRoutes);
 app.use('/api/fertilizer',fertilizerRoutes);
 
