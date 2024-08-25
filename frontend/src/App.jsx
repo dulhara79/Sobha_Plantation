@@ -13,12 +13,10 @@ import Dashboard from "./pages/Dashboard.jsx";
 // inventory
 
 // employee
-import Edashboard from "./pages/employee/Edashboard.jsx";
-import Eregistration from "./pages/employee/Eregistration.jsx";
 
 // harvest
-import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
-import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
+import HarvestDashboard from "./pages/Harvest/HarvestDashboard.jsx";
+import HarvestSchedule from"./pages/Harvest/HarvestSchedule.jsx";
 // crop care
 
 // product
@@ -49,8 +47,6 @@ export default function App() {
       {/* inventory */}
 
       {/* employee */}
-      <Route path="/employee/dashboard" element={<Edashboard/>}/>
-      <Route path= "/employee/registration" element= {<Eregistration/>}/>
 
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
