@@ -15,7 +15,8 @@ import Dashboard from "./pages/Dashboard.jsx";
 
 // harvest
 
-// crop care
+// crop care (diseases)
+import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
 
 // product
 
