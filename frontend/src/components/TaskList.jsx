@@ -53,7 +53,7 @@ const TaskList = () => {
         if (confirmDelete) {
             setLoading(true);
             axios
-                .delete(`https://Sobha_plantation .vercel.app/taskRecords/${recordId}`)
+                .delete(`https://elemahana-backend.vercel.app/taskRecords/${recordId}`)
                 .then(() => {
                     setTaskRecords(prevRecords => prevRecords.filter(record => record._id !== recordId));
                     setLoading(false);
