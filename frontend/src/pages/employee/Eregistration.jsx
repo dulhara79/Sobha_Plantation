@@ -5,7 +5,7 @@ import Sidebar from "../../components/Sidebar";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
 import EmployeeRegistrationForm from "../../components/EmployeeRegistrationForm";
-const Edashboard = () => {
+const Eregistration = () => {
   return (
     <div>
       <Header />
@@ -28,4 +28,4 @@ const Edashboard = () => {
   );
 };
 
-export default Edashboard;
+export default Eregistration;
