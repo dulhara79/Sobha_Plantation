@@ -8,6 +8,7 @@ const salesRoutes = require('./routes/sales');
 const productionRoutes = require('./routes/productionRoute');
 const harvestRoutes = require('./routes/harvest');
 const fertilizerRoutes = require('./routes/fertilizerRoute');
+const yieldRoutes = require('./routes/yield');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/api/sales', salesRoutes);
 app.use('/api/production', productionRoutes);
 app.use('/api/harvest', harvestRoutes);
 app.use('/api/fertilizer', fertilizerRoutes);
+app.use('/api/yield', yieldRoutes);
 
 // Set the port, default to 5000 if not specified in environment variables
 const PORT = process.env.PORT || 5000;
