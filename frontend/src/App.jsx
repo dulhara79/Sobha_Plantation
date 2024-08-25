@@ -1,6 +1,5 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 
 
 // landing page and dashboard
@@ -17,17 +16,17 @@ import Dashboard from "./pages/Dashboard.jsx";
 
 // crop care (diseases)
 import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
+import CoconutInspections from "./pages/Diseases/CoconutInspections.jsx";
 
 // product
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
 import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
+
 // buyers
 
 
-// import Test from "./pages/Test.jsx";
-import PageError from "./pages/PageError.jsx";
 export default function App() {
   return (
     <Routes>
@@ -44,6 +43,8 @@ export default function App() {
       {/* harvest */}
 
       {/* crop care */}
+      <Route path="/diseases" element={<DiseasesDashboard />} />
+      <Route path="/coconutInspections" element={<CoconutInspections />} />
 
       {/* product */}
 
