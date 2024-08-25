@@ -1,6 +1,8 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
+
+
 // landing page and dashboard
 import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -12,7 +14,8 @@ import Dashboard from "./pages/Dashboard.jsx";
 // employee
 
 // harvest
-
+import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
+import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
 // crop care
 
 // product
@@ -21,6 +24,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
 import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
 import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
+
 // buyers
 
 
@@ -40,7 +44,8 @@ export default function App() {
       {/* employee */}
 
       {/* harvest */}
-
+      <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
+      <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
       {/* crop care */}
 
       {/* product */}
@@ -49,6 +54,7 @@ export default function App() {
       <Route path="cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="varietyCrop" element={<VarietyCrop />} />
       <Route path="cvForm" element={<CropVarietyForm />} />
+
       {/* buyers */}
 
       {/* page not found & error page */}

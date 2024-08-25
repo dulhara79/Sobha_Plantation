@@ -166,3 +166,4 @@ FrameComponent.propTypes = {
 };
 
 export default FrameComponent;
+

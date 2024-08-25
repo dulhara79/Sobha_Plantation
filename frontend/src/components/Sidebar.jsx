@@ -30,7 +30,7 @@ const Sidebar = ({ className = "" }) => {
     { name: "Employees", icon: <BadgeOutlined />, path: "/employees/dashboard" },
     { name: "Harvest", icon: <ForestOutlined />, path: "/harvest/dashboard" },
     { name: "Crop Care", icon: <BugReportOutlined />, path: "/crop-care/dashboard" },
-    { name: "Products", icon: <ViewInAr />, path: "/products/dashboard" },
+    { name: "Products", icon: <ViewInAr />, path: "/products/productdashboard" },
     { name: "Field View", icon: <FilterVintageOutlined />, path: "/field-view/dashboard" },
     { name: "Buyers", icon: <Person />, path: "/buyers/dashboard" },
   ];

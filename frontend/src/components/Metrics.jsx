@@ -1,3 +1,4 @@
+
 import PropTypes from "prop-types";
 
 const Metrics = ({ className = "", totalInspections, icons }) => {
