@@ -25,7 +25,7 @@ Metrics.propTypes = {
 };
 
 export default Metrics;
-=======
+
 import PropTypes from "prop-types";
 
 const Metrics = ({ className = "", totalInspections, icons }) => {
@@ -52,4 +52,4 @@ Metrics.propTypes = {
   icons: PropTypes.string,
 };
 
-export default Metrics;
+//export default Metrics;
