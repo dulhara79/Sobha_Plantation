@@ -65,7 +65,7 @@ const CultivationDashboard = () => {
     <h3 className="text-lg font-semibold">Plant Growth</h3>
   </Link>
 
-  <Link to="/seedlingDistribution" className="bg-[#8fd68b] p-8 rounded-xl text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block">
+  <Link to="/seedling" className="bg-[#8fd68b] p-8 rounded-xl text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block">
     <img src="/path/to/seedling-distribution-icon.png" alt="Seedling Distribution" className="mx-auto mb-4 w-16 h-16" />
     <h3 className="text-lg font-semibold">Seedling Distribution</h3>
   </Link>
