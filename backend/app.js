@@ -7,7 +7,7 @@ const cropVarietiesRoutes = require("./routes/cropVarieties");
 const employeeRoutes = require("./routes/employee");
 const salesRoutes = require("./routes/sales");
 const productionRoutes = require('./routes/productionRoute.js');
-const diseasesRoutes = require("./routes/diseasesRoute");
+const diseasesRoutes = require('././routes/DiseaseRoutes/diseasesRoute.js');
 const harvestRoutes = require('./routes/harvest');
 const fertilizerRoutes = require('./routes/fertilizerRoute.js');
 
