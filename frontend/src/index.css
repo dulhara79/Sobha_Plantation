@@ -12,6 +12,7 @@
 body {
   @apply leading-[normal] m-0;
 }
+
 *,
 ::before,
 ::after {
@@ -25,16 +26,36 @@ a {
 
 .app-container {
   display: flex;
-  height: 100vh; /* Ensure full height for the layout */
+  height: 100vh;
+  /* Ensure full height for the layout */
 }
 
 .sidebar {
-  width: 280px; /* Sidebar width */
-  flex-shrink: 0; /* Prevent sidebar from shrinking */
+  width: 280px;
+  /* Sidebar width */
+  flex-shrink: 0;
+  /* Prevent sidebar from shrinking */
 }
 
 .content {
-  flex: 1; /* Take up remaining space */
-  padding: 0px; /* Optional padding for content */
-  overflow-y: auto; /* Allow scrolling if content overflows */
+  flex: 1;
+  /* Take up remaining space */
+  padding: 0px;
+  /* Optional padding for content */
+  overflow-y: auto;
+  /* Allow scrolling if content overflows */
+}
+
+.loader {
+  border-top-color: #3498db;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
