@@ -6,9 +6,9 @@ const cropVarietiesRoutes = require('./routes/cropVarieties');
 const employeeRoutes = require('./routes/employee');
 const salesRoutes = require('./routes/sales');
 const productionRoutes = require('./routes/productionRoute');
-const harvestRoutes = require('./routes/harvest');
 const fertilizerRoutes = require('./routes/fertilizerRoute');
 const yieldRoutes = require('./routes/Harvest/yield');
+const harvestRoutes = require('./routes/Harvest/harvest');
 
 const app = express();
 
