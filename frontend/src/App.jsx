@@ -16,8 +16,12 @@ import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.j
 // inventory
 
 // employee
-// import Edashboard from "./pages/employee/Edashboard.jsx";
-// import Eregistration from "./pages/employee/Eregistration.jsx";
+import Edashboard from "./pages/employee/Edashboard.jsx";
+import Eregistration from "./pages/employee/Eregistration.jsx";
+import Esalary from "./pages/employee/Esalary";
+import EaddTask from "./pages/employee/EaddTask.jsx";
+import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
+import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
@@ -38,7 +42,7 @@ import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
 // buyers
 
 
-// import Test from "./ages/Test.jsx";
+// import Test from "./pages/Test.jsx";
 import PageError from "./pages/PageError.jsx";
 export default function App() {
   return (
@@ -56,8 +60,12 @@ export default function App() {
       {/* inventory */}
 
       {/* employee */}
-      {/* <Route path="/employee/dashboard" element={<Edashboard/>}/> */}
-      {/* <Route path= "/employee/registration" element= {<Eregistration/>}/> */}
+      <Route path="/employee/dashboard" element={<Edashboard/>}/>
+      <Route path= "/employee/registration" element= {<Eregistration/>}/>
+      <Route path="/employee/salary" element= {<Esalary/>}/>
+      <Route path="/employee/task" element= {<EaddTask/>}/>
+      <Route path="/employee/taskedit" element= {<EditTaskPage/>}/>
+      <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
 
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
@@ -73,9 +81,6 @@ export default function App() {
       {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="/varietyCrop" element={<VarietyCrop />} />
-
-      <Route path="cultivationDashboard" element={<CultivationDashboard />} />
-      <Route path="varietyCrop" element={<VarietyCrop />} />
       <Route path="cvForm" element={<CropVarietyForm />} />
         
       {/* buyers */}

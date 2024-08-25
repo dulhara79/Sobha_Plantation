@@ -1,4 +1,4 @@
-const ProductionSchedule = require("../models/productionModel.js");
+const ProductionSchedule = require("../../models/Products/productionModel.js");
 
 // Controller for creating a new production schedule
 exports.createProductionSchedule = async (req, res) => {
