@@ -5,8 +5,8 @@ const connectDB = require('./config/db'); // Import MongoDB connection function
 
 const cropVarietiesRoutes = require('./routes/cropVarieties');
 const employeeRoutes = require('./routes/employee');
-const salesRoutes = require('./routes/sales');
-const productionRoutes = require('./routes/productionRoute');
+// const salesRoutes = require('./routes/sales');
+const productionRoutes = require('./routes/Products/productionRoute.js');
 const fertilizerRoutes = require('./routes/fertilizerRoute');
 const yieldRoutes = require('./routes/Harvest/yield');
 const harvestRoutes = require('./routes/Harvest/harvest');
