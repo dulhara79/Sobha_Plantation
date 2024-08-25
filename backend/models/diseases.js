@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const DiseasesSchema = new mongoose.Schema({
     recordId: {
         type: String,
-        required: true,
+        required: true, //validate
         unique: true,
     },
     pest: {
