@@ -26,8 +26,15 @@ const FormGroup = styled.div`
   flex-direction: column;
   margin-bottom: 15px;
 
+  label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+  }
+
   input,
-  select {
+  select,
+  textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
@@ -181,6 +188,7 @@ const EmployeeRegistrationForm = () => {
       <Title>Employee Registration Form</Title>
       <form onSubmit={handleSubmit}>
         <FormGroup>
+          <label htmlFor="firstName">First Name</label>
           <input
             type="text"
             name="firstName"
@@ -189,6 +197,8 @@ const EmployeeRegistrationForm = () => {
             onChange={handleChange}
           />
           {errors.firstName && <p>{errors.firstName}</p>}
+
+          <label htmlFor="lastName">Last Name</label>
           <input
             type="text"
             name="lastName"
@@ -198,7 +208,9 @@ const EmployeeRegistrationForm = () => {
           />
           {errors.lastName && <p>{errors.lastName}</p>}
         </FormGroup>
+
         <FormGroup>
+          <label htmlFor="nic">NIC</label>
           <input
             type="text"
             name="nic"
@@ -208,7 +220,9 @@ const EmployeeRegistrationForm = () => {
           />
           {errors.nic && <p>{errors.nic}</p>}
         </FormGroup>
+
         <FormGroup>
+          <label htmlFor="dateOfBirth">Date of Birth</label>
           <input
             type="date"
             name="dateOfBirth"
@@ -217,6 +231,8 @@ const EmployeeRegistrationForm = () => {
             onChange={handleChange}
           />
           {errors.dateOfBirth && <p>{errors.dateOfBirth}</p>}
+
+          <label htmlFor="gender">Gender</label>
           <select
             name="gender"
             value={formData.gender}
@@ -229,7 +245,9 @@ const EmployeeRegistrationForm = () => {
           </select>
           {errors.gender && <p>{errors.gender}</p>}
         </FormGroup>
+
         <FormGroup>
+          <label htmlFor="contactNumber">Contact Number</label>
           <input
             type="text"
             name="contactNumber"
@@ -238,6 +256,8 @@ const EmployeeRegistrationForm = () => {
             onChange={handleChange}
           />
           {errors.contactNumber && <p>{errors.contactNumber}</p>}
+
+          <label htmlFor="email">Email</label>
           <input
             type="email"
             name="email"
@@ -247,7 +267,9 @@ const EmployeeRegistrationForm = () => {
           />
           {errors.email && <p>{errors.email}</p>}
         </FormGroup>
+
         <FormGroup>
+          <label htmlFor="address">Address</label>
           <textarea
             name="address"
             placeholder="Address"
@@ -257,7 +279,9 @@ const EmployeeRegistrationForm = () => {
           />
           {errors.address && <p>{errors.address}</p>}
         </FormGroup>
+
         <FormGroup>
+          <label htmlFor="employeeType">Employee Type</label>
           <input
             type="text"
             name="employeeType"
@@ -266,6 +290,8 @@ const EmployeeRegistrationForm = () => {
             onChange={handleChange}
           />
           {errors.employeeType && <p>{errors.employeeType}</p>}
+
+          <label htmlFor="hiredDate">Hired Date</label>
           <input
             type="date"
             name="hiredDate"
@@ -275,7 +301,9 @@ const EmployeeRegistrationForm = () => {
             disabled
           />
         </FormGroup>
+
         <FormGroup>
+          <label htmlFor="hourlyRate">Hourly Rate</label>
           <input
             type="number"
             name="hourlyRate"
@@ -285,6 +313,7 @@ const EmployeeRegistrationForm = () => {
           />
           {errors.hourlyRate && <p>{errors.hourlyRate}</p>}
         </FormGroup>
+
         <ButtonGroup>
           <Button primary type="submit" disabled={!isFormValid}>
             Submit
