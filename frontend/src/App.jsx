@@ -16,6 +16,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
 import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
+import YieldRecords from "./pages/Harvest/YieldRecords"
 // crop care
 
 // product
@@ -44,6 +45,7 @@ export default function App() {
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
+      <Route path="harvest/yield" element={<YieldRecords />} />
       {/* crop care */}
 
       {/* product */}
