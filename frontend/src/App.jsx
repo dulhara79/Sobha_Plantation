@@ -21,6 +21,8 @@ import Dashboard from "./pages/Dashboard.jsx";
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
 import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
 import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
+import Seedling from "./pages/CropVarieties/Seedling.jsx";
+import Schedules from "./pages/CropVarieties/Schedules.jsx";
 // buyers
 
 
@@ -49,6 +51,8 @@ export default function App() {
       <Route path="cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="varietyCrop" element={<VarietyCrop />} />
       <Route path="cvForm" element={<CropVarietyForm />} />
+      <Route path="seedling" element={<Seedling />} />
+      <Route path="schedules" element={<Schedules />} />
       {/* buyers */}
 
       {/* page not found & error page */}
