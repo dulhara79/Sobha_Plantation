@@ -1,4 +1,4 @@
-const HarvestSchedule = require('../models/Harvest');
+const HarvestSchedule = require('../../models/Harvest/Harvest');
 
 // Controller for creating a new Harvest schedule
 exports.createHarvestSchedule = async (req, res) => {
