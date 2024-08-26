@@ -2,11 +2,11 @@ import React, { Fragment, useState } from 'react'
 import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
-    { name: "HOME", path: "/employees/home" },
-    { name: "REGISTRATION", path: "/employees/registration" },
-    { name: "ASSIGN TASKS", path: "/employees/tasks" },
-    { name: "ATTENDANCE MARKER", path: "/employees/attendance" },
-    { name: "SALARY", path: "/employees/salary" },
+    { name: "HOME", path:"/employee/dashboard"  },
+    { name: "REGISTRATION", path: "/employee/registration" },
+    { name: "ASSIGN TASKS", path: "/employee/task" },
+    { name: "ATTENDANCE MARKER", path: "/employee/attendance" },
+    { name: "SALARY", path: "/employee/salary" },
 
 
 ];
