@@ -8,6 +8,10 @@ import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 
 // finance
+import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
+import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
+import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
+import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 
 // inventory
 
@@ -48,6 +52,10 @@ export default function App() {
       <Route path="/dashboard" element={<Dashboard />} />
 
       {/* finance */}
+      <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
+      <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
+      <Route path="/salesAndFinance/sales/addSalesRecord" element={<AddSalesRecordDashboard />} />
+      <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
 
       {/* inventory */}
 
@@ -71,8 +79,8 @@ export default function App() {
       <Route path="/products/addschedule" element={<AddSchedule />} />
 
       {/* field view  */}
-      <Route path="cultivationDashboard" element={<CultivationDashboard />} />
-      <Route path="varietyCrop" element={<VarietyCrop />} />
+      <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
+      <Route path="/varietyCrop" element={<VarietyCrop />} />
       <Route path="cvForm" element={<CropVarietyForm />} />
         
       {/* buyers */}
