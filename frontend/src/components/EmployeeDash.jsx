@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faUserTie, faCheckCircle, faTasks } from '@fortawesome/free-solid-svg-icons';
@@ -70,7 +69,7 @@ const EmployeeDash = () => {
   };
 
   const handleViewAllEmployees = () => {
-    navigate('/employee/list'); // Update the route as needed
+    navigate('/employee/employeelist'); // Update the route as needed
   };
 
   useEffect(() => {
