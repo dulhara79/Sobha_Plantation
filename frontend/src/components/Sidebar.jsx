@@ -31,7 +31,7 @@ const Sidebar = ({ className = "" }) => {
     { name: "Harvest", icon: <ForestOutlined />, path: "/harvest/dashboard" },
     { name: "Crop Care", icon: <BugReportOutlined />, path: "/crop-care/dashboard" },
     { name: "Products", icon: <ViewInAr />, path: "/products/productdashboard" },
-    { name: "Field View", icon: <FilterVintageOutlined />, path: "/field-view/dashboard" },
+    { name: "Field View", icon: <FilterVintageOutlined />, path: "/cultivationDashboard" },
     { name: "Buyers", icon: <Person />, path: "/buyers/dashboard" },
   ];
 
