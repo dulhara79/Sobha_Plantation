@@ -1,13 +1,14 @@
-const HarvestSchedule = require('../../models/Harvest1/Harvest');
+const HarvestSchedule = require('../../models/Harvest/Harvest');
 
 // Controller for creating a new Harvest schedule
 exports.createHarvestSchedule = async (req, res) => {
     try {
-        const { harvestId, cropType, harvestDate, startTime, endTime, fieldNumber, estimatedYield, harvestMethod, numberOfworkers } = req.body;
+        const { harvestId, cropType, harvestDate, startTime, endTime, fieldNumber, harvestMethod, estimatedYield, numberOfWorkers } = req.body;
 
-        if (!harvestId || !cropType || !harvestDate || !startTime || !endTime || !fieldNumber || !estimatedYield || !harvestMethod || !numberOfworkers) {
-            return res.status(400).send({
-                message: 'Please provide all required fields: harvestId, cropType, harvestDate, startTime, endTime, fieldNumber, estimatedYield, harvestMethod, numberOfworkers',
+        if (!harvestId || !cropType || !harvestDate || !startTime || !endTime || !fieldNumber || !harvestMethod || !estimatedYield || !numberOfWorkers) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide all required fields: harvestId, cropType, harvestDate, startTime, endTime, estimatedYield, harvestMethod, numberOfWorkers',
             });
         }
 
@@ -18,16 +19,16 @@ exports.createHarvestSchedule = async (req, res) => {
             startTime,
             endTime,
             fieldNumber,
-            estimatedYield,
             harvestMethod,
-            numberOfworkers
+            estimatedYield,
+            numberOfWorkers,
         };
 
         const harvestSchedule = await HarvestSchedule.create(newSchedule);
-        return res.status(201).send(harvestSchedule);
+        return res.status(201).json({ success: true, data: harvestSchedule });
     } catch (error) {
         console.log('Error creating harvest schedule:', error.message);
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
@@ -36,12 +37,13 @@ exports.getAllHarvestSchedule = async (req, res) => {
     try {
         const schedules = await HarvestSchedule.find({});
         return res.status(200).json({
+            success: true,
             count: schedules.length,
             data: schedules,
         });
     } catch (error) {
         console.log('Error fetching schedules:', error.message);
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
@@ -49,61 +51,49 @@ exports.getAllHarvestSchedule = async (req, res) => {
 exports.getHarvestScheduleById = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log('Searching for schedule with harvestId:', id);
         
-        const schedule = await HarvestSchedule.findOne({ harvestId: id }).exec();
+        const schedule = await HarvestSchedule.findOne({ harvestId: id });
 
         if (!schedule) {
-            console.log('No schedule found with harvestId:', id);
-            return res.status(404).json({ message: 'Schedule not found' });
+            return res.status(404).json({ success: false, message: 'Schedule not found' });
         }
 
-        return res.status(200).json(schedule);
+        return res.status(200).json({ success: true, data: schedule });
     } catch (error) {
         console.log('Error fetching schedule:', error.message);
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
 // Controller for updating a Harvest schedule by harvestId
 exports.updateHarvestSchedule = async (req, res) => {
     try {
-        // Extract harvestId from URL parameters and data from request body
         const { id } = req.params;
-        const { cropType, harvestDate, startTime, endTime, fieldNumber, estimatedYield, harvestMethod, numberOfworkers } = req.body;
+        const { cropType, harvestDate, startTime, endTime, fieldNumber, harvestMethod, estimatedYield, numberOfWorkers } = req.body;
 
-        // Log the incoming parameters and data
-        console.log('Updating schedule with harvestId:', id);
-        console.log('Update data:', req.body);
-
-        // Check if required fields are present
-        if (!cropType || !harvestDate || !startTime || !endTime || !fieldNumber || !estimatedYield || !harvestMethod || !numberOfworkers) {
-            return res.status(400).send({
-                message: 'Send all required fields: cropType, harvestDate, startTime, endTime, fieldNumber, estimatedYield, harvestMethod, numberOfworkers',
+        if (!cropType || !harvestDate || !startTime || !endTime || !fieldNumber || !harvestMethod || !estimatedYield || !numberOfWorkers) {
+            return res.status(400).json({
+                success: false,
+                message: 'Send all required fields: cropType, harvestDate, startTime, endTime, fieldNumber, harvestMethod, estimatedYield, numberOfWorkers',
             });
         }
 
-        // Perform the update operation
         const result = await HarvestSchedule.findOneAndUpdate(
             { harvestId: id },
-            { cropType, harvestDate, startTime, endTime, fieldNumber, estimatedYield, harvestMethod, numberOfworkers },
+            { cropType, harvestDate, startTime, endTime, fieldNumber, harvestMethod, estimatedYield, numberOfWorkers },
             { new: true }
-        ).exec();
+        );
 
-        // Check if the schedule was found and updated
         if (!result) {
-            return res.status(404).json({ message: 'Harvest schedule not found' });
+            return res.status(404).json({ success: false, message: 'Harvest schedule not found' });
         }
 
-        // Send the updated schedule
-        return res.status(200).send({ message: 'Harvest schedule updated successfully', data: result });
+        return res.status(200).json({ success: true, message: 'Harvest schedule updated successfully', data: result });
     } catch (error) {
-        // Log any errors and send a response
         console.log('Error updating schedule:', error.message);
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
-
 
 // Controller for deleting a Harvest schedule by harvestId
 exports.deleteHarvestSchedule = async (req, res) => {
@@ -113,12 +103,12 @@ exports.deleteHarvestSchedule = async (req, res) => {
         const deletedSchedule = await HarvestSchedule.findOneAndDelete({ harvestId: id });
 
         if (!deletedSchedule) {
-            return res.status(404).json({ message: 'Schedule not found' });
+            return res.status(404).json({ success: false, message: 'Schedule not found' });
         }
 
-        return res.status(200).send({ message: 'Schedule deleted successfully' });
+        return res.status(200).json({ success: true, message: 'Schedule deleted successfully' });
     } catch (error) {
         console.log('Error deleting schedule:', error.message);
-        res.status(500).send({ message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };

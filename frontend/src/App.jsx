@@ -27,6 +27,10 @@ import GetAttendance from "./pages/employee/GetAttendance.jsx";
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
 import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
+import YieldRecords from "./pages/Harvest/YieldRecords.jsx";
+import TaskAssign from "./pages/Harvest/TaskAssign.jsx"
+import AddHarvestSchedule from "./pages/Harvest/AddHarvestSchedule.jsx";
+import EditHarvestSchedule from './pages/Harvest/EditHarvestSchedule';
 // crop care
 
 // product
@@ -49,7 +53,7 @@ import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
 
 // import Test from "./pages/Test.jsx";
 import PageError from "./pages/PageError.jsx";
-import YieldRecords from "./pages/Harvest/YieldRecords.jsx";
+
 
 export default function App() {
   return (
@@ -78,6 +82,10 @@ export default function App() {
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
+      <Route path="/harvest/yield" element={<YieldRecords />} />
+      <Route path="/harvest/task" element={<TaskAssign/>} />
+      <Route path="/harvest/addschedule" element={<AddHarvestSchedule />} />
+      <Route path="/harvest/edit/:id" element={<EditHarvestSchedule />} />
       {/* crop care */}
 
       {/* product */}
