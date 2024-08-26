@@ -153,7 +153,7 @@ const TaskList = () => {
                 </div>
 
                 <div>
-                    <Link to="/employees/tasks/addTask"
+                    <Link to="/employee/task"
                        className="flex-none rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">
                         Add new task <span aria-hidden="true">&rarr;</span>
                     </Link>
@@ -243,7 +243,7 @@ const TaskList = () => {
                             No
                         </th>
                         <th scope="col" className="px-6 py-3">
-                            Employee ID
+                            Employee Name
                         </th>
                         <th scope="col" className="px-6 py-3">
                             Task
@@ -276,7 +276,7 @@ const TaskList = () => {
                                 {index + 1}
                             </td>
                             <td className="px-6 py-4">
-                                {record.emp_id}
+                                {record.emp_name}
                             </td>
                             <td className="px-6 py-4">
                                 {record.task}
