@@ -6,12 +6,20 @@ import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 
 // finance
+import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
+import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
+import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
+import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 
 // inventory
 
 // employee
-// import Edashbcoard from "./pages/employee/Edashboard.jsx";
-// import Eregisctration from "./pages/employee/Eregistration.jsx";
+import Edashboard from "./pages/employee/Edashboard.jsx";
+import Eregistration from "./pages/employee/Eregistration.jsx";
+import Esalary from "./pages/employee/Esalary";
+import EaddTask from "./pages/employee/EaddTask.jsx";
+import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
+import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
@@ -45,12 +53,20 @@ export default function App() {
       <Route path="/dashboard" element={<Dashboard />} />
 
       {/* finance */}
+      <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
+      <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
+      <Route path="/salesAndFinance/sales/addSalesRecord" element={<AddSalesRecordDashboard />} />
+      <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
 
       {/* inventory */}
 
       {/* employee */}
-      {/* <Route path="/employee/dashboard" element={<Edashboard/>}/> */}
-      {/* <Route path= "/employee/registration" element= {<Eregistration/>}/> */}
+      <Route path="/employee/dashboard" element={<Edashboard/>}/>
+      <Route path= "/employee/registration" element= {<Eregistration/>}/>
+      <Route path="/employee/salary" element= {<Esalary/>}/>
+      <Route path="/employee/task" element= {<EaddTask/>}/>
+      <Route path="/employee/taskedit" element= {<EditTaskPage/>}/>
+      <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
 
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
@@ -70,8 +86,8 @@ export default function App() {
       <Route path="/products/addschedule" element={<AddSchedule />} />
 
       {/* field view  */}
-      <Route path="cultivationDashboard" element={<CultivationDashboard />} />
-      <Route path="varietyCrop" element={<VarietyCrop />} />
+      <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
+      <Route path="/varietyCrop" element={<VarietyCrop />} />
       <Route path="cvForm" element={<CropVarietyForm />} />
       <Route path="seedlingDistribution" element={<Seedling />} />
       <Route path="schedules" element={<Schedules />} />
