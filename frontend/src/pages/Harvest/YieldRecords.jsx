@@ -9,7 +9,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Breadcrumb } from "antd";
 import { useNavigate } from "react-router-dom";
 
-const HarvestSchedule = () => {
+const YieldRecords = () => {
   const navigate = useNavigate();
 
   const onHomeClick = useCallback(() => {
@@ -47,7 +47,6 @@ const HarvestSchedule = () => {
       <Header />
       <Sidebar className="sidebar" />
       <div className="ml-[300px] p-5">
-        
         {/* Navigation Bar */}
         <nav className="p-4 mb-5">
           <div className="container flex items-center justify-between mx-auto space-x-4">
@@ -66,7 +65,7 @@ const HarvestSchedule = () => {
               </a>
             </div>
             <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#1D6660] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
+              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
               onClick={onGroupContainerClick}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
@@ -74,7 +73,7 @@ const HarvestSchedule = () => {
               </a>
             </div>
             <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
+              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#1D6660] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
               onClick={onGroupContainerClick1}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
@@ -99,7 +98,7 @@ const HarvestSchedule = () => {
               title: <HomeOutlined />,
             },
             {
-              title: "Schedule",
+              title: "Yield Records",
             },
             {
               title: "Dashboard",
@@ -108,21 +107,17 @@ const HarvestSchedule = () => {
         />
 
         <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
-            
           {/* Harvest Schedule Table */}
-
           <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
               <thead>
                 <tr className="bg-gray-200 text-gray-600 text-left">
                   <th className="px-4 py-2 border-b">Harvest ID</th>
-                  <th className="px-4 py-2 border-b">Crop Type</th>
                   <th className="px-4 py-2 border-b">Harvest Date</th>
-                  <th className="px-4 py-2 border-b">Start Time</th>
-                  <th className="px-4 py-2 border-b">End Time</th>
-                  <th className="px-4 py-2 border-b">Field Number</th>
-                  <th className="px-4 py-2 border-b">Estimated Yield</th>
-                  <th className="px-4 py-2 border-b">Harvest Method</th>
-                  <th className="px-4 py-2 border-b">Number of Workers</th>
+                  <th className="px-4 py-2 border-b">Crop Type</th>
+                  <th className="px-4 py-2 border-b">Age of yield date</th>
+                  <th className="px-4 py-2 border-b">Quantity</th>
+                  <th className="px-4 py-2 border-b">Way Picked</th>
+                  <th className="px-4 py-2 border-b">Storage Location</th>
                   <th className="px-4 py-2 border-b">Actions</th>
                 </tr>
               </thead>
@@ -130,14 +125,12 @@ const HarvestSchedule = () => {
                 {/* Example Row */}
                 <tr>
                   <td className="px-4 py-2 border-b">1</td>
-                  <td className="px-4 py-2 border-b">Coconut</td>
                   <td className="px-4 py-2 border-b">2024-08-24</td>
-                  <td className="px-4 py-2 border-b">08:00 AM</td>
-                  <td className="px-4 py-2 border-b">05:00 PM</td>
-                  <td className="px-4 py-2 border-b">Field A</td>
-                  <td className="px-4 py-2 border-b">5000 kg</td>
-                  <td className="px-4 py-2 border-b">Manual</td>
+                  <td className="px-4 py-2 border-b">Coconut</td>
                   <td className="px-4 py-2 border-b">10</td>
+                  <td className="px-4 py-2 border-b">10000KG</td>
+                  <td className="px-4 py-2 border-b">Manual</td>
+                  <td className="px-4 py-2 border-b">L001</td>
                   <td className="px-4 py-2 border-b flex items-center space-x-2">
                     <button
                       onClick={() => handleEdit(1)}
@@ -162,4 +155,4 @@ const HarvestSchedule = () => {
   );
 };
 
-export default HarvestSchedule;
+export default YieldRecords;
