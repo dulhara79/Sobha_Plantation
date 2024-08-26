@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import axios from 'axios';
-import Swal from 'sweetalert2';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 // Styled Components
 const Container = styled.div`
@@ -58,12 +58,12 @@ const Button = styled.button`
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  background-color: ${(props) => (props.primary ? '#4CAF50' : '#ccc')};
+  background-color: ${(props) => (props.primary ? "#4CAF50" : "#ccc")};
   color: white;
   cursor: pointer;
 
   &:hover {
-    background-color: ${(props) => (props.primary ? '#45a049' : '#999')};
+    background-color: ${(props) => (props.primary ? "#45a049" : "#999")};
   }
 `;
 
@@ -72,35 +72,39 @@ const validateField = (name, value) => {
   const errors = {};
 
   switch (name) {
-    case 'firstName':
-    case 'lastName':
+    case "firstName":
+    case "lastName":
       if (!/^[a-zA-Z]+$/.test(value)) {
-        errors[name] = `${name === 'firstName' ? 'First' : 'Last'} name can only contain letters.`;
+        errors[name] = `${
+          name === "firstName" ? "First" : "Last"
+        } name can only contain letters.`;
       }
       break;
-    case 'contactNumber':
+    case "contactNumber":
       if (!/^\d{10}$/.test(value)) {
-        errors[name] = 'Contact number must be 10 digits.';
+        errors[name] = "Contact number must be 10 digits.";
       }
       break;
-    case 'email':
+    case "email":
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        errors[name] = 'Invalid email format.';
+        errors[name] = "Invalid email format.";
       }
       break;
-    case 'nic':
+    case "nic":
       if (!/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(value)) {
-        errors[name] = 'NIC must be in old (9 digits and V/X) or new format (12 digits).';
+        errors[name] =
+          "NIC must be in old (9 digits and V/X) or new format (12 digits).";
       }
       break;
-    case 'address':
+    case "address":
       if (!/^[a-zA-Z0-9\s,.\-]+$/.test(value)) {
-        errors[name] = 'Address can only contain letters, numbers, spaces, commas, dots, and hyphens.';
+        errors[name] =
+          "Address can only contain letters, numbers, spaces, commas, dots, and hyphens.";
       }
       break;
-    case 'hourlyRate':
+    case "hourlyRate":
       if (!/^[0-9]+$/.test(value) || value <= 0) {
-        errors[name] = 'Hourly rate must be a positive number.';
+        errors[name] = "Hourly rate must be a positive number.";
       }
       break;
     default:
@@ -112,18 +116,19 @@ const validateField = (name, value) => {
 
 const EmployeeRegistrationForm = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    gender: '',
-    contactNumber: '',
-    email: '',
-    nic: '',
-    address: '',
-    employeeType: '',
+    firstName: "",
+    lastName: "",
+    dateOfBirth: "",
+    gender: "",
+    contactNumber: "",
+    email: "",
+    nic: "",
+    address: "",
+    employeeType: "",
     hiredDate: new Date().toISOString().slice(0, 10),
-    hourlyRate: '',
+    hourlyRate: "",
   });
+  
 
   const [errors, setErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
@@ -165,20 +170,27 @@ const EmployeeRegistrationForm = () => {
 
     // SweetAlert confirmation
     const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to submit this form?',
-      icon: 'warning',
+      title: "Are you sure?",
+      text: "Do you want to submit this form?",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'Yes, submit it!',
-      cancelButtonText: 'No, cancel!',
+      confirmButtonText: "Yes, submit it!",
+      cancelButtonText: "No, cancel!",
     });
 
     if (result.isConfirmed) {
       try {
-        const response = await axios.post('http://localhost:5000/api/employees', formData);
-        Swal.fire('Success', 'Employee registered successfully!', 'success');
+        const response = await axios.post(
+          "http://localhost:5000/api/employees",
+          formData
+        );
+        Swal.fire("Success", "Employee registered successfully!", "success");
       } catch (error) {
-        Swal.fire('Error', 'Failed to register employee. Please try again.', 'error');
+        Swal.fire(
+          "Error",
+          "Failed to register employee. Please try again.",
+          "error"
+        );
       }
     }
   };
@@ -233,11 +245,8 @@ const EmployeeRegistrationForm = () => {
           {errors.dateOfBirth && <p>{errors.dateOfBirth}</p>}
 
           <label htmlFor="gender">Gender</label>
-          <select
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-          >
+          <select name="gender" value={formData.gender} onChange={handleChange}>
+
             <option value="">Gender</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
