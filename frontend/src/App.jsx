@@ -8,6 +8,10 @@ import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 
 // finance
+import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
+import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
+import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
+import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 
 // inventory
 
@@ -35,6 +39,10 @@ import AddSchedule from "./pages/Products/AddSchedule.jsx";
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
 import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
 import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
+import Seedling from "./pages/CropVarieties/Seedling.jsx";
+import Schedules from "./pages/CropVarieties/Schedules.jsx";
+import ScheduleForm from "./pages/CropVarieties/ScheduleForm.jsx";
+import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
 
 // buyers
 
@@ -53,6 +61,10 @@ export default function App() {
       <Route path="/dashboard" element={<Dashboard />} />
 
       {/* finance */}
+      <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
+      <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
+      <Route path="/salesAndFinance/sales/addSalesRecord" element={<AddSalesRecordDashboard />} />
+      <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
 
       {/* inventory */}
 
@@ -77,9 +89,13 @@ export default function App() {
       <Route path="/products/addschedule" element={<AddSchedule />} />
 
       {/* field view  */}
-      <Route path="cultivationDashboard" element={<CultivationDashboard />} />
-      <Route path="varietyCrop" element={<VarietyCrop />} />
+      <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
+      <Route path="/varietyCrop" element={<VarietyCrop />} />
       <Route path="cvForm" element={<CropVarietyForm />} />
+      <Route path="seedlingDistribution" element={<Seedling />} />
+      <Route path="schedules" element={<Schedules />} />
+      <Route path="scheduleForm" element={<ScheduleForm />} />
+      <Route path="landPreparation" element={<LandPreparation />} />
         
       {/* buyers */}
 
