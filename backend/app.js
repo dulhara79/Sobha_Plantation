@@ -33,7 +33,6 @@ connectDB();
 // Define routes
 app.use('/api/crop-varieties', cropVarietiesRoutes);
 app.use('/api/employee', employeeRoutes);
-// Routes
 app.use("/api/salary-employees", salaryEmployeeRoutes);
 app.use("/api/crop-varieties", cropVarietiesRoutes);
 app.use("/api/employee", employeeRoutes);
