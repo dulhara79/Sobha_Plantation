@@ -6,7 +6,7 @@ const connectDB = require('./config/db'); // Import MongoDB connection function
 const cropVarietiesRoutes = require('./routes/cropVarieties');
 const employeeRoutes = require('./routes/employee');
 // const salesRoutes = require('./routes/sales');
-const productionRoutes = require('./routes/productionRoute');
+const productionRoutes = require('./routes/Products/productionRoute.js');
 const fertilizerRoutes = require('./routes/fertilizerRoute');
 const yieldRoutes = require('./routes/Harvest/yield');
 const harvestRoutes = require('./routes/Harvest/harvest');
@@ -16,6 +16,10 @@ const FinancialTransactionRoutes = require('./routes/SalesAndFinance/financialTr
 const InvoiceRoutes = require('./routes/SalesAndFinance/InvoiceRoutes.js');
 const SalesAnalyticsRoutes = require('./routes/SalesAndFinance/SalesAnalyticsRoutes.js');
 const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoutes.js');
+const salaryEmployeeRoutes = require("./routes/salaryEmployeeRoutes");
+
+const ETaskRoutes = require('./routes/ETaskRoutes');
+const diseasesRoutes = require("./routes/diseases");
 
 const app = express();
 
@@ -29,6 +33,11 @@ connectDB();
 // Define routes
 app.use('/api/crop-varieties', cropVarietiesRoutes);
 app.use('/api/employee', employeeRoutes);
+// Routes
+app.use("/api/salary-employees", salaryEmployeeRoutes);
+app.use("/api/crop-varieties", cropVarietiesRoutes);
+app.use("/api/employee", employeeRoutes);
+app.use('/api/taskRecords', ETaskRoutes);
 app.use('/api/production', productionRoutes);
 app.use('/api/harvest', harvestRoutes);
 app.use('/api/fertilizer', fertilizerRoutes);

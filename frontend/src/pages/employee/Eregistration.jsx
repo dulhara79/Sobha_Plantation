@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
-
+import EmployeeNavbar from "../../components/EmployeeNavbar";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
 import EmployeeRegistrationForm from "../../components/EmployeeRegistrationForm";
@@ -19,10 +19,8 @@ const Eregistration = () => {
             },
           ]}
         />
-
-<EmployeeRegistrationForm /> 
-        
-        
+        <EmployeeNavbar />
+        <EmployeeRegistrationForm />
       </div>
     </div>
   );
