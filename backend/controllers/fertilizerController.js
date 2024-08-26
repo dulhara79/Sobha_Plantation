@@ -1,109 +1,106 @@
-const Fertilizer = require("../Model/fertilizerModel");
+const Fertilizer = require('../models/fertilizerModel');
 
-const getAllFertilizers = async (req, res, next) => {
-
-    let fertilizer;
-    //Get all fertilizers
-    try{
-        fertilizer = await Fertilizer.find();
-    }catch (err) {
-        console.error(err);
-    }
-
-    //not found
-    if(!fertilizer){
-        return res.status(404).json({message:"Fertilizer not found"});
-    }
-
-    //display all fertilizers
-    return res.status(200).json({ fertilizer });
-};
-
-
-//data Insert
-const addFertilizers = async (req, res, next) => {
-    const { name, quantity, storagelocation, addeddate, expiredate } = req.body;
-
-    let fertilizer;
-
+// Controller for getting all fertilizers
+exports.getAllFertilizers = async (req, res) => {
     try {
-        fertilizer = new Fertilizer({name,quantity,storagelocation,addeddate,expiredate});
-        await fertilizer.save();
-    } catch (err) {
-        console.log(err);
-    }
-    //not insert fertilizers
-    if (!fertilizer){
-        return res.status(404).json({message:"unable to add fertilizers"});
-
-    }
-    return res.status(200).json({ fertilizer });
-};
-
-//Get by Id
-const getById = async (req, res, next) => {
-    const id = req.params.id;
-
-    let fertilizer;
-
-    try {
-        fertilizer = await Fertilizer.findById(id);
-    }catch (err) {
-        console.log(err);
-    }
-
-     //not available fertilizers
-     if (!fertilizer){
-        return res.status(404).json({message:"Fertilizer not found"});
-
-    }
-    return res.status(200).json({ fertilizer });
-}
-
-//update fertilizer details
-const updateFertilizer = async (req, res, next) => {
-    const id = req.params.id;
-    const { name, quantity, storagelocation, addeddate, expiredate } = req.body;
-
-    let fertilizers;
-
-    try {
-        fertilizers = await Fertilizer.findByIdAndUpdate(id, 
-            {name: name, quantity: quantity, storagelocation: storagelocation, addeddate: addeddate, expiredate: expiredate });
-            fertilizers = await fertilizers.save();
-        }catch(err) {
-            console.log(err);
+        const fertilizers = await Fertilizer.find({});
+        if (!fertilizers || fertilizers.length === 0) {
+            return res.status(404).json({ message: 'No fertilizers found' });
         }
+        return res.status(200).json({
+            count: fertilizers.length,
+            data: fertilizers,
+        });
+    } catch (error) {
+        console.error('Error fetching fertilizers:', error.message);
+        res.status(500).send({ message: error.message });
+    }
+};
 
-        if (!fertilizers){
-            return res.status(404).json({message:"Unable to update Fertilizer details"});
-    
+// Controller for adding a new fertilizer
+exports.addFertilizers = async (req, res) => {
+    const { name, quantity, storageLocation, addedDate, expireDate } = req.body;
+
+    if (!name || !quantity || !storageLocation || !addedDate || !expireDate) {
+        return res.status(400).send({
+            message: 'Please provide all required fields: name, quantity, storageLocation, addedDate, expireDate',
+        });
+    }
+
+    try {
+        const newFertilizer = new Fertilizer({
+            name,
+            quantity,
+            storageLocation,
+            addedDate,
+            expireDate
+        });
+        const savedFertilizer = await newFertilizer.save();
+        return res.status(201).json(savedFertilizer);
+    } catch (error) {
+        console.error('Error adding fertilizer:', error.message);
+        res.status(500).send({ message: error.message });
+    }
+};
+
+// Controller for getting a single fertilizer by ID
+exports.getById = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const fertilizer = await Fertilizer.findById(id);
+        if (!fertilizer) {
+            return res.status(404).json({ message: 'Fertilizer not found' });
         }
-        return res.status(200).json({ fertilizers });
-    
+        return res.status(200).json(fertilizer);
+    } catch (error) {
+        console.error('Error fetching fertilizer:', error.message);
+        res.status(500).send({ message: error.message });
+    }
 };
 
-//Delete user details
-const deleteFertilizer = async ( req, res, next) => {
-    const id = req.params.id;
+// Controller for updating a fertilizer by ID
+exports.updateFertilizer = async (req, res) => {
+    const { id } = req.params;
+    const { name, quantity, storageLocation, addedDate, expireDate } = req.body;
 
-    let fertilizer;
-
-    try{
-        fertilizer= await Fertilizer.findByIdAndDelete(id)
-    }catch(err) {
-        console.log(err);
+    if (!name || !quantity || !storageLocation || !addedDate || !expireDate) {
+        return res.status(400).send({
+            message: 'Please provide all required fields: name, quantity, storageLocation, addedDate, expireDate',
+        });
     }
 
-    if (!fertilizer){
-        return res.status(404).json({message:"Unable to delete Fertilizer details"});
+    try {
+        const updatedFertilizer = await Fertilizer.findByIdAndUpdate(id, {
+            name,
+            quantity,
+            storageLocation,
+            addedDate,
+            expireDate
+        }, { new: true });
 
+        if (!updatedFertilizer) {
+            return res.status(404).json({ message: 'Fertilizer not found' });
+        }
+        return res.status(200).json({ message: 'Fertilizer updated successfully', data: updatedFertilizer });
+    } catch (error) {
+        console.error('Error updating fertilizer:', error.message);
+        res.status(500).send({ message: error.message });
     }
-    return res.status(200).json({ fertilizer });
 };
 
-exports.getAllFertilizers = getAllFertilizers;
-exports.addFertilizers = addFertilizers;
-exports.getById = getById;
-exports.updateFertilizer = updateFertilizer;
-exports.deleteFertilizer=deleteFertilizer;
+// Controller for deleting a fertilizer by ID
+exports.deleteFertilizer = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const deletedFertilizer = await Fertilizer.findByIdAndDelete(id);
+        if (!deletedFertilizer) {
+            return res.status(404).json({ message: 'Fertilizer not found' });
+        }
+        return res.status(200).json({ message: 'Fertilizer deleted successfully', data: deletedFertilizer });
+    } catch (error) {
+        console.error('Error deleting fertilizer:', error.message);
+        res.status(500).send({ message: error.message });
+    }
+};
