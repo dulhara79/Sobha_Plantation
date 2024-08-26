@@ -44,6 +44,7 @@ import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
 
 // import Test from "./pages/Test.jsx";
 import PageError from "./pages/PageError.jsx";
+import YieldRecords from "./pages/Harvest/YieldRecords.jsx";
 export default function App() {
   return (
     <Routes>
@@ -55,7 +56,7 @@ export default function App() {
       <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
       <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
       <Route path="/salesAndFinance/sales/addSalesRecord" element={<AddSalesRecordDashboard />} />
-      <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
+      <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} /> 
 
       {/* inventory */}
 
@@ -63,13 +64,14 @@ export default function App() {
       <Route path="/employee/dashboard" element={<Edashboard/>}/>
       <Route path= "/employee/registration" element= {<Eregistration/>}/>
       <Route path="/employee/salary" element= {<Esalary/>}/>
-      <Route path="/employee/task" element= {<EaddTask/>}/>
+     <Route path="/employee/task" element= {<EaddTask/>}/>
       <Route path="/employee/taskedit" element= {<EditTaskPage/>}/>
-      <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
+      <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>  
 
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
+      <Route path="/harvest/yield" element={<YieldRecords />} />
       {/* crop care */}
 
       {/* product */}
