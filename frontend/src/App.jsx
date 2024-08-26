@@ -19,6 +19,7 @@ import Esalary from "./pages/employee/Esalary";
 import EaddTask from "./pages/employee/EaddTask.jsx";
 import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
+import GetAttendance from "./pages/employee/GetAttendance.jsx";
 
 // harvest
 
@@ -37,6 +38,7 @@ import PageError from "./pages/PageError.jsx";
 
 
 
+
 export default function App() {
   return (
     <Routes>
@@ -50,11 +52,12 @@ export default function App() {
 
       {/* employee */}
       <Route path="/employee/dashboard" element={<Edashboard/>}/>
-      <Route path= "/employee/registration" element= {<Eregistration/>}/>
+      <Route path="/employee/registration" element= {<Eregistration/>}/>
       <Route path="/employee/salary" element= {<Esalary/>}/>
       <Route path="/employee/task" element= {<EaddTask/>}/>
       <Route path="/employee/taskedit" element= {<EditTaskPage/>}/>
       <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
+      <Route path="/employee/attendance" element= {<GetAttendance/>}/>
 
 
       {/* harvest */}
