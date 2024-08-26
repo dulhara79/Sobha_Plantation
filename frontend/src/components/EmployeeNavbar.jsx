@@ -5,7 +5,7 @@ const menuItems = [
     { name: "HOME", path:"/employee/dashboard"  },
     { name: "REGISTRATION", path: "/employee/employeelist" },
     { name: "ASSIGN TASKS", path: "/employee/task" },
-    { name: "ATTENDANCE MARKER", path: "/employee/attendance" },
+    { name: "ATTENDANCE MARKER", path: "/employee/attendanceList" },
     { name: "SALARY", path: "/employee/salary" },
 
 
