@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faUserTie, faCheckCircle, faTasks } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom'; // Step 1: Import useNavigate
 
+
 // Styled Components
 const Container = styled.div`
   padding: 20px;
@@ -61,7 +62,6 @@ const EmployeeDash = () => {
     completedTasks: 10,
     totalTasks: 15,
   });
-
   const navigate = useNavigate(); // Step 1: Initialize navigate
 
   const handleViewAllTasks = () => {

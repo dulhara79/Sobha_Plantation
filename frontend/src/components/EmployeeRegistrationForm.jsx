@@ -246,6 +246,7 @@ const EmployeeRegistrationForm = () => {
 
           <label htmlFor="gender">Gender</label>
           <select name="gender" value={formData.gender} onChange={handleChange}>
+
             <option value="">Gender</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
