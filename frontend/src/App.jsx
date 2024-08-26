@@ -1,8 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
-
-
 // landing page and dashboard
 import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -12,12 +10,12 @@ import Dashboard from "./pages/Dashboard.jsx";
 // inventory
 
 // employee
-import Edashboard from "./pages/employee/Edashboard.jsx";
-import Eregistration from "./pages/employee/Eregistration.jsx";
+// import Edashbcoard from "./pages/employee/Edashboard.jsx";
+// import Eregisctration from "./pages/employee/Eregistration.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
-import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
+import HarvestSchedule from "./pages/Harvest/HarvestSchedule";
 // crop care
 
 // product
@@ -30,9 +28,12 @@ import AddSchedule from "./pages/Products/AddSchedule.jsx";
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
 import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
 import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
+import Seedling from "./pages/CropVarieties/Seedling.jsx";
+import Schedules from "./pages/CropVarieties/Schedules.jsx";
+import ScheduleForm from "./pages/CropVarieties/ScheduleForm.jsx";
+import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
 
 // buyers
-
 
 // import Test from "./pages/Test.jsx";
 import PageError from "./pages/PageError.jsx";
@@ -48,8 +49,8 @@ export default function App() {
       {/* inventory */}
 
       {/* employee */}
-      <Route path="/employee/dashboard" element={<Edashboard/>}/>
-      <Route path= "/employee/registration" element= {<Eregistration/>}/>
+      {/* <Route path="/employee/dashboard" element={<Edashboard/>}/> */}
+      {/* <Route path= "/employee/registration" element= {<Eregistration/>}/> */}
 
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
@@ -57,8 +58,14 @@ export default function App() {
       {/* crop care */}
 
       {/* product */}
-      <Route path="/products/productdashboard" element={<ProductsDashboard />} />
-      <Route path="/products/production-overview" element={<ProductionScheduleOverview />} />
+      <Route
+        path="/products/productdashboard"
+        element={<ProductsDashboard />}
+      />
+      <Route
+        path="/products/production-overview"
+        element={<ProductionScheduleOverview />}
+      />
       <Route path="/products/quality-control" element={<QualityControl />} />
       <Route path="/products/addschedule" element={<AddSchedule />} />
 
@@ -66,7 +73,11 @@ export default function App() {
       <Route path="cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="varietyCrop" element={<VarietyCrop />} />
       <Route path="cvForm" element={<CropVarietyForm />} />
-        
+      <Route path="seedlingDistribution" element={<Seedling />} />
+      <Route path="schedules" element={<Schedules />} />
+      <Route path="scheduleForm" element={<ScheduleForm />} />
+      <Route path="landPreparation" element={<LandPreparation />} />
+
       {/* buyers */}
 
       {/* page not found & error page */}
