@@ -27,7 +27,7 @@ const Sidebar = ({ className = "" }) => {
     { name: "Home", icon: <HomeOutlined />, path: "/dashboard" },
     { name: "Finances", icon: <AccountBalanceOutlined />, path: "/finance/finance/dashboard" },
     { name: "Inventory", icon: <InventoryOutlined />, path: "/inventory/dashboard" },
-    { name: "Employees", icon: <BadgeOutlined />, path: "/employees/dashboard" },
+    { name: "Employees", icon: <BadgeOutlined />, path: "/employee/dashboard" },
     { name: "Harvest", icon: <ForestOutlined />, path: "/harvest/dashboard" },
     { name: "Crop Care", icon: <BugReportOutlined />, path: "/crop-care/dashboard" },
     { name: "Products", icon: <ViewInAr />, path: "/products/productdashboard" },
