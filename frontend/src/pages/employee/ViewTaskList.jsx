@@ -5,40 +5,33 @@ import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import React from "react";
 import EmployeeNavbar from "../../components/EmployeeNavbar";
 import TaskList from "../../components/TaskList";
-import {SnackbarProvider} from "notistack";
-
+import { SnackbarProvider } from "notistack";
 
 export default function ViewTaskList() {
+  const breadcrumbItems = [
+    { name: "Employees", href: "/employees/home" },
+    { name: "Assign Tasks", href: "/employees/tasks" },
+  ];
 
-    const breadcrumbItems = [
-        { name: 'Employees', href: '/employees/home' },
-        { name: 'Assign Tasks', href: '/employees/tasks' },
-    ];
-
-
-    return (
-        <SnackbarProvider>
-        <div className="">
-           
-             
-      
+  return (
+    <SnackbarProvider>
+      <div className="">
         <Header />
-                <Sidebar />
-                
-                        <div className={`ml-[300px]`}>
-                        <Breadcrumb
-          items={[
-            {
-              href: "",
-              title: <HomeOutlined />,
-            },
-          ]}
-        />
-                       <EmployeeNavbar/>
-                            <TaskList/>
-                        </div>
-                    </div>
+        <Sidebar />
 
-                    </SnackbarProvider>            
-    );
-};
+        <div className={`ml-[300px]`}>
+          <Breadcrumb
+            items={[
+              {
+                href: "",
+                title: <HomeOutlined />,
+              },
+            ]}
+          />
+          <EmployeeNavbar />
+          <TaskList />
+        </div>
+      </div>
+    </SnackbarProvider>
+  );
+}
