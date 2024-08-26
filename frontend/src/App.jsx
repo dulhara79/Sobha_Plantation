@@ -63,6 +63,7 @@ export default function App() {
       <Route path="/employee/task" element= {<EaddTask/>}/>
       <Route path="/employee/taskedit" element= {<EditTaskPage/>}/>
       <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
+      <Route path="/employee/attendance" element= {<GetAttendance/>}/>
 
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
