@@ -14,36 +14,8 @@ const QualityControl = () => {
   const [inspectionData, setInspectionData] = useState([]);
 
   useEffect(() => {
-    // Fetch or update inspection data dynamically here
-    // Example: fetchInspectionData();
-
-    // Temporary placeholder for illustration, should be replaced with actual fetching logic
-    setInspectionData([
-      {
-        key: "1",
-        reportId: "R001",
-        productType: "Coconut oil",
-        inspectionDate: "2024-08-01",
-        status: "Pass",
-        inspectorName: "Mr. Perera",
-      },
-      {
-        key: "2",
-        reportId: "R002",
-        productType: "Coconut cream",
-        inspectionDate: "2024-08-02",
-        status: "Fail",
-        inspectorName: "Mr. Perera",
-      },
-      {
-        key: "3",
-        reportId: "R003",
-        productType: "Coconut water",
-        inspectionDate: "2024-08-04",
-        status: "Pass",
-        inspectorName: "Mr. Jagath",
-      },
-    ]);
+    
+    setInspectionData([]);
   }, []);
 
   // Navigation handlers
@@ -69,11 +41,6 @@ const QualityControl = () => {
 
   // Table columns definition
   const columns = [
-    {
-      title: "Report ID",
-      dataIndex: "reportId",
-      key: "reportId",
-    },
     {
       title: "Product Type",
       dataIndex: "productType",
@@ -213,7 +180,7 @@ const QualityControl = () => {
         <div className="mt-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">Inspection Reports Table</h2>
-            <Button type="primary" onClick={() => navigate("/add-new-report")}>
+            <Button type="primary" onClick={() => navigate("/products/addInspectionReport")}>
               Add New Report
             </Button>
           </div>
