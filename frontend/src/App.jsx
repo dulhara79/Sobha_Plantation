@@ -22,6 +22,7 @@ import Esalary from "./pages/employee/Esalary";
 import EaddTask from "./pages/employee/EaddTask.jsx";
 import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
+import GetAttendance from "./pages/employee/GetAttendance.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
@@ -38,6 +39,10 @@ import AddSchedule from "./pages/Products/AddSchedule.jsx";
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
 import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
 import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
+import Seedling from "./pages/CropVarieties/Seedling.jsx";
+import Schedules from "./pages/CropVarieties/Schedules.jsx";
+import ScheduleForm from "./pages/CropVarieties/ScheduleForm.jsx";
+import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
 
 // buyers
 
@@ -57,22 +62,22 @@ export default function App() {
       <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
       <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
       <Route path="/salesAndFinance/sales/addSalesRecord" element={<AddSalesRecordDashboard />} />
-      <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} /> 
+      <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
 
       {/* inventory */}
 
       {/* employee */}
       <Route path="/employee/dashboard" element={<Edashboard/>}/>
-      <Route path= "/employee/registration" element= {<Eregistration/>}/>
+      <Route path="/employee/registration" element= {<Eregistration/>}/>
       <Route path="/employee/salary" element= {<Esalary/>}/>
-     <Route path="/employee/task" element= {<EaddTask/>}/>
+      <Route path="/employee/task" element= {<EaddTask/>}/>
       <Route path="/employee/taskedit" element= {<EditTaskPage/>}/>
-      <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>  
+      <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
+      <Route path="/employee/attendance" element= {<GetAttendance/>}/>
 
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
-      <Route path="/harvest/yield" element={<YieldRecords />} />
       {/* crop care */}
 
       {/* product */}
@@ -85,6 +90,10 @@ export default function App() {
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="/varietyCrop" element={<VarietyCrop />} />
       <Route path="cvForm" element={<CropVarietyForm />} />
+      <Route path="seedlingDistribution" element={<Seedling />} />
+      <Route path="schedules" element={<Schedules />} />
+      <Route path="scheduleForm" element={<ScheduleForm />} />
+      <Route path="landPreparation" element={<LandPreparation />} />
         
       {/* buyers */}
 
