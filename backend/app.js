@@ -17,13 +17,9 @@ const InvoiceRoutes = require('./routes/SalesAndFinance/InvoiceRoutes.js');
 const SalesAnalyticsRoutes = require('./routes/SalesAndFinance/SalesAnalyticsRoutes.js');
 const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoutes.js');
 const salaryEmployeeRoutes = require("./routes/salaryEmployeeRoutes");
+
 const ETaskRoutes = require('./routes/ETaskRoutes');
-const salesRoutes = require("./routes/sales");
-const productionRoutes = require('./routes/productionRoute.js');
 const diseasesRoutes = require("./routes/diseases");
-const harvestRoutes = require('./routes/harvest');
-const fertilizerRoutes = require('./routes/fertilizerRoute.js');
-const cors = require('cors');
 
 const app = express();
 
@@ -42,7 +38,6 @@ app.use("/api/salary-employees", salaryEmployeeRoutes);
 app.use("/api/crop-varieties", cropVarietiesRoutes);
 app.use("/api/employee", employeeRoutes);
 app.use('/api/taskRecords', ETaskRoutes);
-app.use("/api/sales", salesRoutes);
 app.use('/api/production', productionRoutes);
 app.use('/api/harvest', harvestRoutes);
 app.use('/api/fertilizer', fertilizerRoutes);
