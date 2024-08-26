@@ -10,6 +10,7 @@ const productionRoutes = require('./routes/Products/productionRoute.js');
 const fertilizerRoutes = require('./routes/fertilizerRoute');
 const yieldRoutes = require('./routes/Harvest/yield');
 const harvestRoutes = require('./routes/Harvest/harvest');
+const qualityControlRoute = require('./routes/Products/qualityControlRoute.js');
 
 // const salesAndFinanceRoutes = require('./routes/SalesAndFinance/Routes.js');
 const FinancialTransactionRoutes = require('./routes/SalesAndFinance/financialTransactionRoutes.js');
@@ -33,6 +34,7 @@ app.use('/api/production', productionRoutes);
 app.use('/api/harvest', harvestRoutes);
 app.use('/api/fertilizer', fertilizerRoutes);
 app.use('/api/yield', yieldRoutes);
+app.use('/api/quality-control', qualityControlRoute);
 
 /**
  * Sales and Finance Routes
