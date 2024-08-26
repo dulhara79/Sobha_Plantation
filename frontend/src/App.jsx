@@ -7,7 +7,6 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 
-
 // finance
 
 // inventory
@@ -22,14 +21,21 @@ import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
 import GetAttendance from "./pages/employee/GetAttendance.jsx";
 
 // harvest
-
+import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
+import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
 // crop care
 
 // product
+import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
+import ProductionScheduleOverview from "./pages/Products/ProductionScheduleOverview.jsx";
+import QualityControl from "./pages/Products/QualityControl.jsx";
+import AddSchedule from "./pages/Products/AddSchedule.jsx";
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
 import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
+import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
+
 // buyers
 
 
@@ -57,18 +63,23 @@ export default function App() {
       <Route path="/employee/task" element= {<EaddTask/>}/>
       <Route path="/employee/taskedit" element= {<EditTaskPage/>}/>
       <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
-      <Route path="/employee/attendance" element= {<GetAttendance/>}/>
-
 
       {/* harvest */}
-
+      <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
+      <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
       {/* crop care */}
 
       {/* product */}
+      <Route path="/products/productdashboard" element={<ProductsDashboard />} />
+      <Route path="/products/production-overview" element={<ProductionScheduleOverview />} />
+      <Route path="/products/quality-control" element={<QualityControl />} />
+      <Route path="/products/addschedule" element={<AddSchedule />} />
 
       {/* field view  */}
       <Route path="cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="varietyCrop" element={<VarietyCrop />} />
+      <Route path="cvForm" element={<CropVarietyForm />} />
+        
       {/* buyers */}
 
       {/* page not found & error page */}
