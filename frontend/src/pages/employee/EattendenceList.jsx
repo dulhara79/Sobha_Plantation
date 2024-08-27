@@ -4,7 +4,7 @@ import { Breadcrumb } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import React from "react";
 import EmployeeNavbar from "../../components/EmployeeNavbar";
-import EditTask from "../../components/EditTask";
+import EattendenceTable from "../../components/EattendenceTable";
 
 export default function EditTaskPage() {
   const breadcrumbItems = [
@@ -28,7 +28,7 @@ export default function EditTaskPage() {
           ]}
         />
         <EmployeeNavbar />
-        <EditTask />
+        <EattendenceTable />
       </div>
     </div>
   );

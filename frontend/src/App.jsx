@@ -23,6 +23,8 @@ import EaddTask from "./pages/employee/EaddTask.jsx";
 import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
 import GetAttendance from "./pages/employee/GetAttendance.jsx";
+import EmployeeList from "./pages/employee/EmployeeList.jsx";
+import EattendenceList from "./pages/employee/EattendenceList.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
@@ -76,6 +78,8 @@ export default function App() {
       <Route path="/employee/taskedit" element= {<EditTaskPage/>}/>
       <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
       <Route path="/employee/attendance" element= {<GetAttendance/>}/>
+      <Route path="/employee/employeelist" element= {<EmployeeList/>}/>
+      <Route path="/employee/attendanceList" element= {<EattendenceList/>}/>
 
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
