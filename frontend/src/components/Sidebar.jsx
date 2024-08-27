@@ -21,19 +21,24 @@ const Sidebar = ({ className = "" }) => {
   const isActive = (path) => {
     const currentPath = location.pathname.split('/')[1];
     return currentPath === path.split('/')[1];
+    // return path.split('/')[1];
   };
 
   const menuItems = [
     { name: "Home", icon: <HomeOutlined />, path: "/dashboard" },
-    { name: "Finances", icon: <AccountBalanceOutlined />, path: "/finance/dashboard" },
-    { name: "Inventory", icon: <InventoryOutlined />, path: "/inventory/dashboard" },
-    { name: "Employees", icon: <BadgeOutlined />, path: "/employees/dashboard" },
-    { name: "Harvest", icon: <ForestOutlined />, path: "/harvest/dashboard" },
+    { name: "Finances", icon: <AccountBalanceOutlined />, path: "/salesAndFinance/" },
+    { name: "Inventory", icon: <InventoryOutlined />, path: "/inventory/InventoryDashboard" },
+    { name: "Employees", icon: <BadgeOutlined />, path: "/employee/dashboard" },
+    { name: "Harvest", icon: <ForestOutlined />, path: "/harvest/harvestdashboard" },
     { name: "Crop Care", icon: <BugReportOutlined />, path: "/crop-care/dashboard" },
     { name: "Products", icon: <ViewInAr />, path: "/products/productdashboard" },
-    { name: "Field View", icon: <FilterVintageOutlined />, path: "/field-view/dashboard" },
+    { name: "Field View", icon: <FilterVintageOutlined />, path: "/cultivationDashboard" },
     { name: "Buyers", icon: <Person />, path: "/buyers/dashboard" },
   ];
+
+  console.log("location.pathname: "+location.pathname);
+  console.log("activePage: "+activePage);
+  console.log("isActivePage: "+isActive(activePage));
 
   return (
     <div
@@ -45,9 +50,9 @@ const Sidebar = ({ className = "" }) => {
           key={item.name}
           onClick={() => setActivePage(item.path)}
           className={`w-[206px] flex flex-row items-center justify-start py-2 px-[21px] rounded-full box-border text-left transition-all duration-300 no-underline ${
-            activePage === item.path
+            /* isActive(activePage) === item.path */ isActive(activePage) === true && activePage.split('/')[1] === item.path.split('/')[1]
               ? "bg-[#60DB19] bg-opacity-80 text-white"
-              : "bg-whitesmoke text-gray-1700"
+              : "bg-whitesmoke text-gray-1700" }
           } hover:bg-[#a3a3a3] hover:bg-opacity-60 hover:text-2xl`}
         >
           <div className="flex flex-row items-center flex-1 gap-5">

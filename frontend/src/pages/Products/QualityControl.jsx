@@ -13,9 +13,9 @@ const QualityControl = () => {
   // State to handle inspection data
   const [inspectionData, setInspectionData] = useState([]);
 
-  useEffect(() => {
-    
+  useEffect(() => {    
     setInspectionData([]);
+
   }, []);
 
   // Navigation handlers
