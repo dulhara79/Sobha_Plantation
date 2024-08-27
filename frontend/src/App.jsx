@@ -14,7 +14,11 @@ import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecor
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 
 // inventory
-
+ import Fertilizer from "./pages/Inventory/Fertilizer.jsx";
+ import FertilizerForm from "./pages/Inventory/FertilizerForm.jsx";
+ import InventoryDashboard from "./pages/Inventory/InventoryDashboard.jsx";
+ import Maintenance from "./pages/Inventory/Maintenance.jsx";
+ import MaintenanceForm from "./pages/Inventory/MaintenanceForm.jsx";
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
 import Eregistration from "./pages/employee/Eregistration.jsx";
@@ -69,6 +73,11 @@ export default function App() {
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
 
       {/* inventory */}
+      <Route path="/Inventory/Fertilizer" element={<Fertilizer/>} />
+      <Route path="/Inventory/Maintenance" element={<Maintenance/>} />
+      <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>} />
+      <Route path="/Inventory/FertilizerForm" element={<FertilizerForm/>} />
+      <Route path="/Inventory/MaintenanceForm" element={<MaintenanceForm/>} />
 
       {/* employee */}
       <Route path="/employee/dashboard" element={<Edashboard/>}/>

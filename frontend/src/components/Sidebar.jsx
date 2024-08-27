@@ -27,7 +27,7 @@ const Sidebar = ({ className = "" }) => {
   const menuItems = [
     { name: "Home", icon: <HomeOutlined />, path: "/dashboard" },
     { name: "Finances", icon: <AccountBalanceOutlined />, path: "/salesAndFinance/" },
-    { name: "Inventory", icon: <InventoryOutlined />, path: "/inventory/dashboard" },
+    { name: "Inventory", icon: <InventoryOutlined />, path: "/inventory/InventoryDashboard" },
     { name: "Employees", icon: <BadgeOutlined />, path: "/employee/dashboard" },
     { name: "Harvest", icon: <ForestOutlined />, path: "/harvest/harvestdashboard" },
     { name: "Crop Care", icon: <BugReportOutlined />, path: "/crop-care/dashboard" },
