@@ -3,13 +3,20 @@ import Header from '../../components/Header'
 import Sidebar from '../../components/Sidebar'
 import { HomeOutlined, LeftOutlined } from '@ant-design/icons';
 import { Breadcrumb, Button, Table, Input, Dropdown, Menu } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { SearchOutlined, FilePdfOutlined } from '@ant-design/icons';
 import { DownOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import axios from 'axios';
+
+const URL = "http://Localhost:5000/diseases/coconutInspections";
+
+const fetchHandler = async () => {
+  return await axios.get(URL).then((res) => res.data);
+}
 
 const datasource = [
     {
-    key: '1',
+    key: '6',
     date: '12/08/2024',
     section: 'A',
     pests: 'None',
@@ -17,7 +24,7 @@ const datasource = [
     inspectedBy: 'Dewdu',
   },
   {
-    key: '2',
+    key: '7',
     date: '05/08/2024',
     section: 'D',
     pests: 'Coconut Mite',
@@ -25,7 +32,7 @@ const datasource = [
     inspectedBy: 'Thamara',
   },
   {
-    key: '3',
+    key: '8',
     date: '01/08/2024',
     section: 'A',
     pests: 'The Red Weevil',
@@ -33,7 +40,7 @@ const datasource = [
     inspectedBy: 'Dewdu',
   },
   {
-    key: '4',
+    key: '9',
     date: '27/07/2024',
     section: 'B',
     pests: 'None',
@@ -41,7 +48,7 @@ const datasource = [
     inspectedBy: 'Sithara',
   },
   {
-    key: '5',
+    key: '10',
     date: '20/07/2024',
     section: 'C',
     pests: 'None',
@@ -102,6 +109,17 @@ const sortMenu = (
 
 
 const CoconutInspections = () => {
+  const navigate = useNavigate();
+
+  const goToPath = () => {
+    navigate('/path');
+  };  
+
+  const [diseases, setDiseases] = useState();
+  useEffect(() => {
+    fetchHandler().then((data) => setDiseases(data.diseases));
+  }, [])
+
   return (
     <div>
       <Header/>
@@ -121,13 +139,13 @@ const CoconutInspections = () => {
           <Link to="/CoconutInspections" className="text-[#236A64] font-semibold">
             Inspections
           </Link>
-          <Link to="/treatments" className="text-[#3CCD65] hover:text-[#2b8f57]">
+          <Link to="/CoconutTreatments" className="text-[#3CCD65] hover:text-[#2b8f57]">
             Treatments
           </Link>
-          <Link to="/pests-diseases" className="text-[#3CCD65] hover:text-[#2b8f57]">
+          <Link to="/CoconutPests" className="text-[#3CCD65] hover:text-[#2b8f57]">
             Pests and Diseases
           </Link>
-          <Link to="/maintenance" className="text-[#3CCD65] hover:text-[#2b8f57]">
+          <Link to="/Maintenance" className="text-[#3CCD65] hover:text-[#2b8f57]">
             Maintenance
           </Link>
         </div>
@@ -169,9 +187,20 @@ const CoconutInspections = () => {
 
           {/* Centered Buttons */}
           <div className="flex justify-center space-x-4 mt-4">
-            <Button style={{ backgroundColor: 'rgba(196, 196, 196, 0.44)' }}>Coconuts</Button>
-            <Button>Inter Crops</Button>
-          </div>
+          
+          <Button 
+            style={{ backgroundColor: 'rgba(196, 196, 196, 0.44)' }}
+            onClick={() => navigate('/coconutInspections')}
+          >
+            Coconuts
+          </Button>
+          <Button 
+            style={{ backgroundColor: 'rgba(196, 196, 196, 0)' }}
+            onClick={() => navigate('/intercropInspections')}
+          >
+            Inter Crops
+          </Button>
+         </div>
 
           {/* Table */}
           <div className="mt-4">
@@ -181,7 +210,9 @@ const CoconutInspections = () => {
           {/* Learn More and Add Buttons */}
           <div className="flex flex-col items-center mt-8 pb-8">
             <Button style={{ backgroundColor: 'rgba(196, 196, 196, 0.44)', width: '100%', maxWidth: '400px' }}>Learn More</Button>
-            <Button style={{ backgroundColor: '#236A64', color: '#fff', marginTop: '16px' }}>+ Add</Button>
+            <Button style={{ backgroundColor: '#236A64', color: '#fff', marginTop: '16px' }}
+            onClick={() => navigate('/AddCoconutDiseases')}
+            >+ Add</Button>
           </div>
         </div>
        </div>
