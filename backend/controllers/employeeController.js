@@ -58,7 +58,8 @@ exports.createEmployee = async (req, res) => {
   
   const errors = validateInput(req.body);
   console.log("Validation errors:", errors);
-
+  console.log("Object.keys:", Object.keys);
+  
   if (Object.keys(errors).length > 0) {
     return res.status(400).json({ errors });
   }
@@ -80,6 +81,7 @@ exports.createEmployee = async (req, res) => {
 exports.getAllEmployees = async (req, res) => {
   try {
     const employees = await Employee.find();
+    console.log("Employees:", employees);
     res.status(200).json(employees);
   } catch (error) {
     res.status(400).json({ error: error.message });
