@@ -1,10 +1,9 @@
-// src/components/Dashboard.jsx
-
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faUserTie, faCheckCircle, faTasks } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom'; // Step 1: Import useNavigate
+
 
 // Styled Components
 const Container = styled.div`
@@ -18,14 +17,11 @@ const Header = styled.div`
   margin-bottom: 20px;
 `;
 
-
-
 const WidgetRow = styled.div`
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   margin-bottom: 20px;
- 
   position: relative;
 `;
 
@@ -39,7 +35,7 @@ const Card = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 10px;
- margin: 10px; 
+  margin: 10px; 
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 `;
 
@@ -65,6 +61,16 @@ const EmployeeDash = () => {
     completedTasks: 10,
     totalTasks: 15,
   });
+  const navigate = useNavigate(); // Step 1: Initialize navigate
+
+  const handleViewAllTasks = () => {
+    // Step 2: Create the click handler
+    navigate('/employee/TaskListview'); // Use navigate to redirect
+  };
+
+  const handleViewAllEmployees = () => {
+    navigate('/employee/employeelist'); // Update the route as needed
+  };
 
   useEffect(() => {
     // Fetch the data from your API
@@ -80,14 +86,12 @@ const EmployeeDash = () => {
 
   return (
     <Container>
-     
-       
-         <Header>
+      <Header>
         <div>
           <h2>Welcome Senuvi,</h2>
           <p>Today is {currentDate}</p>
         </div>
-        </Header>
+      </Header>
 
       <h3>Welcome to the Employee Management System.</h3>
 
@@ -105,7 +109,7 @@ const EmployeeDash = () => {
           <p>{data.permanentEmployees}</p>
         </Card>
 
-        <Button>View All Employee</Button>
+        <Button onClick={handleViewAllEmployees}>View All Employees</Button>
       </WidgetRow>
 
       {/* Second Row of Widgets */}
@@ -122,7 +126,7 @@ const EmployeeDash = () => {
           <p>{data.totalTasks}</p>
         </Card>
 
-        <Button>View All Task</Button>
+        <Button onClick={handleViewAllTasks}>View All Tasks</Button> {/* Attach click handler */}
       </WidgetRow>
     </Container>
   );
