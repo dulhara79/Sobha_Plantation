@@ -1,6 +1,9 @@
 import React from "react";
 import ReactDOM, { createRoot } from "react-dom/client";
 import App from "./App";
+import Dashboard from "./pages/Dashboard";
+import Home from "./pages/Home";
+
 import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard";
 import CoconutInspections from "./pages/Diseases/CoconutInspections";
 import IntercropInspections from "./pages/Diseases/IntercropInspections";
@@ -9,6 +12,10 @@ import AddCropsDiseases from "./pages/Diseases/AddCropsDiseases";
 import CoconutTreatments from "./pages/Diseases/CoconutTreatments";
 import CoconutPests from "./pages/Diseases/CoconutPests";
 import Maintenance from "./pages/Diseases/Maintenance";
+
+import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard";
+import VarietyCrop from "./pages/CropVarieties/varietyCrop";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import {
@@ -33,6 +40,9 @@ root.render(
         <CssBaseline />
         <Routes>
           <Route path="/" element={<App />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+
           <Route path="/diseases" element={<DiseasesDashboard />} />
           <Route path="/coconutInspections" element={<CoconutInspections />} />
           <Route path="/intercropInspections" element={<IntercropInspections />} />
@@ -41,6 +51,10 @@ root.render(
           <Route path="/coconutTreatments" element={<CoconutTreatments />} />
           <Route path="/coconutPests" element={<CoconutPests />} />
           <Route path="/maintenance" element={<Maintenance />} />
+
+          <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
+          <Route path="/varietyCrop" element={<VarietyCrop />} />
+
           <Route path="*" element={<PageError />} />
         </Routes>
       </ThemeProvider>
