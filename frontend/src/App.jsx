@@ -7,11 +7,20 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 
-// finance
+/**
+ * sales and finance
+*/ 
+//sales
 import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
 import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
 import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
+import ViewSalesRecordDashboard from "./pages/SalesAndFinance/Sales/ViewSalesRecordDashboard.jsx";
+import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage.jsx";
+// finance
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
+import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
+import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDisplay.jsx";
+import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
 
 // inventory
 
@@ -55,7 +64,13 @@ export default function App() {
       <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
       <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
       <Route path="/salesAndFinance/sales/addSalesRecord" element={<AddSalesRecordDashboard />} />
+      <Route path="/salesAndFinance/sales/viewSalesRecord" element={<ViewSalesRecordDashboard />} />
+      <Route path="/salesAndFinance/sales/analytics" element={<SalesAnalyticsPage />} />
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
+      <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} />
+      <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
+      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />
+
 
       {/* inventory */}
 
