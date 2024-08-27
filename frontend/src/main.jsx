@@ -3,6 +3,12 @@ import ReactDOM, { createRoot } from "react-dom/client";
 import App from "./App";
 import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard";
 import CoconutInspections from "./pages/Diseases/CoconutInspections";
+import IntercropInspections from "./pages/Diseases/IntercropInspections";
+import AddCoconutDiseases from "./pages/Diseases/AddCoconutDiseases";
+import AddCropsDiseases from "./pages/Diseases/AddCropsDiseases";
+import CoconutTreatments from "./pages/Diseases/CoconutTreatments";
+import CoconutPests from "./pages/Diseases/CoconutPests";
+import Maintenance from "./pages/Diseases/Maintenance";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import {
@@ -29,6 +35,12 @@ root.render(
           <Route path="/" element={<App />} />
           <Route path="/diseases" element={<DiseasesDashboard />} />
           <Route path="/coconutInspections" element={<CoconutInspections />} />
+          <Route path="/intercropInspections" element={<IntercropInspections />} />
+          <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
+          <Route path="/addCropsDiseases" element={<AddCropsDiseases />} />
+          <Route path="/coconutTreatments" element={<CoconutTreatments />} />
+          <Route path="/coconutPests" element={<CoconutPests />} />
+          <Route path="/maintenance" element={<Maintenance />} />
           <Route path="*" element={<PageError />} />
         </Routes>
       </ThemeProvider>
