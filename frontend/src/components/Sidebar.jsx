@@ -25,14 +25,14 @@ const Sidebar = ({ className = "" }) => {
 
   const menuItems = [
     { name: "Home", icon: <HomeOutlined />, path: "/dashboard" },
-    { name: "Finances", icon: <AccountBalanceOutlined />, path: "/finance/finance/dashboard" },
-    { name: "Inventory", icon: <InventoryOutlined />, path: "/inventory/dashboard" },
-    { name: "Employees", icon: <BadgeOutlined />, path: "/employees/dashboard" },
-    { name: "Harvest", icon: <ForestOutlined />, path: "/harvest/dashboard" },
-    { name: "Crop Care", icon: <BugReportOutlined />, path: "/crop-care/dashboard" },
+    { name: "Finances", icon: <AccountBalanceOutlined />, path: "/salesAndFinance/" },
+    { name: "Inventory", icon: <InventoryOutlined />, path: "/inventory/InventoryDashboard" },
+    { name: "Employees", icon: <BadgeOutlined />, path: "/employee/dashboard" },
+    { name: "Harvest", icon: <ForestOutlined />, path: "/harvest/harvestdashboard" },
+    { name: "Crop Care", icon: <BugReportOutlined />, path: "/diseases" },
     { name: "Products", icon: <ViewInAr />, path: "/products/productdashboard" },
-    { name: "Field View", icon: <FilterVintageOutlined />, path: "/field-view/dashboard" },
-    { name: "Buyers", icon: <Person />, path: "/buyers/dashboard" },
+    { name: "Field View", icon: <FilterVintageOutlined />, path: "/cultivationDashboard" },
+    { name: "Buyers", icon: <Person />, path: "/buyer-registration" },
   ];
 
   return (
