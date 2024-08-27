@@ -59,7 +59,7 @@ const EditHarvestSchedule = () => {
       });
       if (response.data.success) {
         notification.success({ message: 'Harvest schedule updated successfully!' });
-        navigate('/harvest/schedule'); // Redirect after successful update
+        navigate('/harvest/harvest-schedule'); // Redirect after successful update
       } else {
         notification.error({ message: response.data.message });
       }

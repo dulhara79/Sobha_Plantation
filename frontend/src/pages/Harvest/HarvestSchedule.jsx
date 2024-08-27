@@ -97,7 +97,6 @@ const HarvestSchedule = () => {
         </span>
       ),
     }
-    ,
   ];
 
   // Navigation Handlers
@@ -130,9 +129,9 @@ const HarvestSchedule = () => {
   return (
     <div className="app">
       <Sidebar />
-      <div className="content">
+      <div className="content" style={{ marginLeft: '250px' }}> {/* Add margin to create space from the sidebar */}
         <Header />
-        <nav className="p-4 mb-5" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <nav className="p-4 mb-5" style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
           <div className="container flex items-center space-x-4">
             <div
               className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer"
@@ -175,12 +174,12 @@ const HarvestSchedule = () => {
           </div>
         </nav>
 
-        <Breadcrumb style={{ marginBottom: '16px' }}>
+        {/* <Breadcrumb style={{ marginBottom: '30px' }}>
           <Breadcrumb.Item onClick={() => navigate(-1)}>
-            <ArrowBack style={{ marginRight: 5 }} /> Back
+            <ArrowBack style={{ marginRight: 50 }} /> Back
           </Breadcrumb.Item>
           <Breadcrumb.Item>Harvest Schedule</Breadcrumb.Item>
-        </Breadcrumb>
+        </Breadcrumb> */}
 
         <Row justify="space-between" align="middle" style={{ marginBottom: '24px' }}>
           <Col style={{ flex: 1, textAlign: 'right' }}>
@@ -206,7 +205,7 @@ const HarvestSchedule = () => {
             columns={columns}
             rowKey={(record) => record.harvestId}
             pagination={{ pageSize: 5 }}
-            style={{ width: '80%' }}
+            style={{ width: '97%' }}
           />
         </div>
       </div>
