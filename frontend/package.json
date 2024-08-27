@@ -28,6 +28,7 @@
     "lodash": "^4.17.21",
     "menu": "^0.2.5",
     "moment": "^2.30.1",
+    "mui": "^0.0.1",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
@@ -36,7 +37,8 @@
     "react-intersection-observer": "^9.13.0",
     "react-router-dom": "^6.26.1",
     "swiper": "^11.1.10",
-    "table": "^6.8.2"
+    "table": "^6.8.2",
+    "url": "^0.11.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
