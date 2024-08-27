@@ -17,6 +17,12 @@ import Dashboard from "./pages/Dashboard.jsx";
 // crop care (diseases)
 import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
 import CoconutInspections from "./pages/Diseases/CoconutInspections.jsx";
+import IntercropInspections from "./pages/Diseases/IntercropInspections.jsx";
+import AddCoconutDiseases from "./pages/Diseases/AddCoconutDiseases.jsx";
+import AddCropsDiseases from "./pages/Diseases/AddCropsDiseases.jsx";
+import CoconutTreatments from "./pages/Diseases/CoconutTreatments.jsx";
+import CoconutPests from "./pages/Diseases/CoconutPests.jsx";
+import Maintenance from "./pages/Diseases/Maintenance.jsx";
 
 // product
 
@@ -45,6 +51,12 @@ export default function App() {
       {/* crop care */}
       <Route path="/diseases" element={<DiseasesDashboard />} />
       <Route path="/coconutInspections" element={<CoconutInspections />} />
+      <Route path="/intercropInspections" element={<IntercropInspections />} />
+      <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
+      <Route path="/addCropDiseases" element={<AddCropsDiseases />} />
+      <Routh path="/coconutTreatments" element={<CoconutTreatments />} />
+      <Route path="/coconutPests" element={<CoconutPests />} />
+      <Route path="/maintenance" element={<Maintenance />} />
 
       {/* product */}
 
