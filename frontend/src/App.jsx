@@ -8,6 +8,11 @@ import Dashboard from "./pages/Dashboard.jsx";
 // finance
 
 // inventory
+import InventoryDashboard from "./pages/Inventory/InventoryDashboard.jsx";
+import Fertilizer from"./pages/Inventory/Fertilizer.jsx";
+import FertilizerForm from "./pages/Inventory/FertilizerForm.jsx";
+import Maintenance from "./pages/Inventory/Maintenance.jsx";
+import MaintenanceForm from "./pages/Inventory/MaintenanceForm.jsx";
 
 // employee
 
@@ -36,7 +41,12 @@ export default function App() {
       {/* finance */}
 
       {/* inventory */}
-
+      <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>}/>
+      <Route path="/Inventory/Fertilizer" element={<Fertilizer/>}/>
+      <Route path="/Inventory/FertilizerForm" element={<FertilizerForm />} />
+      <Route path="/Inventory/Maintenance" element={<Maintenance/>}/>
+      <Route path="/Inventory/MaintenanceForm" element={<MaintenanceForm />} />
+      
       {/* employee */}
 
       {/* harvest */}

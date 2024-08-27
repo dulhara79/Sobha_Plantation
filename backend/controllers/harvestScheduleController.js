@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream:backend/controllers/harvestScheduleController.js
 const HarvestSchedule = require('../models/Harvest.js');
+=======
+const HarvestSchedule = require('../../models/Harvest/Harvest');
+>>>>>>> Stashed changes:backend/controllers/Harvest/harvestScheduleController.js
 
 // Controller for creating a new Harvest schedule
 exports.createHarvestSchedule = async (req, res) => {

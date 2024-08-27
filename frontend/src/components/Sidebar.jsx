@@ -25,9 +25,15 @@ const Sidebar = ({ className = "" }) => {
 
   const menuItems = [
     { name: "Home", icon: <HomeOutlined />, path: "/dashboard" },
+<<<<<<< Updated upstream
     { name: "Finances", icon: <AccountBalanceOutlined />, path: "/finance/finance/dashboard" },
     { name: "Inventory", icon: <InventoryOutlined />, path: "/inventory/dashboard" },
     { name: "Employees", icon: <BadgeOutlined />, path: "/employees/dashboard" },
+=======
+    { name: "Finances", icon: <AccountBalanceOutlined />, path: "/salesAndFinance/" },
+    { name: "Inventory", icon: <InventoryOutlined />, path: "/Inventory/InventoryDashboard" },
+    { name: "Employees", icon: <BadgeOutlined />, path: "/employee/dashboard" },
+>>>>>>> Stashed changes
     { name: "Harvest", icon: <ForestOutlined />, path: "/harvest/dashboard" },
     { name: "Crop Care", icon: <BugReportOutlined />, path: "/crop-care/dashboard" },
     { name: "Products", icon: <ViewInAr />, path: "/products/dashboard" },
