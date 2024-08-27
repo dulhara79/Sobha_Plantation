@@ -14,7 +14,11 @@ import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecor
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 
 // inventory
-
+ import Fertilizer from "./pages/Inventory/Fertilizer.jsx";
+ import FertilizerForm from "./pages/Inventory/FertilizerForm.jsx";
+ import InventoryDashboard from "./pages/Inventory/InventoryDashboard.jsx";
+ import Maintenance from "./pages/Inventory/Maintenance.jsx";
+ import MaintenanceForm from "./pages/Inventory/MaintenanceForm.jsx";
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
 import Eregistration from "./pages/employee/Eregistration.jsx";
@@ -29,6 +33,10 @@ import EattendenceList from "./pages/employee/EattendenceList.jsx";
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
 import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
+import YieldRecords from "./pages/Harvest/YieldRecords.jsx";
+import TaskAssign from "./pages/Harvest/TaskAssign.jsx"
+import AddHarvestSchedule from "./pages/Harvest/AddHarvestSchedule.jsx";
+import EditHarvestSchedule from './pages/Harvest/EditHarvestSchedule';
 // crop care
 
 // product
@@ -53,8 +61,6 @@ import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
 import PageError from "./pages/PageError.jsx";
 
 
-
-
 export default function App() {
   return (
     <Routes>
@@ -69,6 +75,11 @@ export default function App() {
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
 
       {/* inventory */}
+      <Route path="/Inventory/Fertilizer" element={<Fertilizer/>} />
+      <Route path="/Inventory/Maintenance" element={<Maintenance/>} />
+      <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>} />
+      <Route path="/Inventory/FertilizerForm" element={<FertilizerForm/>} />
+      <Route path="/Inventory/MaintenanceForm" element={<MaintenanceForm/>} />
 
       {/* employee */}
       <Route path="/employee/dashboard" element={<Edashboard/>}/>
@@ -84,6 +95,10 @@ export default function App() {
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
+      <Route path="/harvest/yield" element={<YieldRecords />} />
+      <Route path="/harvest/task" element={<TaskAssign/>} />
+      <Route path="/harvest/addschedule" element={<AddHarvestSchedule />} />
+      <Route path="/harvest/edit/:id" element={<EditHarvestSchedule />} />
       {/* crop care */}
 
       {/* product */}
