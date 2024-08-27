@@ -1,267 +1,289 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {
-    PencilSquareIcon,
-    TrashIcon,
-    InformationCircleIcon,
-    MagnifyingGlassIcon,
-} from '@heroicons/react/24/outline';
-import { Link } from 'react-router-dom';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
-import { enqueueSnackbar, useSnackbar } from 'notistack';
-import { StyleSheet } from '@react-pdf/renderer';
-import Header from '../../components/Header';
-import Sidebar from '../../components/Sidebar';
-import EmployeeNavbar from '../../components/EmployeeNavbar';
-import { HomeOutlined, UserOutlined } from "@ant-design/icons";
-import { Breadcrumb } from "antd";
+import Swal from 'sweetalert2';
+import { InformationCircleIcon, TrashIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { Link } from "react-router-dom";
+import { jsPDF } from "jspdf";
+import autoTable from 'jspdf-autotable';
+import { useSnackbar } from "notistack";
+import { DatePicker, Select, Button, Table } from 'antd';
+import { DownOutlined, SearchOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
 
-const pdfStyles = StyleSheet.create({
-    page: {
-        flexDirection: 'row',
-        backgroundColor: '#ffffff',
-    },
-    section: {
-        margin: 10,
-        padding: 10,
-        flexGrow: 1,
-    },
-});
+const { RangePicker } = DatePicker;
+const { Option } = Select;
 
 const EmployeeList = () => {
-    const [RegistrationRecords, setRegistrationRecords] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-    const { enqueueSnackbar } = useSnackbar();
-    const [selectedTypeFilter, setSelectedTypeFilter] = useState('All Types');
+    const [employeeRecords, setEmployeeRecords] = useState([]);
     const [filteredEmployeeRecords, setFilteredEmployeeRecords] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedTypeFilter, setSelectedTypeFilter] = useState('All Types');
+    const [dateRange, setDateRange] = useState([null, null]);
+    const { enqueueSnackbar } = useSnackbar();
+    const [loading, setLoading] = useState(false);
 
+    // Define employee types
+    const employeeTypes = ['Full-Time', 'Part-Time', 'Contract']; // Example types
+
+    // Fetch employee data
     useEffect(() => {
         setLoading(true);
-        axios
-            .get(`http://localhost:5000/api/employee`)
+        axios.get(`http://localhost:5000/api/employee`)
             .then((response) => {
-                setRegistrationRecords(response.data.data);
+                setEmployeeRecords(response.data || []);
+                setFilteredEmployeeRecords(response.data || []);
                 setLoading(false);
             })
             .catch((error) => {
-                console.log(error);
+                console.error(error);
                 setLoading(false);
             });
     }, []);
 
-    const getFilteredEmployeeRecords = (searchQuery, selectedTypeFilter) => {
-        const filtered = RegistrationRecords.filter((record) => {
-            const fullName = `${record.f_name} ${record.l_name}`.toLowerCase();
-            return (
-                fullName.includes(searchQuery.toLowerCase()) &&
-                (selectedTypeFilter === 'All Types' || record.emp_type === selectedTypeFilter)
-            );
-        });
-        setFilteredEmployeeRecords(filtered);
-    };
-
-    useEffect(() => {
-        getFilteredEmployeeRecords(searchQuery, selectedTypeFilter);
-    }, [searchQuery, selectedTypeFilter]);
-
-    const handleDelete = (id) => {
-        const confirmDelete = window.confirm('Are you sure you want to delete this registration record?');
-        if (confirmDelete) {
-            setLoading(true);
-            axios
-                .delete(`http://localhost:5000/api/employee${id}`)
-                .then(() => {
-                    setRegistrationRecords((prevRecords) => prevRecords.filter((record) => record._id !== id));
-                    setLoading(false);
-                    enqueueSnackbar('Record Deleted successfully', { variant: 'success' });
-                })
-                .catch((error) => {
-                    console.log(error);
-                    // Handle error
-                });
-        }
-    };
-
-    const filteredRecords = RegistrationRecords.filter((record) =>
-        Object.values(record).some((value) => {
-            if (typeof value === 'string' || typeof value === 'number') {
-                return String(value).toLowerCase().includes(searchQuery.toLowerCase());
-            }
-            return false;
-        }) && (selectedTypeFilter === 'All Types' || record.emp_type === selectedTypeFilter)
-    );
-
-    const employeeTypes = [...new Set(RegistrationRecords.map((record) => record.emp_type))];
-
-    const generatePDF = () => {
-        const input = document.getElementById('registration-table');
-        if (input) {
-            const currentDate = new Date().toLocaleString('en-GB');
-
-            html2canvas(input)
-                .then((canvas) => {
-                    const imgData = canvas.toDataURL('image/png');
-                    const pdf = new jsPDF('l', 'mm', 'a3');
-
-                    const recordCount = filteredRecords.length;
-                    const pageWidth = pdf.internal.pageSize.getWidth();
-                    const textWidth =
-                        pdf.getStringUnitWidth('Employee Details') * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
-                    const centerPosition = (pageWidth - textWidth) / 2;
-
-                    pdf.setFontSize(16);
-                    pdf.text('Employee Details', centerPosition, 10);
-                    pdf.setFontSize(12);
-                    pdf.text(`As At: ${currentDate}`, centerPosition, 20);
-
-                    pdf.text(`Number of Employees: ${recordCount}`, 10, 40);
-
-                    pdf.autoTable({
-                        html: '#registration-table',
-                        startY: 70,
-                        theme: 'grid',
+    const handleDelete = (recordId) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setLoading(true);
+                axios.delete(`http://localhost:5000/api/employee/${recordId}`)
+                    .then(() => {
+                        setEmployeeRecords(prevRecords => prevRecords.filter(record => record._id !== recordId));
+                        setFilteredEmployeeRecords(prevRecords => prevRecords.filter(record => record._id !== recordId));
+                        setLoading(false);
+                        enqueueSnackbar('Record Deleted successfully', { variant: 'success' });
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        setLoading(false);
                     });
+            }
+        });
+    };
 
-                    pdf.save(`Employee-details_generatedAt_${currentDate}.pdf`);
-                })
-                .catch((error) => {
-                    console.error('Error generating PDF:', error);
-                });
+    const handleDownloadPDF = () => {
+        if (employeeRecords.length === 0) {
+            enqueueSnackbar('No employee records to generate report', { variant: 'error' });
+            return;
+        }
+
+        const doc = new jsPDF();
+        doc.text(`Employee Report`, 10, 10);
+
+        const headers = ["First Name", "Last Name", "Date of Birth", "Gender", "Contact Number", "Email", "NIC", "Address", "Employee Type", "Hired Date", "Hourly Rate"];
+        const tableData = employeeRecords.map(record => [
+            record.firstName,
+            record.lastName,
+            dayjs(record.dateOfBirth).format('YYYY-MM-DD'),
+            record.gender,
+            record.contactNumber,
+            record.email,
+            record.nic,
+            record.address,
+            record.employeeType,
+            dayjs(record.hiredDate).format('YYYY-MM-DD'),
+            record.hourlyRate
+        ]);
+
+        autoTable(doc, {
+            head: [headers],
+            body: tableData,
+            startY: 20,
+            styles: { overflow: 'linebreak', columnWidth: 'wrap' },
+            theme: 'striped'
+        });
+
+        doc.save('Employee_report.pdf');
+    };
+
+    const handleSearch = () => {
+        getFilteredEmployeeRecords(searchQuery, selectedTypeFilter, dateRange);
+    };
+
+    const handleFilterChange = (value) => {
+        setSelectedTypeFilter(value);
+        getFilteredEmployeeRecords(searchQuery, value, dateRange);
+    };
+
+    const handleDateChange = (dates) => {
+        setDateRange(dates);
+        getFilteredEmployeeRecords(searchQuery, selectedTypeFilter, dates);
+    };
+
+    const getFilteredEmployeeRecords = (searchQuery, selectedTypeFilter, dateRange) => {
+        if (Array.isArray(employeeRecords) && employeeRecords.length > 0) {
+            const filtered = employeeRecords.filter((record) => {
+                const fullName = `${record.firstName} ${record.lastName}`.toLowerCase();
+                const hiredDate = dayjs(record.hiredDate).startOf('day');
+                const [startDate, endDate] = dateRange;
+                const withinDateRange = startDate && endDate ? hiredDate.isBetween(dayjs(startDate).startOf('day'), dayjs(endDate).endOf('day'), 'day', '[)') : true;
+
+                return (
+                    (fullName.includes(searchQuery.toLowerCase()) || record.email.toLowerCase().includes(searchQuery.toLowerCase())) &&
+                    (selectedTypeFilter === 'All Types' || record.employeeType === selectedTypeFilter) &&
+                    withinDateRange
+                );
+            });
+            setFilteredEmployeeRecords(filtered);
         } else {
-            console.error('Table element not found');
+            setFilteredEmployeeRecords([]);
         }
     };
 
-    function getBorderColorClass(emp_type) {
-        return subtypeBorderColorMap[emp_type] || 'border-gray-200';
-    }
+    const columns = [
+        {
+            title: 'No',
+            dataIndex: 'index',
+            key: 'index',
+            render: (text, record, index) => index + 1,
+            sorter: (a, b) => a.index - b.index,
+        },
+        {
+            title: 'First Name',
+            dataIndex: 'firstName',
+            key: 'firstName',
+            sorter: (a, b) => a.firstName.localeCompare(b.firstName),
+        },
+        {
+            title: 'Last Name',
+            dataIndex: 'lastName',
+            key: 'lastName',
+            sorter: (a, b) => a.lastName.localeCompare(b.lastName),
+        },
+        {
+            title: 'Date of Birth',
+            dataIndex: 'dateOfBirth',
+            key: 'dateOfBirth',
+            render: (text) => dayjs(text).format('YYYY-MM-DD'),
+            sorter: (a, b) => new Date(a.dateOfBirth) - new Date(b.dateOfBirth),
+        },
+        {
+            title: 'Gender',
+            dataIndex: 'gender',
+            key: 'gender',
+        },
+        {
+            title: 'Contact Number',
+            dataIndex: 'contactNumber',
+            key: 'contactNumber',
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'email',
+        },
+        {
+            title: 'NIC',
+            dataIndex: 'nic',
+            key: 'nic',
+        },
+        {
+            title: 'Address',
+            dataIndex: 'address',
+            key: 'address',
+        },
+        {
+            title: 'Employee Type',
+            dataIndex: 'employeeType',
+            key: 'employeeType',
+            filters: employeeTypes.map(type => ({ text: type, value: type })),
+            onFilter: (value, record) => record.employeeType === value,
+        },
+        {
+            title: 'Hired Date',
+            dataIndex: 'hiredDate',
+            key: 'hiredDate',
+            render: (text) => dayjs(text).format('YYYY-MM-DD'),
+            sorter: (a, b) => new Date(a.hiredDate) - new Date(b.hiredDate),
+        },
+        {
+            title: 'Hourly Rate',
+            dataIndex: 'hourlyRate',
+            key: 'hourlyRate',
+            sorter: (a, b) => a.hourlyRate - b.hourlyRate,
+        },
+        {
+            title: 'Info',
+            key: 'info',
+            render: (text, record) => (
+                <InformationCircleIcon className="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-600" />
+            ),
+        },
+        {
+            title: 'Delete',
+            key: 'delete',
+            render: (text, record) => (
+                <TrashIcon
+                    className="w-5 h-5 text-red-500 cursor-pointer hover:text-red-700"
+                    onClick={() => handleDelete(record._id)}
+                />
+            ),
+        }
+    ];
 
-    const subtypeBorderColorMap = {
-        permanent: 'border-cyan-400',
-        contract: 'border-yellow-400',
-        trainee: 'border-red-400',
-        seasonal: 'border-purple-400',
-        casual: 'border-lime-400',
-    };
+    const dataSource = filteredEmployeeRecords.map(record => ({ ...record, key: record._id }));
 
     return (
-        <div className="">
-            <Header/>
-            <Sidebar/>
-            <div className={`ml-[300px]`}>
-            <Breadcrumb
-          items={[
-              {
-                  href: "",
-                  title: <HomeOutlined />,
-                },
-            ]}
-        />
-            <EmployeeNavbar className="" />
-        </div>
-            <div className="flex flex-row justify-between items-center mb-4">
-                <div>
-                    <h1 className={`ml-[310px] text-lg font-semibold text-left`}>Employee Details</h1>
-                    <p className={`ml-[310px] mt-1 text-sm font-normal text-gray-500`}>Easily access stored employee details within the system for thorough insights.</p>
-                    <div className={`ml-[310px] py-4 relative`}>
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <MagnifyingGlassIcon className="text-gray-500 h-4 w-4"/>
-                        </div>
-                        <input
-                            type="text"
-                            placeholder="Search all employees..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="border border-gray-300 rounded-full px-3 py-1.5 w-full text-sm pl-8"
-                            style={{paddingRight: '2.5rem'}}
-                        />
-                    </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                    <select
-                        value={selectedTypeFilter}
-                        onChange={(e) => setSelectedTypeFilter(e.target.value)}
-                        className="appearance-none rounded-full bg-white px-7 py-1.5 text-sm text-gray-900 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300"
-                    >
-                        <option value="All Types">All Types</option>
-                        {employeeTypes.map((type) => (
-                            <option key={type} value={type}>{type}</option>
-                        ))}
-                    </select>
-                    <Link to="/employee/registration"
-                        className="flex-none rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">
-                        Add new employee <span aria-hidden="true">&rarr;</span>
-                    </Link>
+        <div className="p-8">
+            <h1 className="text-lg font-semibold">Employee Details</h1>
+            <p className="text-sm text-gray-500">Manage employee information and generate reports.</p>
+
+            <div className="flex items-center my-4 space-x-4">
+                <Select
+                    defaultValue="All Types"
+                    style={{ width: 120 }}
+                    onChange={handleFilterChange}
+                    allowClear
+                >
+                    <Option value="All Types">All Types</Option>
+                    {employeeTypes.map(type => (
+                        <Option key={type} value={type}>{type}</Option>
+                    ))}
+                </Select>
+
+                <RangePicker
+                    format="YYYY-MM-DD"
+                    onChange={handleDateChange}
+                />
+
+                <div className="relative">
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="p-2 border rounded"
+                    />
                     <button
-                        onClick={generatePDF}
-                        className="flex-none rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">
-                        Generate Report
+                        onClick={handleSearch}
+                        className="absolute top-0 right-0 px-4 py-2 text-white bg-blue-500 rounded-r"
+                    >
+                        <SearchOutlined />
                     </button>
                 </div>
             </div>
 
-            <div className={`ml-[310px] overflow-x-auto`}>
-                <table id="registration-table" className="w-full text-sm text-left rtl:text-right text-gray-500">
-                    <thead className="text-xs text-gray-700 shadow-md uppercase bg-gray-100 border-l-4 border-gray-500">
-                        <tr>
-                            <th></th>
-                            <th scope="col" className="px-6 py-3">No</th>
-                            <th scope="col" className="px-6 py-3">First Name</th>
-                            <th scope="col" className="px-6 py-3">Last Name</th>
-                            <th scope="col" className="px-6 py-3">DOB</th>
-                            <th scope="col" className="px-6 py-3">Gender</th>
-                            <th scope="col" className="px-6 py-3">Contact No</th>
-                            <th scope="col" className="px-6 py-3">Email</th>
-                            <th scope="col" className="px-6 py-3">NIC</th>
-                            <th scope="col" className="px-6 py-3">Address</th>
-                            <th scope="col" className="px-6 py-3">Employee type</th>
-                            <th scope="col" className="px-6 py-3">Work Qualifications</th>
-                            <th scope="col" className="px-6 py-3">Hired Date</th>
-                            <th scope="col" className="px-6 py-3">Hourly Rate</th>
-                            <th scope="col" className="py-3">Action</th>
-                            
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredRecords.map((record, index) => (
-                            <tr key={record._id} className={`ml-[300px] bg-white border-b border-l-4 ${getBorderColorClass(record.emp_type)}`}>
-                                <td className="py-3">
-                                    <InformationCircleIcon
-                                        className="h-5 w-5 text-gray-500 hover:text-cyan-500 cursor-pointer"
-                                        onClick={() => alert(JSON.stringify(record, null, 2))}
-                                    />
-                                </td>
-                                <td className="px-6 py-4">{index + 1}</td>
-                                <td className="px-6 py-4">{record.f_name}</td>
-                                <td className="px-6 py-4">{record.l_name}</td>
-                                <td className="px-6 py-4">{record.dob}</td>
-                                <td className="px-6 py-4">{record.gender}</td>
-                                <td className="px-6 py-4">{record.contact_no}</td>
-                                <td className="px-6 py-4">{record.email}</td>
-                                <td className="px-6 py-4">{record.nic}</td>
-                                <td className="px-6 py-4">{record.address}</td>
-                                <td className="px-6 py-4">{record.emp_type}</td>
-                                <td className="px-6 py-4">{record.work_qualifications}</td>
-                                <td className="px-6 py-4">{record.hired_date}</td>
-                                <td className="px-6 py-4">{record.hourly_rate}</td>
-                                <td className="py-3">
-                                    <Link to={`/employees/registration/updateEmployee/${record._id}`}>
-                                        <PencilSquareIcon className="h-5 w-5 text-gray-500 hover:text-yellow-500 cursor-pointer" />
-                                    </Link>
-                                </td>
-                                <td className="py-3">
-                                    <TrashIcon
-                                        className="h-5 w-5 text-gray-500 hover:text-red-500 cursor-pointer"
-                                        onClick={() => handleDelete(record._id)}
-                                    />
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            <Table
+                dataSource={dataSource}
+                columns={columns}
+                loading={loading}
+                pagination={{ pageSize: 10 }}
+                scroll={{ x: true }}
+            />
+
+            <Button
+                type="primary"
+                className="mt-4"
+                onClick={handleDownloadPDF}
+            >
+                Download PDF
+            </Button>
         </div>
     );
 };
