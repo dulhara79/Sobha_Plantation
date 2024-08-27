@@ -73,13 +73,13 @@ const DiseasesDashboard = () => {
           <Link to="/CoconutInspections" className="text-[#3CCD65] hover:text-[#2b8f57]">
             Inspections
           </Link>
-          <Link to="/treatments" className="text-[#3CCD65] hover:text-[#2b8f57]">
+          <Link to="/CoconutTreatments" className="text-[#3CCD65] hover:text-[#2b8f57]">
             Treatments
           </Link>
-          <Link to="/pests-diseases" className="text-[#3CCD65] hover:text-[#2b8f57]">
+          <Link to="/CoconutPests" className="text-[#3CCD65] hover:text-[#2b8f57]">
             Pests and Diseases
           </Link>
-          <Link to="/maintenance" className="text-[#3CCD65] hover:text-[#2b8f57]">
+          <Link to="/Maintenance" className="text-[#3CCD65] hover:text-[#2b8f57]">
             Maintenance
           </Link>
         </div>
@@ -139,7 +139,7 @@ const DiseasesDashboard = () => {
           <img src={diseaseIdentificationImg} alt="Disease Identification" className="w-full h-80 object-cover rounded-lg" />
           </Link>
 
-            <Link to="/application-of-treatments" className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block flex-col h-100">
+            <Link to="/CoconutTreatments" className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block flex-col h-100">
               <h1 className="text-3xl font-bold mb-2">Application of Treatments</h1>
               <img src={applicationOfTreatmentsImg} alt="Application of Treatments" className="w-full h-80 object-cover rounded-lg" />
             </Link>
