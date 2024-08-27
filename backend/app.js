@@ -35,7 +35,7 @@ app.use('/api/crop-varieties', cropVarietiesRoutes);
 app.use('/api/employee', employeeRoutes);
 app.use("/api/salary-employees", salaryEmployeeRoutes);
 app.use("/api/crop-varieties", cropVarietiesRoutes);
-app.use("/api/employee", employeeRoutes);
+// app.use("/api/employee", employeeRoutes);
 app.use('/api/taskRecords', ETaskRoutes);
 app.use('/api/production', productionRoutes);
 app.use('/api/harvest', harvestRoutes);
