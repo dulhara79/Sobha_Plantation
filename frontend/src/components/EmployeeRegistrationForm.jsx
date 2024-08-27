@@ -135,7 +135,8 @@ const validateNICWithDOB = (nic, dob) => {
   if (!dob) return true; // Skip validation if DOB is not provided
 
   const dobYear = new Date(dob).getFullYear();
-  const yearFromNIC = nic.length === 10 ? `19${nic.substr(0, 2)}` : nic.substr(0, 4);
+  const yearFromNIC =
+    nic.length === 10 ? `19${nic.substr(0, 2)}` : nic.substr(0, 4);
 
   return dobYear === parseInt(yearFromNIC, 10);
 };
@@ -224,13 +225,38 @@ const Eregistration = () => {
       cancelButtonText: "No, cancel!",
     });
 
+    console.log("Form data:", formData);
+    console.log("result.isConfirmed:", result.isConfirmed);
+
     if (result.isConfirmed) {
       try {
-        const response = await axios.post("http://localhost:5000/api/employee", formData);
-        Swal.fire("Success", "Employee registered successfully!", "success");
+        // const response = await axios.post("http://localhost:5000/api/employee", formData);
+        // Swal.fire("Success", "Employee registered successfully!", "success");
+        await axios
+          .post("http://localhost:5000/api/employee", formData)
+          .then((response) => {
+            console.log(response.data);
+            Swal.fire(
+              "Success",
+              "Employee registered successfully!",
+              "success"
+            );
+          })
+          .catch((error) => {
+            console.error("Error during Axios request:", error.response.data);
+            Swal.fire(
+              "Error",
+              "Failed to register employee. Please try again.",
+              "error"
+            );
+          });
       } catch (error) {
         console.error("Error during Axios request:", error.response.data);
-        Swal.fire("Error", "Failed to register employee. Please try again.", "error");
+        Swal.fire(
+          "Error",
+          "Failed to register employee. Please try again.",
+          "error"
+        );
       }
     }
   };
@@ -386,19 +412,24 @@ const Eregistration = () => {
         </FormRow>
 
         <ButtonGroup>
-          <Button type="button" onClick={() => setFormData({
-            firstName: "",
-            lastName: "",
-            dateOfBirth: "",
-            gender: "",
-            contactNumber: "",
-            email: "",
-            nic: "",
-            address: "",
-            employeeType: "",
-            hiredDate: new Date().toISOString().slice(0, 10), // Reset to current date
-            hourlyRate: "",
-          })}>
+          <Button
+            type="button"
+            onClick={() =>
+              setFormData({
+                firstName: "",
+                lastName: "",
+                dateOfBirth: "",
+                gender: "",
+                contactNumber: "",
+                email: "",
+                nic: "",
+                address: "",
+                employeeType: "",
+                hiredDate: new Date().toISOString().slice(0, 10), // Reset to current date
+                hourlyRate: "",
+              })
+            }
+          >
             Reset
           </Button>
           <Button type="submit" primary disabled={!isFormValid}>
