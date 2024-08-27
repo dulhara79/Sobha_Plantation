@@ -63,6 +63,7 @@ export default function App() {
       {/* field view  */}
       <Route path="cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="varietyCrop" element={<VarietyCrop />} />
+      
       {/* buyers */}
 
       {/* page not found & error page */}
