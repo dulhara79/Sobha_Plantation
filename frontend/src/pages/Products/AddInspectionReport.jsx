@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
-const AddSchedule = () => {
+const AddInspectionReport = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
@@ -15,37 +15,36 @@ const AddSchedule = () => {
     return current && current < moment().startOf('day');
   };
 
-  // Function to validate progress value
-  const validateProgress = (_, value) => {
-    if (value < 0 || value > 100) {
-      return Promise.reject(new Error('Progress must be between 0 and 100'));
+  // Function to validate inspector name
+  const validateInspectorName = (_, value) => {
+    if (!value || value.trim() === '') {
+      return Promise.reject(new Error('Inspector Name is required'));
     }
     return Promise.resolve();
   };
 
   const handleSubmit = async (values) => {
     try {
-      // Check if the values have the correct date format
+      // Convert inspectionDate to ISO string
       const payload = {
         ...values,
-        startDate: values.startDate ? moment(values.startDate).toISOString() : null,
-        endDate: values.endDate ? moment(values.endDate).toISOString() : null,
+        inspectionDate: values.inspectionDate ? moment(values.inspectionDate).toISOString() : null,
       };
 
       // Send POST request to the API
-      await axios.post('http://localhost:5000/api/production', payload);
+      await axios.post('http://localhost:5000/api/quality-control', payload);
       notification.success({
         message: 'Success',
-        description: 'Production schedule added successfully!',
+        description: 'Inspection report added successfully!',
       });
       form.resetFields();
-      navigate('/products/production-overview');
+      navigate('/products/quality-control');
     } catch (error) {
       // Log detailed error information
-      console.error('Failed to add production schedule:', error.response || error.message);
+      console.error('Failed to add inspection report:', error.response?.data || error.message);
       notification.error({
         message: 'Error',
-        description: `Failed to add production schedule. ${error.response?.data?.message || 'Please try again.'}`,
+        description: `Failed to add inspection report. ${error.response?.data?.message || 'Please try again.'}`,
       });
     }
   };
@@ -53,7 +52,7 @@ const AddSchedule = () => {
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="mb-6 text-2xl font-bold text-center">Add Production Schedule</h2>
+        <h2 className="mb-6 text-2xl font-bold text-center">Add Inspection Report</h2>
         <Form
           form={form}
           onFinish={handleSubmit}
@@ -75,17 +74,9 @@ const AddSchedule = () => {
           </Form.Item>
 
           <Form.Item
-            label="Quantity"
-            name="quantity"
-            rules={[{ required: true, message: 'Please enter the quantity!' }]}
-          >
-            <Input type="number" placeholder="Enter quantity" />
-          </Form.Item>
-
-          <Form.Item
-            label="Start Date"
-            name="startDate"
-            rules={[{ required: true, message: 'Please select the start date!' }]}
+            label="Inspection Date"
+            name="inspectionDate"
+            rules={[{ required: true, message: 'Please select the inspection date!' }]}
           >
             <DatePicker
               format="YYYY-MM-DD"
@@ -94,14 +85,14 @@ const AddSchedule = () => {
           </Form.Item>
 
           <Form.Item
-            label="End Date"
-            name="endDate"
-            rules={[{ required: true, message: 'Please select the end date!' }]}
+            label="Inspector Name"
+            name="inspectorName"
+            rules={[
+              { required: true, message: 'Please enter the inspector name!' },
+              { validator: validateInspectorName },
+            ]}
           >
-            <DatePicker
-              format="YYYY-MM-DD"
-              disabledDate={disablePastDates}
-            />
+            <Input placeholder="Enter inspector name" />
           </Form.Item>
 
           <Form.Item
@@ -110,27 +101,15 @@ const AddSchedule = () => {
             rules={[{ required: true, message: 'Please select the status!' }]}
           >
             <Select placeholder="Select status">
-              <Option value="Scheduled">Scheduled</Option>
-              <Option value="In Progress">In Progress</Option>
-              <Option value="Completed">Completed</Option>
-              <Option value="Cancelled">Cancelled</Option>
+              <Option value="Passed">Passed</Option>
+              <Option value="Failed">Failed</Option>
+              {/* Add more status options as needed */}
             </Select>
-          </Form.Item>
-
-          <Form.Item
-            label="Progress (%)"
-            name="progress"
-            rules={[
-              { required: true, message: 'Please enter the progress!' },
-              { validator: validateProgress },
-            ]}
-          >
-            <Input type="number" placeholder="Enter progress percentage" />
           </Form.Item>
 
           <Form.Item>
             <Button type="primary" htmlType="submit" block>
-              Add Schedule
+              Add Report
             </Button>
           </Form.Item>
         </Form>
@@ -139,4 +118,4 @@ const AddSchedule = () => {
   );
 };
 
-export default AddSchedule;
+export default AddInspectionReport;

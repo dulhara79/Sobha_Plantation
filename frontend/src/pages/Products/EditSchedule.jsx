@@ -1,14 +1,15 @@
-import React from 'react';
-import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
+import React, { useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Form, Input, DatePicker, Select, Button, notification } from 'antd';
 import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
-const AddSchedule = () => {
-  const [form] = Form.useForm();
+const EditSchedule = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const [form] = Form.useForm();
 
   // Function to disable past dates
   const disablePastDates = (current) => {
@@ -23,29 +24,43 @@ const AddSchedule = () => {
     return Promise.resolve();
   };
 
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/production/${id}`);
+        const { data } = response;
+        form.setFieldsValue({
+          ...data,
+          startDate: data.startDate ? moment(data.startDate) : null,
+          endDate: data.endDate ? moment(data.endDate) : null,
+        });
+      } catch (error) {
+        notification.error({
+          message: 'Error',
+          description: 'Error fetching schedule',
+        });
+      }
+    };
+
+    fetchSchedule();
+  }, [id, form]);
+
   const handleSubmit = async (values) => {
     try {
-      // Check if the values have the correct date format
-      const payload = {
+      await axios.put(`http://localhost:5000/api/production/${id}`, {
         ...values,
-        startDate: values.startDate ? moment(values.startDate).toISOString() : null,
-        endDate: values.endDate ? moment(values.endDate).toISOString() : null,
-      };
-
-      // Send POST request to the API
-      await axios.post('http://localhost:5000/api/production', payload);
+        startDate: values.startDate ? values.startDate.toISOString() : null,
+        endDate: values.endDate ? values.endDate.toISOString() : null,
+      });
       notification.success({
         message: 'Success',
-        description: 'Production schedule added successfully!',
+        description: 'Schedule updated successfully!',
       });
-      form.resetFields();
       navigate('/products/production-overview');
     } catch (error) {
-      // Log detailed error information
-      console.error('Failed to add production schedule:', error.response || error.message);
       notification.error({
         message: 'Error',
-        description: `Failed to add production schedule. ${error.response?.data?.message || 'Please try again.'}`,
+        description: 'Error updating schedule',
       });
     }
   };
@@ -53,7 +68,7 @@ const AddSchedule = () => {
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="mb-6 text-2xl font-bold text-center">Add Production Schedule</h2>
+        <h2 className="mb-6 text-2xl font-bold text-center">Edit Production Schedule</h2>
         <Form
           form={form}
           onFinish={handleSubmit}
@@ -88,6 +103,7 @@ const AddSchedule = () => {
             rules={[{ required: true, message: 'Please select the start date!' }]}
           >
             <DatePicker
+              name="startDate"
               format="YYYY-MM-DD"
               disabledDate={disablePastDates}
             />
@@ -99,6 +115,7 @@ const AddSchedule = () => {
             rules={[{ required: true, message: 'Please select the end date!' }]}
           >
             <DatePicker
+              name="endDate"
               format="YYYY-MM-DD"
               disabledDate={disablePastDates}
             />
@@ -130,7 +147,7 @@ const AddSchedule = () => {
 
           <Form.Item>
             <Button type="primary" htmlType="submit" block>
-              Add Schedule
+              Update Schedule
             </Button>
           </Form.Item>
         </Form>
@@ -139,4 +156,4 @@ const AddSchedule = () => {
   );
 };
 
-export default AddSchedule;
+export default EditSchedule;
