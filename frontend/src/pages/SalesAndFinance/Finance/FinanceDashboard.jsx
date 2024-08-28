@@ -2,12 +2,15 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Breadcrumb } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
-import AddIcon from "@mui/icons-material/Add";
-import ListIcon from "@mui/icons-material/List";
-import AnalyticsIcon from "@mui/icons-material/Analytics";
+// import Add from "@mui/icons-material/Add";
+// import List from "@mui/icons-material/List";
+// import Assessment from "@mui/icons-material/Assessment";
+// import AttachMoneyIcon from "@mui/icons-material/AttachMoney"; // Use this or another suitable icon for Budget
+// import Analytics from "@mui/icons-material/Analytics";
 import Header from "../../../components/Header";
 import Sidebar from "../../../components/Sidebar";
 import NavigationButtons from "../../../components/Sales_and_Finance/NavigationButtons";
+import {Add, List, Assessment, AttachMoney, Analytics} from "@mui/icons-material";
 
 const SalesDashboard = () => {
   const navigate = useNavigate();
@@ -21,8 +24,8 @@ const SalesDashboard = () => {
       <Header />
       <Sidebar />
       <div className={`ml-[300px] pt-3`}>
-      <Breadcrumb
-      style={{ margin: "10px 0" }}
+        <Breadcrumb
+          style={{ margin: "10px 0" }}
           items={[
             {
               href: "/dashboard",
@@ -43,28 +46,42 @@ const SalesDashboard = () => {
           ]}
         />
         <div className="p-4 bg-gray-100">
-        <NavigationButtons activePage="finance" />
+          <NavigationButtons activePage="finance" />
           {/* Rectangle Icons */}
           <div className="grid grid-cols-2 gap-4">
             <div
-              className="flex items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
-              onClick={() => navigateTo("/add-record")}
+              className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
+              onClick={() => navigateTo("/salesAndFinance/finance/add-transaction")}
             >
-              <AddIcon fontSize="large" className="mr-2" />
-              <span className="text-xl font-semibold">Add Record</span>
+              <Add fontSize="large" className="mb-8 mr-2 size-24" />
+              <span className="text-xl font-semibold">Add Transaction</span>
             </div>
             <div
-              className="flex items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
-              onClick={() => navigateTo("/view-records")}
+              className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
+              onClick={() => navigateTo("/salesAndFinance/finance/transaction-display")}
             >
-              <ListIcon fontSize="large" className="mr-2" />
+              <List fontSize="large" className="mb-8 mr-2 size-24" />
               <span className="text-xl font-semibold">View All Records</span>
             </div>
             <div
-              className="flex items-center justify-center col-span-2 h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
-              onClick={() => navigateTo("/analytics")}
+              className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
+              onClick={() => navigateTo("/valuation")}
             >
-              <AnalyticsIcon fontSize="large" className="mr-2" />
+              <Assessment fontSize="large" className="mb-8 mr-2 size-24" />
+              <span className="text-xl font-semibold">Valuation</span>
+            </div>
+            <div
+              className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
+              onClick={() => navigateTo("/budget")}
+            >
+              <AttachMoney fontSize="large" className="mb-8 mr-2 size-24" />
+              <span className="text-xl font-semibold">Budget</span>
+            </div>
+            <div
+              className="flex flex-col items-center justify-center col-span-2 h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
+              onClick={() => navigateTo("/salesAndFinance/finance/analytics")}
+            >
+              <Analytics fontSize="large" className="mb-8 mr-2 size-24" />
               <span className="text-xl font-semibold">Analytics</span>
             </div>
           </div>
