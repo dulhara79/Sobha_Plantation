@@ -1,12 +1,12 @@
-import React, { useState, useEffect }from 'react'
-import Header from '../../components/Header'
-import Sidebar from '../../components/Sidebar'
-import { HomeOutlined, UserOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import Header from '../../components/Header';
+import Sidebar from '../../components/Sidebar';
+import { HomeOutlined } from '@ant-design/icons';
 import { Breadcrumb } from 'antd';
 import { Link } from 'react-router-dom';
+
 const CultivationDashboard = () => {
-    
-    const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   // Update the date and time every minute
   useEffect(() => {
@@ -23,58 +23,78 @@ const CultivationDashboard = () => {
 
   return (
     <div>
-      <Header/>
-      <Sidebar/>
+      <Header />
+      <Sidebar />
 
-      <div className={`ml-[300px]`}>
-      <Breadcrumb
-    items={[
-      {
-        href: '',
-        title: <HomeOutlined />,
-      },
-      {
-        href: '',
-        title: 'Field View',
-      },
-    ]}
-  />
-{/* Welcome Message */}
-    <div className="bg-white shadow-md rounded-lg p-4 my-4">
-          <h2 className="text-xl font-semibold">Welcome Piyushi,</h2>
-          <p>Today is {formattedDate}</p>
-    </div>
+      <div className={`ml-[300px] p-4`}>
+        <Breadcrumb
+          items={[
+            {
+              href: '',
+              title: <HomeOutlined />,
+            },
+            {
+              href: '',
+              title: 'Field View',
+            },
+            {
+              href: '',
+              title: 'Dashboard',
+            },
+          ]}
+        />
 
-    {/* Summary Section */}
-    <div className="grid grid-cols-2 gap-6">
-          <Link to="/varietyCrop" className="bg-[#8fd68b] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block">
-            <img src="/path/to/crop-variety-icon.png" alt="Crop Variety" className="mx-auto mb-4 w-16 h-16" />
-            <h3 className="text-lg font-semibold">Crop Variety</h3>
-          </Link>
-          <Link to="/landPreparation" className="bg-[#8fd68b] p-8 rounded-xl text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block">
-    <img src="/path/to/land-preparation-icon.png" alt="Land Preparation" className="mx-auto mb-4 w-16 h-16" />
-    <h3 className="text-lg font-semibold">Land Preparation</h3>
-  </Link>
-
-  <Link to="/plantGrowth" className="bg-[#8fd68b] p-8 rounded-xl text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block">
-    <img src="/path/to/plant-growth-icon.png" alt="Plant Growth" className="mx-auto mb-4 w-16 h-16" />
-    <h3 className="text-lg font-semibold">Plant Growth</h3>
-  </Link>
-
-  <Link to="/seedlingDistribution" className="bg-[#8fd68b] p-8 rounded-xl text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block">
-    <img src="/path/to/seedling-distribution-icon.png" alt="Seedling Distribution" className="mx-auto mb-4 w-16 h-16" />
-    <h3 className="text-lg font-semibold">Seedling Distribution</h3>
-  </Link>
-
-  <Link to="/schedules" className="bg-[#8fd68b] p-8 rounded-xl text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block">
-    <img src="/path/to/schedule-icon.png" alt="Schedules" className="mx-auto mb-4 w-16 h-16" />
-    <h3 className="text-lg font-semibold">Schedules</h3>
-  </Link>
+        {/* Welcome Message */}
+        <div className="bg-white shadow-md rounded-lg p-6 my-6">
+          <h2 className="text-2xl font-bold">👋 Welcome Piyushi,</h2>
+          <p className="text-gray-600">Today is {formattedDate}</p>
         </div>
 
-  </div>
-    </div>
-  )
-}
+        {/* Summary Section */}
+        <div className="grid grid-cols-2 gap-6">
+          <Link
+            to="/varietyCrop"
+            className="bg-[#8fd68b] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition-transform transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer block"
+          >
+            <span className="text-10xl">🌿</span>
+            <h3 className="text-2xl font-semibold mt-4">Crop Variety</h3>
+          </Link>
 
-export default CultivationDashboard
+          <Link
+            to="/landPreparation"
+            className="bg-[#8fd68b] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition-transform transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer block"
+          >
+            <span className="text-10xl">🌾</span>
+            <h3 className="text-2xl font-semibold mt-4">Land Preparation</h3>
+          </Link>
+
+          <Link
+            to="/plantGrowth"
+            className="bg-[#8fd68b] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition-transform transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer block"
+          >
+            <span className="text-10xl">🌱</span>
+            <h3 className="text-2xl font-semibold mt-4">Plant Growth</h3>
+          </Link>
+
+          <Link
+            to="/seedlingDistribution"
+            className="bg-[#8fd68b] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition-transform transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer block"
+          >
+            <span className="text-10xl">🌰</span>
+            <h3 className="text-2xl font-semibold mt-4">Seedling Distribution</h3>
+          </Link>
+
+          <Link
+            to="/schedules"
+            className="bg-[#8fd68b] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition-transform transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer block"
+          >
+            <span className="text-10xl">🗓️</span>
+            <h3 className="text-2xl font-semibold mt-4">Schedules</h3>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CultivationDashboard;

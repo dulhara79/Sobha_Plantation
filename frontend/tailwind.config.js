@@ -144,4 +144,13 @@ module.exports = {
   corePlugins: {
     preflight: false,
   },
+  keyframes: {
+    slideInFromRight: {
+      '0%': { transform: 'translateX(100%)', opacity: 0 },
+      '100%': { transform: 'translateX(0)', opacity: 1 },
+    },
+  },
+  animation: {
+    slideInFromRight: 'slideInFromRight 1s ease-in-out forwards',
+  },
 };

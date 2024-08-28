@@ -21,6 +21,7 @@ const Sidebar = ({ className = "" }) => {
   const isActive = (path) => {
     const currentPath = location.pathname.split('/')[1];
     return currentPath === path.split('/')[1];
+    // return path.split('/')[1];
   };
 
   const menuItems = [
@@ -35,6 +36,10 @@ const Sidebar = ({ className = "" }) => {
     { name: "Buyers", icon: <Person />, path: "/buyer-registration" },
   ];
 
+  console.log("location.pathname: "+location.pathname);
+  console.log("activePage: "+activePage);
+  console.log("isActivePage: "+isActive(activePage));
+
   return (
     <div
       className={`w-[280px] shadow-lg rounded-tl-none rounded-tr-31xl rounded-br-31xl rounded-bl-none bg-whitesmoke flex flex-col items-start justify-start pt-[70px] px-2 pb-[240.3px] fixed gap-[20px] text-left text-lg text-gray-1700 font-roboto no-underline ${className}`}
@@ -45,9 +50,9 @@ const Sidebar = ({ className = "" }) => {
           key={item.name}
           onClick={() => setActivePage(item.path)}
           className={`w-[206px] flex flex-row items-center justify-start py-2 px-[21px] rounded-full box-border text-left transition-all duration-300 no-underline ${
-            activePage === item.path
+            /* isActive(activePage) === item.path */ isActive(activePage) === true && activePage.split('/')[1] === item.path.split('/')[1]
               ? "bg-[#60DB19] bg-opacity-80 text-white"
-              : "bg-whitesmoke text-gray-1700"
+              : "bg-whitesmoke text-gray-1700" }
           } hover:bg-[#a3a3a3] hover:bg-opacity-60 hover:text-2xl`}
         >
           <div className="flex flex-row items-center flex-1 gap-5">

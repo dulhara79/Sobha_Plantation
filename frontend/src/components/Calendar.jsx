@@ -16,4 +16,5 @@ const CalendarApp = () => {
     </div>
   );
 };
+
 export default CalendarApp;
