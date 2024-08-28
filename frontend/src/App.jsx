@@ -98,7 +98,7 @@ export default function App() {
       <Route path="/Inventory/FertilizerForm" element={<FertilizerForm/>} />
       <Route path="/Inventory/MaintenanceForm" element={<MaintenanceForm/>} />
 
-      {/* employee */}
+      {/* employee */}        
       <Route path="/employee/dashboard" element={<Edashboard/>}/>
       <Route path="/employee/registration" element= {<Eregistration/>}/>
       <Route path="/employee/salary" element= {<Esalary/>}/>
