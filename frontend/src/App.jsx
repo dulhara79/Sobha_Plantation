@@ -44,7 +44,16 @@ import YieldRecords from "./pages/Harvest/YieldRecords.jsx";
 import TaskAssign from "./pages/Harvest/TaskAssign.jsx"
 import AddHarvestSchedule from "./pages/Harvest/AddHarvestSchedule.jsx";
 import EditHarvestSchedule from './pages/Harvest/EditHarvestSchedule';
-// crop care
+
+// crop care (diseases)
+import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
+import CoconutInspections from "./pages/Diseases/CoconutInspections.jsx";
+import IntercropInspections from "./pages/Diseases/IntercropInspections.jsx";
+import AddCoconutDiseases from "./pages/Diseases/AddCoconutDiseases.jsx";
+import AddCropsDiseases from "./pages/Diseases/AddCropsDiseases.jsx";
+import CoconutTreatments from "./pages/Diseases/CoconutTreatments.jsx";
+import CoconutPests from "./pages/Diseases/CoconutPests.jsx";
+import RegularMaintenance from "./pages/Diseases/RegularMaintenance.jsx";
 
 // product
 import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
@@ -116,7 +125,16 @@ export default function App() {
       <Route path="/harvest/task" element={<TaskAssign/>} />
       <Route path="/harvest/addschedule" element={<AddHarvestSchedule />} />
       <Route path="/harvest/edit/:id" element={<EditHarvestSchedule />} />
+        
       {/* crop care */}
+      <Route path="/diseases" element={<DiseasesDashboard />} />
+      <Route path="/coconutInspections" element={<CoconutInspections />} />
+      <Route path="/intercropInspections" element={<IntercropInspections />} />
+      <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
+      <Route path="/addCropDiseases" element={<AddCropsDiseases />} />
+      <Route path="/coconutTreatments" element={<CoconutTreatments />} />
+      <Route path="/coconutPests" element={<CoconutPests />} />
+      <Route path="/maintenance" element={<RegularMaintenance />} />
 
       {/* product */}
       <Route path="/products/productdashboard" element={<ProductsDashboard />} />
