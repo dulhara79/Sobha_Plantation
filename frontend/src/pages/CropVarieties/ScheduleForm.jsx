@@ -46,7 +46,7 @@ const ScheduleForm = () => {
 
         <div className="flex justify-center mt-5">
           <div className="mt-5 bg-white p-6 shadow-md rounded-md w-[600px]">
-            <h2 className="text-2xl font-bold mb-4">Add Crop Variety Schedule</h2>
+            <h2 className="text-2xl font-bold mb-4">Schedule</h2>
 
             <Form layout="vertical" onFinish={onFinish}>
               <Form.Item

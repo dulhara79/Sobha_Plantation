@@ -1,10 +1,28 @@
 import React from "react";
-import { Table, Button, Breadcrumb } from "antd";
-import { HomeOutlined, PlusOutlined, FilePdfOutlined } from "@ant-design/icons";
+import { Table, Button, Breadcrumb, message } from "antd";
+import { HomeOutlined, PlusOutlined, FilePdfOutlined, EditOutlined, DeleteOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 
 const LandPreparation = () => {
+  const handleEdit = (key) => {
+    message.info(`Editing item with key: ${key}`);
+    // Implement your edit functionality here
+  };
+
+  const handleDelete = (key) => {
+    // Confirm before deletion
+    if (window.confirm(`Are you sure you want to delete item with key: ${key}?`)) {
+      message.info(`Deleted item with key: ${key}`);
+      // Implement your delete functionality here
+    }
+  };
+
+  const handleInfo = (key) => {
+    message.info(`Info for item with key: ${key}`);
+    // Implement your info functionality here
+  };
+
   const columns = [
     {
       title: "Soil pH",
@@ -39,11 +57,18 @@ const LandPreparation = () => {
     {
       title: "Actions",
       key: "actions",
-      render: () => (
+      render: (text, record) => (
         <div className="flex space-x-2">
-          <Button type="primary" icon={<i className="fas fa-edit" />} />
-          <Button type="danger" icon={<i className="fas fa-trash" />} />
-          <Button icon={<i className="fas fa-info-circle" />} />
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={() => handleEdit(record.key)}
+          />
+          <Button
+            type="danger"
+            icon={<DeleteOutlined />}
+            onClick={() => handleDelete(record.key)}
+          />
         </div>
       ),
     },
@@ -109,13 +134,11 @@ const LandPreparation = () => {
               title: "Dashboard",
             },
             {
-                href: "",
-                title: "Land Preparation",
-              },
+              href: "",
+              title: "Land Preparation",
+            },
           ]}
         />
-
-       
 
         {/* Page Header */}
         <div className="bg-white shadow-md rounded-lg p-4 my-4">

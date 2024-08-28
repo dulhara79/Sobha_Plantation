@@ -129,11 +129,11 @@ export default function App() {
       {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="/varietyCrop" element={<VarietyCrop />} />
-      <Route path="cvForm" element={<CropVarietyForm />} />
-      <Route path="seedlingDistribution" element={<Seedling />} />
-      <Route path="schedules" element={<Schedules />} />
-      <Route path="scheduleForm" element={<ScheduleForm />} />
-      <Route path="landPreparation" element={<LandPreparation />} />
+      <Route path="/cvForm" element={<CropVarietyForm />} />
+      <Route path="/seedlingDistribution" element={<Seedling />} />
+      <Route path="/schedules" element={<Schedules />} />
+      <Route path="/scheduleForm" element={<ScheduleForm />} />
+      <Route path="/landPreparation" element={<LandPreparation />} />
         
       {/* buyers */}
       <Route path="/buyer-registration" element={<BuyerRegistrationForm />} />
