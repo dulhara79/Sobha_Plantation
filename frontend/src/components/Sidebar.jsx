@@ -33,7 +33,7 @@ const Sidebar = ({ className = "" }) => {
     { name: "Crop Care", icon: <BugReportOutlined />, path: "/crop-care/dashboard" },
     { name: "Products", icon: <ViewInAr />, path: "/products/productdashboard" },
     { name: "Field View", icon: <FilterVintageOutlined />, path: "/cultivationDashboard" },
-    { name: "Buyers", icon: <Person />, path: "/buyers/dashboard" },
+    { name: "Buyers", icon: <Person />, path: "/buyer-registration" },
   ];
 
   console.log("location.pathname: "+location.pathname);
@@ -72,4 +72,3 @@ Sidebar.propTypes = {
 };
 
 export default Sidebar;
-

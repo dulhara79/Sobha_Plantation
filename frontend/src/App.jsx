@@ -1,8 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
-
-
 // landing page and dashboard
 import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -66,6 +64,9 @@ import ScheduleForm from "./pages/CropVarieties/ScheduleForm.jsx";
 import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
 
 // buyers
+import BuyerRegistrationForm from "./pages/BuyerRegistrationForm.jsx";
+import BuyerTable from "./pages/BuyerTable.jsx";
+import Profile from './components/Profile';
 
 
 // import Test from "./pages/Test.jsx";
@@ -89,7 +90,6 @@ export default function App() {
       <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} />
       <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
       <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />
-
 
       {/* inventory */}
       <Route path="/Inventory/Fertilizer" element={<Fertilizer/>} />
@@ -136,6 +136,9 @@ export default function App() {
       <Route path="landPreparation" element={<LandPreparation />} />
         
       {/* buyers */}
+      <Route path="/buyer-registration" element={<BuyerRegistrationForm />} />
+      <Route path="/buyert" element={<BuyerTable />} />
+      <Route path="/profile" element={<Profile />} />
 
       {/* page not found & error page */}
       {/* <Route path="/test" element={<Test />} /> */}
