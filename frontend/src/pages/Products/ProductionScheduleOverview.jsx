@@ -117,8 +117,8 @@ const ProductionScheduleOverview = () => {
   };
 
   // Handle update
-  const handleUpdate = (scheduleId) => {
-    navigate(`/products/editschedule/${scheduleId}`);
+  const handleUpdate = (id) => {
+    navigate(`/products/editschedule/${id}`);
   };
 
   // Handle delete

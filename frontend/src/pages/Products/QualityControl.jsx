@@ -12,7 +12,6 @@ const QualityControl = () => {
   
   // State to handle inspection data
   const [inspectionData, setInspectionData] = useState([]);
-
   useEffect(() => {
     // Fetch or update inspection data dynamically here
     // Example: fetchInspectionData();
@@ -66,7 +65,6 @@ const QualityControl = () => {
 
   // Table columns definition
   const columns = [
-    
     {
       title: "Product Type",
       dataIndex: "productType",

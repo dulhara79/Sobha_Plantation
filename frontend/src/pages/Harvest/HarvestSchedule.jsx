@@ -1,67 +1,149 @@
-import React, { useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowBack } from "@mui/icons-material";
+import { Breadcrumb, Table, Button, Input, Modal, Row, Col } from "antd";
+import axios from "axios";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
+import moment from "moment";
+import { HomeOutlined } from "@ant-design/icons";
 import "../../index.css";
-import { HomeOutlined } from "@mui/icons-material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Breadcrumb } from "antd";
-import { useNavigate } from "react-router-dom";
+
+const { Search } = Input;
 
 const HarvestSchedule = () => {
+  const [schedules, setSchedules] = useState([]);
+  const [filteredSchedules, setFilteredSchedules] = useState([]);
+  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
 
-  const onHomeClick = useCallback(() => {
-    navigate("/harvest/harvestdashboard"); // Navigate to HarvestDashboard
-  }, [navigate]);
+  // Fetch schedules from API
+  const fetchSchedules = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/harvest");
+      if (response.data.success) {
+        setSchedules(response.data.data);
+        setFilteredSchedules(response.data.data);
+      } else {
+        console.error("Error fetching schedules: ", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching schedules: ", error.message);
+    }
+  };
 
-  const onBackClick = useCallback(() => {
-    navigate(-1); // Navigate back to the previous page
-  }, [navigate]);
+  useEffect(() => {
+    fetchSchedules();
+  }, []);
 
+  // Search schedules
+  const handleSearch = (value) => {
+    setSearchText(value);
+    const filtered = schedules.filter((schedule) =>
+      schedule.cropType.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredSchedules(filtered);
+  };
+
+  // Confirm before deleting a schedule
+  const confirmDelete = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this schedule?",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk: () => handleDelete(id),
+    });
+  };
+
+  // Delete schedule
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(`http://localhost:5000/api/harvest/${id}`);
+      if (response.data.success) {
+        fetchSchedules();
+      } else {
+        console.error("Error deleting schedule: ", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error deleting schedule: ", error.message);
+    }
+  };
+
+  // Columns definition
+  const columns = [
+    { title: "Harvest ID", dataIndex: "harvestId", key: "harvestId" },
+    { title: "Crop Type", dataIndex: "cropType", key: "cropType" },
+    {
+      title: "Harvest Date",
+      dataIndex: "harvestDate",
+      key: "harvestDate",
+      render: (date) => moment(date).format("YYYY-MM-DD"),
+      sorter: (a, b) => new Date(a.harvestDate) - new Date(b.harvestDate),
+    },
+    { title: "Start Time", dataIndex: "startTime", key: "startTime" },
+    { title: "End Time", dataIndex: "endTime", key: "endTime" },
+    { title: "Field Number", dataIndex: "fieldNumber", key: "fieldNumber" },
+    { title: "Harvest Method", dataIndex: "harvestMethod", key: "harvestMethod" },
+    { title: "Estimated Yield", dataIndex: "estimatedYield", key: "estimatedYield" },
+    { title: "Number of Workers", dataIndex: "numberOfWorkers", key: "numberOfWorkers" },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (text, record) => (
+        <span style={{ display: 'flex', gap: '10px' }}>
+          <Button onClick={() => navigate(`/harvest/edit/${record.harvestId}`)}>Edit</Button>
+          <Button onClick={() => confirmDelete(record.harvestId)} danger>Delete</Button>
+        </span>
+      ),
+    }
+  ];
+
+  // Navigation Handlers
   const onGroupContainerClick = useCallback(() => {
-    navigate("/harvest/harvest-schedule"); // Navigate to harvest-schedule
+    navigate("/harvest/harvest-schedule");
   }, [navigate]);
 
   const onGroupContainerClick1 = useCallback(() => {
-    navigate("/harvest/yield"); // Navigate to yield
+    navigate("/harvest/yield");
   }, [navigate]);
 
   const onGroupContainerClick2 = useCallback(() => {
-    navigate("/harvest/task"); // Navigate to task
+    navigate("/harvest/task");
   }, [navigate]);
 
-  const handleEdit = (id) => {
-    console.log(`Edit item with id: ${id}`);
-    // Implement edit logic here
-  };
+  const onHomeClick = useCallback(() => {
+    navigate("/harvest/harvestdashboard");
+  }, [navigate]);
 
-  const handleDelete = (id) => {
-    console.log(`Delete item with id: ${id}`);
-    // Implement delete logic here
+  const onBackClick = useCallback(() => {
+    navigate(-1);
+  }, [navigate]);
+
+  // Function to format today's date
+  const getTodayDate = () => {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date().toLocaleDateString(undefined, options);
   };
 
   return (
-    <div>
-      <Header />
-      <Sidebar className="sidebar" />
-      <div className="ml-[300px] p-5">
-        
-        {/* Navigation Bar */}
-        <nav className="p-4 mb-5">
-          <div className="container flex items-center justify-between mx-auto space-x-4">
+    <div className="app">
+      <Sidebar />
+      <div className="content" style={{ marginLeft: '250px' }}> {/* Add margin to create space from the sidebar */}
+        <Header />
+        <nav className="p-4 mb-5" style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+          <div className="container flex items-center space-x-4">
             <div
               className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer"
               onClick={onBackClick}
             >
-              <ArrowBackIcon className="text-gray-700" />
+              <ArrowBack className="text-gray-700" />
             </div>
             <div
               className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
               onClick={onHomeClick}
             >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+              <a className="relative font-bold text-[inherit] inline-block w-full text-center">
                 Home
               </a>
             </div>
@@ -69,7 +151,7 @@ const HarvestSchedule = () => {
               className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#1D6660] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
               onClick={onGroupContainerClick}
             >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+              <a className="relative font-bold text-[inherit] inline-block w-full text-center">
                 Schedule
               </a>
             </div>
@@ -77,7 +159,7 @@ const HarvestSchedule = () => {
               className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
               onClick={onGroupContainerClick1}
             >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+              <a className="relative font-bold text-[inherit] inline-block w-full text-center">
                 Yield Records
               </a>
             </div>
@@ -85,77 +167,46 @@ const HarvestSchedule = () => {
               className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
               onClick={onGroupContainerClick2}
             >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+              <a className="relative font-bold text-[inherit] inline-block w-full text-center">
                 Task Assign
               </a>
             </div>
           </div>
         </nav>
 
-        <Breadcrumb
-          items={[
-            {
-              href: '',
-              title: <HomeOutlined />,
-            },
-            {
-              title: "Schedule",
-            },
-            {
-              title: "Dashboard",
-            },
-          ]}
-        />
+        {/* <Breadcrumb style={{ marginBottom: '30px' }}>
+          <Breadcrumb.Item onClick={() => navigate(-1)}>
+            <ArrowBack style={{ marginRight: 50 }} /> Back
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Harvest Schedule</Breadcrumb.Item>
+        </Breadcrumb> */}
 
-        <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
-            
-          {/* Harvest Schedule Table */}
+        <Row justify="space-between" align="middle" style={{ marginBottom: '24px' }}>
+          <Col style={{ flex: 1, textAlign: 'right' }}>
+            <Search
+              placeholder="Search by Crop Type"
+              onSearch={handleSearch}
+              enterButton
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              style={{ width: 300, marginRight: 20 }}
+            />
+          </Col>
+          <Col style={{ flex: 1 }}>
+            <Button type="primary" onClick={() => navigate("/harvest/addschedule")} style={{ marginLeft: 'auto' }}>
+              Add Schedule
+            </Button>
+          </Col>
+        </Row>
 
-          <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-              <thead>
-                <tr className="bg-gray-200 text-gray-600 text-left">
-                  <th className="px-4 py-2 border-b">Harvest ID</th>
-                  <th className="px-4 py-2 border-b">Crop Type</th>
-                  <th className="px-4 py-2 border-b">Harvest Date</th>
-                  <th className="px-4 py-2 border-b">Start Time</th>
-                  <th className="px-4 py-2 border-b">End Time</th>
-                  <th className="px-4 py-2 border-b">Field Number</th>
-                  <th className="px-4 py-2 border-b">Estimated Yield</th>
-                  <th className="px-4 py-2 border-b">Harvest Method</th>
-                  <th className="px-4 py-2 border-b">Number of Workers</th>
-                  <th className="px-4 py-2 border-b">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* Example Row */}
-                <tr>
-                  <td className="px-4 py-2 border-b">1</td>
-                  <td className="px-4 py-2 border-b">Coconut</td>
-                  <td className="px-4 py-2 border-b">2024-08-24</td>
-                  <td className="px-4 py-2 border-b">08:00 AM</td>
-                  <td className="px-4 py-2 border-b">05:00 PM</td>
-                  <td className="px-4 py-2 border-b">Field A</td>
-                  <td className="px-4 py-2 border-b">5000 kg</td>
-                  <td className="px-4 py-2 border-b">Manual</td>
-                  <td className="px-4 py-2 border-b">10</td>
-                  <td className="px-4 py-2 border-b flex items-center space-x-2">
-                    <button
-                      onClick={() => handleEdit(1)}
-                      className="text-blue-500 hover:text-blue-700"
-                    >
-                      <EditIcon />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(1)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <DeleteIcon />
-                    </button>
-                  </td>
-                </tr>
-                {/* Add more rows as needed */}
-              </tbody>
-            </table>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '25px' }}>
+          <Table
+            dataSource={filteredSchedules}
+            columns={columns}
+            rowKey={(record) => record.harvestId}
+            pagination={{ pageSize: 5 }}
+            style={{ width: '97%' }}
+          />
         </div>
       </div>
     </div>
