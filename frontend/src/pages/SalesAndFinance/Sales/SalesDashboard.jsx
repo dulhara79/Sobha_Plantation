@@ -47,24 +47,24 @@ const SalesDashboard = () => {
           {/* Rectangle Icons */}
           <div className="grid grid-cols-2 gap-4">
             <div
-              className="flex items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
+              className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
               onClick={() => navigateTo("/salesAndFinance/sales/addSalesRecord")}
             >
-              <AddIcon fontSize="large" className="mr-2" />
+              <AddIcon fontSize="large" className="mb-8 mr-2 size-24" />
               <span className="text-xl font-semibold">Add Record</span>
             </div>
             <div
-              className="flex items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
-              onClick={() => navigateTo("/view-records")}
+              className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
+              onClick={() => navigateTo("/salesAndFinance/sales/viewSalesRecord")}
             >
-              <ListIcon fontSize="large" className="mr-2" />
+              <ListIcon fontSize="large" className="mb-8 mr-2 size-24" />
               <span className="text-xl font-semibold">View All Records</span>
             </div>
             <div
-              className="flex items-center justify-center col-span-2 h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
-              onClick={() => navigateTo("/analytics")}
+              className="flex flex-col items-center justify-center col-span-2 h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
+              onClick={() => navigateTo("/salesAndFinance/sales/analytics")}
             >
-              <AnalyticsIcon fontSize="large" className="mr-2" />
+              <AnalyticsIcon fontSize="large" className="mb-8 mr-2 size-24" />
               <span className="text-xl font-semibold">Analytics</span>
             </div>
           </div>

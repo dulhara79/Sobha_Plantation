@@ -125,7 +125,7 @@ const CropVarietyForm = () => {
                 <Button type="primary" htmlType="submit">
                   Submit
                 </Button>
-                <Button type="default" htmlType="button" className="ml-2">
+                <Button type="default" htmlType="button" className="ml-2"  onClick={() => navigate(-1)}>
                   Cancel
                 </Button>
               </Form.Item>

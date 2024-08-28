@@ -7,7 +7,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Breadcrumb } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
-import WeatherComponent from "../../components/WeatherInf"; // Ensure the path is correct
+import WeatherComponent from "../../components/WeatherInf"; 
 
 const HarvestDashboard = () => {
   const navigate = useNavigate();

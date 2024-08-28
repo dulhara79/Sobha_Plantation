@@ -5,20 +5,20 @@ const harvestScheduleSchema = mongoose.Schema({
         type: String,
         required: [true, 'Harvest ID is required'],
         unique: true,
-        trim: true, // Removes whitespace from both ends of the string
-        minlength: [3, 'Harvest ID must be at least 3 characters long'], // Minimum length validation
+        trim: true,
+        minlength: [3, 'Harvest ID must be at least 3 characters long'],
     },
     cropType: {
         type: String,
         required: [true, 'Crop type is required'],
-        enum: ['Coconut', 'Banana', 'Pepper', 'Papaya'], // Only allow specific crop types
+        enum: ['Coconut', 'Banana', 'Pepper', 'Papaya'],
     },
     harvestDate: {
         type: Date,
         required: [true, 'Harvest date is required'],
         validate: {
             validator: function(value) {
-                return value >= new Date(); // Harvest date must be today or in the future
+                return value >= new Date().setHours(0, 0, 0, 0); // Compare dates without time
             },
             message: 'Harvest date cannot be in the past',
         },
@@ -26,7 +26,7 @@ const harvestScheduleSchema = mongoose.Schema({
     startTime: {
         type: String,
         required: [true, 'Start time is required'],
-        match: [/^([01]\d|2[0-3]):([0-5]\d)$/, 'Start time must be in HH:mm format'], // Regex for time validation
+        match: [/^([01]\d|2[0-3]):([0-5]\d)$/, 'Start time must be in HH:mm format'],
     },
     endTime: {
         type: String,
@@ -34,7 +34,7 @@ const harvestScheduleSchema = mongoose.Schema({
         match: [/^([01]\d|2[0-3]):([0-5]\d)$/, 'End time must be in HH:mm format'],
         validate: {
             validator: function(value) {
-                return value > this.startTime; // End time must be after start time
+                return value > this.startTime;
             },
             message: 'End time must be after start time',
         },
@@ -42,28 +42,24 @@ const harvestScheduleSchema = mongoose.Schema({
     fieldNumber: {
         type: String,
         required: [true, 'Field number is required'],
-        unique: true,
-        match: [/^\d+$/, 'Field number must be numeric'], // Ensures field number is numeric
-    },
-    estimatedYield: {
-        type: Number,
-        required: [true, 'Estimated yield is required'],
-        min: [1, 'Estimated yield must be at least 1'],
-        max: [100000, 'Estimated yield cannot exceed 100,000'], // Example range for yield
+        match: [/^\d+$/, 'Field number must be numeric'],
     },
     harvestMethod: {
         type: String,
         required: [true, 'Harvest method is required'],
-        enum: ['Manual', 'Mechanical'], // Allow only these methods
+        enum: ['Manual', 'Mechanical'],
     },
-    numberOfworkers: {
+    estimatedYield: {
+        type: Number,
+        required: [true, 'Estimated yield is required'],
+    },
+    numberOfWorkers: {
         type: Number,
         required: [true, 'Number of workers is required'],
-        min: [1, 'There must be at least 1 worker'],
-        max: [500, 'Number of workers cannot exceed 500'], // Example limit for workers
+        minlength: [2, 'Harvest ID must be at least 3 characters long'],
     },
 }, {
     timestamps: true,
 });
 
-module.exports = mongoose.model('harvestSchedule', harvestScheduleSchema);
+module.exports = mongoose.model('HarvestSchedule', harvestScheduleSchema);
