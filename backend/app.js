@@ -18,6 +18,11 @@ const scheduleRoutes = require("./routes/scheduleRoutes");
 const soilTestingRoutes = require("./routes/soilTestingRoutes");
 const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
 
+/**
+ * buyer
+ */
+const BuyerRoutes = require('./routes/buyerRoute');
+
 // const salesAndFinanceRoutes = require('./routes/SalesAndFinance/Routes.js');
 const FinancialTransactionRoutes = require('./routes/SalesAndFinance/financialTransactionRoutes.js');
 const InvoiceRoutes = require('./routes/SalesAndFinance/InvoiceRoutes.js');
@@ -65,6 +70,11 @@ app.use("/api/salesAndFinance/finance/transaction", FinancialTransactionRoutes);
 app.use("/api/salesAndFinance/finance/invoice", InvoiceRoutes);
 app.use("/api/salesAndFinance/sales/analytics", SalesAnalyticsRoutes);
 app.use("/api/salesAndFinance/sales/tracking", SalesTrackingRoutes);
+
+/**
+ * buyer
+ */
+app.use('/api/buyer', BuyerRoutes);
 
 const PORT = process.env.PORT || 8090;
 
