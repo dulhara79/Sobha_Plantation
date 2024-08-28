@@ -39,6 +39,7 @@ const qualityControlRoute = require('./routes/Products/qualityControlRoute.js');
  */
 const diseasesRoute = require('./routes/DiseaseRoutes/diseasesRoute');
 
+
 /**
  * crop
  */
@@ -106,6 +107,7 @@ app.use("/api/plant-growth", plantGrowthRoutes);
  * crop care
  */
 app.use('/api/diseases', diseasesRoute);
+
 
 
 /**
