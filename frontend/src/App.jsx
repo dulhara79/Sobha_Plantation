@@ -17,6 +17,16 @@ import MaintenanceForm from "./pages/Inventory/MaintenanceForm.jsx";
 // employee
 
 // harvest
+<<<<<<< Updated upstream
+=======
+import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
+import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
+
+import InventoryDashboard from"./pages/Inventory/InventoryDashboard";
+import FertilizerForm from "./pages/Inventory/FertilizerForm.jsx";
+import Maintenance from "./pages/Inventory/FertilizerForm.jsx";
+import FertilizerForm from "./pages/Inventory/FertilizerForm.jsx";
+>>>>>>> Stashed changes
 
 // crop care
 
@@ -41,12 +51,22 @@ export default function App() {
       {/* finance */}
 
       {/* inventory */}
+<<<<<<< Updated upstream
       <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>}/>
       <Route path="/Inventory/Fertilizer" element={<Fertilizer/>}/>
       <Route path="/Inventory/FertilizerForm" element={<FertilizerForm />} />
       <Route path="/Inventory/Maintenance" element={<Maintenance/>}/>
       <Route path="/Inventory/MaintenanceForm" element={<MaintenanceForm />} />
       
+=======
+      <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard />} />
+      <Route path="/Inventory/Fertilizer" element={<Fertilizer />} />
+      <Route path="/Inventory/FertilizerForm" element={<FertilizerForm />} />
+      <Route path="/Inventory/Maintenance" element={<Maintenance />} />
+      <Route path="/Inventory/MaintenanceForm" element={<MaintenanceForm />} />
+      
+
+>>>>>>> Stashed changes
       {/* employee */}
 
       {/* harvest */}

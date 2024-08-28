@@ -1,5 +1,9 @@
 <<<<<<< Updated upstream:backend/controllers/harvestScheduleController.js
+<<<<<<< Updated upstream:backend/controllers/harvestScheduleController.js
 const HarvestSchedule = require('../models/Harvest.js');
+=======
+const HarvestSchedule = require('../../models/Harvest/Harvest');
+>>>>>>> Stashed changes:backend/controllers/Harvest/harvestScheduleController.js
 =======
 const HarvestSchedule = require('../../models/Harvest/Harvest');
 >>>>>>> Stashed changes:backend/controllers/Harvest/harvestScheduleController.js
