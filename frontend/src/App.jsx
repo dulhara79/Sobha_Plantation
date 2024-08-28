@@ -26,7 +26,6 @@ import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAna
  import InventoryDashboard from "./pages/Inventory/InventoryDashboard.jsx";
  import Maintenance from "./pages/Inventory/Maintenance.jsx";
  import MaintenanceForm from "./pages/Inventory/MaintenanceForm.jsx";
- 
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
 import Eregistration from "./pages/employee/Eregistration.jsx";
@@ -126,7 +125,7 @@ export default function App() {
       <Route path="/harvest/task" element={<TaskAssign/>} />
       <Route path="/harvest/addschedule" element={<AddHarvestSchedule />} />
       <Route path="/harvest/edit/:id" element={<EditHarvestSchedule />} />
-      
+        
       {/* crop care */}
       <Route path="/diseases" element={<DiseasesDashboard />} />
       <Route path="/coconutInspections" element={<CoconutInspections />} />
