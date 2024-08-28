@@ -22,15 +22,14 @@ const soilTestingRoutes = require("./routes/soilTestingRoutes");
 const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
 
 //diseases
-{/* <Route path="/diseases" element={<DiseasesDashboard />} />
-          <Route path="/coconutInspections" element={<CoconutInspections />} />
-          <Route path="/intercropInspections" element={<IntercropInspections />} />
-          <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
-          <Route path="/addCropsDiseases" element={<AddCropsDiseases />} />
-          <Route path="/coconutTreatments" element={<CoconutTreatments />} />
-          <Route path="/coconutPests" element={<CoconutPests />} />
-          <Route path="/maintenance" element={<Maintenance />} /> */}
-
+const DiseasesDashboard = require('./routes/DiseaseRoutes/DiseasesDashboard');
+const CoconutInspections = require('./routes/DiseaseRoutes/CoconutInspections');
+const IntercropInspections = require('./routes/DiseaseRoutes/IntercropInspections');
+const AddCoconutDiseases = require('./routes/DiseaseRoutes/AddCoconutDiseases');
+const AddCropsDiseases = require('./routes/DiseaseRoutes/AddCropsDiseases');
+const CoconutTreatments = require('./routes/DiseaseRoutes/CoconutTreatments');
+const CoconutPests = require('./routes/DiseaseRoutes/CoconutPests');
+const Maintenance = require('./routes/DiseaseRoutes/Maintenance');
 
 //buyer
 const BuyerRoutes = require('./routes/buyerRoute');
