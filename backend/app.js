@@ -105,7 +105,7 @@ app.use("/api/plant-growth", plantGrowthRoutes);
 /**
  * crop care
  */
-app.use('/diseases', diseasesRoute);
+app.use('/api/diseases', diseasesRoute);
 
 
 /**
