@@ -5,11 +5,20 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 
-// finance
+/**
+ * sales and finance
+*/ 
+//sales
 import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
 import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
 import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
+import ViewSalesRecordDashboard from "./pages/SalesAndFinance/Sales/ViewSalesRecordDashboard.jsx";
+import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage.jsx";
+// finance
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
+import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
+import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDisplay.jsx";
+import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
 
 // inventory
  import Fertilizer from "./pages/Inventory/Fertilizer.jsx";
@@ -75,7 +84,12 @@ export default function App() {
       <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
       <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
       <Route path="/salesAndFinance/sales/addSalesRecord" element={<AddSalesRecordDashboard />} />
+      <Route path="/salesAndFinance/sales/viewSalesRecord" element={<ViewSalesRecordDashboard />} />
+      <Route path="/salesAndFinance/sales/analytics" element={<SalesAnalyticsPage />} />
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
+      <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} />
+      <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
+      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />
 
       {/* inventory */}
       <Route path="/Inventory/Fertilizer" element={<Fertilizer/>} />
@@ -84,7 +98,7 @@ export default function App() {
       <Route path="/Inventory/FertilizerForm" element={<FertilizerForm/>} />
       <Route path="/Inventory/MaintenanceForm" element={<MaintenanceForm/>} />
 
-      {/* employee */}
+      {/* employee */}        
       <Route path="/employee/dashboard" element={<Edashboard/>}/>
       <Route path="/employee/registration" element= {<Eregistration/>}/>
       <Route path="/employee/salary" element= {<Esalary/>}/>
@@ -115,11 +129,11 @@ export default function App() {
       {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="/varietyCrop" element={<VarietyCrop />} />
-      <Route path="cvForm" element={<CropVarietyForm />} />
-      <Route path="seedlingDistribution" element={<Seedling />} />
-      <Route path="schedules" element={<Schedules />} />
-      <Route path="scheduleForm" element={<ScheduleForm />} />
-      <Route path="landPreparation" element={<LandPreparation />} />
+      <Route path="/cvForm" element={<CropVarietyForm />} />
+      <Route path="/seedlingDistribution" element={<Seedling />} />
+      <Route path="/schedules" element={<Schedules />} />
+      <Route path="/scheduleForm" element={<ScheduleForm />} />
+      <Route path="/landPreparation" element={<LandPreparation />} />
         
       {/* buyers */}
       <Route path="/buyer-registration" element={<BuyerRegistrationForm />} />
