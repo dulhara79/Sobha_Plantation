@@ -34,6 +34,7 @@ const UserManagementTable = () => {
     { id: 1, userName: 'a1', firstName: 'Kmal', lastName: 'Perera', gender: 'Male', dob: '1997-08-15', contactNo: '047825869', district: 'Colombo' },
     { id: 2, userName: 'a2', firstName: 'Nimal', lastName: 'Subasinghe', gender: 'Male', dob: '1997-08-15', contactNo: '047825869', district: 'Colombo' },
     { id: 3, userName: 'a3', firstName: 'Sunil', lastName: 'Shantha', gender: 'Male', dob: '1997-08-15', contactNo: '047825869', district: 'Gampaha' },
+    
     { id: 4, userName: 'a4', firstName: 'Amal', lastName: 'Perera', gender: 'Male', dob: '1997-08-15', contactNo: '047825869', district: 'Matara' },
     { id: 5, userName: 'a5', firstName: 'Janaka', lastName: 'Gunathileka', gender: 'Male', dob: '1997-08-15', contactNo: '047825869', district: 'Galle' },
     { id: 6, userName: 'a6', firstName: 'Kmal', lastName: 'Perera', gender: 'Male', dob: '1997-08-15', contactNo: '047825869', district: 'Kandy' },
