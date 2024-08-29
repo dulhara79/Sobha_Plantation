@@ -38,7 +38,8 @@ const maintenanceRoutes = require('./routes/Inventory/maintenanceRoute.js');
 /**
  * crop care
  */
-const DiseasesDashboard = require('./routes/DiseaseRoutes/diseasesRoute');
+const diseasesRoute = require('./routes/DiseaseRoutes/diseasesRoute');
+
 
 /**
  * crop
@@ -67,7 +68,6 @@ const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoute
  */
 const salaryEmployeeRoutes = require("./routes/salaryEmployeeRoutes");
 const ETaskRoutes = require('./routes/ETaskRoutes');
-const diseasesRoutes = require("./routes/diseases");
 
 const app = express();
 
@@ -110,7 +110,8 @@ app.use("/api/plant-growth", plantGrowthRoutes);
 /**
  * crop care
  */
-app.use('/diseases', diseasesRoute);
+app.use('/api/diseases', diseasesRoute);
+
 
 
 /**

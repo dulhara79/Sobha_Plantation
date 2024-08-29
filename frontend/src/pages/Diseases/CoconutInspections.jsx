@@ -134,7 +134,7 @@ const CoconutInspections = () => {
         {/* Navigation Items */}
         <div className="flex space-x-4">
           <Link to="/diseases" className="text-[#3CCD65] hover:text-[#2b8f57]">
-            Summary
+            Home
           </Link>
           <Link to="/CoconutInspections" className="text-[#236A64] font-semibold">
             Inspections

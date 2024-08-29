@@ -26,6 +26,7 @@ import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAna
  import InventoryDashboard from "./pages/Inventory/InventoryDashboard.jsx";
  import Maintenance from "./pages/Inventory/Maintenance.jsx";
  import MaintenanceForm from "./pages/Inventory/MaintenanceForm.jsx";
+ 
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
 import Eregistration from "./pages/employee/Eregistration.jsx";
