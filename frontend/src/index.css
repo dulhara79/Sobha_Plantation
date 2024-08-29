@@ -94,3 +94,34 @@ a {
 .animate-bounce {
   animation: bounce 2s infinite;
 }
+
+/* products */
+
+/* Apply consistent padding and margin to navigation items */
+nav .container {
+  padding: 0 1rem;
+}
+
+/* Ensure flex container items are evenly spaced */
+nav .container .flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Apply spacing and alignment to buttons */
+.ant-btn {
+  margin: 0 8px;
+}
+
+/* Adjust header styles for better alignment */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Make sure the PDF content is styled consistently */
+#pdf-content {
+  margin-top: 1rem;
+}
+
