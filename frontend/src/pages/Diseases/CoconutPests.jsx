@@ -3,9 +3,11 @@ import Header from '../../components/Header';
 import Sidebar from '../../components/Sidebar';
 import { HomeOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Breadcrumb, Button } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const CoconutPests = () => {
+  const navigate = useNavigate(); // Hook to navigate between pages
+
   return (
     <div>
       <Header />
@@ -37,6 +39,9 @@ const CoconutPests = () => {
           <Link to="/Maintenance" className="text-[#3CCD65] hover:text-[#2b8f57]">
             Maintenance
           </Link>
+          <Link to="/UserProfile" className="text-[#3CCD65] hover:text-[#2b8f57]">
+            My Profile
+          </Link>
         </div>
       </nav>
 
@@ -49,78 +54,103 @@ const CoconutPests = () => {
             },
             {
               href: '',
-              title: 'Coconut Pests',
+              title: 'Coconut Pests and Diseases',
             },
           ]}
         />
 
-        {/* Summary Section */}
-        <div className="mt-8">
-          <h1 className="text-5xl font-semibold text-center mb-9">Common Coconut Pests</h1>
+        {/* Topic Heading */}
+        <div className="flex justify-center items-center">
+          <h1 className="text-5xl font-semibold">Pests and Diseases</h1>
+        </div>
 
- {/* Grid for Pest Buttons */}
- <div className="grid grid-cols-2 gap-4">
+        {/* Buttons for Coconuts and Inter Crops */}
+        <div className="flex justify-center space-x-8 mt-2">
+          <Button
+            style={{
+              backgroundColor: 'rgba(196, 196, 196, 0.44)',
+              width: '300px',
+              height: '28px',
+            }}
+            onClick={() => navigate('/coconutPests')}
+          >
+            Coconuts
+          </Button>
+          <Button
+            style={{
+              backgroundColor: 'rgba(196, 196, 196, 0)',
+              width: '300px',
+              height: '28px',
+            }}
+            onClick={() => navigate('/intercropPests')}
+          >
+            Inter Crops
+          </Button>
+        </div>
+
+        {/* Pest Section */}
+        <div className="mt-8 mb-8">
+          <h1 className="text-2xl font-semibold mb-9">Common Coconut Pests</h1>
+
+          {/* Grid for Pest Buttons */}
+          <div className="grid grid-cols-2 gap-4">
             {/* Buttons for Different Pests */}
-            <Button 
-              type="primary" 
-              block 
-              className="bg-[#8BEF8A] hover:bg-[#75D873] text-black py-16 px-6 text-lg rounded-lg"
-            >
-              Coconut Leaf Miner <RightOutlined />
-            </Button>
-            <Button 
-              type="primary" 
-              block 
-              className="bg-[#8BEF8A] hover:bg-[#75D873] text-black py-16 px-6 text-lg rounded-lg"
-            >
-              The Black Beetle <RightOutlined />
-            </Button>
-            <Button 
-              type="primary" 
-              block 
-              className="bg-[#8BEF8A] hover:bg-[#75D873] text-black py-16 px-6 text-lg rounded-lg"
-            >
-              Coconut Mites <RightOutlined />
-            </Button>
-            <Button 
-              type="primary" 
-              block 
-              className="bg-[#8BEF8A] hover:bg-[#75D873] text-black py-16 px-6 text-lg rounded-lg"
-            >
-              Termites <RightOutlined />
-            </Button>
-            <Button 
-              type="primary" 
-              block 
-              className="bg-[#8BEF8A] hover:bg-[#75D873] text-black py-16 px-6 text-lg rounded-lg"
-            >
-              The Red Weevil <RightOutlined />
-            </Button>
-            <Button 
-              type="primary" 
-              block 
-              className="bg-[#8BEF8A] hover:bg-[#75D873] text-black py-16 px-6 text-lg rounded-lg"
-            >
-              Mammalian Pests <RightOutlined />
-            </Button>
+            {['Coconut Leaf Miner', 'The Black Beetle', 'Coconut Mites', 'Termites', 'The Red Weevil', 'Mammalian Pests'].map((pest) => (
+              <Button
+                key={pest}
+                type="primary"
+                block
+                className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
+                style={{
+                  backgroundImage: 'linear-gradient(135deg, #4CAF50 30%, #E3F2FD 100%)',
+                  border: 'none',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
+                }}
+              >
+                {pest} <RightOutlined />
+              </Button>
+            ))}
           </div>
 
-{/* Additional Buttons Section */}
-<div className="flex justify-center space-x-4 mt-8">
-            <Button
-              type="default"
-              className="bg-gray-100 text-gray-800 hover:bg-gray-400 py-6 px-5 text-lg rounded-lg mt-4 mb-8"
-              onClick={() => window.location.href = '/CoconutDiseases'} // Adjust path accordingly
-            >
-              Coconut Diseases &gt;&gt;
-            </Button>
-            <Button
-              type="default"
-              className="bg-gray-100 text-gray-800 hover:bg-gray-400 py-6 px-5 text-lg rounded-lg mt-4 mb-8"
-              onClick={() => window.location.href = '/OtherCrops'} // Adjust path accordingly
-            >
-              Other Crops &gt;&gt;
-            </Button>
+          {/* Diseases Section */}
+          <div className="mt-10">
+            <h1 className="text-2xl font-semibold mb-9">Common Coconut Diseases</h1>
+
+            {/* Grid for Disease Buttons */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Buttons for Different Diseases */}
+              {['Bud Rot', 'Leaf Spot', 'Stem Bleeding', 'Root Wilt', 'Lethal Yellowing', 'Ganoderma'].map((disease) => (
+                <Button
+                  key={disease}
+                  type="primary"
+                  block
+                  className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
+                  style={{
+                    backgroundImage: 'linear-gradient(135deg, #4CAF50 30%, #E3F2FD 100%)',
+                    border: 'none',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
+                  }}
+                >
+                  {disease} <RightOutlined />
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
