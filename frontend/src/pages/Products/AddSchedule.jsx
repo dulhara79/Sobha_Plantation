@@ -25,11 +25,15 @@ const AddSchedule = () => {
 
   const handleSubmit = async (values) => {
     try {
-      await axios.post('http://localhost:5000/api/production', {
+      // Check if the values have the correct date format
+      const payload = {
         ...values,
-        startDate: moment(values.startDate).toISOString(),
-        endDate: moment(values.endDate).toISOString(),
-      });
+        startDate: values.startDate ? moment(values.startDate).toISOString() : null,
+        endDate: values.endDate ? moment(values.endDate).toISOString() : null,
+      };
+
+      // Send POST request to the API
+      await axios.post('http://localhost:5000/api/production', payload);
       notification.success({
         message: 'Success',
         description: 'Production schedule added successfully!',
@@ -37,10 +41,11 @@ const AddSchedule = () => {
       form.resetFields();
       navigate('/products/production-overview');
     } catch (error) {
-      console.log(error);
+      // Log detailed error information
+      console.error('Failed to add production schedule:', error.response || error.message);
       notification.error({
         message: 'Error',
-        description: 'Failed to add production schedule. Please try again.',
+        description: `Failed to add production schedule. ${error.response?.data?.message || 'Please try again.'}`,
       });
     }
   };
@@ -59,7 +64,7 @@ const AddSchedule = () => {
             name="productType"
             rules={[{ required: true, message: 'Please select a product type!' }]}
           >
-            <Select placeholder="Select a product type" name="productType">
+            <Select placeholder="Select a product type">
               <Option value="coconut-oil">Coconut Oil</Option>
               <Option value="coconut-water">Coconut Water</Option>
               <Option value="coconut-milk">Coconut Milk</Option>
@@ -74,7 +79,7 @@ const AddSchedule = () => {
             name="quantity"
             rules={[{ required: true, message: 'Please enter the quantity!' }]}
           >
-            <Input type="number" placeholder="Enter quantity" name="quantity" />
+            <Input type="number" placeholder="Enter quantity" />
           </Form.Item>
 
           <Form.Item
@@ -83,7 +88,6 @@ const AddSchedule = () => {
             rules={[{ required: true, message: 'Please select the start date!' }]}
           >
             <DatePicker
-              name="startDate"
               format="YYYY-MM-DD"
               disabledDate={disablePastDates}
             />
@@ -95,7 +99,6 @@ const AddSchedule = () => {
             rules={[{ required: true, message: 'Please select the end date!' }]}
           >
             <DatePicker
-              name="endDate"
               format="YYYY-MM-DD"
               disabledDate={disablePastDates}
             />
@@ -106,7 +109,7 @@ const AddSchedule = () => {
             name="status"
             rules={[{ required: true, message: 'Please select the status!' }]}
           >
-            <Select placeholder="Select status" name="status">
+            <Select placeholder="Select status">
               <Option value="Scheduled">Scheduled</Option>
               <Option value="In Progress">In Progress</Option>
               <Option value="Completed">Completed</Option>
@@ -122,7 +125,7 @@ const AddSchedule = () => {
               { validator: validateProgress },
             ]}
           >
-            <Input type="number" placeholder="Enter progress percentage" name="progress" />
+            <Input type="number" placeholder="Enter progress percentage" />
           </Form.Item>
 
           <Form.Item>
