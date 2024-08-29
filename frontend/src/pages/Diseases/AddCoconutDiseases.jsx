@@ -82,6 +82,9 @@ const AddCoconutDiseases = () => {
               <Link to="/maintenance" className="text-[#3CCD65] hover:text-[#2b8f57]">
                 Maintenance
               </Link>
+              <Link to="/UserProfile" className="text-[#3CCD65] hover:text-[#2b8f57]">
+            My Profile
+          </Link>
             </div>
           </nav>
 
