@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
 import { Breadcrumb, Table, Button, Input, Select, Modal } from "antd";
 import axios from "axios";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import moment from "moment";
@@ -110,12 +112,6 @@ const ProductionScheduleOverview = () => {
     filterSchedules(searchText, filterStatus);
   };
 
-  // Handler to cancel sorting
-  const cancelSorting = () => {
-    setSorter({ field: null, order: null });
-    filterSchedules(searchText, filterStatus);
-  };
-
   // Handle update
   const handleUpdate = (id) => {
     navigate(`/products/editschedule/${id}`);
@@ -146,6 +142,106 @@ const ProductionScheduleOverview = () => {
     });
   };
 
+// Function to convert an image file to base64
+const getImageDataURL = (url) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'Anonymous'; // Ensure cross-origin images are handled
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      context.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+};
+
+// Generate PDF report
+const generatePDF = async () => {
+  try {
+    const tableContainer = document.getElementById('pdf-content');
+    if (!tableContainer) {
+      console.error('PDF content element not found');
+      return;
+    }
+
+    // Temporarily hide "Actions" column
+    const actionColumn = tableContainer.querySelectorAll('.ant-table-cell:last-child');
+    actionColumn.forEach(cell => cell.style.display = 'none');
+
+    // Hide action buttons
+    const actionButtons = tableContainer.querySelectorAll('.ant-btn');
+    actionButtons.forEach(button => button.style.display = 'none');
+
+    // Capture content
+    const canvas = await html2canvas(tableContainer, { scale: 2 });
+    const imgData = canvas.toDataURL('image/png');
+
+    // Restore "Actions" column visibility
+    actionColumn.forEach(cell => cell.style.display = '');
+
+    // Restore action buttons visibility
+    actionButtons.forEach(button => button.style.display = '');
+
+    // Load logo image
+    const logoUrl = '../src/assets/logo.png';
+    const logoDataURL = await getImageDataURL(logoUrl);
+
+    // Create PDF document
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4',
+    });
+
+    // Add header with logo and title
+    pdf.addImage(logoDataURL, 'PNG', 15, 10, 30, 30); // Logo
+    pdf.setFontSize(22);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('Production Schedule', 75, 25); // Title
+
+    // Add table content to PDF
+    const imgWidth = 190; // Width in mm
+    const pageHeight = 295; // Height in mm (A4)
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+    let heightLeft = imgHeight;
+
+    let position = 50; // Adjust to place content below header
+
+    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft >= 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    // Add footer with page number
+    pdf.setFontSize(10);
+    pdf.setFont('helvetica', 'normal');
+    for (let i = 1; i <= pdf.internal.getNumberOfPages(); i++) {
+      pdf.setPage(i);
+      pdf.text(`Page ${i}`, 190, 285, { align: 'right' });
+    }
+
+    // Save the PDF
+    pdf.save('production_schedule_report.pdf');
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    Modal.error({
+      title: 'Error',
+      content: 'Failed to generate the PDF. Please try again later.',
+    });
+  }
+};
+
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Header />
@@ -174,19 +270,19 @@ const ProductionScheduleOverview = () => {
                 onClick={onGroupContainerClick}
               >
                 <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Production
+                  Production Overview
                 </a>
               </div>
               <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen  flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
                 onClick={onGroupContainerClick1}
               >
                 <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Quality
+                  Quality Control
                 </a>
               </div>
               <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen  flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
                 onClick={onGroupContainerClick2}
               >
                 <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
@@ -196,102 +292,118 @@ const ProductionScheduleOverview = () => {
             </div>
           </nav>
 
-          {/* Breadcrumb, Search, Filter, and Table */}
-          <div className="p-6 bg-white rounded-lg shadow-lg">
-            <div className="flex items-center justify-between mb-4">
-              <Breadcrumb>
-                <Breadcrumb.Item href="">Products Dashboard</Breadcrumb.Item>
-                <Breadcrumb.Item href="">Production Overview</Breadcrumb.Item>
-              </Breadcrumb>
-              <div className="flex items-center space-x-4">
-                <Search
-                  placeholder="Search by Product Type"
-                  onSearch={onSearch}
-                  style={{ width: 200 }}
-                />
-                <Select defaultValue="All" onChange={onFilterChange}>
-                  <Option value="All">All</Option>
-                  <Option value="Scheduled">Scheduled</Option>
-                  <Option value="In Progress">In Progress</Option>
-                  <Option value="Completed">Completed</Option>
-                </Select>
-                <Button 
-                  style={{ backgroundColor: "#60DB19", color: "#fff" }} // Custom color for "Add Schedule" button
-                  onClick={() => navigate("/products/addschedule")}
-                >
-                  Add Schedule
-                </Button>
-              </div>
+          {/* Page Header */}
+          <header className="flex items-center justify-between px-6 py-4 mb-6 bg-white shadow-md">
+            <h1 className="text-2xl font-bold">Production Schedule Overview</h1>
+            <div className="flex items-center space-x-4">
+              <Search
+                placeholder="Search by product type"
+                onSearch={onSearch}
+                style={{ width: 200 }}
+              />
+              <Select
+                defaultValue="All"
+                style={{ width: 120 }}
+                onChange={onFilterChange}
+              >
+                <Option value="All">All Statuses</Option>
+                <Option value="Scheduled">Scheduled</Option>
+                <Option value="Completed">Completed</Option>
+                <Option value="Pending">Pending</Option>
+              </Select>
+              <Button 
+                type="primary" 
+                onClick={generatePDF} 
+                style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }} // Custom green color
+              >
+                Generate PDF
+              </Button>
+              <Button 
+                type="primary" 
+                onClick={() => navigate('/products/addschedule')} 
+                style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }} // Custom green color
+              >
+                Add Schedule
+              </Button>
+
             </div>
-            <Table
-              columns={[
-              
-                {
-                  title: "Product Type",
-                  dataIndex: "productType",
-                  key: "productType",
-                  sorter: true,
-                  sortOrder: sorter.field === 'productType' ? sorter.order : null,
-                },
-                {
-                  title: "Quantity",
-                  dataIndex: "quantity",
-                  key: "quantity",
-                  sorter: true,
-                  sortOrder: sorter.field === 'quantity' ? sorter.order : null,
-                },
-                {
-                  title: "Start Date",
-                  dataIndex: "startDate",
-                  key: "startDate",
-                  sorter: true,
-                  sortOrder: sorter.field === 'startDate' ? sorter.order : null,
-                  render: (text) => moment(text).format("YYYY-MM-DD"),
-                },
-                {
-                  title: "End Date",
-                  dataIndex: "endDate",
-                  key: "endDate",
-                  sorter: true,
-                  sortOrder: sorter.field === 'endDate' ? sorter.order : null,
-                  render: (text) => moment(text).format("YYYY-MM-DD"),
-                },
-                {
-                  title: "Status",
-                  dataIndex: "status",
-                  key: "status",
-                },
-                {
-                  title: "Progress",
-                  dataIndex: "progress",
-                  key: "progress",
-                },
-                {
-                  title: "Actions",
-                  key: "actions",
-                  render: (text, record) => (
-                    <span>
-                      <Button type="link" onClick={() => handleUpdate(record._id)}>
+          </header>
+
+          {/* Content Area */}
+          <main className="p-6 bg-white rounded-lg shadow-md">
+            <div id="pdf-content">
+              <Table
+                dataSource={filteredSchedules}
+                columns={[
+                  {
+                    title: 'Product Type',
+                    dataIndex: 'productType',
+                    sorter: true,
+                    onHeaderCell: (column) => ({
+                      onClick: () => handleSort('productType', sorter.order === 'ascend' ? 'descend' : 'ascend'),
+                    }),
+                  },
+                  {
+                    title: 'Quantity',
+                    dataIndex: 'quantity',
+                    sorter: true,
+                    onHeaderCell: (column) => ({
+                      onClick: () => handleSort('quantity', sorter.order === 'ascend' ? 'descend' : 'ascend'),
+                    }),
+                  },
+                  {
+                    title: 'Start Date',
+                    dataIndex: 'startDate',
+                    render: (date) => moment(date).format('YYYY-MM-DD'),
+                    sorter: true,
+                    onHeaderCell: (column) => ({
+                      onClick: () => handleSort('startDate', sorter.order === 'ascend' ? 'descend' : 'ascend'),
+                    }),
+                  },
+                  {
+                    title: 'End Date',
+                    dataIndex: 'endDate',
+                    render: (date) => moment(date).format('YYYY-MM-DD'),
+                    sorter: true,
+                    onHeaderCell: (column) => ({
+                      onClick: () => handleSort('endDate', sorter.order === 'ascend' ? 'descend' : 'ascend'),
+                    }),
+                  },
+                  {
+                    title: 'Status',
+                    dataIndex: 'status',
+                  },
+                  {
+                    title: 'Progress',
+                    dataIndex: 'progress',
+                  },
+                  {
+                    title: 'Actions',
+                    render: (text, record) => (
+                      <div>
+                      <Button 
+                        onClick={() => handleUpdate(record._id)} 
+                        style={{ marginRight: 8, backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff' }} // Blue color
+                      >
                         Edit
                       </Button>
-                      <Button type="link" danger onClick={() => confirmDelete(record._id)}>
+                      <Button 
+                        onClick={() => confirmDelete(record._id)} 
+                        type="danger"
+                        style={{ backgroundColor: '#ff4d4f', borderColor: '#ff4d4f', color: '#fff' }} // Red color
+                      >
                         Delete
                       </Button>
-                    </span>
-                  ),
-                },
-              ]}
-              dataSource={filteredSchedules}
-              rowKey="_id"
-              onChange={(pagination, filters, sorter) => {
-                if (sorter && sorter.order) {
-                  handleSort(sorter.field, sorter.order);
-                } else {
-                  cancelSorting();
-                }
-              }}
-            />
-          </div>
+                    </div>
+
+                    ),
+                  },
+                ]}
+                rowKey="_id"
+                pagination={false}
+              />
+            </div>
+          </main>
         </div>
       </div>
     </div>
