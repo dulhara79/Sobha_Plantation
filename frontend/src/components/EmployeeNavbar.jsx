@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 const menuItems = [
     { name: "HOME", path:"/employee/dashboard"  },
     { name: "REGISTRATION", path: "/employee/employeelist" },
-    { name: "ASSIGN TASKS", path: "/employee/task" },
+    { name: "ASSIGN TASKS", path: "/employee/TaskListview" },
     { name: "ATTENDANCE MARKER", path: "/employee/attendanceList" },
     { name: "SALARY", path: "/employee/salary" },
 
