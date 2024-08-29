@@ -11,14 +11,15 @@ const employeeRoutes = require('./routes/employee');
 // const salesRoutes = require('./routes/sales');
 const productionRoutes = require('./routes/Products/productionRoute.js');
 // const productionRoutes = require('./routes/productionRoute');
-const fertilizerRoutes = require('./routes/fertilizerRoute');
+
 const yieldRoutes = require('./routes/Harvest/yield');
 const harvestRoutes = require('./routes/Harvest/harvest');
 const qualityControlRoute = require('./routes/Products/qualityControlRoute.js');
 
-/**
- * fertilizer
- */
+//inventory
+const fertilizerRoutes = require('./routes/Inventory/fertilizerRoute.js');
+const maintenanceRoutes = require('./routes/Inventory/maintenanceRoute.js');
+ 
 
 
 
@@ -90,10 +91,13 @@ app.use('/api/taskRecords', ETaskRoutes);
 app.use('/api/production', productionRoutes);
 // app.use('/api/production', productionRoutes);
 app.use('/api/harvest', harvestRoutes);
-app.use('/api/fertilizer', fertilizerRoutes);
 app.use('/api/yield', yieldRoutes);
 app.use('/api/quality-control', qualityControlRoute);
 
+
+//inventory
+app.use('/api/Inventory/fertilizer', fertilizerRoutes);
+app.use('/api/Inventory/maintenance', maintenanceRoutes);
 /**
 * crop
 */

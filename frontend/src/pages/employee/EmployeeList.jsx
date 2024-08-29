@@ -9,7 +9,11 @@ import { useSnackbar } from "notistack";
 import { DatePicker, Select, Button, Table } from 'antd';
 import { DownOutlined, SearchOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-
+import Header from '../../components/Header';
+import Sidebar from '../../components/Sidebar';
+import { HomeOutlined, UserOutlined } from "@ant-design/icons";
+import { Breadcrumb } from "antd";
+import EmployeeNavbar from '../../components/EmployeeNavbar';
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
@@ -230,11 +234,26 @@ const EmployeeList = () => {
     const dataSource = filteredEmployeeRecords.map(record => ({ ...record, key: record._id }));
 
     return (
-        <div className="p-8">
-            <h1 className="text-lg font-semibold">Employee Details</h1>
-            <p className="text-sm text-gray-500">Manage employee information and generate reports.</p>
+        <div className="">
+        <Header/>
+        <Sidebar/>
+        <div className={`ml-[300px]`}>
+        <Breadcrumb
+      items={[
+          {
+              href: "",
+              title: <HomeOutlined />,
+            },
+        ]}
+    />
+        <EmployeeNavbar className="" />
+    </div>
 
-            <div className="flex items-center my-4 space-x-4">
+        <div className="p-8">
+            <h1 className={"ml-[310px] text-lg font-semibold"}>Employee Details</h1>
+            <p className={"ml-[310px] text-sm text-gray-500"}>Manage employee information and generate reports.</p>
+
+            <div className={"ml-[310px] flex items-center my-4 space-x-4"}>
                 <Select
                     defaultValue="All Types"
                     style={{ width: 120 }}
@@ -268,6 +287,7 @@ const EmployeeList = () => {
                     </button>
                 </div>
             </div>
+            <div className={`ml-[310px] overflow-x-auto`}>
 
             <Table
                 dataSource={dataSource}
@@ -285,6 +305,8 @@ const EmployeeList = () => {
                 Download PDF
             </Button>
         </div>
+    </div>
+    </div>
     );
 };
 
