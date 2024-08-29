@@ -42,7 +42,7 @@ const UserManagementTable = () => {
     { id: 6, userName: 'a6', firstName: 'Kmal', lastName: 'Perera', gender: 'Male', dob: '1997-08-15', contactNo: '047825869', district: 'Kandy' },
 
     { id: 7, userName: 'a7', firstName: 'Vihanga', lastName: 'Perera', gender: 'Male', dob: '1997-08-15', contactNo: '047825869', district: 'Colombo' },
-    
+
     { id: 8, userName: 'a8', firstName: 'Pushpitha', lastName: 'Perera', gender: 'Male', dob: '1997-08-15', contactNo: '047825869', district: 'Kandy' },
     { id: 9, userName: 'a9', firstName: 'Uvindu', lastName: 'Seneviratne', gender: 'Male', dob: '2002-10-06', contactNo: '0769922694', district: 'Colombo' },
   ];
@@ -57,6 +57,7 @@ const UserManagementTable = () => {
     // Logic to delete the user
   };
 
+  
   return (
     <div style={{
       height: 400,
