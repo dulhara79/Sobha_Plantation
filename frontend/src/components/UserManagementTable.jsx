@@ -57,7 +57,7 @@ const UserManagementTable = () => {
     // Logic to delete the user
   };
 
-  
+
   return (
     <div style={{
       height: 400,
@@ -90,5 +90,6 @@ const UserManagementTable = () => {
     </div>
   );
 };
+
 
 export default UserManagementTable;
