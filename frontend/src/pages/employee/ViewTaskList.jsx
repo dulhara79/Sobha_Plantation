@@ -3,7 +3,7 @@ import Sidebar from "../../components/Sidebar";
 import { Breadcrumb } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import React from "react";
-import EmployeeNavbar from "../../components/EmployeeNavbar";
+import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
 import TaskList from "../../components/TaskList";
 import { SnackbarProvider } from "notistack";
 
