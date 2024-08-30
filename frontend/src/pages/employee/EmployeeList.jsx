@@ -13,7 +13,7 @@ import Header from '../../components/Header';
 import Sidebar from '../../components/Sidebar';
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
-import EmployeeNavbar from '../../components/EmployeeNavbar';
+import EmployeeNavbar from '../../components/Employee/EmployeeNavbar';
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
@@ -287,6 +287,12 @@ const EmployeeList = () => {
                     </button>
                 </div>
             </div>
+            <Link to="/employee/registration">
+                        <Button type="primary" className="ml-[310px] bg-green-500 hover:bg-green-600 text-white">
+                            Add new Employee
+                        </Button>
+                    </Link>
+    
             <div className={`ml-[310px] overflow-x-auto`}>
 
             <Table
