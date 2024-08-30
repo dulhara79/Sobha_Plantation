@@ -8,6 +8,25 @@ import { Link, useNavigate } from 'react-router-dom';
 const CoconutPests = () => {
   const navigate = useNavigate(); // Hook to navigate between pages
 
+  // List of pests and diseases and their corresponding routes
+  const pests = [
+    { name: 'Coconut Leaf Miner', route: '/coconutLeafMiner' },
+    { name: 'The Black Beetle', route: '/blackBeetle' },
+    { name: 'Coconut Mites', route: '/C' },
+    { name: 'Termites', route: '/D' },
+    { name: 'The Red Weevil', route: '/E' },
+    { name: 'Mammalian Pests', route: '/F' },
+  ];
+
+  const diseases = [
+    { name: 'Bud Rot', route: '/G' },
+    { name: 'Leaf Spot', route: '/H' },
+    { name: 'Stem Bleeding', route: '/I' },
+    { name: 'Root Wilt', route: '/J' },
+    { name: 'Lethal Yellowing', route: '/K' },
+    { name: 'Ganoderma', route: '/L' },
+  ];
+
   return (
     <div>
       <Header />
@@ -95,9 +114,9 @@ const CoconutPests = () => {
           {/* Grid for Pest Buttons */}
           <div className="grid grid-cols-2 gap-4">
             {/* Buttons for Different Pests */}
-            {['Coconut Leaf Miner', 'The Black Beetle', 'Coconut Mites', 'Termites', 'The Red Weevil', 'Mammalian Pests'].map((pest) => (
+            {pests.map(({ name, route }) => (
               <Button
-                key={pest}
+                key={name}
                 type="primary"
                 block
                 className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
@@ -114,8 +133,9 @@ const CoconutPests = () => {
                   e.currentTarget.style.transform = 'scale(1)';
                   e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
                 }}
+                onClick={() => navigate(route)}
               >
-                {pest} <RightOutlined />
+                {name} <RightOutlined />
               </Button>
             ))}
           </div>
@@ -127,9 +147,9 @@ const CoconutPests = () => {
             {/* Grid for Disease Buttons */}
             <div className="grid grid-cols-2 gap-4">
               {/* Buttons for Different Diseases */}
-              {['Bud Rot', 'Leaf Spot', 'Stem Bleeding', 'Root Wilt', 'Lethal Yellowing', 'Ganoderma'].map((disease) => (
+              {diseases.map(({ name, route }) => (
                 <Button
-                  key={disease}
+                  key={name}
                   type="primary"
                   block
                   className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
@@ -146,8 +166,9 @@ const CoconutPests = () => {
                     e.currentTarget.style.transform = 'scale(1)';
                     e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
                   }}
+                  onClick={() => navigate(route)}
                 >
-                  {disease} <RightOutlined />
+                  {name} <RightOutlined />
                 </Button>
               ))}
             </div>
