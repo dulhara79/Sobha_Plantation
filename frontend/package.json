@@ -1,3 +1,4 @@
+
 {
   "name": "frontend",
   "private": true,
@@ -63,3 +64,4 @@
     "vite": "^5.4.1"
   }
 }
+

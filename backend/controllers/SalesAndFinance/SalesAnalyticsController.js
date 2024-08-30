@@ -22,15 +22,35 @@ exports.getAllSalesAnalytics = async (req, res, next) => {
 
 // Get a sales analytics record by ID
 exports.getSalesAnalyticsById = async (req, res, next) => {
+  // try {
+  //   const salesAnalytics = await SalesAnalytics.findById(req.params.id).populate('sale');
+  //   if (!salesAnalytics) {
+  //     return res.status(404).json({ success: false, message: 'Sales analytics record not found' });
+  //   }
+  //   res.status(200).json({ success: true, data: salesAnalytics });
+  // } catch (error) {
+  //   next(error);
+  // }
+
   try {
-    const salesAnalytics = await SalesAnalytics.findById(req.params.id).populate('sale');
-    if (!salesAnalytics) {
-      return res.status(404).json({ success: false, message: 'Sales analytics record not found' });
+    const { id } = req.params;
+
+    // If 'id' is not a valid ObjectId, handle it accordingly
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: 'Invalid ID format' });
     }
-    res.status(200).json({ success: true, data: salesAnalytics });
-  } catch (error) {
-    next(error);
-  }
+
+    const salesAnalytics = await SalesAnalytics.findById(id);
+
+    if (!salesAnalytics) {
+        return res.status(404).json({ message: 'Sales Analytics not found' });
+    }
+
+    res.status(200).json({ data: salesAnalytics });
+} catch (error) {
+    res.status(500).json({ message: error.message });
+}
+
 };
 
 // Update a sales analytics record
