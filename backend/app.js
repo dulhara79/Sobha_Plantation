@@ -4,7 +4,7 @@ const cors = require("cors");
 const connectDB = require('./config/db'); // Import MongoDB connection function
 
 
-const employeeRoutes = require('./routes/employee');
+const employeeRoutes = require('./routes/Employee/employee.js');
 // const salesRoutes = require('./routes/sales');
 const productionRoutes = require('./routes/Products/productionRoute.js');
 const fertilizerRoutes = require('./routes/fertilizerRoute');
@@ -29,8 +29,8 @@ const InvoiceRoutes = require('./routes/SalesAndFinance/InvoiceRoutes.js');
 const SalesAnalyticsRoutes = require('./routes/SalesAndFinance/SalesAnalyticsRoutes.js');
 const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoutes.js');
 
-const salaryEmployeeRoutes = require("./routes/salaryEmployeeRoutes");
-const ETaskRoutes = require('./routes/ETaskRoutes');
+const salaryEmployeeRoutes = require("./routes/Employee/salaryEmployeeRoutes.js");
+const ETaskRoutes = require('./routes/Employee/ETaskRoutes.js');
 const diseasesRoutes = require("./routes/diseases");
 
 const app = express();
