@@ -84,8 +84,6 @@ const HarvestSchedule = () => {
     { title: "Start Time", dataIndex: "startTime", key: "startTime" },
     { title: "End Time", dataIndex: "endTime", key: "endTime" },
     { title: "Field Number", dataIndex: "fieldNumber", key: "fieldNumber" },
-    { title: "Harvest Method", dataIndex: "harvestMethod", key: "harvestMethod" },
-    { title: "Estimated Yield", dataIndex: "estimatedYield", key: "estimatedYield" },
     { title: "Number of Workers", dataIndex: "numberOfWorkers", key: "numberOfWorkers" },
     {
       title: "Actions",

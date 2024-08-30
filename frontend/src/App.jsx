@@ -36,6 +36,12 @@ import EattendenceList from "./pages/employee/EattendenceList.jsx";
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
 import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
+import YieldRecords from "./pages/Harvest/YieldRecords";
+import TaskAssign from "./pages/Harvest/TaskAssign";
+import AddYieldRecord from "./pages/Harvest/AddYeildRecord";
+import AddHarvestSchedule from  "./pages/Harvest/AddHarvestSchedule";
+import EditHarvestSchedule from './pages/Harvest/EditHarvestSchedule';
+import EditYieldRecords from './pages/Harvest/EditYieldRecords.jsx'
 // crop care
 
 // product
@@ -84,11 +90,11 @@ export default function App() {
       <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />
 
       {/* inventory */}
-      <Route path="/Inventory/Fertilizer" element={<Fertilizer/>} />
+      {/* <Route path="/Inventory/Fertilizer" element={<Fertilizer/>} />
       <Route path="/Inventory/Maintenance" element={<Maintenance/>} />
       <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>} />
       <Route path="/Inventory/FertilizerForm" element={<FertilizerForm/>} />
-      <Route path="/Inventory/MaintenanceForm" element={<MaintenanceForm/>} />
+      <Route path="/Inventory/MaintenanceForm" element={<MaintenanceForm/>} /> */}
 
       {/* employee */}        
       <Route path="/employee/dashboard" element={<Edashboard/>}/>
@@ -104,15 +110,22 @@ export default function App() {
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
+      <Route path="/harvest/yield" element={<YieldRecords />} />
+      <Route path="/harvest/task" element={<TaskAssign />} />
+      <Route path="/yield/addrecords" element={<AddYieldRecord />} />
+      <Route path="/harvest/addschedule" element={<AddHarvestSchedule />} />
+      <Route path="/harvest/edit/:id" element={<EditHarvestSchedule />} />
+      <Route path="/yield/editrecords/:id" element={<EditYieldRecords />} />
+
       {/* crop care */}
-      <Route path="/diseases" element={<DiseasesDashboard />} />
+      {/* <Route path="/diseases" element={<DiseasesDashboard />} />
       <Route path="/coconutInspections" element={<CoconutInspections />} />
       <Route path="/intercropInspections" element={<IntercropInspections />} />
       <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
       <Route path="/addCropDiseases" element={<AddCropsDiseases />} />
       <Route path="/coconutTreatments" element={<CoconutTreatments />} />
       <Route path="/coconutPests" element={<CoconutPests />} />
-      <Route path="/maintenance" element={<RegularMaintenance />} />
+      <Route path="/maintenance" element={<RegularMaintenance />} /> */}
 
       {/* product */}
       <Route path="/products/productdashboard" element={<ProductsDashboard />} />

@@ -1,154 +1,307 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import "../../index.css";
-import { HomeOutlined } from "@mui/icons-material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Breadcrumb } from "antd";
+import { ArrowBack } from "@mui/icons-material";
+import { Breadcrumb, Table, Button, Input, Modal } from "antd";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+
+
+const { Search } = Input;
 
 const YieldRecords = () => {
+  const [schedules, setSchedules] = useState([]);
+  const [filteredSchedules, setFilteredSchedules] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [sorter, setSorter] = useState({ field: null, order: null });
   const navigate = useNavigate();
 
+  useEffect(() => {
+    fetchSchedules();
+  }, []);
+
+  const fetchSchedules = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/yield');
+      setSchedules(response.data.data);
+      setFilteredSchedules(response.data.data);
+    } catch (error) {
+      console.error('Error fetching yield records:', error);
+    }
+  };
+
   const onHomeClick = useCallback(() => {
-    navigate("/harvest/harvestdashboard"); // Navigate to HarvestDashboard
+    navigate("/harvest/harvestdashboard");
   }, [navigate]);
 
   const onBackClick = useCallback(() => {
-    navigate(-1); // Navigate back to the previous page
+    navigate(-1);
   }, [navigate]);
 
   const onGroupContainerClick = useCallback(() => {
-    navigate("/harvest/harvest-schedule"); // Navigate to harvest-schedule
+    navigate("/harvest/harvest-schedule");
   }, [navigate]);
 
   const onGroupContainerClick1 = useCallback(() => {
-    navigate("/harvest/yield"); // Navigate to yield
+    navigate("/harvest/yield");
   }, [navigate]);
 
   const onGroupContainerClick2 = useCallback(() => {
-    navigate("/harvest/task"); // Navigate to task
+    navigate("/harvest/task");
   }, [navigate]);
 
-  const handleEdit = (id) => {
-    console.log(`Edit item with id: ${id}`);
-    // Implement edit logic here
+  const onSearch = (value) => {
+    setSearchText(value);
+    filterSchedules(value, filterStatus);
   };
 
-  const handleDelete = (id) => {
-    console.log(`Delete item with id: ${id}`);
-    // Implement delete logic here
+  const filterSchedules = (searchText, filterStatus) => {
+    let filteredData = schedules;
+  
+    if (searchText) {
+      const lowercasedSearchText = searchText.toLowerCase();
+      filteredData = filteredData.filter((schedule) => 
+        Object.values(schedule).some((value) => 
+          String(value).toLowerCase().includes(lowercasedSearchText)
+        )
+      );
+    }
+  
+    if (filterStatus !== "All") {
+      filteredData = filteredData.filter((schedule) => schedule.status === filterStatus);
+    }
+  
+    if (sorter.field) {
+      filteredData = [...filteredData].sort((a, b) => {
+        if (sorter.order === 'ascend') {
+          return a[sorter.field] > b[sorter.field] ? 1 : -1;
+        } else {
+          return a[sorter.field] < b[sorter.field] ? 1 : -1;
+        }
+      });
+    }
+  
+    setFilteredSchedules(filteredData);
+  };
+  
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.text("Yield Records Report", 20, 10);
+  
+    const tableColumn = ["Harvest Date", "Crop Type", "Quantity", "Trees Picked", "Storage Location"];
+    const tableRows = [];
+  
+    filteredSchedules.forEach((schedule) => {
+      const scheduleData = [
+        moment(schedule.harvestdate).format("YYYY-MM-DD"),
+        schedule.cropType,
+        schedule.quantity,
+        schedule.treesPicked,
+        schedule.storageLocation,
+      ];
+      tableRows.push(scheduleData);
+    });
+  
+    doc.autoTable(tableColumn, tableRows, { startY: 20 });
+    doc.save("yield_records_report.pdf");
+  };
+  
+
+  const handleSort = (field, order) => {
+    setSorter({ field, order });
+    filterSchedules(searchText, filterStatus);
+  };
+
+  const cancelSorting = () => {
+    setSorter({ field: null, order: null });
+    filterSchedules(searchText, filterStatus);
+  };
+
+  const handleUpdate = (id) => {
+    navigate(`/yield/editrecords/${id}`);
+  };
+
+  const confirmDelete = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this schedule?",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk: () => handleDelete(id),
+    });
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(`http://localhost:5000/api/yield/${id}`);
+      if (response.status === 200) {
+        fetchSchedules();
+      } else {
+        console.error("Error deleting schedule: ", response.data.message || 'Unknown error');
+      }
+    } catch (error) {
+      console.error("Error deleting schedule: ", error.response?.data.message || error.message);
+    }
   };
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen bg-gray-100">
       <Header />
-      <Sidebar className="sidebar" />
-      <div className="ml-[300px] p-5">
-        {/* Navigation Bar */}
-        <nav className="p-4 mb-5">
-          <div className="container flex items-center justify-between mx-auto space-x-4">
-            <div
-              className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer"
-              onClick={onBackClick}
-            >
-              <ArrowBackIcon className="text-gray-700" />
+      <div className="flex flex-1">
+        <Sidebar />
+        <div className="ml-[300px] pt-3 flex-1">
+          <nav className="p-4 mb-5">
+            {/* Navigation Buttons */}
+            <div className="container flex items-center justify-between mx-auto space-x-4">
+              <div
+                className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform bg-gray-200 rounded-41xl hover:bg-gray-300"
+                onClick={onBackClick}
+              >
+                <ArrowBack className="text-gray-700" />
+              </div>
+              <div
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                onClick={onHomeClick}
+              >
+                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+                  Home
+                </a>
+              </div>
+              <div
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                onClick={onGroupContainerClick}
+              >
+                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+                  Schedule
+                </a>
+              </div>
+              <div
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                onClick={onGroupContainerClick1}
+              >
+                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+                  Yield Records
+                </a>
+              </div>
+              <div
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                onClick={onGroupContainerClick2}
+              >
+                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+                  Task Assign
+                </a>
+              </div>
             </div>
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-              onClick={onHomeClick}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Home
-              </a>
+
+          </nav>
+
+          <Breadcrumb
+            items={[
+              { title: 'Home', href: '/' },
+              { title: 'Yield', href: '/harvest/yield' }
+            ]}
+          />
+             {/* Welcome Message Component */}
+             <div className="flex flex-row items-center justify-between shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-[98%] mb-5">
+                  <b className="text-3xl">Welcome Kaushalya</b>
+             </div>
+
+
+          <div className="p-6 bg-white rounded-lg shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-4">
+              <Search
+                  placeholder="Search by any field"
+                  onChange={(e) => onSearch(e.target.value)}  // Trigger filter on input change
+                  style={{ width: 200 }}
+                  value={searchText}  // Keep the input controlled
+/>
+                <Button 
+                  style={{ backgroundColor: "#60DB19", color: "#fff" }} 
+                  onClick={() => navigate("/yield/addrecords")}
+                >
+                  Add Records
+                </Button>
+                <Button 
+                   style={{ backgroundColor: "#60DB19", color: "#fff" }} 
+                   onClick={generatePDF}
+                  >
+                  Generate PDF Report
+                </Button>
+
+              </div>
             </div>
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-              onClick={onGroupContainerClick}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Schedule
-              </a>
-            </div>
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#1D6660] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-              onClick={onGroupContainerClick1}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Yield Records
-              </a>
-            </div>
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-              onClick={onGroupContainerClick2}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Task Assign
-              </a>
-            </div>
+            <Table
+              columns={[
+                {
+                  title: "Harvest Date",
+                  dataIndex: "harvestdate",
+                  key: "harvestdate",
+                  sorter: true,
+                  sortOrder: sorter.field === 'harvestdate' ? sorter.order : null,
+                  render: (text) => moment(text).format("YYYY-MM-DD"),
+                },
+                {
+                  title: "Crop Type",
+                  dataIndex: "cropType",
+                  key: "cropType",
+                  sorter: true,
+                  sortOrder: sorter.field === 'cropType' ? sorter.order : null,
+                },
+                {
+                  title: "Quantity",
+                  dataIndex: "quantity",
+                  key: "quantity",
+                  sorter: true,
+                  sortOrder: sorter.field === 'quantity' ? sorter.order : null,
+                },
+                {
+                  title: "Trees Picked",
+                  dataIndex: "treesPicked",
+                  key: "treesPicked",
+                  sorter: true,
+                  sortOrder: sorter.field === 'treesPicked' ? sorter.order : null,
+                },
+                {
+                  title: "Storage Location",
+                  dataIndex: "storageLocation",
+                  key: "storageLocation",
+                  sorter: true,
+                  sortOrder: sorter.field === 'storageLocation' ? sorter.order : null,
+                },
+                {
+                  title: "Actions",
+                  key: "actions",
+                  render: (text, record) => (
+                    <span>
+                      <Button type="link" onClick={() => handleUpdate(record.id)}>
+                        Edit
+                      </Button>
+                      <Button type="link" danger onClick={() => confirmDelete(record.id)}>
+                        Delete
+                      </Button>
+                    </span>
+                  ),
+                },
+              ]}
+              dataSource={filteredSchedules}
+              rowKey="_id"
+              pagination={false}  // Disable pagination
+              scroll={{ y: 400 }} // Optional: Add vertical scroll if there are many rows
+              onChange={(pagination, filters, sorter) => {
+                if (sorter && sorter.order) {
+                  handleSort(sorter.field, sorter.order);
+                } else {
+                  cancelSorting();
+                }
+              }}
+            />
           </div>
-        </nav>
-
-        <Breadcrumb
-          items={[
-            {
-              href: '',
-              title: <HomeOutlined />,
-            },
-            {
-              title: "Yield Records",
-            },
-            {
-              title: "Dashboard",
-            },
-          ]}
-        />
-
-        <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
-          {/* Harvest Schedule Table */}
-          <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-              <thead>
-                <tr className="bg-gray-200 text-gray-600 text-left">
-                  <th className="px-4 py-2 border-b">Harvest ID</th>
-                  <th className="px-4 py-2 border-b">Harvest Date</th>
-                  <th className="px-4 py-2 border-b">Crop Type</th>
-                  <th className="px-4 py-2 border-b">Age of yield date</th>
-                  <th className="px-4 py-2 border-b">Quantity</th>
-                  <th className="px-4 py-2 border-b">Way Picked</th>
-                  <th className="px-4 py-2 border-b">Storage Location</th>
-                  <th className="px-4 py-2 border-b">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* Example Row */}
-                <tr>
-                  <td className="px-4 py-2 border-b">1</td>
-                  <td className="px-4 py-2 border-b">2024-08-24</td>
-                  <td className="px-4 py-2 border-b">Coconut</td>
-                  <td className="px-4 py-2 border-b">10</td>
-                  <td className="px-4 py-2 border-b">10000KG</td>
-                  <td className="px-4 py-2 border-b">Manual</td>
-                  <td className="px-4 py-2 border-b">L001</td>
-                  <td className="px-4 py-2 border-b flex items-center space-x-2">
-                    <button
-                      onClick={() => handleEdit(1)}
-                      className="text-blue-500 hover:text-blue-700"
-                    >
-                      <EditIcon />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(1)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <DeleteIcon />
-                    </button>
-                  </td>
-                </tr>
-                {/* Add more rows as needed */}
-              </tbody>
-            </table>
         </div>
       </div>
     </div>
