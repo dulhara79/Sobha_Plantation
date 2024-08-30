@@ -18,5 +18,4 @@ const UpdateProfileModal = ({ isOpen, onClose, profile, onUpdate }) => {
   );
 };
 
-
 export default UpdateProfileModal;
