@@ -12,10 +12,34 @@ const QualityControl = () => {
   
   // State to handle inspection data
   const [inspectionData, setInspectionData] = useState([]);
+  useEffect(() => {
+    // Fetch or update inspection data dynamically here
+    // Example: fetchInspectionData();
 
-  useEffect(() => {    
-    setInspectionData([]);
-
+    // Temporary placeholder for illustration, should be replaced with actual fetching logic
+    setInspectionData([
+      {
+        key: "1",
+        productType: "Coconut oil",
+        inspectionDate: "2024-08-01",
+        status: "Pass",
+        inspectorName: "Mr. Perera",
+      },
+      {
+        key: "2",
+        productType: "Coconut cream",
+        inspectionDate: "2024-08-02",
+        status: "Fail",
+        inspectorName: "Mr. Perera",
+      },
+      {
+        key: "3",
+        productType: "Coconut water",
+        inspectionDate: "2024-08-04",
+        status: "Pass",
+        inspectorName: "Mr. Jagath",
+      },
+    ]);
   }, []);
 
   // Navigation handlers
@@ -65,6 +89,7 @@ const QualityControl = () => {
         </span>
       ),
     },
+    
     {
       title: "Inspector Name",
       dataIndex: "inspectorName",
@@ -73,19 +98,15 @@ const QualityControl = () => {
     {
       title: "Actions",
       key: "actions",
-      render: (_, record) => (
-        <div className="flex space-x-2">
-          <Button
-            type="link"
-            icon={<i className="fas fa-edit"></i>}
-            onClick={() => handleEdit(record.key)}
-          />
-          <Button
-            type="link"
-            icon={<i className="fas fa-trash-alt"></i>}
-            onClick={() => handleDelete(record.key)}
-          />
-        </div>
+      render: (text, record) => (
+        <span>
+          <Button type="link" onClick={() => handleUpdate(record._id)}>
+            Edit
+          </Button>
+          <Button type="link" danger onClick={() => confirmDelete(record._id)}>
+            Delete
+          </Button>
+        </span>
       ),
     },
   ];
@@ -180,7 +201,8 @@ const QualityControl = () => {
         <div className="mt-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">Inspection Reports Table</h2>
-            <Button type="primary" onClick={() => navigate("/products/addInspectionReport")}>
+            <Button type="primary" onClick={() => navigate("/products/add-report")}
+              style={{ backgroundColor: "#60DB19", color: "#fff" }}>
               Add New Report
             </Button>
           </div>
