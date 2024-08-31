@@ -1,118 +1,127 @@
+const mongoose = require('mongoose');
+const FertilizerRecords = require('../../models/Inventory/fertilizers'); // Ensure this path is correct
 
-const Fertilizers = require("../../models/Inventory/fertilizerModel");
 
-// Controller for creating a new Fertilizer
-exports.createFertilizers = async (req, res) => {
+exports.createFertilizerRecords = async (req, res) => {
     try {
-        const { id,addingdate, type, quantity, storagelocation, expiredate,actions } = req.body;
+        const { addeddate, fertilizertype, quantity, storagelocation, expireddate } = req.body;
 
-        if (!id || !addingdate || !type || !quantity || !storagelocation || !expiredate || !actions
-        ) {
-            return res.status(400).send({
-                message: 'Please provide all required fields: id,addingdate,type,quantity,storagelocation,expiredate,actions',
+        // Validate required fields
+        if (!addeddate || !fertilizertype || !quantity || !storagelocation || !expireddate ) {
+            return res.status(400).json({
+                message: 'Please provide all required fields: addeddate, fertilizertype, quantity, storagelocation, expireddate',
             });
         }
 
-        const newFertilizer = {
-            id,
-            addingdate,
-            type,
+        // Create a new yield record
+        const newRecord = new FertilizerRecords({
+            addeddate,
+            fertilizertype,
             quantity,
             storagelocation,
-            expiredate,
-            actions
+            expireddate
 
-        };
+            // Ensure id field is either auto-generated or removed if not required
+        });
 
-        const fertilizers = await Fertilizers.create(newFertilizer);
-        return res.status(201).send(fertilizers);
+        // Save the record to the database
+        const savedRecord = await newRecord.save();
+        return res.status(201).json(savedRecord);
     } catch (error) {
-        console.log('Error creating fertilizers:', error.message);
-        res.status(500).send({ message: error.message });
+        console.error('Error creating  fertilizer record:', error);
+        res.status(500).json({ message: 'Failed to create  fertilizer record.', error: error.message });
     }
 };
 
-// Controller for getting all Fertilizers
-exports.getAllFertilizers = async (req, res) => {
+
+// Controller for getting all Yield Records
+exports.getAllFertilizerRecords = async (req, res) => {
     try {
-        const fertilizers = await Fertilizers.find({});
+        const records = await FertilizerRecords.find({});
         return res.status(200).json({
-            count: fertilizers.length,
-            data: fertilizers,
+            count: records.length,
+            data: records,
         });
     } catch (error) {
-        console.log('Error fetching fertilizers:', error.message);
-        res.status(500).send({ message: error.message });
+        console.error('Error fetching records:', error);
+        res.status(500).json({ message: 'Failed to fetch records.', error: error.message });
     }
 };
 
-// Controller for getting a single Fertilizer by Id
-exports.getFertilizersById = async (req, res) => {
+// Controller for getting a single Yield Record by Id
+exports.getFertilizerRecordsById = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log('Searching for fertilizers with Id:', id);
 
-        const fertilizers = await Fertilizers.findById(id).exec();
-
-        if (!fertilizers) {
-            console.log('No fertilizers found with Id:', id);
-            return res.status(404).json({ message: 'Fertilizer not found' });
+        // Check for a valid MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'Invalid ID format.' });
         }
 
-        return res.status(200).json(fertilizers);
+        const record = await FertilizerRecords.findById(id);
+
+        if (!record) {
+            return res.status(404).json({ message: 'Record not found' });
+        }
+
+        return res.status(200).json(record);
     } catch (error) {
-        console.log('Error fetching fertilizers:', error.message);
-        res.status(500).send({ message: error.message });
+        console.error('Error fetching record by id:', error);
+        res.status(500).json({ message: 'Failed to fetch record.', error: error.message });
     }
 };
 
-// Controller for updating a Fertilizer by Id
-exports.updateFertilizers = async (req, res) => {
+// Controller for updating a Yield Record by Id
+exports.updateFertilizerRecords = async (req, res) => {
     try {
         const { id } = req.params;
-        const { addingdate,type,quantity,storagelocation,expiredate,actions
-        } = req.body;
+        const { addeddate, fertilizertype, quantity, storagelocation, expireddate } = req.body;
 
-        console.log('Updating fertilizer with id:', id);
-        console.log('Update data:', req.body);
+        // Check for a valid MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'Invalid ID format.' });
+        }
 
-        if (!addingdate || !type || !quantity || !storagelocation || !expiredate || !actions) {
-            return res.status(400).send({
-                message: 'Please provide all required fields: addingdate,type,quantity,storagelocation,expiredate,actions',
+        // Ensure all required fields are present
+        if (!addeddate || !fertilizertype || !quantity || !storagelocation || !expireddate ) {
+            return res.status(400).json({
+                message: 'Please provide all required fields: addeddate, fertilizertype, quantity, storagelocation, expireddate ',
             });
         }
 
-        const result = await Fertilizers.findOneAndUpdate(
-            { id: id },
-            { addingdate,type,quantity,storagelocation,expiredate,actions},
-            { new: true, runValidators: true } // Return updated document and run schema validations
-        ).exec();
+        // Update the record
+        const result = await FertilizerRecords.findByIdAndUpdate(
+            id,
+            { addeddate, fertilizertype, quantity, storagelocation, expireddate },
+            { new: true, runValidators: true }
+        );
 
+        // Handle case where record is not found
         if (!result) {
-            return res.status(404).json({ message: 'Fertilizer not found' });
+            return res.status(404).json({ message: 'Fertilizer Record not found' });
         }
 
-        return res.status(200).send({ message: 'Fertilizer updated successfully', data: updatedFertilizer });
+        // Successfully updated the record
+        return res.status(200).json({ message: 'Fertilizer Record updated successfully', data: result });
     } catch (error) {
-        console.log('Error updating fertilizer:', error.message);
-        res.status(500).send({ message: error.message });
+        console.error('Error updating record:', error);
+        res.status(500).json({ message: 'Failed to update record.', error: error.message });
     }
 };
 
-// Controller for deleting a Fertilizer by Id
-exports.deleteFertilizers = async (req, res) => {
+// Controller for deleting a Yield Record by Id
+exports.deleteFertilizerRecords = async (req, res) => {
     try {
-        const { id } = req.params;
-
-        const deletedFertilizers = await Fertilizers.findOneAndDelete({id: id });
-
-        if (!deletedFertilizers) {
-            return res.status(404).json({ message: 'Fertilizers not found' });
-        }
-
-        return res.status(200).send({ message: 'Fertilizers deleted successfully' });
+      const { id } = req.params; // Ensure this is correctly obtained
+      const deletedRecord = await FertilizerRecords.findByIdAndDelete(id);
+  
+      if (!deletedRecord) {
+        return res.status(404).json({ message: 'Record not found' });
+      }
+  
+      return res.status(200).json({ message: 'Record deleted successfully' });
     } catch (error) {
-        console.log('Error deleting fertilizers:', error.message);
-        res.status(500).send({ message: error.message });
+      console.error('Error deleting record:', error.message);
+      res.status(500).json({ message: 'Failed to delete record.' });
     }
-};
+  };

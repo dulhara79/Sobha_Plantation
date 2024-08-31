@@ -1,50 +1,110 @@
 import React, { useCallback } from "react";
+import { Chart as ChartJS, ArcElement } from "chart.js";
+import { Pie } from "react-chartjs-2";
+import { Card, Row, Col } from "antd";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
+// import Footer from "../../components/Footer";
 import "../../index.css";
 import { HomeOutlined } from "@mui/icons-material";
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Breadcrumb } from 'antd';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
+// Import image assets
+import Tools from '../../assets/Inventory/tools.jpg';
+import Fertilizers from '../../assets/Inventory/fertilizerImg.png';
+import Plants from '../../assets/Inventory/plantsImg.png';
+import Agrochemicals from '../../assets/Inventory/agrochemicalImg.jpg';
+import Maintenance from '../../assets/Inventory/maintenanceImg.png';
+
+ChartJS.register(ArcElement);
+
+const toolsData = {
+  labels: ["Available", "Used"],
+  datasets: [
+    {
+      data: [78, 22],
+      backgroundColor: ["#FF9F40", "#FFCE56"],
+      hoverBackgroundColor: ["#FF9F40", "#FFCE56"],
+    },
+  ],
+};
+
+const fertilizersData = {
+  labels: ["Available", "Used"],
+  datasets: [
+    {
+      data: [45, 55],
+      backgroundColor: ["#4BC0C0", "#36A2EB"],
+      hoverBackgroundColor: ["#4BC0C0", "#36A2EB"],
+    },
+  ],
+};
+
+const plantsData = {
+  labels: ["Available", "Used"],
+  datasets: [
+    {
+      data: [64, 36],
+      backgroundColor: ["#36A2EB", "#FF6384"],
+      hoverBackgroundColor: ["#36A2EB", "#FF6384"],
+    },
+  ],
+};
+
+const agroChemicalsData = {
+  labels: ["Available", "Used"],
+  datasets: [
+    {
+      data: [56, 44],
+      backgroundColor: ["#FF6384", "#FFCE56"],
+      hoverBackgroundColor: ["#FF6384", "#FFCE56"],
+    },
+  ],
+};
+
+const maintenanceData = {
+  labels: ["Completed", "Pending", "Overdue"],
+  datasets: [
+    {
+      data: [70, 20, 10],
+      backgroundColor: ["#36A2EB", "#FFCE56", "#FF6384"],
+      hoverBackgroundColor: ["#36A2EB", "#FFCE56", "#FF6384"],
+    },
+  ],
+};
 
 const InventoryDashboard = () => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const onGroupContainerClick = useCallback(() => {
-    navigate("/Inventory/Fertilizer");
+    navigate("/Inventory/FertilizerRecords");
   }, [navigate]);
 
   const onGroupContainerClick1 = useCallback(() => {
-    navigate("/Inventory/Maintenance");
+    navigate("/Inventory/maintenance");
   }, [navigate]);
 
   const onGroupContainerClick2 = useCallback(() => {
-    navigate("/Inventory/Equipments");
+    navigate("/Inventory/Order");
   }, [navigate]);
 
+  
+
   const onHomeClick = useCallback(() => {
-    navigate("/Inventory/InventoryDashboard"); // Navigate to HarvestDashboard
+    navigate("/Inventory/InventoryDashboard");
   }, [navigate]);
 
   const onBackClick = useCallback(() => {
-    navigate(-1); // Navigate back to the previous page
+    navigate(-1);
   }, [navigate]);
-
-  // Function to format today's date
-  const getTodayDate = () => {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date().toLocaleDateString(undefined, options);
-  };
 
   return (
     <div>
       <Header />
       <Sidebar className="sidebar" />
       <div className="ml-[300px] p-5">
-        {/* Navigation Bar */}
         <nav className="p-4 mb-5">
           <div className="container flex items-center justify-between mx-auto space-x-4">
             <div
@@ -74,7 +134,7 @@ const InventoryDashboard = () => {
               onClick={onGroupContainerClick1}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-              Maintenance
+                Maintenance
               </a>
             </div>
             <div
@@ -82,9 +142,10 @@ const InventoryDashboard = () => {
               onClick={onGroupContainerClick2}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-              Equipments
+                Order
               </a>
             </div>
+      
           </div>
         </nav>
 
@@ -102,41 +163,79 @@ const InventoryDashboard = () => {
             },
           ]}
         />
-        <div className="mt-5">
-          {/* Welcome message section */}
-          <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
-            <div className="flex flex-row items-center justify-between">
-              <div className="flex flex-col">
-                <b className="mb-2 text-3xl">Welcome Maheesha,</b>
-                <div className="text-xl text-gray-900">
-                  <div className="font-medium">{`Today is ${getTodayDate()}`}</div>
-                </div>
-              </div>
-              <div className="flex flex-col items-end">
-                <NotificationsIcon className="mb-2 text-gray-500" />
-              </div>
-            </div>
-          </div>
-          {/* Weather Component Section */}
-       
 
-          <div className="grid grid-cols-2 gap-10 mt-5">
-            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform bg-green-500 rounded-lg shadow-lg hover:scale-105">
-              <h3 className="text-xl text-center">Total Equipments 📝</h3>
-              <p className="mt-2 font-extrabold text-10xl">129</p>
-            </div>
-            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform bg-green-500 rounded-lg shadow-lg hover:scale-105">
-              <h3 className="text-xl text-center">No of Maintenance in Progress ✅</h3>
-              <p className="mt-2 font-extrabold text-10xl">10</p>
-            </div>
-            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform bg-red-500 rounded-lg shadow-lg hover:scale-105">
-              <h3 className="text-xl text-center">No of Equipments for Maintenance</h3>
-              <p className="mt-2 font-extrabold text-10xl">6</p>
-            </div>
-            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform bg-green-500 rounded-lg shadow-lg hover:scale-105">
-              <h3 className="text-xl text-center">Total Plants</h3>
-              <p className="mt-2 font-extrabold text-10xl">240</p>
-            </div>
+        <div className="flex justify-center items-center mt-5">
+          <div className="w-full max-w-[1200px]">
+            <Row gutter={[16, 16]} justify="center" className="mt-5">
+              <Col span={8}>
+                <Card title="Tools">
+                  <Row align="middle" justify="center">
+                    <Col span={12}>
+                      <img src={Tools} alt="Tools" style={{ width: "100px", height: "120px" }} />
+                    </Col>
+                    <Col span={12}>
+                      <Pie data={toolsData} />
+                      <p>78% tools are available.</p>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card title="Fertilizers">
+                  <Row align="middle" justify="center">
+                    <Col span={12}>
+                      <img src={Fertilizers} alt="Fertilizers" style={{ width: "90px", height: "100px" }} />
+                    </Col>
+                    <Col span={12}>
+                      <Pie data={fertilizersData} />
+                      <p>45% fertilizers are available.</p>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card title="Plant Varieties">
+                  <Row align="middle" justify="center">
+                    <Col span={12}>
+                      <img src={Plants} alt="Plants" style={{ width: "120px", height: "160px" }} />
+                    </Col>
+                    <Col span={12}>
+                      <Pie data={plantsData} />
+                      <p>64% plant varieties are available.</p>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+            </Row>
+
+            <Row gutter={[16, 16]} justify="center" className="mt-5">
+              <Col span={8}>
+                <Card title="Agro Chemicals">
+                  <Row align="middle" justify="center">
+                    <Col span={12}>
+                      <img src={Agrochemicals} alt="Agrochemicals" style={{ width: "110px", height: "180px" }} />
+                    </Col>
+                    <Col span={12}>
+                      <Pie data={agroChemicalsData} />
+                      <p>56% agro chemicals are available.</p>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card title="Maintenance Records">
+                  <Row align="middle" justify="center">
+                    <Col span={12}>
+                      <img src={Maintenance} alt="Maintenance" style={{ width: "130px", height: "125px" }} />
+                    </Col>
+                    <Col span={12}>
+                      <Pie data={maintenanceData} />
+                      <p>70% of maintenance tasks are completed.</p>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+            </Row>
           </div>
         </div>
       </div>

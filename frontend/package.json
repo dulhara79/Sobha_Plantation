@@ -22,7 +22,7 @@
     "@mui/styled-engine": "^5.16.6",
     "@mui/x-data-grid": "^7.14.0",
     "@react-pdf/renderer": "^3.4.4",
-    "antd": "^5.20.2",
+    "antd": "^5.20.3",
     "axios": "^1.7.5",
     "chart.js": "^4.4.4",
     "cors": "^2.8.5",

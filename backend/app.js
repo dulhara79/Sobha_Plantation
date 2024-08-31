@@ -17,9 +17,8 @@ const harvestRoutes = require('./routes/Harvest/harvest');
 const qualityControlRoute = require('./routes/Products/qualityControlRoute.js');
 
 //inventory
-const fertilizerRoutes = require('./routes/Inventory/fertilizerRoute.js');
-const maintenanceRoutes = require('./routes/Inventory/maintenanceRoute.js');
- 
+const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
+
 
 
 
@@ -96,8 +95,10 @@ app.use('/api/quality-control', qualityControlRoute);
 
 
 //inventory
-app.use('/api/Inventory/fertilizer', fertilizerRoutes);
-app.use('/api/Inventory/maintenance', maintenanceRoutes);
+app.use('/api/fertilizers', fertilizerRoutes);
+//app.use('/api/maintenance', maintenanceRoutes);
+//app.use('/api/inventoryRecords', InventoryRecordRoutes);
+
 /**
 * crop
 */
