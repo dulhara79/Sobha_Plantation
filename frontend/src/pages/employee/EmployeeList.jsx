@@ -235,84 +235,88 @@ const EmployeeList = () => {
 
     return (
         <div className="">
-        <Header/>
-        <Sidebar/>
-        <div className={`ml-[300px]`}>
-        <Breadcrumb
-      items={[
-          {
-              href: "",
-              title: <HomeOutlined />,
-            },
-        ]}
-    />
-        <EmployeeNavbar className="" />
-    </div>
-
-        <div className="p-8">
-            <h1 className={"ml-[310px] text-lg font-semibold"}>Employee Details</h1>
-            <p className={"ml-[310px] text-sm text-gray-500"}>Manage employee information and generate reports.</p>
-
-            <div className={"ml-[310px] flex items-center my-4 space-x-4"}>
-                <Select
-                    defaultValue="All Types"
-                    style={{ width: 120 }}
-                    onChange={handleFilterChange}
-                    allowClear
-                >
-                    <Option value="All Types">All Types</Option>
-                    {employeeTypes.map(type => (
-                        <Option key={type} value={type}>{type}</Option>
-                    ))}
-                </Select>
-
-                <RangePicker
-                    format="YYYY-MM-DD"
-                    onChange={handleDateChange}
+            <Header />
+            <Sidebar />
+            <div className={`ml-[300px]`}>
+                <Breadcrumb
+                    items={[
+                        {
+                            href: "",
+                            title: <HomeOutlined />,
+                        },
+                    ]}
                 />
-
-                <div className="relative">
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="p-2 border rounded"
-                    />
-                    <button
-                        onClick={handleSearch}
-                        className="absolute top-0 right-0 px-4 py-2 text-white bg-blue-500 rounded-r"
-                    >
-                        <SearchOutlined />
-                    </button>
-                </div>
+                <EmployeeNavbar className="" />
             </div>
-            <Link to="/employee/registration">
-                        <Button type="primary" className="ml-[310px] bg-green-500 hover:bg-green-600 text-white">
+
+            <div className="p-8">
+                <h1 className={"ml-[310px] text-lg font-semibold"}>Employee Details</h1>
+                <p className={"ml-[310px] text-sm text-gray-500"}>Manage employee information and generate reports.</p>
+
+                <div className={"relative"}>
+                    {/* Add New Employee Button */}
+                    <Link to="/employee/registration">
+                        <Button type="primary" className="absolute top-1 right-4 bg-green-500 hover:bg-green-600 text-white">
                             Add new Employee
                         </Button>
                     </Link>
-    
-            <div className={`ml-[310px] overflow-x-auto`}>
 
-            <Table
-                dataSource={dataSource}
-                columns={columns}
-                loading={loading}
-                pagination={{ pageSize: 10 }}
-                scroll={{ x: true }}
-            />
+                    {/* Filter and Search Controls */}
+                    <div className=" ml-[310px] flex items-center my-4 space-x-4">
+                        <Select
+                            defaultValue="All Types"
+                            style={{ width: 120 }}
+                            onChange={handleFilterChange}
+                            allowClear
+                        >
+                            <Option value="All Types">All Types</Option>
+                            {employeeTypes.map(type => (
+                                <Option key={type} value={type}>{type}</Option>
+                            ))}
+                        </Select>
 
-            <Button
-                type="primary"
-                className="mt-4"
-                onClick={handleDownloadPDF}
-            >
-                Download PDF
-            </Button>
+                        <RangePicker
+                            format="YYYY-MM-DD"
+                            onChange={handleDateChange}
+                        />
+
+                        <div className="relative">
+                            <input
+                                type="text"
+                                placeholder="Search..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="p-2 border rounded"
+                            />
+                            <button
+                                onClick={handleSearch}
+                                className="absolute top-0 right-0 px-4 py-2 text-white bg-blue-500 rounded-r"
+                            >
+                                <SearchOutlined />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={`ml-[310px] overflow-x-auto`}>
+                    <Table
+                        dataSource={dataSource}
+                        columns={columns}
+                        loading={loading}
+                        pagination={{ pageSize: 10 }}
+                        scroll={{ x: true }}
+                    />
+
+                    <Button
+                        type="primary"
+                        className="mt-4"
+                        onClick={handleDownloadPDF}
+                    >
+                        Download PDF
+                    </Button>
+                </div>
+            </div>
         </div>
-    </div>
-    </div>
     );
 };
 
