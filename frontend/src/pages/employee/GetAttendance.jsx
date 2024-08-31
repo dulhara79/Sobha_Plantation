@@ -5,7 +5,7 @@ import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 
 import React from "react";
 import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
-import GetEmpAttendance from "../../components/GetEmpAttendance";
+import GetEmpAttendance from "../../components/Employee/GetEmpAttendance";
 
 import {SnackbarProvider} from "notistack";
 
