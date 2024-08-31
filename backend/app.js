@@ -65,7 +65,7 @@ const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoute
 
 const salaryEmployeeRoutes = require("./routes/Employee/salaryEmployeeRoutes.js");
 const ETaskRoutes = require('./routes/Employee/ETaskRoutes.js');
-const diseasesRoutes = require("./routes/diseases");
+
 
 const app = express();
 
