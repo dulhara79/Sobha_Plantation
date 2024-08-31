@@ -55,15 +55,16 @@ const ProductsDashboard = () => {
               <ArrowBackIcon className="text-gray-700" />
             </div>
             <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white text-white"
               onClick={onHomeClick}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
                 Home
               </a>
             </div>
+
             <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
               onClick={onGroupContainerClick}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
@@ -71,7 +72,7 @@ const ProductsDashboard = () => {
               </a>
             </div>
             <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
               onClick={onGroupContainerClick1}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
@@ -79,7 +80,7 @@ const ProductsDashboard = () => {
               </a>
             </div>
             <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
               onClick={onGroupContainerClick2}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
@@ -108,7 +109,7 @@ const ProductsDashboard = () => {
           <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
             <div className="flex flex-row items-center justify-between">
               <div className="flex flex-col">
-                <b className="mb-2 text-3xl">Welcome Dewmini,</b>
+                <b className="mb-2 text-3xl">Welcome,</b>
                 <div className="text-xl text-gray-900">
                   <div className="font-medium">{`Today is ${getTodayDate()}`}</div>
                 </div>
@@ -121,27 +122,27 @@ const ProductsDashboard = () => {
           </div>
 
           <div className="grid grid-cols-3 gap-5 mt-5">
-            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform bg-green-500 rounded-lg shadow-lg hover:scale-105">
+            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-green-400 to-blue-500 hover:scale-105 hover:bg-gradient-to-r" >
               <h3 className="text-xl text-center">Total Inspections 📝</h3>
               <p className="mt-2 font-extrabold text-10xl">1,200</p>
             </div>
-            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform bg-green-500 rounded-lg shadow-lg hover:scale-105">
+            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-green-400 to-blue-500 hover:scale-105 hover:bg-gradient-to-r" >
               <h3 className="text-xl text-center">Passed Products ✅</h3>
               <p className="mt-2 font-extrabold text-10xl">1,050</p>
             </div>
-            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform bg-red-500 rounded-lg shadow-lg hover:scale-105">
+            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:scale-105 hover:bg-gradient-to-r">
               <h3 className="text-xl text-center">Failed Products <ErrorOutline style={{ color: "black" }} /></h3>
               <p className="mt-2 font-extrabold text-10xl">150</p>
             </div>
-            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform bg-green-500 rounded-lg shadow-lg hover:scale-105">
+            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-green-400 to-blue-500 hover:scale-105 hover:bg-gradient-to-r">
               <h3 className="text-xl text-center">Active Schedules 📅</h3>
               <p className="mt-2 font-extrabold text-10xl">10</p>
             </div>
-            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform bg-green-500 rounded-lg shadow-lg hover:scale-105">
+            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-green-400 to-blue-500 hover:scale-105 hover:bg-gradient-to-r">
               <h3 className="text-xl text-center">Packaged Units 📦</h3>
               <p className="mt-2 font-extrabold text-10xl">8,000</p>
             </div>
-            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform bg-red-500 rounded-lg shadow-lg hover:scale-105">
+            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:scale-105 hover:bg-gradient-to-r">
               <h3 className="text-xl text-center">Defect Rate ⚠️</h3>
               <p className="mt-2 font-extrabold text-10xl">12.5%</p>
             </div>
