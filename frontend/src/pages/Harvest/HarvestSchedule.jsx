@@ -107,7 +107,7 @@ const HarvestSchedule = () => {
   }, [navigate]);
 
   const onGroupContainerClick2 = useCallback(() => {
-    navigate("/harvest/task");
+    navigate("/harvest/compliancechecklist");
   }, [navigate]);
 
   const onHomeClick = useCallback(() => {
@@ -158,7 +158,7 @@ const HarvestSchedule = () => {
               onClick={onGroupContainerClick1}
             >
               <a className="relative font-bold text-[inherit] inline-block w-full text-center">
-                Yield Records
+              Yield Records
               </a>
             </div>
             <div
@@ -166,7 +166,7 @@ const HarvestSchedule = () => {
               onClick={onGroupContainerClick2}
             >
               <a className="relative font-bold text-[inherit] inline-block w-full text-center">
-                Task Assign
+              Compliance Check List
               </a>
             </div>
           </div>

@@ -1,42 +1,33 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-// Define a schema for harvest records
-const harvestrecordsSchema = mongoose.Schema(
-  {
-    id: {
-      type: String,
-      unique: true,
-      trim: true,
-    },
+const yieldSchema = new mongoose.Schema({
     harvestdate: {
-      type: Date,
+        type: Date,
+        required: true,
     },
     cropType: {
-      type: String,
-    },
-    ageofYieldDate: {
-      type: Number,
+        type: String,
+        required: true,
     },
     quantity: {
-      type: Number,
-    },
-    wayPicked: {
-      type: String,
+        type: Number,
+        required: true,
     },
     treesPicked: {
-      type: Number,
+        type: Number,
+        required: true,
     },
     storageLocation: {
-      type: String,
-      trim: true,
-      minlength: 3,
-      maxlength: 100,
+        type: String,
+        required: true,
     },
-  },
-  {
-    timestamps: true,
-  }
-);
+    // Optional: Remove if not needed
+     id: {
+       type: mongoose.Schema.Types.ObjectId,
+       default: () => new mongoose.Types.ObjectId(), // Generates a new ObjectId if 'id' is needed
+       unique: true, // Ensure unique index if needed
+       sparse: true  // Allows null values if unique index is still desired
+    }
+});
 
-// Export the model
-module.exports = mongoose.model("harvestrecords", harvestrecordsSchema);
+module.exports = mongoose.model('YieldRecords', yieldSchema);

@@ -32,7 +32,7 @@ const maintenanceRoutes = require('./routes/Inventory/maintenanceRoute.js');
  */
 const yieldRoutes = require('./routes/Harvest/yield.js');
 const harvestRoutes = require('./routes/Harvest/harvest.js');
-
+const complianceCheckRoutes = require('./routes/Harvest/compliance.js')
 
 
 /**
@@ -97,6 +97,10 @@ app.use('/api/production', productionRoutes);
 // harvest
 app.use('/api/harvest', harvestRoutes);
 app.use('/api/yield', yieldRoutes);
+app.use('/api/compliance-checks', complianceCheckRoutes);// Ensure the route path is correct
+
+
+
 //inventory
 app.use('/api/Inventory/fertilizer', fertilizerRoutes);
 app.use('/api/Inventory/maintenance', maintenanceRoutes);

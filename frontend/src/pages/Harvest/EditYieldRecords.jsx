@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
@@ -8,6 +8,7 @@ const { Option } = Select;
 
 const EditYieldRecord = () => {
   const [form] = Form.useForm();
+  const [record, setRecord] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams(); // Get the record ID from the route parameters
 
@@ -16,33 +17,22 @@ const EditYieldRecord = () => {
     return current && current < moment().startOf('day');
   };
 
+  // Fetch record data
   useEffect(() => {
-    // Fetch the existing yield record data when the component mounts
-    const fetchData = async () => {
+    const fetchRecord = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/yield/${id}`);
-        const data = response.data;
+        setRecord(response.data);
         form.setFieldsValue({
-          id: data.id,
-          harvestdate: moment(data.harvestdate),
-          cropType: data.cropType,
-          ageofYieldDate: data.ageofYieldDate,
-          quantity: data.quantity,
-          wayPicked: data.wayPicked,
-          treesPicked: data.treesPicked,
-          storageLocation: data.storageLocation,
+          ...response.data,
+          harvestdate: moment(response.data.harvestdate),
         });
       } catch (error) {
-        console.error('Failed to fetch yield record:', error);
-        notification.error({
-          message: 'Error',
-          description: `Failed to fetch yield record. ${error.response?.data?.message || 'Please try again.'}`,
-        });
+        console.error('Error fetching record:', error);
       }
     };
-
-    fetchData();
-  }, [form, id]);
+    fetchRecord();
+  }, [id, form]);
 
   const handleSubmit = async (values) => {
     try {
@@ -77,13 +67,6 @@ const EditYieldRecord = () => {
           onFinish={handleSubmit}
           layout="vertical"
         >
-          <Form.Item
-            label="ID"
-            name="id"
-            rules={[{ required: true, message: 'Please enter the ID!' }]}
-          >
-            <Input type="text" placeholder="Enter ID" />
-          </Form.Item>
 
           <Form.Item
             label="Harvest Date"
@@ -149,8 +132,16 @@ const EditYieldRecord = () => {
             <Input type="text" placeholder="Enter storage location" />
           </Form.Item>
 
+          <Form.Item
+            label="Way Picked"
+            name="wayPicked"
+            rules={[{ required: true, message: 'Please enter the way picked!' }]}
+          >
+            <Input type="text" placeholder="Enter way picked" />
+          </Form.Item>
+
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button type="primary" htmlType="submit">
               Update Record
             </Button>
           </Form.Item>

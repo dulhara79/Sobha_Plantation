@@ -4,30 +4,30 @@ const YieldRecords = require('../../models/Harvest/Yield'); // Ensure this path 
 // Controller for creating a new Yield Record
 exports.createYieldRecords = async (req, res) => {
     try {
-        const { id, harvestdate, cropType, ageofYieldDate, quantity, wayPicked, treesPicked, storageLocation } = req.body;
+        const { harvestdate, cropType, quantity, treesPicked, storageLocation } = req.body;
 
-        if (!id || !harvestdate || !cropType || !ageofYieldDate || !quantity || !wayPicked || !treesPicked || !storageLocation) {
+        // Validate required fields
+        if (!harvestdate || !cropType || !quantity || !treesPicked || !storageLocation) {
             return res.status(400).json({
-                message: 'Please provide all required fields: id, harvestdate, cropType, ageofYieldDate, quantity, wayPicked, treesPicked, storageLocation',
+                message: 'Please provide all required fields: harvestdate, cropType, quantity, treesPicked, storageLocation',
             });
         }
 
-        const newRecord = {
-            id,
+        // Create a new yield record
+        const newRecord = new YieldRecords({
             harvestdate,
             cropType,
-            ageofYieldDate,
             quantity,
-            wayPicked,
             treesPicked,
-            storageLocation
-        };
+            storageLocation,
+        });
 
-        const yieldRecords = await YieldRecords.create(newRecord);
-        return res.status(201).json(yieldRecords);
+        // Save the record to the database
+        const savedRecord = await newRecord.save();
+        return res.status(201).json(savedRecord);
     } catch (error) {
-        console.error('Error creating yield record:', error);  // Enhanced error logging
-        res.status(500).json({ message: 'Failed to create yield record.' });
+        console.error('Error creating yield record:', error);
+        res.status(500).json({ message: 'Failed to create yield record.', error: error.message });
     }
 };
 
@@ -40,8 +40,8 @@ exports.getAllYieldRecords = async (req, res) => {
             data: records,
         });
     } catch (error) {
-        console.error('Error fetching records:', error);  // Enhanced error logging
-        res.status(500).json({ message: 'Failed to fetch records.' });
+        console.error('Error fetching records:', error);
+        res.status(500).json({ message: 'Failed to fetch records.', error: error.message });
     }
 };
 
@@ -50,16 +50,21 @@ exports.getYieldRecordsById = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const records = await YieldRecords.findOne({ id: id }).exec();
+        // Check for a valid MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'Invalid ID format.' });
+        }
 
-        if (!records) {
+        const record = await YieldRecords.findById(id);
+
+        if (!record) {
             return res.status(404).json({ message: 'Record not found' });
         }
 
-        return res.status(200).json(records);
+        return res.status(200).json(record);
     } catch (error) {
-        console.error('Error fetching record by id:', error);  // Enhanced error logging
-        res.status(500).json({ message: 'Failed to fetch record.' });
+        console.error('Error fetching record by id:', error);
+        res.status(500).json({ message: 'Failed to fetch record.', error: error.message });
     }
 };
 
@@ -67,21 +72,26 @@ exports.getYieldRecordsById = async (req, res) => {
 exports.updateYieldRecords = async (req, res) => {
     try {
         const { id } = req.params;
-        const { harvestdate, cropType, ageofYieldDate, quantity, wayPicked, treesPicked, storageLocation } = req.body;
+        const { harvestdate, cropType, quantity, treesPicked, storageLocation } = req.body;
+
+        // Check for a valid MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'Invalid ID format.' });
+        }
 
         // Ensure all required fields are present
-        if (!harvestdate || !cropType || !ageofYieldDate || !quantity || !wayPicked || !treesPicked || !storageLocation) {
+        if (!harvestdate || !cropType || !quantity || !treesPicked || !storageLocation) {
             return res.status(400).json({
-                message: 'Please provide all required fields: harvestdate, cropType, ageofYieldDate, quantity, wayPicked, treesPicked, storageLocation',
+                message: 'Please provide all required fields: harvestdate, cropType, quantity, treesPicked, storageLocation',
             });
         }
 
         // Update the record
-        const result = await YieldRecords.findOneAndUpdate(
-            { id: id },
-            { harvestdate, cropType, ageofYieldDate, quantity, wayPicked, treesPicked, storageLocation },
+        const result = await YieldRecords.findByIdAndUpdate(
+            id,
+            { harvestdate, cropType, quantity, treesPicked, storageLocation },
             { new: true, runValidators: true }
-        ).exec();
+        );
 
         // Handle case where record is not found
         if (!result) {
@@ -91,18 +101,16 @@ exports.updateYieldRecords = async (req, res) => {
         // Successfully updated the record
         return res.status(200).json({ message: 'Yield Record updated successfully', data: result });
     } catch (error) {
-        console.error('Error updating record:', error);  // Enhanced error logging
-        res.status(500).json({ message: 'Failed to update record.' });
+        console.error('Error updating record:', error);
+        res.status(500).json({ message: 'Failed to update record.', error: error.message });
     }
 };
-
-
 
 // Controller for deleting a Yield Record by Id
 exports.deleteYieldRecords = async (req, res) => {
     try {
-        const { id } = req.params;
-        const deletedRecord = await YieldRecords.findOneAndDelete({ id });
+        const { id } = req.params; // Ensure this is correctly obtained
+        const deletedRecord = await YieldRecords.findByIdAndDelete(id);
 
         if (!deletedRecord) {
             return res.status(404).json({ message: 'Record not found' });
@@ -114,4 +122,3 @@ exports.deleteYieldRecords = async (req, res) => {
         res.status(500).json({ message: 'Failed to delete record.' });
     }
 };
-

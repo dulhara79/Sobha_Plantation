@@ -37,11 +37,14 @@ import EattendenceList from "./pages/employee/EattendenceList.jsx";
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
 import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
 import YieldRecords from "./pages/Harvest/YieldRecords";
-import TaskAssign from "./pages/Harvest/TaskAssign";
+import ComplianceCheckList from "./pages/Harvest/ComplianceCheckList";
 import AddYieldRecord from "./pages/Harvest/AddYeildRecord";
 import AddHarvestSchedule from  "./pages/Harvest/AddHarvestSchedule";
 import EditHarvestSchedule from './pages/Harvest/EditHarvestSchedule';
 import EditYieldRecords from './pages/Harvest/EditYieldRecords.jsx'
+import AddComplianceCheck from './pages/Harvest/AddComplianceCheck.jsx';
+import EditComplianceCheck from './pages/Harvest/EditComplianceCheck.jsx';
+import YieldBarChart from './pages/Harvest/YieldBarChart.jsx';
 // crop care
 
 // product
@@ -111,11 +114,15 @@ export default function App() {
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
       <Route path="/harvest/yield" element={<YieldRecords />} />
-      <Route path="/harvest/task" element={<TaskAssign />} />
+      <Route path="/harvest/compliancechecklist" element={<ComplianceCheckList />} />
       <Route path="/yield/addrecords" element={<AddYieldRecord />} />
       <Route path="/harvest/addschedule" element={<AddHarvestSchedule />} />
       <Route path="/harvest/edit/:id" element={<EditHarvestSchedule />} />
       <Route path="/yield/editrecords/:id" element={<EditYieldRecords />} />
+      <Route path="/compliance-checks/addrecords" element={<AddComplianceCheck />} />
+      <Route path="/compliance-checks/editrecords/:id" element={<EditComplianceCheck />} />
+      <Route path="/yield-bar-chart" element={<YieldBarChart />} />
+
 
       {/* crop care */}
       {/* <Route path="/diseases" element={<DiseasesDashboard />} />

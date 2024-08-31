@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
@@ -9,6 +9,9 @@ const { Option } = Select;
 const AddSchedule = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  
+  // Define loading state for managing form submission
+  const [loading, setLoading] = useState(false);
 
   // Function to disable past dates
   const disablePastDates = (current) => {
@@ -23,30 +26,40 @@ const AddSchedule = () => {
     return Promise.resolve();
   };
 
+  // Function to handle form submission
   const handleSubmit = async (values) => {
     try {
-      // Check if the values have the correct date format
-      const payload = {
-        ...values,
-        startDate: values.startDate ? moment(values.startDate).toISOString() : null,
-        endDate: values.endDate ? moment(values.endDate).toISOString() : null,
-      };
+        setLoading(true);
+        // Extract form values
+        const { harvestdate, cropType, ageofYieldDate, quantity, wayPicked, treesPicked, storageLocation } = values;
 
-      // Send POST request to the API
-      await axios.post('http://localhost:5000/api/yield', payload);
-      notification.success({
-        message: 'Success',
-        description: 'Yield Record added successfully!',
-      });
-      form.resetFields();
-      navigate('/harvest/yield');
+        await axios.post('http://localhost:5000/api/yield', {
+          harvestdate,
+          cropType,
+          ageofYieldDate,
+          quantity,
+          wayPicked,
+          treesPicked,
+          storageLocation
+        });
+        
+        // Handle success, reset loading or form fields if needed
+        notification.success({
+            message: 'Success',
+            description: 'Yield record added successfully!',
+        });
+        setLoading(false);
+        form.resetFields();  // Optionally reset the form after successful submission
+
+        // Navigate to /harvest/yield page after successful submission
+        navigate('/harvest/yield');
     } catch (error) {
-      // Log detailed error information
-      console.error('Failed to add yield record:', error.response || error.message);
-      notification.error({
-        message: 'Error',
-        description: `Failed to add yield record. ${error.response?.data?.message || 'Please try again.'}`,
-      });
+        console.error('Error adding yield record:', error);
+        setLoading(false);
+        notification.error({
+            message: 'Error',
+            description: 'There was an error adding the yield record.',
+        });
     }
   };
 
@@ -59,13 +72,6 @@ const AddSchedule = () => {
           onFinish={handleSubmit}
           layout="vertical"
         >
-             <Form.Item
-            label="ID"
-            name="id"
-            rules={[{ required: true, message: 'Please enter the age of Yield Date!' }]}
-          >
-            <Input type="number" placeholder="Enter " />
-          </Form.Item>
           <Form.Item
             label="Crop Type "
             name="cropType"
@@ -91,7 +97,7 @@ const AddSchedule = () => {
           </Form.Item>
 
           <Form.Item
-            label="Age of Yield Datentity"
+            label="Age of Yield Date"
             name="ageofYieldDate"
             rules={[{ required: true, message: 'Please enter the age of Yield Date!' }]}
           >
@@ -101,36 +107,34 @@ const AddSchedule = () => {
           <Form.Item
             label="Quantity"
             name="quantity"
-            rules={[{ required: true, message: 'Please enter the age of Yield Date!' }]}
+            rules={[{ required: true, message: 'Please enter the quantity!' }]}
           >
             <Input type="number" placeholder="Enter quantity" />
           </Form.Item>
           <Form.Item
             label="Way Picked"
             name="wayPicked"
-            rules={[{ required: true, message: 'Please enter the age of Yield Date!' }]}
+            rules={[{ required: true, message: 'Please enter how it was picked!' }]}
           >
-            <Input type="string" placeholder="Enter Way Picked" />
+            <Input placeholder="Enter Way Picked" />
           </Form.Item>
           <Form.Item
             label="Trees Picked"
             name="treesPicked"
-            rules={[{ required: true, message: 'Please enter the age of Trees Picked!' }]}
+            rules={[{ required: true, message: 'Please enter the number of trees picked!' }]}
           >
-            <Input type="string" placeholder="Enter Trees Picked" />
+            <Input type="number" placeholder="Enter Trees Picked" />
           </Form.Item>
           <Form.Item
-            label="TStorage Location"
+            label="Storage Location"
             name="storageLocation"
-            rules={[{ required: true, message: 'Please enter the age of Storage Location!' }]}
+            rules={[{ required: true, message: 'Please enter the storage location!' }]}
           >
-            <Input type="string" placeholder="Enter Storage Location" />
+            <Input placeholder="Enter Storage Location" />
           </Form.Item>
 
-          
-
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button type="primary" htmlType="submit" block loading={loading}>
               Add Records
             </Button>
           </Form.Item>
