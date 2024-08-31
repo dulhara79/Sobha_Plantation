@@ -63,6 +63,8 @@ import QualityControl from "./pages/Products/QualityControl.jsx";
 import AddSchedule from "./pages/Products/AddSchedule.jsx";
 import EditSchedule from "./pages/Products/EditSchedule.jsx";
 import AddInspectionReport from "./pages/Products/AddInspectionReport.jsx";
+import EditInspectionReport from "./pages/Products/EditInspectionReport.jsx";
+
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
@@ -144,6 +146,8 @@ export default function App() {
       <Route path="/products/addschedule" element={<AddSchedule />} />
       <Route path="/products/editschedule/:id" element={<EditSchedule />} />
       <Route path="/products/addInspectionReport" element={<AddInspectionReport />} />
+      <Route path="/products/editInspectionReport/:id" element={<EditInspectionReport />} />
+      
 
       {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
