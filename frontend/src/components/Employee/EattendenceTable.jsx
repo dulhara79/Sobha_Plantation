@@ -1,23 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
+import axios from 'axios';
 
 const AttendanceTable = () => {
+  const [attendanceData, setAttendanceData] = useState([]);
   const navigate = useNavigate();
 
-  const rows = [
-    { id: 1, name: 'Kmal Perera', date: '2024/03/02', status: 'present' },
-    { id: 2, name: 'Nimal Subasinghe', date: '2024/03/02', status: 'absent' },
-    { id: 3, name: 'Sunil Shantha', date: '2024/03/02', status: 'absent' },
-    { id: 4, name: 'Amal Perera', date: '2024/03/02', status: 'present' },
-    { id: 5, name: 'Janaka Gunathileka', date: '2024/03/02', status: 'present' },
-    { id: 6, name: 'Vihanga Jayalath', date: '2024/03/02', status: 'present' },
-    { id: 7, name: 'Pushpitha Rajapaksha', date: '2024/03/02', status: 'absent' },
-    { id: 8, name: 'Supun Subasinghe', date: '2024/03/02', status: 'absent' },
-  ];
+  useEffect(() => {
+    // Fetch data from an API or a data source
+    const fetchAttendanceData = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/attendance');
+        setAttendanceData(response.data);
+      } catch (error) {
+        console.error('Error fetching attendance data:', error);
+      }
+    };
+
+    fetchAttendanceData();
+  }, []);
 
   const handleGetAttendance = () => {
     navigate('/employee/attendance');
@@ -85,7 +90,6 @@ const AttendanceTable = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>No</TableCell>
               <TableCell>Name</TableCell>
               <TableCell>Date</TableCell>
               <TableCell>Status</TableCell>
@@ -93,9 +97,8 @@ const AttendanceTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {attendanceData.map((row) => (
               <TableRow key={row.id}>
-                <TableCell>{row.id}</TableCell>
                 <TableCell>{row.name}</TableCell>
                 <TableCell>{row.date}</TableCell>
                 <TableCell style={{ color: row.status === 'present' ? 'blue' : 'red' }}>{row.status}</TableCell>
