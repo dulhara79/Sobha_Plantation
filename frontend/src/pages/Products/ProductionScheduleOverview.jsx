@@ -4,11 +4,13 @@ import { ArrowBack } from "@mui/icons-material";
 import { Breadcrumb, Table, Button, Input, Select, Modal } from "antd";
 import axios from "axios";
 import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+//import jsPDF from "jspdf";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import moment from "moment";
 import "../../index.css";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const { Search } = Input;
 const { Option } = Select;
@@ -142,7 +144,7 @@ const ProductionScheduleOverview = () => {
     });
   };
 
-// Function to convert an image file to base64
+// Function to get image data URL
 const getImageDataURL = (url) => {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -162,83 +164,71 @@ const getImageDataURL = (url) => {
 
 // Generate PDF report
 const generatePDF = async () => {
+  const doc = new jsPDF();
+
+  // Load the logo image
+  const logoUrl = '../src/assets/logo.png'; 
   try {
-    const tableContainer = document.getElementById('pdf-content');
-    if (!tableContainer) {
-      console.error('PDF content element not found');
-      return;
-    }
-
-    // Temporarily hide "Actions" column
-    const actionColumn = tableContainer.querySelectorAll('.ant-table-cell:last-child');
-    actionColumn.forEach(cell => cell.style.display = 'none');
-
-    // Hide action buttons
-    const actionButtons = tableContainer.querySelectorAll('.ant-btn');
-    actionButtons.forEach(button => button.style.display = 'none');
-
-    // Capture content
-    const canvas = await html2canvas(tableContainer, { scale: 2 });
-    const imgData = canvas.toDataURL('image/png');
-
-    // Restore "Actions" column visibility
-    actionColumn.forEach(cell => cell.style.display = '');
-
-    // Restore action buttons visibility
-    actionButtons.forEach(button => button.style.display = '');
-
-    // Load logo image
-    const logoUrl = '../src/assets/logo.png';
     const logoDataURL = await getImageDataURL(logoUrl);
 
-    // Create PDF document
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
-    });
+    // Add the logo image to the PDF
+    doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
 
-    // Add header with logo and title
-    pdf.addImage(logoDataURL, 'PNG', 15, 10, 30, 30); // Logo
-    pdf.setFontSize(22);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Production Schedule', 75, 25); // Title
-
-    // Add table content to PDF
-    const imgWidth = 190; // Width in mm
-    const pageHeight = 295; // Height in mm (A4)
-    const imgHeight = canvas.height * imgWidth / canvas.width;
-    let heightLeft = imgHeight;
-
-    let position = 50; // Adjust to place content below header
-
-    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
-
-    // Add footer with page number
-    pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'normal');
-    for (let i = 1; i <= pdf.internal.getNumberOfPages(); i++) {
-      pdf.setPage(i);
-      pdf.text(`Page ${i}`, 190, 285, { align: 'right' });
-    }
-
-    // Save the PDF
-    pdf.save('production_schedule_report.pdf');
   } catch (error) {
-    console.error('Error generating PDF:', error);
-    Modal.error({
-      title: 'Error',
-      content: 'Failed to generate the PDF. Please try again later.',
-    });
+    console.error('Failed to load the logo image:', error);
   }
+
+  // Define the table columns
+  const columns = [
+    { title: "Product Type", dataKey: "productType" },
+    { title: "Quantity", dataKey: "quantity" },
+    { title: "Start Date", dataKey: "startDate" },
+    { title: "End Date", dataKey: "endDate" },
+    { title: "Status", dataKey: "status" },
+    { title: "Progress", dataKey: "progress" },
+  ];
+
+  // Map the filteredSchedules data to match the columns
+  const rows = filteredSchedules.map(schedule => ({
+    productType: schedule.productType,
+    quantity: schedule.quantity,
+    startDate: moment(schedule.startDate).format('YYYY-MM-DD'),
+    endDate: moment(schedule.endDate).format('YYYY-MM-DD'),
+    status: schedule.status,
+    progress: schedule.progress,
+  }));
+
+  // Add title and table
+  doc.setFontSize(22);
+  doc.text("Production Schedule Report", 50, 40); // Adjust y-coordinate as needed
+
+  doc.autoTable({
+    columns: columns,
+    body: rows,
+    startY: 50, 
+    margin: { horizontal: 10 },
+    styles: {
+      fontSize: 10,
+    },
+    headStyles: {
+      fillColor: [64, 133, 126], 
+      textColor: [255, 255, 255], 
+      fontSize: 12,
+    },
+    theme: 'striped',
+    didDrawPage: (data) => {
+      // Add page number to footer
+      const pageNumber = doc.internal.getNumberOfPages();
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+
+      doc.setFontSize(10);
+      doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10); // Adjust position as needed
+    },
+  });
+
+  // Save the PDF
+  doc.save("production_schedule_report.pdf");
 };
 
 
@@ -258,7 +248,7 @@ const generatePDF = async () => {
                 <ArrowBack className="text-gray-700" />
               </div>
               <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
                 onClick={onHomeClick}
               >
                 <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
@@ -266,7 +256,7 @@ const generatePDF = async () => {
                 </a>
               </div>
               <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white text-white"
                 onClick={onGroupContainerClick}
               >
                 <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
@@ -274,7 +264,7 @@ const generatePDF = async () => {
                 </a>
               </div>
               <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen  flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400  flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
                 onClick={onGroupContainerClick1}
               >
                 <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
@@ -282,7 +272,7 @@ const generatePDF = async () => {
                 </a>
               </div>
               <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen  flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400  flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
                 onClick={onGroupContainerClick2}
               >
                 <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
@@ -291,6 +281,13 @@ const generatePDF = async () => {
               </div>
             </div>
           </nav>
+
+          {/* Breadcrumbs */}
+          <Breadcrumb style={{ marginBottom: 16, marginLeft: 16 }}>
+          <Breadcrumb.Item>..</Breadcrumb.Item>
+            <Breadcrumb.Item onClick={onHomeClick}>Products</Breadcrumb.Item>
+            <Breadcrumb.Item>Production Overview</Breadcrumb.Item>
+          </Breadcrumb>
 
           {/* Page Header */}
           <header className="flex items-center justify-between px-6 py-4 mb-6 bg-white shadow-md">
@@ -308,20 +305,19 @@ const generatePDF = async () => {
               >
                 <Option value="All">All Statuses</Option>
                 <Option value="Scheduled">Scheduled</Option>
+                <Option value="In Progress">In Progress</Option>
                 <Option value="Completed">Completed</Option>
-                <Option value="Pending">Pending</Option>
+                
               </Select>
               <Button 
                 type="primary" 
                 onClick={generatePDF} 
-                style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }} // Custom green color
               >
                 Generate PDF
               </Button>
               <Button 
                 type="primary" 
                 onClick={() => navigate('/products/addschedule')} 
-                style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }} // Custom green color
               >
                 Add Schedule
               </Button>
