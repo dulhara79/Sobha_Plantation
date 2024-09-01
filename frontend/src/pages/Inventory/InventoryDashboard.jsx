@@ -83,11 +83,15 @@ const InventoryDashboard = () => {
   }, [navigate]);
 
   const onGroupContainerClick1 = useCallback(() => {
-    navigate("/Inventory/maintenance");
+    navigate("/Inventory/MaintenanceRecords");
   }, [navigate]);
 
   const onGroupContainerClick2 = useCallback(() => {
-    navigate("/Inventory/Order");
+    navigate("/Inventory/EquipmentRecords");
+  }, [navigate]);
+
+  const onGroupContainerClick3 = useCallback(() => {
+    navigate("/Inventory/OrderRecords");
   }, [navigate]);
 
   
@@ -122,27 +126,35 @@ const InventoryDashboard = () => {
               </a>
             </div>
             <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-              onClick={onGroupContainerClick}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-              Fertilizer
-              </a>
-            </div>
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-              onClick={onGroupContainerClick1}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Maintenance
-              </a>
-            </div>
-            <div
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                onClick={onGroupContainerClick}
+              >
+                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+                  Fertilizers & Agrochemicals
+                </a>
+              </div>
+              <div
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                onClick={onGroupContainerClick1}
+              >
+                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+                  Maintenance Record
+                </a>
+              </div>
+              <div
               className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
               onClick={onGroupContainerClick2}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Order
+                Equipments & Machines
+              </a>
+            </div>
+            <div
+              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
+              onClick={onGroupContainerClick3}
+            >
+              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+                Orders
               </a>
             </div>
       

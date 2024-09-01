@@ -1,28 +1,26 @@
 const mongoose = require('mongoose');
-const FertilizerRecords = require('../../models/Inventory/fertilizers'); // Ensure this path is correct
+const EquipmentRecords = require('../../models/Inventory/equipments'); // Ensure this path is correct
 
 
-exports.createFertilizerRecords = async (req, res) => {
+exports.createEquipmentRecords = async (req, res) => {
     try {
-        const { addeddate, fertilizertype, quantity, unit, storagelocation, expireddate, status } = req.body;
+        const { addeddate,equipmenttype,quantity,storagelocation,status } = req.body;
 
         // Validate required fields
-        if (!addeddate || !fertilizertype || !quantity || !unit || !storagelocation || !expireddate ||!status) {
+        if (!addeddate || !equipmenttype || !quantity || !storagelocation ||!status) {
             return res.status(400).json({
-                message: 'Please provide all required fields: addeddate, fertilizertype, quantity, unit, storagelocation, expireddate, status',
+                message: 'Please provide all required fields: addeddate,equipmenttype,quantity,storagelocation,status',
             });
         }
 
         // Create a new yield record
-        const newRecord = new FertilizerRecords({
+        const newRecord = new EquipmentRecords({
             addeddate,
-            fertilizertype,
+            equipmenttype,
             quantity,
-            unit,
             storagelocation,
-            expireddate,
             status
-
+        
             // Ensure id field is either auto-generated or removed if not required
         });
 
@@ -37,9 +35,9 @@ exports.createFertilizerRecords = async (req, res) => {
 
 
 // Controller for getting all Yield Records
-exports.getAllFertilizerRecords = async (req, res) => {
+exports.getAllEquipmentRecords = async (req, res) => {
     try {
-        const records = await FertilizerRecords.find({});
+        const records = await EquipmentRecords.find({});
         return res.status(200).json({
             count: records.length,
             data: records,
@@ -51,7 +49,7 @@ exports.getAllFertilizerRecords = async (req, res) => {
 };
 
 // Controller for getting a single Yield Record by Id
-exports.getFertilizerRecordsById = async (req, res) => {
+exports.getEquipmentRecordsById = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -60,7 +58,7 @@ exports.getFertilizerRecordsById = async (req, res) => {
             return res.status(400).json({ message: 'Invalid ID format.' });
         }
 
-        const record = await FertilizerRecords.findById(id);
+        const record = await EquipmentRecords.findById(id);
 
         if (!record) {
             return res.status(404).json({ message: 'Record not found' });
@@ -74,10 +72,10 @@ exports.getFertilizerRecordsById = async (req, res) => {
 };
 
 // Controller for updating a Yield Record by Id
-exports.updateFertilizerRecords = async (req, res) => {
+exports.updateEquipmentRecords = async (req, res) => {
     try {
         const { id } = req.params;
-        const { addeddate, fertilizertype, quantity, unit, storagelocation, expireddate, status } = req.body;
+        const { addeddate,equipmenttype,quantity,storagelocation,status } = req.body;
 
         // Check for a valid MongoDB ObjectId
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -85,16 +83,16 @@ exports.updateFertilizerRecords = async (req, res) => {
         }
 
         // Ensure all required fields are present
-        if (!addeddate || !fertilizertype || !quantity || !unit || !storagelocation || !expireddate ||!status ) {
+        if (!addeddate || !equipmenttype || !quantity || !storagelocation ||!status ) {
             return res.status(400).json({
-                message: 'Please provide all required fields: addeddate, fertilizertype, quantity, unit, storagelocation, expireddate, status ',
+                message: 'Please provide all required fields: addeddate,equipmenttype,quantity,storagelocation,status ',
             });
         }
 
         // Update the record
-        const result = await FertilizerRecords.findByIdAndUpdate(
+        const result = await EquipmentRecords.findByIdAndUpdate(
             id,
-            { addeddate, fertilizertype, quantity, unit, storagelocation, expireddate, status },
+            { addeddate,equipmenttype,quantity,storagelocation,status },
             { new: true, runValidators: true }
         );
 
@@ -112,10 +110,10 @@ exports.updateFertilizerRecords = async (req, res) => {
 };
 
 // Controller for deleting a Yield Record by Id
-exports.deleteFertilizerRecords = async (req, res) => {
+exports.deleteEquipmentRecords = async (req, res) => {
     try {
       const { id } = req.params; // Ensure this is correctly obtained
-      const deletedRecord = await FertilizerRecords.findByIdAndDelete(id);
+      const deletedRecord = await EquipmentRecords.findByIdAndDelete(id);
   
       if (!deletedRecord) {
         return res.status(404).json({ message: 'Record not found' });

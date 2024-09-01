@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
@@ -6,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
-const AddFertilizerRecord = () => {
+const AddEquipmentRecord = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   
@@ -31,15 +32,13 @@ const AddFertilizerRecord = () => {
     try {
         setLoading(true);
         // Extract form values
-        const { addeddate, fertilizertype, quantity,unit, storagelocation,expireddate,status } = values;
+        const { addeddate,equipmenttype,quantity,storagelocation,status } = values;
 
-        await axios.post('http://localhost:5000/api/fertilizers', {
+        await axios.post('http://localhost:5000/api/equipments', {
           addeddate,
-          fertilizertype,
+          equipmenttype,
           quantity,
-          unit,
           storagelocation,
-          expireddate,
           status
         });
         
@@ -52,7 +51,7 @@ const AddFertilizerRecord = () => {
         form.resetFields();  // Optionally reset the form after successful submission
 
         // Navigate to /harvest/yield page after successful submission
-        navigate('/Inventory/FertilizerRecords');
+        navigate('/Inventory/EquipmentRecords');
     } catch (error) {
         console.error('Error adding record:', error);
         setLoading(false);
@@ -66,34 +65,26 @@ const AddFertilizerRecord = () => {
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="mb-6 text-2xl font-bold text-center">Add Fertilizer/AgroChemical Records</h2>
+        <h2 className="mb-6 text-2xl font-bold text-center">Add Equipment/Machine Records</h2>
         <Form
           form={form}
           onFinish={handleSubmit}
           layout="vertical"
         >
           <Form.Item
-            label="Fertilizer/Agrochemical Name "
-            name="fertilizertype"
-            rules={[{ required: true, message: 'Please select a fertilizer/agrochemical type!' }]}
+            label="Equipment/Machine Name "
+            name="equipmenttype"
+            rules={[{ required: true, message: 'Please select a equipment/machine type!' }]}
           >
-               <Select placeholder="Select a fertilizer/AgroChemical type">
-              <Option value="Coconut fertilizer">Coconut fertilizer</Option>
-              <Option value="Banana fertilizer">Banana fertilizer</Option>
-              <Option value="Pepper fertilizer">Pepper fertilizer</Option>
-              <Option value="Papaya fertilizer">Papaya fertilizer</Option>
-              <Option value="Urea">Urea</Option>
-              <Option value="Dolomite">Dolomite</Option>
-              <Option value="YPM">YPM</Option> 
-              <Option value="Booster K 45%">Booster K 45%</Option>
-              <Option value="Daconil Chlorothalonil (chlorothalonil 500g/l SC) fungicide">Daconil Chlorothalonil (chlorothalonil 500g/l SC) fungicide</Option>
-              <Option value="Marshal 20 SC (carbosulfan 200g/l SC) insecticide">Marshal 20 SC (carbosulfan 200g/l SC) insecticide</Option>
-              <Option value="Mitsu Abamectin (abamectin 18g/l EC) insecticide">Mitsu Abamectin (abamectin 18g/l EC) insecticide</Option>
-              <Option value="Alberts solution">Alberts solution</Option>
-              <Option value="Crop Master solution">Crop Master solution</Option>
-              <Option value="Oasis Thiram (thiuram disulfide) fungicide">Oasis Thiram (thiuram disulfide) fungicide</Option>
-              <Option value="weeGlyphosate weedicideicide">Glyphosate weedicide</Option>
-              <Option value="Rootone">Rootone</Option>
+               <Select placeholder="Select a equipment/machine type">
+              <Option value="Bush cutter">Bush cutter</Option>
+              <Option value="4L disel cans">4L disel cans</Option>
+              <Option value="Metal chemical sprayer">Metal chemical sprayer</Option>
+              <Option value="4hp diesel water pump">4hp diesel water pump</Option>
+              <Option value="Boots pairs">Boots pairs</Option>
+              <Option value="8hp petrol hand tractor">8hp petrol hand tractor</Option>
+              <Option value="1hp tube well pump">1hp tube well pump</Option> 
+             
             </Select>
           </Form.Item>
 
@@ -116,19 +107,7 @@ const AddFertilizerRecord = () => {
             <Input type="number" placeholder="Enter quantity" />
           </Form.Item>
 
-          <Form.Item
-            label="Unit"
-            name="unit"
-            rules={[{ required: true, message: 'Please select unit!' }]}
-          >
-            <Select placeholder="Select unit">
-              <Option value="l">l</Option>
-              <Option value="ml">ml</Option>
-              <Option value="kg">kg</Option>
-              <Option value="g">g</Option>
-   
-            </Select>
-          </Form.Item>
+         
         
           <Form.Item
             label="Storage Location"
@@ -138,16 +117,7 @@ const AddFertilizerRecord = () => {
             <Input placeholder="Enter Storage Location" />
           </Form.Item>
 
-          <Form.Item
-            label="Expired Date"
-            name="expireddate"
-            rules={[{ required: true, message: 'Please select the expired date!' }]}
-          >
-            <DatePicker
-              format="YYYY-MM-DD"
-              disabledDate={disablePastDates}
-            />
-          </Form.Item>
+         
 
           <Form.Item
             label="Status"
@@ -157,7 +127,7 @@ const AddFertilizerRecord = () => {
             <Select placeholder="Select status">
               <Option value="In Stock">In Stock</Option>
               <Option value="Out Of Stock">Out Of Stock</Option>
-              <Option value="Expired">Expired</Option>
+              <Option value="Maintenance">Maintenance</Option>
    
             </Select>
           </Form.Item>
@@ -174,4 +144,4 @@ const AddFertilizerRecord = () => {
   );
 };
 
-export default AddFertilizerRecord;
+export default AddEquipmentRecord;

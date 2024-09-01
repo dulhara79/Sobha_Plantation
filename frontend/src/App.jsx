@@ -25,8 +25,13 @@ import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAna
  import EditFertilizerRecord from "./pages/Inventory/EditFertilizerRecord.jsx";
  import AddFertilizerRecord from "./pages/Inventory/AddFertilizerRecord.jsx";
  import InventoryDashboard from "./pages/Inventory/InventoryDashboard.jsx";
-
-
+ import MaintenanceRecords from "./pages/Inventory/MaintenanceRecords.jsx";
+ import EditMaintenanceRecord from "./pages/Inventory/EditMaintenanceRecord.jsx";
+ import AddMaintenanceRecord from "./pages/Inventory/AddMaintenanceRecord.jsx";
+ import EquipmentRecords from "./pages/Inventory/EquipmentRecords.jsx";
+ import EditEquipmentRecord from "./pages/Inventory/EditEquipmentRecord.jsx";
+ import AddEquipmentRecord from "./pages/Inventory/AddEquipmentRecord.jsx";
+ 
  
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
@@ -56,7 +61,6 @@ import AddCropsDiseases from "./pages/Diseases/AddCropsDiseases.jsx";
 import CoconutTreatments from "./pages/Diseases/CoconutTreatments.jsx";
 import CoconutPests from "./pages/Diseases/CoconutPests.jsx";
 import RegularMaintenance from "./pages/Diseases/RegularMaintenance.jsx";
-
 // product
 import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
 import ProductionScheduleOverview from "./pages/Products/ProductionScheduleOverview.jsx";
@@ -107,9 +111,12 @@ export default function App() {
     <Route path="/Inventory/EditFertilizerRecords/:id" element={<EditFertilizerRecord/>} />
     <Route path="/Inventory/AddFertilizerRecord" element={<AddFertilizerRecord/>} />
     <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>} />
-   
-
-      
+    <Route path="/Inventory/MaintenanceRecords" element={<MaintenanceRecords/>} />
+    <Route path="/Inventory/EditMaintenanceRecord/:id" element={<EditMaintenanceRecord/>} />
+    <Route path="/Inventory/AddMaintenanceRecord" element={<AddMaintenanceRecord/>} />
+    <Route path="/Inventory/EquipmentRecords" element={<EquipmentRecords/>} />
+    <Route path="/Inventory/EditEquipmentRecords/:id" element={<EditEquipmentRecord/>} />
+    <Route path="/Inventory/AddEquipmentRecord" element={<AddEquipmentRecord/>} />
 
       {/* employee */}        
       <Route path="/employee/dashboard" element={<Edashboard/>}/>
@@ -130,7 +137,7 @@ export default function App() {
       <Route path="/harvest/addschedule" element={<AddHarvestSchedule />} />
       <Route path="/harvest/edit/:id" element={<EditHarvestSchedule />} />
         
-      {/* crop care */}
+       {/* crop care */}
       <Route path="/diseases" element={<DiseasesDashboard />} />
       <Route path="/coconutInspections" element={<CoconutInspections />} />
       <Route path="/intercropInspections" element={<IntercropInspections />} />
