@@ -10,7 +10,7 @@
   "license": "ISC",
   "description": "Sobha Plantations - Coconut Cultivation and Operations Management System",
   "dependencies": {
-    "axios": "^1.7.5",
+    "axios": "^1.7.4",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
@@ -19,7 +19,6 @@
     "express": "^4.19.2",
     "joi": "^17.13.3",
     "mongoose": "^8.5.3",
-    "recharts": "^2.12.7",
     "socket.io": "^4.7.5"
   },
   "devDependencies": {

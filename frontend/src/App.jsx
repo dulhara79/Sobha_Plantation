@@ -21,6 +21,10 @@ import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDispl
 import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
 
 // inventory
+ import FertilizerRecords from "./pages/Inventory/FertilizerRecords.jsx";
+ import EditFertilizerRecord from "./pages/Inventory/EditFertilizerRecord.jsx";
+ import AddFertilizerRecord from "./pages/Inventory/AddFertilizerRecord.jsx";
+ import InventoryDashboard from "./pages/Inventory/InventoryDashboard.jsx";
 
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
@@ -109,11 +113,10 @@ export default function App() {
       <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />
 
       {/* inventory */}
-      {/* <Route path="/Inventory/Fertilizer" element={<Fertilizer/>} />
-      <Route path="/Inventory/Maintenance" element={<Maintenance/>} />
-      <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>} />
-      <Route path="/Inventory/FertilizerForm" element={<FertilizerForm/>} />
-      <Route path="/Inventory/MaintenanceForm" element={<MaintenanceForm/>} /> */}
+    <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} />
+    <Route path="/Inventory/EditFertilizerRecords/:id" element={<EditFertilizerRecord/>} />
+    <Route path="/Inventory/AddFertilizerRecord" element={<AddFertilizerRecord/>} />
+    <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>} />
 
       {/* employee */}        
       <Route path="/employee/dashboard" element={<Edashboard/>}/>
