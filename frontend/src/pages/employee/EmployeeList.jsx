@@ -266,10 +266,10 @@ const EmployeeList = () => {
                     ))}
                 </Select>
 
-                <RangePicker
-                    format="YYYY-MM-DD"
-                    onChange={handleDateChange}
-                />
+                        <RangePicker
+                            format="YYYY-MM-DD"
+                            onChange={handleDateChange}
+                        />
 
                 <div className="relative">
                     <input
@@ -289,13 +289,14 @@ const EmployeeList = () => {
             </div>
             <div className={`ml-[310px] overflow-x-auto`}>
 
-            <Table
-                dataSource={dataSource}
-                columns={columns}
-                loading={loading}
-                pagination={{ pageSize: 10 }}
-                scroll={{ x: true }}
-            />
+                <div className={`ml-[310px] overflow-x-auto`}>
+                    <Table
+                        dataSource={dataSource}
+                        columns={columns}
+                        loading={loading}
+                        pagination={{ pageSize: 10 }}
+                        scroll={{ x: true }}
+                    />
 
             <Button
                 type="primary"
@@ -305,6 +306,7 @@ const EmployeeList = () => {
                 Download PDF
             </Button>
         </div>
+    </div>
     </div>
     </div>
     );
