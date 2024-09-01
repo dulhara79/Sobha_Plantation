@@ -28,7 +28,7 @@ export default function ViewTaskDetails() {
     useEffect(() => {
         setLoading(true);
         axios
-            .get(`https://Sobha_Plantation.vercel.app/taskRecords/${id}`)
+            .get(`http://localhost:5000/api/taskRecords/${id}`)
             .then((response) => {
                 setTaskRecord(response.data);
                 setLoading(false);

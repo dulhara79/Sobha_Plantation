@@ -36,9 +36,9 @@ const Sidebar = ({ className = "" }) => {
     { name: "Buyers", icon: <Person />, path: "/buyer-registration" },
   ];
 
-  console.log("location.pathname: "+location.pathname);
-  console.log("activePage: "+activePage);
-  console.log("isActivePage: "+isActive(activePage));
+  // console.log("location.pathname: "+location.pathname);
+  // console.log("activePage: "+activePage);
+  // console.log("isActivePage: "+isActive(activePage));
 
   return (
     <div

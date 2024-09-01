@@ -2,19 +2,17 @@ require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const cors = require("cors");
 const connectDB = require('./config/db'); // Import MongoDB connection function
-
 const http = require('http');
 const { Server } = require('socket.io');
 
 
 const employeeRoutes = require('./routes/employee');
 // const salesRoutes = require('./routes/sales');
-const productionRoutes = require('./routes/Products/productionRoute.js');
-// const productionRoutes = require('./routes/productionRoute');
+
 
 const yieldRoutes = require('./routes/Harvest/yield');
 const harvestRoutes = require('./routes/Harvest/harvest');
-const qualityControlRoute = require('./routes/Products/qualityControlRoute.js');
+
 
 //inventory
 const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
@@ -25,8 +23,8 @@ const fertilizerRoutes = require('./routes/Inventory/fertilizers.js');
 /**
  * production
  */
-
-
+const productionRoutes = require('./routes/Products/productionRoute.js');
+const qualityControlRoute = require('./routes/Products/qualityControlRoute.js');
 
 /**
  * harvest
@@ -87,12 +85,13 @@ app.use("/api/salary-employees", salaryEmployeeRoutes);
 app.use("/api/crop-varieties", cropVarietiesRoutes);
 // app.use("/api/employee", employeeRoutes);
 app.use('/api/taskRecords', ETaskRoutes);
-app.use('/api/production', productionRoutes);
-// app.use('/api/production', productionRoutes);
 app.use('/api/harvest', harvestRoutes);
 app.use('/api/yield', yieldRoutes);
-app.use('/api/quality-control', qualityControlRoute);
 
+
+//products
+app.use('/api/production', productionRoutes);
+app.use('/api/quality-control', qualityControlRoute);
 
 //inventory
 app.use('/api/fertilizers', fertilizerRoutes);
