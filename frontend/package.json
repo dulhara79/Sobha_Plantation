@@ -1,4 +1,3 @@
-
 {
   "name": "frontend",
   "private": true,

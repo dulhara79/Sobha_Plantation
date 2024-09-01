@@ -3,12 +3,12 @@ const HarvestSchedule = require('../../models/Harvest/Harvest');
 // Controller for creating a new Harvest schedule
 exports.createHarvestSchedule = async (req, res) => {
     try {
-        const { harvestId, cropType, harvestDate, startTime, endTime, fieldNumber, harvestMethod, estimatedYield, numberOfWorkers } = req.body;
+        const { harvestId, cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers } = req.body;
 
-        if (!harvestId || !cropType || !harvestDate || !startTime || !endTime || !fieldNumber || !harvestMethod || !estimatedYield || !numberOfWorkers) {
+        if (!harvestId || !cropType || !harvestDate || !startTime || !endTime || !fieldNumber ||  !numberOfWorkers) {
             return res.status(400).json({
                 success: false,
-                message: 'Please provide all required fields: harvestId, cropType, harvestDate, startTime, endTime, estimatedYield, harvestMethod, numberOfWorkers',
+                message: 'Please provide all required fields: harvestId, cropType, harvestDate, startTime, endTime, numberOfWorkers',
             });
         }
 
@@ -19,8 +19,6 @@ exports.createHarvestSchedule = async (req, res) => {
             startTime,
             endTime,
             fieldNumber,
-            harvestMethod,
-            estimatedYield,
             numberOfWorkers,
         };
 
@@ -69,18 +67,18 @@ exports.getHarvestScheduleById = async (req, res) => {
 exports.updateHarvestSchedule = async (req, res) => {
     try {
         const { id } = req.params;
-        const { cropType, harvestDate, startTime, endTime, fieldNumber, harvestMethod, estimatedYield, numberOfWorkers } = req.body;
+        const { cropType, harvestDate, startTime, endTime, fieldNumber,numberOfWorkers } = req.body;
 
-        if (!cropType || !harvestDate || !startTime || !endTime || !fieldNumber || !harvestMethod || !estimatedYield || !numberOfWorkers) {
+        if (!cropType || !harvestDate || !startTime || !endTime || !fieldNumber ||!numberOfWorkers) {
             return res.status(400).json({
                 success: false,
-                message: 'Send all required fields: cropType, harvestDate, startTime, endTime, fieldNumber, harvestMethod, estimatedYield, numberOfWorkers',
+                message: 'Send all required fields: cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers',
             });
         }
 
         const result = await HarvestSchedule.findOneAndUpdate(
             { harvestId: id },
-            { cropType, harvestDate, startTime, endTime, fieldNumber, harvestMethod, estimatedYield, numberOfWorkers },
+            { cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers },
             { new: true }
         );
 

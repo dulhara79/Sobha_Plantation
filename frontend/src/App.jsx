@@ -26,8 +26,6 @@ import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAna
  import AddFertilizerRecord from "./pages/Inventory/AddFertilizerRecord.jsx";
  import InventoryDashboard from "./pages/Inventory/InventoryDashboard.jsx";
 
-
- 
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
 import Eregistration from "./pages/employee/Eregistration.jsx";
@@ -42,10 +40,15 @@ import EattendenceList from "./pages/employee/EattendenceList.jsx";
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
 import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
-import YieldRecords from "./pages/Harvest/YieldRecords.jsx";
-import TaskAssign from "./pages/Harvest/TaskAssign.jsx"
-import AddHarvestSchedule from "./pages/Harvest/AddHarvestSchedule.jsx";
+import YieldRecords from "./pages/Harvest/YieldRecords";
+import ComplianceCheckList from "./pages/Harvest/ComplianceCheckList";
+import AddYieldRecord from "./pages/Harvest/AddYeildRecord";
+import AddHarvestSchedule from  "./pages/Harvest/AddHarvestSchedule";
 import EditHarvestSchedule from './pages/Harvest/EditHarvestSchedule';
+import EditYieldRecords from './pages/Harvest/EditYieldRecords.jsx'
+import AddComplianceCheck from './pages/Harvest/AddComplianceCheck.jsx';
+import EditComplianceCheck from './pages/Harvest/EditComplianceCheck.jsx';
+import YieldBarChart from './pages/Harvest/YieldBarChart.jsx';
 
 // crop care (diseases)
 import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
@@ -114,9 +117,6 @@ export default function App() {
     <Route path="/Inventory/EditFertilizerRecords/:id" element={<EditFertilizerRecord/>} />
     <Route path="/Inventory/AddFertilizerRecord" element={<AddFertilizerRecord/>} />
     <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>} />
-   
-
-      
 
       {/* employee */}        
       <Route path="/employee/dashboard" element={<Edashboard/>}/>
@@ -133,12 +133,18 @@ export default function App() {
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
       <Route path="/harvest/yield" element={<YieldRecords />} />
-      <Route path="/harvest/task" element={<TaskAssign/>} />
+      <Route path="/harvest/compliancechecklist" element={<ComplianceCheckList />} />
+      <Route path="/yield/addrecords" element={<AddYieldRecord />} />
       <Route path="/harvest/addschedule" element={<AddHarvestSchedule />} />
       <Route path="/harvest/edit/:id" element={<EditHarvestSchedule />} />
-        
+      <Route path="/yield/editrecords/:id" element={<EditYieldRecords />} />
+      <Route path="/compliance-checks/addrecords" element={<AddComplianceCheck />} />
+      <Route path="/compliance-checks/editrecords/:id" element={<EditComplianceCheck />} />
+      <Route path="/yield-bar-chart" element={<YieldBarChart />} />
+
+
       {/* crop care */}
-      <Route path="/diseases" element={<DiseasesDashboard />} />
+      {/* <Route path="/diseases" element={<DiseasesDashboard />} />
       <Route path="/coconutInspections" element={<CoconutInspections />} />
       <Route path="/intercropInspections" element={<IntercropInspections />} />
       <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
@@ -146,6 +152,7 @@ export default function App() {
       <Route path="/coconutTreatments" element={<CoconutTreatments />} />
       <Route path="/intercropTreatments" element={<IntercropTreatments />} />
       <Route path="/coconutPests" element={<CoconutPests />} />
+      <Route path="/maintenance" element={<RegularMaintenance />} /> */}
       <Route path="/intercropPests" element={<IntercropPests />} />
       <Route path="/maintenance" element={<RegularMaintenance />} />
       <Route path="/UserProfile" element={<UserProfile />} />

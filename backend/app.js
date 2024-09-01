@@ -10,13 +10,11 @@ const employeeRoutes = require('./routes/employee');
 // const salesRoutes = require('./routes/sales');
 
 
-const yieldRoutes = require('./routes/Harvest/yield');
-const harvestRoutes = require('./routes/Harvest/harvest');
-
 
 //inventory
-const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
-
+const fertilizerRoutes = require('./routes/Inventory/fertilizers.js');
+// const maintenanceRoutes = require('./routes/Inventory/maintenanceRoute.js');
+ 
 
 
 
@@ -29,7 +27,9 @@ const qualityControlRoute = require('./routes/Products/qualityControlRoute.js');
 /**
  * harvest
  */
-
+const yieldRoutes = require('./routes/Harvest/yield.js');
+const harvestRoutes = require('./routes/Harvest/harvest.js');
+const complianceCheckRoutes = require('./routes/Harvest/compliance.js')
 
 
 /**
@@ -85,9 +85,11 @@ app.use("/api/salary-employees", salaryEmployeeRoutes);
 app.use("/api/crop-varieties", cropVarietiesRoutes);
 // app.use("/api/employee", employeeRoutes);
 app.use('/api/taskRecords', ETaskRoutes);
+
+// harvest
 app.use('/api/harvest', harvestRoutes);
 app.use('/api/yield', yieldRoutes);
-
+app.use('/api/compliance-checks', complianceCheckRoutes);// Ensure the route path is correct
 
 //products
 app.use('/api/production', productionRoutes);
