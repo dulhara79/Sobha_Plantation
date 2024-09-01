@@ -10,9 +10,9 @@ import moment from "moment";
 
 const { Search } = Input;
 
-const FertilizerRecords = () => {
-  const [fertilizers, setFertilizers] = useState([]);
-  const [filteredFertilizers, setFilteredFertilizers] = useState([]);
+const OrderRecords = () => {
+  const [orders, setOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [sorter, setSorter] = useState({ field: null, order: null });
@@ -24,14 +24,14 @@ const FertilizerRecords = () => {
   };
 
   useEffect(() => {
-    fetchFertilizers();
+    fetchOrders();
   }, []);
 
-  const fetchFertilizers = async () => {
+  const fetchOrders = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/fertilizers');
-      setFertilizers(response.data.data);
-      setFilteredFertilizers(response.data.data);
+      const response = await axios.get('http://localhost:5000/api/orders');
+      setOrders(response.data.data);
+      setFilteredOrders(response.data.data);
     } catch (error) {
       console.error('Error fetching records:', error);
     }
@@ -63,23 +63,23 @@ const FertilizerRecords = () => {
 
   const onSearch = (value) => {
     setSearchText(value);
-    filterFertilizers(value, filterStatus);
+    filterOrders(value, filterStatus);
   };
 
-  const filterFertilizers = (searchText, filterStatus) => {
-    let filteredData = fertilizers;
+  const filterOrders = (searchText, filterStatus) => {
+    let filteredData = orders;
   
     if (searchText) {
       const lowercasedSearchText = searchText.toLowerCase();
-      filteredData = filteredData.filter((fertilizer) => 
-        Object.values(fertilizer).some((value) => 
+      filteredData = filteredData.filter((order) => 
+        Object.values(order).some((value) => 
           String(value).toLowerCase().includes(lowercasedSearchText)
         )
       );
     }
   
     if (filterStatus !== "All") {
-      filteredData = filteredData.filter((fertilizer) => fertilizer.status === filterStatus);
+      filteredData = filteredData.filter((order) => order.status === filterStatus);
     }
   
     if (sorter.field) {
@@ -92,22 +92,22 @@ const FertilizerRecords = () => {
       });
     }
   
-    setFilteredFertilizers(filteredData);
+    setFilteredOrders(filteredData);
   };
 
   
   const handleSort = (field, order) => {
     setSorter({ field, order });
-    filterFertilizers(searchText, filterStatus);
+    filterOrders(searchText, filterStatus);
   };
 
   const cancelSorting = () => {
     setSorter({ field: null, order: null });
-    filterFertilizers(searchText, filterStatus);
+    filterOrders(searchText, filterStatus);
   };
 
   const handleUpdate = (id) => {
-    navigate(`/Inventory/EditFertilizerRecords/${id}`);
+    navigate(`/Inventory/EditOrderRecords/${id}`);
   };
   
   const confirmDelete = (id) => {
@@ -122,14 +122,14 @@ const FertilizerRecords = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/fertilizers/${id}`);
+      const response = await axios.delete(`http://localhost:5000/api/orders/${id}`);
       if(response.status === 200) {
         notification.success({
           message: 'Success',
           description: ' record deleted successfully!',
         });
         // Update local state to remove the deleted record
-        setFilteredFertilizers(filteredFertilizers.filter(record => record._id !== id));
+        setFilteredOrders(filteredOrders.filter(record => record._id !== id));
       } else {
         notification.error({
           message: 'Error',
@@ -169,7 +169,7 @@ const FertilizerRecords = () => {
                 </a>
               </div>
               <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
                 onClick={onGroupContainerClick}
               >
                 <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
@@ -193,11 +193,11 @@ const FertilizerRecords = () => {
               </a>
             </div>
             <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
+              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
               onClick={onGroupContainerClick3}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-              Order Details
+                Order Details
               </a>
             </div>
             </div>
@@ -206,7 +206,7 @@ const FertilizerRecords = () => {
           <Breadcrumb
             items={[
               { title: 'Home', href: '/' },
-              { title: 'fertilizers', href: '/Inventory/FertilizerRecords' }
+              { title: 'orders', href: '/Inventory/OrderRecords' }
             ]}
           />
           {/* Welcome Message Component 
@@ -240,19 +240,26 @@ const FertilizerRecords = () => {
             <Table
               columns={[
                 {
-                  title: "Added Date",
-                  dataIndex: "addeddate",
-                  key: "addeddate",
+                  title: "Order Date",
+                  dataIndex: "orderdate",
+                  key: "orderdate",
                   sorter: true,
-                  sortOrder: sorter.field === 'addeddate' ? sorter.order : null,
+                  sortOrder: sorter.field === 'orderdate' ? sorter.order : null,
                   render: (text) => moment(text).format("YYYY-MM-DD"),
                 },
                 {
-                  title: "Fertilizer/Agrochemical Name",
-                  dataIndex: "fertilizertype",
-                  key: "fertilizertype",
+                  title: "Order Type",
+                  dataIndex: "ordertype",
+                  key: "ordertype",
                   sorter: true,
-                  sortOrder: sorter.field === 'fertilizertype' ? sorter.order : null,
+                  sortOrder: sorter.field === 'ordertype' ? sorter.order : null,
+                },
+                {
+                    title: "Item Name",
+                    dataIndex: "itemname",
+                    key: "itemname",
+                    sorter: true,
+                    sortOrder: sorter.field === 'itemname' ? sorter.order : null,
                 },
                 {
                   title: "Quantity",
@@ -269,18 +276,18 @@ const FertilizerRecords = () => {
                   sortOrder: sorter.field === 'unit' ? sorter.order : null,
                 },
                 {
-                  title: "Storage Location",
-                  dataIndex: "storagelocation",
-                  key: "storagelocation",
+                  title: "Referred Location",
+                  dataIndex: "referredlocation",
+                  key: "referredlocation",
                   sorter: true,
-                  sortOrder: sorter.field === 'storagelocation' ? sorter.order : null,
+                  sortOrder: sorter.field === 'referredlocation' ? sorter.order : null,
                 },
                 {
-                  title: "Expired Date",
-                  dataIndex: "expireddate",
-                  key: "expireddate",
+                  title: "Received Date",
+                  dataIndex: "receiveddate",
+                  key: "receiveddate",
                   sorter: true,
-                  sortOrder: sorter.field === 'expireddate' ? sorter.order : null,
+                  sortOrder: sorter.field === 'receiveddate' ? sorter.order : null,
                   render: (text) => moment(text).format("YYYY-MM-DD"),
                 },
                 {
@@ -305,7 +312,7 @@ const FertilizerRecords = () => {
                   ),
                 },
               ]}
-              dataSource={filteredFertilizers}
+              dataSource={filteredOrders}
               rowKey="_id"
               pagination={false}  // Disable pagination
               scroll={{ y: 400 }} // Optional: Add vertical scroll if there are many rows
@@ -324,4 +331,4 @@ const FertilizerRecords = () => {
   );
 };
 
-export default FertilizerRecords;
+export default OrderRecords;

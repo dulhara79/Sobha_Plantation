@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard.jsx";
  * sales and finance
 */ 
 //sales
+
 import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
 import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
 import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
@@ -21,10 +22,17 @@ import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDispl
 import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
 
 // inventory
+ // inventory
  import FertilizerRecords from "./pages/Inventory/FertilizerRecords.jsx";
  import EditFertilizerRecord from "./pages/Inventory/EditFertilizerRecord.jsx";
  import AddFertilizerRecord from "./pages/Inventory/AddFertilizerRecord.jsx";
  import InventoryDashboard from "./pages/Inventory/InventoryDashboard.jsx";
+ import MaintenanceRecords from "./pages/Inventory/MaintenanceRecords.jsx";
+ import EditMaintenanceRecord from "./pages/Inventory/EditMaintenanceRecord.jsx";
+ import AddMaintenanceRecord from "./pages/Inventory/AddMaintenanceRecord.jsx";
+ import EquipmentRecords from "./pages/Inventory/EquipmentRecords.jsx";
+ import EditEquipmentRecord from "./pages/Inventory/EditEquipmentRecord.jsx";
+ import AddEquipmentRecord from "./pages/Inventory/AddEquipmentRecord.jsx";
 
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
@@ -110,15 +118,21 @@ export default function App() {
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
       <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} />
       <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
-      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />
+      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} /> 
 
-      {/* inventory */}
-    <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} />
+       {/* inventory */}
+       <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} />
     <Route path="/Inventory/EditFertilizerRecords/:id" element={<EditFertilizerRecord/>} />
     <Route path="/Inventory/AddFertilizerRecord" element={<AddFertilizerRecord/>} />
     <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>} />
+    <Route path="/Inventory/MaintenanceRecords" element={<MaintenanceRecords/>} />
+    <Route path="/Inventory/EditMaintenanceRecord/:id" element={<EditMaintenanceRecord/>} />
+    <Route path="/Inventory/AddMaintenanceRecord" element={<AddMaintenanceRecord/>} />
+    <Route path="/Inventory/EquipmentRecords" element={<EquipmentRecords/>} />
+    <Route path="/Inventory/EditEquipmentRecords/:id" element={<EditEquipmentRecord/>} />
+    <Route path="/Inventory/AddEquipmentRecord" element={<AddEquipmentRecord/>} />
 
-      {/* employee */}        
+      {/* employee */}       
       <Route path="/employee/dashboard" element={<Edashboard/>}/>
       <Route path="/employee/registration" element= {<Eregistration/>}/>
       <Route path="/employee/salary" element= {<Esalary/>}/>
@@ -127,7 +141,7 @@ export default function App() {
       <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
       <Route path="/employee/attendance" element= {<GetAttendance/>}/>
       <Route path="/employee/employeelist" element= {<EmployeeList/>}/>
-      <Route path="/employee/attendanceList" element= {<EattendenceList/>}/>
+      <Route path="/employee/attendanceList" element= {<EattendenceList/>}/> 
 
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />

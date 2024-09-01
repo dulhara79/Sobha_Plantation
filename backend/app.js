@@ -12,8 +12,10 @@ const employeeRoutes = require('./routes/Employee/employee.js');
 
 
 //inventory
-const fertilizerRoutes = require('./routes/Inventory/fertilizers.js');
-// const maintenanceRoutes = require('./routes/Inventory/maintenanceRoute.js');
+
+const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
+const maintenanceRoutes = require('./routes/Inventory/maintenance.js'); 
+const equipmentRoutes = require('./routes/Inventory/equipments.js'); 
  
 
 
@@ -93,10 +95,12 @@ app.use('/api/compliance-checks', complianceCheckRoutes);// Ensure the route pat
 app.use('/api/production', productionRoutes);
 app.use('/api/quality-control', qualityControlRoute);
 
+
 //inventory
 app.use('/api/fertilizers', fertilizerRoutes);
-//app.use('/api/maintenance', maintenanceRoutes);
-//app.use('/api/inventoryRecords', InventoryRecordRoutes);
+app.use('/api/maintenance', maintenanceRoutes);
+app.use('/api/equipments', equipmentRoutes);
+
 
 /**
 * crop

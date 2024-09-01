@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 // Import image assets
 import Tools from '../../assets/Inventory/tools.jpg';
 import Fertilizers from '../../assets/Inventory/fertilizerImg.png';
-import Plants from '../../assets/Inventory/plantsImg.png';
+//import Plants from '../../assets/Inventory/plantsImg.png';
 import Agrochemicals from '../../assets/Inventory/agrochemicalImg.jpg';
 import Maintenance from '../../assets/Inventory/maintenanceImg.png';
 
@@ -42,7 +42,7 @@ const fertilizersData = {
   ],
 };
 
-const plantsData = {
+{/*const plantsData = {
   labels: ["Available", "Used"],
   datasets: [
     {
@@ -52,7 +52,7 @@ const plantsData = {
     },
   ],
 };
-
+*/}
 const agroChemicalsData = {
   labels: ["Available", "Used"],
   datasets: [
@@ -83,11 +83,15 @@ const InventoryDashboard = () => {
   }, [navigate]);
 
   const onGroupContainerClick1 = useCallback(() => {
-    navigate("/Inventory/maintenance");
+    navigate("/Inventory/MaintenanceRecords");
   }, [navigate]);
 
   const onGroupContainerClick2 = useCallback(() => {
-    navigate("/Inventory/Order");
+    navigate("/Inventory/EquipmentRecords");
+  }, [navigate]);
+
+  const onGroupContainerClick3 = useCallback(() => {
+    navigate("/Inventory/OrderRecords");
   }, [navigate]);
 
   
@@ -122,27 +126,35 @@ const InventoryDashboard = () => {
               </a>
             </div>
             <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-              onClick={onGroupContainerClick}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-              Fertilizer
-              </a>
-            </div>
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-              onClick={onGroupContainerClick1}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Maintenance
-              </a>
-            </div>
-            <div
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                onClick={onGroupContainerClick}
+              >
+                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+                  Fertilizers & Agrochemicals
+                </a>
+              </div>
+              <div
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                onClick={onGroupContainerClick1}
+              >
+                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+                  Maintenance Records
+                </a>
+              </div>
+              <div
               className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
               onClick={onGroupContainerClick2}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Order
+                Equipments & Machines
+              </a>
+            </div>
+            <div
+              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
+              onClick={onGroupContainerClick3}
+            >
+              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+              Order Details
               </a>
             </div>
       
@@ -193,7 +205,7 @@ const InventoryDashboard = () => {
                   </Row>
                 </Card>
               </Col>
-              <Col span={8}>
+       { /*      <Col span={8}>
                 <Card title="Plant Varieties">
                   <Row align="middle" justify="center">
                     <Col span={12}>
@@ -205,7 +217,7 @@ const InventoryDashboard = () => {
                     </Col>
                   </Row>
                 </Card>
-              </Col>
+              </Col>*/}
             </Row>
 
             <Row gutter={[16, 16]} justify="center" className="mt-5">

@@ -1,14 +1,14 @@
 
 const mongoose = require('mongoose');
 
-const fertilizerSchema = new mongoose.Schema({
+const equipmentSchema = new mongoose.Schema({
 
     addeddate: {
         type: Date,
         required: true,
         
     },
-    fertilizertype: {
+    equipmenttype: {
         type: String,
         required: true,
       
@@ -18,21 +18,13 @@ const fertilizerSchema = new mongoose.Schema({
         required: true,
      
     },
-    unit: {
-        type: String,
-        required: true,
-      
-    },
+   
     storagelocation: {
         type: String,
         required: true,
       
     },
-    expireddate: {
-        type: Date,
-        required: true,
-       
-    },
+   
     status: {
         type: String,
         required: true,
@@ -48,4 +40,4 @@ const fertilizerSchema = new mongoose.Schema({
 });
 
 // Export the model with a singular name
-module.exports = mongoose.model('FertilizerRecords', fertilizerSchema);
+module.exports = mongoose.model('EquipmmentRecords', equipmentSchema);
