@@ -22,7 +22,7 @@ const HarvestDashboard = () => {
   }, [navigate]);
 
   const onGroupContainerClick2 = useCallback(() => {
-    navigate("/harvest/task");
+    navigate("/harvest/compliancechecklist");
   }, [navigate]);
 
   const onHomeClick = useCallback(() => {
@@ -82,7 +82,7 @@ const HarvestDashboard = () => {
               onClick={onGroupContainerClick2}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Task Assign
+              Compliance Check List
               </a>
             </div>
           </div>
@@ -124,13 +124,13 @@ const HarvestDashboard = () => {
 
           <div className="grid grid-cols-2 gap-10 mt-5">
             <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform bg-green-500 rounded-lg shadow-lg hover:scale-105">
-              <h3 className="text-xl text-center">Ready to harvest in Papaya</h3>
-              <p className="mt-2 font-extrabold text-10xl">129</p>
-            </div>
-            <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform bg-green-500 rounded-lg shadow-lg hover:scale-105">
-              <h3 className="text-xl text-center">Ready to harvest in Coconut</h3>
-              <p className="mt-2 font-extrabold text-10xl">40</p>
-            </div>
+             <h3 className="text-xl text-center">🍐Ready to harvest in Papaya</h3>
+             <p className="mt-2 font-extrabold text-10xl">129</p>
+           </div>
+           <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform bg-green-500 rounded-lg shadow-lg hover:scale-105">
+             <h3 className="text-xl text-center">🥥Ready to harvest in Coconut</h3>
+             <p className="mt-2 font-extrabold text-10xl">40</p>
+           </div>
           </div>
         </div>
       </div>
