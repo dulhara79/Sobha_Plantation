@@ -62,6 +62,7 @@ import Seedling from "./pages/CropVarieties/Seedling.jsx";
 import Schedules from "./pages/CropVarieties/Schedules.jsx";
 import ScheduleForm from "./pages/CropVarieties/ScheduleForm.jsx";
 import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
+import AddSeedlingForm from "./pages/CropVarieties/AddSeedlingForm.jsx";
 
 // buyers
 import BuyerRegistrationForm from "./pages/BuyerRegistrationForm.jsx";
@@ -134,6 +135,7 @@ export default function App() {
       <Route path="/schedules" element={<Schedules />} />
       <Route path="/scheduleForm" element={<ScheduleForm />} />
       <Route path="/landPreparation" element={<LandPreparation />} />
+      <Route path="/seedlingForm" element={<AddSeedlingForm />} />
         
       {/* buyers */}
       <Route path="/buyer-registration" element={<BuyerRegistrationForm />} />
