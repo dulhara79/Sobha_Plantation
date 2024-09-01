@@ -64,6 +64,12 @@ import IntercropPests from "./pages/Diseases/IntercropPests.jsx";
 import UserProfile from "./pages/Diseases/UserProfile.jsx";
 import CoconutLeafMiner from "./pages/Diseases/CoconutLeafMiner.jsx";
 import BlackBeetle from "./pages/Diseases/BlackBeetle.jsx";
+import AddCoconutTreatments from "./pages/Diseases/AddCoconutTreatments.jsx";
+import AddIntercropTreatments from "./pages/Diseases/AddIntercropTreatments.jsx";
+import Insights from "./pages/Diseases/Insights.jsx";
+import DetailedOverview from "./pages/Diseases/DetailedOverview.jsx";
+import AddMaintenance from "./pages/Diseases/AddMaintenance.jsx";
+import AddProfile from "./pages/Diseases/AddProfile.jsx";
 
 // product
 import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
@@ -158,6 +164,12 @@ export default function App() {
       <Route path="/UserProfile" element={<UserProfile />} />
       <Route path="/coconutLeafMiner" element={<CoconutLeafMiner />} />
       <Route path="/blackBeetle" element={<BlackBeetle />} />
+      <Route path="/addCoconutTreatments" element={<AddCoconutTreatments />} />
+      <Route path="/addIntercropTreatments" element={<AddIntercropTreatments />} />
+      <Route path="/insights" element={<Insights />} />
+      <Route path="/detailedOverview" element={<DetailedOverview />} />
+      <Route path="/addMaintenance" element={<AddMaintenance />} />
+      <Route path="/addProfile" element={<AddProfile />} />
 
       {/* product */}
       <Route path="/products/productdashboard" element={<ProductsDashboard />} />
