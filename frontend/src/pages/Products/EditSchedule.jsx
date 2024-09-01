@@ -6,7 +6,7 @@ import moment from 'moment';
 
 const { Option } = Select;
 
-const EditSchedule = () => {
+const EditRecords = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -156,4 +156,4 @@ const EditSchedule = () => {
   );
 };
 
-export default EditSchedule;
+export default EditRecords;

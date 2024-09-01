@@ -1,4 +1,3 @@
-// src/pages/harvest/EditHarvestSchedule.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Form, Input, DatePicker, TimePicker, Button, notification, Card, Spin } from 'antd';
@@ -22,7 +21,7 @@ const EditHarvestSchedule = () => {
       if (response.data.success) {
         const data = response.data.data;
         form.setFieldsValue({
-          harvestId: data.harvestId,
+          Id: data.Id,
           cropType: data.cropType,
           harvestDate: moment(data.harvestDate),
           startTime: moment(data.startTime, 'HH:mm'),

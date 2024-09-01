@@ -1,37 +1,41 @@
-import React, { useCallback, useEffect, useState } from "react";
-import Sidebar from "../../components/Sidebar";
-import Header from "../../components/Header";
+// src/components/ComplianceCheckList.jsx
+import React, { useCallback, useEffect, useState } from 'react';
+import Sidebar from '../../components/Sidebar';
+import Header from '../../components/Header';
 import "../../index.css";
 import { ArrowBack } from "@mui/icons-material";
-import { Breadcrumb, Table, Button, Input, Modal, notification } from "antd";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import moment from "moment";
+import { Breadcrumb, Button, Input, Modal, notification, Table } from 'antd';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import YieldBarChart from '../Harvest/YieldBarChart';
 
 const { Search } = Input;
 
-const YieldRecords = () => {
-  const [schedules, setSchedules] = useState([]);
-  const [filteredSchedules, setFilteredSchedules] = useState([]);
+const ComplianceCheckList = () => {
+  const [complianceChecks, setComplianceChecks] = useState([]);
+  const [filteredChecks, setFilteredChecks] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [filterStatus, setFilterStatus] = useState("All");
   const [sorter, setSorter] = useState({ field: null, order: null });
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchSchedules();
+    fetchComplianceChecks();
   }, []);
 
-  const fetchSchedules = async () => {
+  const fetchComplianceChecks = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/yield');
-      setSchedules(response.data.data);
-      setFilteredSchedules(response.data.data);
+      const response = await axios.get('http://localhost:5000/api/compliance-checks');
+      console.log('Fetched data:', response.data); // Check the data
+      if (Array.isArray(response.data.data)) {
+        setComplianceChecks(response.data.data);
+        setFilteredChecks(response.data.data);
+      } else {
+        console.error('Unexpected data format:', response.data);
+      }
     } catch (error) {
-      console.error('Error fetching yield records:', error);
+      console.error('Error fetching compliance checks:', error);
     }
   };
 
@@ -57,115 +61,102 @@ const YieldRecords = () => {
 
   const onSearch = (value) => {
     setSearchText(value);
-    filterSchedules(value, filterStatus);
+    filterChecks(value);
   };
 
- const filterSchedules = (searchText) => {
-    let filteredData = schedules;
+  const filterChecks = (searchText) => {
+    let filteredData = complianceChecks;
 
     if (searchText) {
       const lowercasedSearchText = searchText.toLowerCase();
+      filteredData = filteredData.filter((check) =>
+        Object.values(check).some((value) =>
+          String(value).toLowerCase().includes(lowercasedSearchText)
+        )
+      );
+    }
 
-      filteredData = filteredData.filter((schedule) => {
-        return Object.keys(schedule).some((key) => {
-          const value = schedule[key];
-
-          // Debugging
-          console.log(`Key: ${key}, Value: ${value}`);
-
-          // Format and filter date fields
-          if (moment(value, moment.ISO_8601, true).isValid()) {
-            return moment(value).format("YYYY-MM-DD").toLowerCase().includes(lowercasedSearchText);
-          }
-
-          // Filter string and number fields
-          if (typeof value === 'string') {
-            return value.toLowerCase().includes(lowercasedSearchText);
-          } else if (typeof value === 'number') {
-            return value.toString().includes(searchText);
-          }
-
-          return false;
-        });
+    if (sorter.field) {
+      filteredData = [...filteredData].sort((a, b) => {
+        if (sorter.order === 'ascend') {
+          return a[sorter.field] > b[sorter.field] ? 1 : -1;
+        } else {
+          return a[sorter.field] < b[sorter.field] ? 1 : -1;
+        }
       });
     }
 
-    setFilteredSchedules(filteredData);
+    setFilteredChecks(filteredData);
   };
-
-
 
   const generatePDF = () => {
     const doc = new jsPDF();
-    doc.text("Yield Records Report", 20, 10);
+    doc.text("Compliance Check List Report", 20, 10);
   
-    const tableColumn = ["Harvest Date", "Crop Type", "Quantity", "Trees Picked", "Storage Location"];
+    const tableColumn = ["Criteria Name", "Description", "Active", "Last Updated"];
     const tableRows = [];
   
-    filteredSchedules.forEach((schedule) => {
-      const scheduleData = [
-        moment(schedule.harvestdate).format("YYYY-MM-DD"),
-        schedule.cropType,
-        schedule.quantity,
-        schedule.treesPicked,
-        schedule.storageLocation,
+    filteredChecks.forEach((check) => {
+      const checkData = [
+        check.criteriaName,
+        check.description,
+        check.isActive ? 'Yes' : 'No',
+        moment(check.lastUpdated).format("YYYY-MM-DD HH:mm:ss"),
       ];
-      tableRows.push(scheduleData);
+      tableRows.push(checkData);
     });
   
     doc.autoTable(tableColumn, tableRows, { startY: 20 });
-    doc.save("yield_records_report.pdf");
+    doc.save("compliance_check_list_report.pdf");
   };
 
   const handleSort = (field, order) => {
     setSorter({ field, order });
-    filterSchedules(searchText, filterStatus);
+    filterChecks(searchText);
   };
 
   const cancelSorting = () => {
     setSorter({ field: null, order: null });
-    filterSchedules(searchText, filterStatus);
+    filterChecks(searchText);
   };
 
   const handleUpdate = (id) => {
-    navigate(`/yield/editrecords/${id}`);
+    navigate(`/compliance-checks/editrecords/${id}`);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(`http://localhost:5000/api/compliance-checks/${id}`);
+      if (response.status === 200) {
+        notification.success({
+          message: 'Success',
+          description: 'Compliance check deleted successfully!',
+        });
+        setFilteredChecks(filteredChecks.filter((check) => check._id !== id));
+      } else {
+        notification.error({
+          message: 'Error',
+          description: 'There was an error deleting the compliance check.',
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting compliance check:', error.response?.data?.message || error.message);
+      notification.error({
+        message: 'Error',
+        description: error.response?.data?.message || 'There was an error deleting the compliance check.',
+      });
+    }
   };
 
   const confirmDelete = (id) => {
     Modal.confirm({
-      title: "Are you sure you want to delete this schedule?",
+      title: "Are you sure you want to delete this compliance check?",
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
       onOk: () => handleDelete(id),
     });
   };
-
-  const handleDelete = async (id) => {
-    try {
-      const response = await axios.delete(`http://localhost:5000/api/yield/${id}`);
-      if (response.status === 200) {
-        notification.success({
-          message: 'Success',
-          description: 'Yield record deleted successfully!',
-        });
-        // Update local state to remove the deleted record
-        setFilteredSchedules(filteredSchedules.filter(record => record._id !== id));
-      } else {
-        notification.error({
-          message: 'Error',
-          description: 'There was an error deleting the yield record.',
-        });
-      }
-    } catch (error) {
-      console.error('Error deleting schedule:', error.response?.data?.message || error.message);
-      notification.error({
-        message: 'Error',
-        description: error.response?.data?.message || 'There was an error deleting the yield record.',
-      });
-    }
-  };
-
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Header />
@@ -198,7 +189,7 @@ const YieldRecords = () => {
                 </a>
               </div>
               <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
                 onClick={onGroupContainerClick1}
               >
                 <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
@@ -206,11 +197,11 @@ const YieldRecords = () => {
                 </a>
               </div>
               <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
                 onClick={onGroupContainerClick2}
               >
                 <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Compliance Check List
+                  Compliance Check List
                 </a>
               </div>
             </div>
@@ -219,10 +210,10 @@ const YieldRecords = () => {
           <Breadcrumb
             items={[
               { title: 'Home', href: '/' },
-              { title: 'Yield', href: '/harvest/yield' }
+              { title: 'Compliance Checks', href: '/compliance' }
             ]}
           />
-          {/* Welcome Message Component */}
+
           <div className="flex flex-row items-center justify-between shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-[98%] mb-5">
             <b className="text-3xl">Welcome Kaushalya</b>
           </div>
@@ -232,13 +223,13 @@ const YieldRecords = () => {
               <div className="flex items-center space-x-4">
                 <Search
                   placeholder="Search by any field"
-                  onChange={(e) => onSearch(e.target.value)}  // Trigger filter on input change
+                  onChange={(e) => onSearch(e.target.value)}
                   style={{ width: 200 }}
-                  value={searchText}  // Keep the input controlled
+                  value={searchText}
                 />
                 <Button 
                   style={{ backgroundColor: "#60DB19", color: "#fff" }} 
-                  onClick={() => navigate("/yield/addrecords")}
+                  onClick={() => navigate("/compliance-checks/addrecords")}
                 >
                   Add Records
                 </Button>
@@ -253,40 +244,32 @@ const YieldRecords = () => {
             <Table
               columns={[
                 {
-                  title: "Harvest Date",
-                  dataIndex: "harvestdate",
-                  key: "harvestdate",
+                  title: "Criteria Name",
+                  dataIndex: "criteriaName",
+                  key: "criteriaName",
                   sorter: true,
-                  sortOrder: sorter.field === 'harvestdate' ? sorter.order : null,
-                  render: (text) => moment(text).format("YYYY-MM-DD"),
+                  sortOrder: sorter.field === 'criteriaName' ? sorter.order : null,
                 },
                 {
-                  title: "Crop Type",
-                  dataIndex: "cropType",
-                  key: "cropType",
+                  title: "Description",
+                  dataIndex: "description",
+                  key: "description",
                   sorter: true,
-                  sortOrder: sorter.field === 'cropType' ? sorter.order : null,
+                  sortOrder: sorter.field === 'description' ? sorter.order : null,
                 },
                 {
-                  title: "Quantity",
-                  dataIndex: "quantity",
-                  key: "quantity",
-                  sorter: true,
-                  sortOrder: sorter.field === 'quantity' ? sorter.order : null,
+                  title: "Active",
+                  dataIndex: "isActive",
+                  key: "isActive",
+                  render: (text) => (
+                    <span>{text ? 'Yes' : 'No'}</span>
+                  ),
                 },
                 {
-                  title: "Trees Picked",
-                  dataIndex: "treesPicked",
-                  key: "treesPicked",
-                  sorter: true,
-                  sortOrder: sorter.field === 'treesPicked' ? sorter.order : null,
-                },
-                {
-                  title: "Storage Location",
-                  dataIndex: "storageLocation",
-                  key: "storageLocation",
-                  sorter: true,
-                  sortOrder: sorter.field === 'storageLocation' ? sorter.order : null,
+                  title: "Last Updated",
+                  dataIndex: "lastUpdated",
+                  key: "lastUpdated",
+                  render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss'),
                 },
                 {
                   title: "Actions",
@@ -303,16 +286,11 @@ const YieldRecords = () => {
                   ),
                 },
               ]}
-              dataSource={filteredSchedules}
-              rowKey="_id"
-              pagination={false}  // Disable pagination
-              scroll={{ y: 400 }} // Optional: Add vertical scroll if there are many rows
+              dataSource={Array.isArray(filteredChecks) ? filteredChecks : []}
+              // Remove pagination
+              pagination={false}
               onChange={(sorter) => {
-                if (sorter && sorter.order) {
-                  handleSort(sorter.field, sorter.order);
-                } else {
-                  cancelSorting();
-                }
+                handleSort(sorter.field, sorter.order);
               }}
             />
           </div>
@@ -322,4 +300,4 @@ const YieldRecords = () => {
   );
 };
 
-export default YieldRecords;
+export default ComplianceCheckList;

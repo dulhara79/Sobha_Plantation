@@ -18,7 +18,7 @@ import "../../index.css";
 
 const { Search } = Input;
 
-const CoconutTreatments = () => {
+const IntercropTreatments = () => {
   const [treatments, setTreatments] = useState([]);
   const [filteredTreatments, setFilteredTreatments] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -114,7 +114,7 @@ const CoconutTreatments = () => {
           <Button
             type="link"
             icon={<EditOutlined />}
-            onClick={() => navigate(`/treatments/edit/${record.key}`)}
+            onClick={() => navigate(`/intercrop-treatments/edit/${record.key}`)}
           />
           <Button
             type="link"
@@ -201,7 +201,7 @@ const CoconutTreatments = () => {
                 },
                 {
                   href: "",
-                  title: "Coconut Treatments",
+                  title: "Intercrop Treatments",
                 },
               ]}
             />
@@ -232,13 +232,13 @@ const CoconutTreatments = () => {
             {/* Buttons Row */}
             <div className="flex justify-center space-x-8 mt-8 mb-8">
               <Button
-                style={{ backgroundColor: "rgba(196, 196, 196, 0.44)" }}
+                style={{ backgroundColor: "rgba(196, 196, 196, 0)" }}
                 onClick={() => navigate("/coconutTreatments")}
               >
                 Coconuts
               </Button>
               <Button
-                style={{ backgroundColor: "rgba(196, 196, 196, 0)" }}
+                style={{ backgroundColor: "rgba(196, 196, 196, 0.44)" }}
                 onClick={() => navigate("/intercropTreatments")}
               >
                 Inter Crops
@@ -263,14 +263,14 @@ const CoconutTreatments = () => {
                   marginTop: "16px",
                   marginBottom: "16px",
                 }}
-                onClick={() => navigate("/AddCoconutTreatments")}
+                onClick={() => navigate("/AddIntercropTreatments")}
               >
                 + Add
               </Button>
 
               <Button
                 style={{
-                  background: "linear-gradient(135deg, #4CAF50, orange)",
+                  background: "linear-gradient(135deg, orange, #4CAF50)", // Green-blue gradient background
                   color: "#fff",
                   marginTop: "16px",
                   width: "100%",
@@ -300,4 +300,4 @@ const CoconutTreatments = () => {
   );
 };
 
-export default CoconutTreatments;
+export default IntercropTreatments;

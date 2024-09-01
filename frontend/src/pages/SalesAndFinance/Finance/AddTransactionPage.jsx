@@ -1,12 +1,23 @@
-import React from 'react'
-import Header from '../../../components/Header'
-import Sidebar from '../../../components/Sidebar'
-import NavigationButtons from '../../../components/Sales_and_Finance/NavigationButtons'
-import AddTransaction from '../../../components/Sales_and_Finance/Finance/AddTransaction'
-import { Breadcrumb } from "antd";
+import React, { useState } from 'react';
+import axios from 'axios';
+import Sidebar from "../../../components/Sidebar";
+import Header from "../../../components/Header";
+
+import AddTransaction from "../../../components/Sales_and_Finance/Finance/AddTransaction";
+import NavigationButtons from "../../../components/Sales_and_Finance/NavigationButtons";
+
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
+import { Breadcrumb } from "antd";
+
+// import FinanceNavigation from "../../../components/finances/FinanceNavigation.js";
+
+import {useNavigate} from "react-router-dom";
+import { useSnackbar } from 'notistack';
 
 const AddTransactionPage = () => {
+    const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
+    const [loading, setLoading] = useState(false);
   return (
     <div>
     <Header />
@@ -40,9 +51,7 @@ const AddTransactionPage = () => {
           },
         ]}
       />
-      <div className="p-4 bg-gray-100">
-      <NavigationButtons activePage="finance" />
-      </div>
+      <NavigationButtons />
       <div className={`ml-[250px] pt-3 w-[600px]`}>
       <AddTransaction />
       </div>
@@ -51,4 +60,5 @@ const AddTransactionPage = () => {
   )
 }
 
-export default AddTransactionPage
+
+export default AddTransactionPage;
