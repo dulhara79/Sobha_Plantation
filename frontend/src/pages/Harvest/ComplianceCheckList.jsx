@@ -48,11 +48,11 @@ const ComplianceCheckList = () => {
   }, [navigate]);
 
   const onGroupContainerClick = useCallback(() => {
-    navigate("/harvest/harvest-schedule");
+    navigate("/harvest/schedule-options");
   }, [navigate]);
 
   const onGroupContainerClick1 = useCallback(() => {
-    navigate("/harvest/yield");
+    navigate("/yield-options");
   }, [navigate]);
 
   const onGroupContainerClick2 = useCallback(() => {

@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import YieldBarChart from '../Harvest/YieldBarChart';
+
 
 const { Search } = Input;
 
@@ -44,11 +44,11 @@ const YieldRecords = () => {
   }, [navigate]);
 
   const onGroupContainerClick = useCallback(() => {
-    navigate("/harvest/harvest-schedule");
+    navigate("/harvest/schedule-options");
   }, [navigate]);
 
   const onGroupContainerClick1 = useCallback(() => {
-    navigate("/harvest/yield");
+    navigate("/yield-options");
   }, [navigate]);
 
   const onGroupContainerClick2 = useCallback(() => {
@@ -227,7 +227,7 @@ const YieldRecords = () => {
             <b className="text-3xl">Welcome Kaushalya</b>
           </div>
 
-          <div className="p-6 bg-white rounded-lg shadow-lg">
+         <div className="p-6 bg-white rounded-lg shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-4">
                 <Search
@@ -236,12 +236,6 @@ const YieldRecords = () => {
                   style={{ width: 200 }}
                   value={searchText}  // Keep the input controlled
                 />
-                <Button 
-                  style={{ backgroundColor: "#60DB19", color: "#fff" }} 
-                  onClick={() => navigate("/yield/addrecords")}
-                >
-                  Add Records
-                </Button>
                 <Button 
                   style={{ backgroundColor: "#60DB19", color: "#fff" }} 
                   onClick={generatePDF}
