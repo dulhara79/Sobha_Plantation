@@ -2,7 +2,6 @@ require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const cors = require("cors");
 const connectDB = require('./config/db'); // Import MongoDB connection function
-
 const http = require('http');
 const { Server } = require('socket.io');
 
@@ -14,8 +13,8 @@ const yieldRoutes = require('./routes/Harvest/yield');
 const harvestRoutes = require('./routes/Harvest/harvest');
 
 //inventory
-const fertilizerRoutes = require('./routes/Inventory/fertilizerRoute.js');
-const maintenanceRoutes = require('./routes/Inventory/maintenanceRoute.js');
+const fertilizerRoutes = require('./routes/Inventory/fertilizers.js');
+// const maintenanceRoutes = require('./routes/Inventory/maintenanceRoute.js');
  
 
 
@@ -32,7 +31,9 @@ const labelingRoute = require('./routes/Products/labelingRoute.js');
 /**
  * harvest
  */
-
+const yieldRoutes = require('./routes/Harvest/yield.js');
+const harvestRoutes = require('./routes/Harvest/harvest.js');
+const complianceCheckRoutes = require('./routes/Harvest/compliance.js')
 
 
 /**
@@ -88,8 +89,13 @@ app.use("/api/salary-employees", salaryEmployeeRoutes);
 app.use("/api/crop-varieties", cropVarietiesRoutes);
 // app.use("/api/employee", employeeRoutes);
 app.use('/api/taskRecords', ETaskRoutes);
+// app.use('/api/harvest', harvestRoutes);
+// app.use('/api/yield', yieldRoutes);
+
+// harvest
 app.use('/api/harvest', harvestRoutes);
 app.use('/api/yield', yieldRoutes);
+app.use('/api/compliance-checks', complianceCheckRoutes);// Ensure the route path is correct
 
 //products
 app.use('/api/production', productionRoutes);
@@ -98,8 +104,10 @@ app.use('/api/labeling-prices', labelingPricesRoute);
 app.use('/api/labeling', labelingRoute);
 
 //inventory
-app.use('/api/Inventory/fertilizer', fertilizerRoutes);
-app.use('/api/Inventory/maintenance', maintenanceRoutes);
+app.use('/api/fertilizers', fertilizerRoutes);
+//app.use('/api/maintenance', maintenanceRoutes);
+//app.use('/api/inventoryRecords', InventoryRecordRoutes);
+
 /**
 * crop
 */

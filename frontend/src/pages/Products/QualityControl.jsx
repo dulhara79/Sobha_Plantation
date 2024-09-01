@@ -367,7 +367,7 @@ const getImageDataURL = (url) => {
                 type="primary" 
                 style={{ marginRight: 8 }} 
                 onClick={generatePDF}
-                style={{ marginBottom: '24px', backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
+                
               >
                 Generate Report
               </Button>

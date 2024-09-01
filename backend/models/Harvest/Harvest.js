@@ -44,15 +44,15 @@ const harvestScheduleSchema = mongoose.Schema({
         required: [true, 'Field number is required'],
         match: [/^\d+$/, 'Field number must be numeric'],
     },
-    harvestMethod: {
-        type: String,
-        required: [true, 'Harvest method is required'],
-        enum: ['Manual', 'Mechanical'],
-    },
-    estimatedYield: {
-        type: Number,
-        required: [true, 'Estimated yield is required'],
-    },
+    // harvestMethod: {
+    //     type: String,
+    //     required: [true, 'Harvest method is required'],
+    //     enum: ['Manual', 'Mechanical'],
+    // },
+    // estimatedYield: {
+    //     type: Number,
+    //     required: [true, 'Estimated yield is required'],
+    // },
     numberOfWorkers: {
         type: Number,
         required: [true, 'Number of workers is required'],

@@ -10,7 +10,7 @@ import '../../index.css';
 
 const { Search } = Input;
 
-const CoconutTreatments = () => {
+const IntercropTreatments = () => {
   const [treatments, setTreatments] = useState([]);
   const [filteredTreatments, setFilteredTreatments] = useState([]);
   const [searchText, setSearchText] = useState('');
@@ -101,7 +101,7 @@ const CoconutTreatments = () => {
       key: 'actions',
       render: (text, record) => (
         <div className="flex space-x-2">
-          <Button type="link" icon={<EditOutlined />} onClick={() => navigate(`/treatments/edit/${record.key}`)} />
+          <Button type="link" icon={<EditOutlined />} onClick={() => navigate(`/intercrop-treatments/edit/${record.key}`)} />
           <Button type="link" icon={<DeleteOutlined />} onClick={() => confirmDelete(record.key)} />
         </div>
       ),
@@ -163,7 +163,7 @@ const CoconutTreatments = () => {
                 },
                 {
                   href: '',
-                  title: 'Coconut Treatments',
+                  title: 'Intercrop Treatments',
                 },
               ]}
             />
@@ -188,13 +188,13 @@ const CoconutTreatments = () => {
             {/* Buttons Row */}
             <div className="flex justify-center space-x-8 mt-8 mb-8">
               <Button
-                style={{ backgroundColor: 'rgba(196, 196, 196, 0.44)' }}
+                style={{ backgroundColor: 'rgba(196, 196, 196, 0)' }}
                 onClick={() => navigate('/coconutTreatments')}
               >
                 Coconuts
               </Button>
               <Button
-                style={{ backgroundColor: 'rgba(196, 196, 196, 0)' }}
+                style={{ backgroundColor: 'rgba(196, 196, 196, 0.44)' }}
                 onClick={() => navigate('/intercropTreatments')}
               >
                 Inter Crops
@@ -208,39 +208,38 @@ const CoconutTreatments = () => {
 
             {/* Add and Insights Buttons */}
             <div className="flex flex-col items-center mt-8 pb-8">
-            <Button
-  style={{ 
-    backgroundColor: '#4CAF50', // Green color for Add button
-    color: '#fff', 
-    marginTop: '16px',
-    marginBottom: '16px',
-  }}
-  onClick={() => navigate('/AddCoconutTreatments')}
->
-  + Add
-</Button>
+              <Button
+                style={{ 
+                  backgroundColor: '#4CAF50', // Green color for Add button
+                  color: '#fff', 
+                  marginTop: '16px',
+                  marginBottom: '16px',
+                }}
+                onClick={() => navigate('/AddIntercropTreatments')}
+              >
+                + Add
+              </Button>
 
-<Button 
-  style={{
-    background: 'linear-gradient(135deg, #4CAF50, orange)',
-    color: '#fff',
-    marginTop: '16px',
-    width: '100%',
-    maxWidth: '400px',
-    height: '48px', // Taller height for Insights button
-    border: 'none',
-    borderRadius: '8px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-    fontWeight: 'bold',
-    transition: 'all 0.3s ease', // Transition effect
-  }}
-  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} // Scale on hover
-  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} // Reset scale on leave
-  onClick={() => navigate('/insights')}
->
-  Insights
-</Button>
-
+              <Button 
+                style={{
+                  background: 'linear-gradient(135deg, orange, #4CAF50)', // Green-blue gradient background
+                  color: '#fff',
+                  marginTop: '16px',
+                  width: '100%',
+                  maxWidth: '400px',
+                  height: '48px', // Taller height for Insights button
+                  border: 'none',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                  fontWeight: 'bold',
+                  transition: 'all 0.3s ease', // Transition effect
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} // Scale on hover
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} // Reset scale on leave
+                onClick={() => navigate('/insights')}
+              >
+                Insights
+              </Button>
             </div>
           </div>
         </div>
@@ -249,4 +248,4 @@ const CoconutTreatments = () => {
   );
 };
 
-export default CoconutTreatments;
+export default IntercropTreatments;
