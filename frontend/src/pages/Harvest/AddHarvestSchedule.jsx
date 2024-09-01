@@ -25,9 +25,7 @@ const AddHarvestSchedule = () => {
     startTime: true,
     endTime: true,
     fieldNumber: true,
-    estimatedYield: true,
     numberOfWorkers: true,
-    harvestMethod: true,
   });
 
   // Prevent selecting past dates
@@ -42,9 +40,7 @@ const AddHarvestSchedule = () => {
       startTime: !allValues.harvestDate,
       endTime: !allValues.startTime,
       fieldNumber: !allValues.endTime,
-      estimatedYield: !allValues.fieldNumber,
-      numberOfWorkers: !allValues.estimatedYield,
-      harvestMethod: !allValues.numberOfWorkers,
+      numberOfWorkers: !allValues.fieldNumber,
     });
   };
 
@@ -75,9 +71,7 @@ const AddHarvestSchedule = () => {
         startTime: true,
         endTime: true,
         fieldNumber: true,
-        estimatedYield: true,
         numberOfWorkers: true,
-        harvestMethod: true,
       });
       navigate("/harvest/harvest-schedule");
     } catch (error) {
@@ -176,26 +170,6 @@ const AddHarvestSchedule = () => {
             <Input placeholder="Enter Field Number" disabled={disableFields.fieldNumber} />
           </Form.Item>
 
-          {/* Estimated Yield */}
-          <Form.Item
-            label="Estimated Yield"
-            name="estimatedYield"
-            rules={[
-              { required: true, message: "Estimated yield is required" },
-              { pattern: /^\d+$/, message: "Estimated yield must be numeric" },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || (parseInt(value) > 0 && parseInt(value) <= 300000)) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error("Estimated yield must be between 1 and 300,000!"));
-                },
-              }),
-            ]}
-          >
-            <Input placeholder="Enter Estimated Yield" type="number" disabled={disableFields.estimatedYield} />
-          </Form.Item>
-
           {/* Number of Workers */}
           <Form.Item
             label="Number of Workers"
@@ -214,18 +188,6 @@ const AddHarvestSchedule = () => {
             ]}
           >
             <Input placeholder="Enter Number of Workers" type="number" disabled={disableFields.numberOfWorkers} />
-          </Form.Item>
-
-          {/* Harvest Method */}
-          <Form.Item
-            label="Harvest Method"
-            name="harvestMethod"
-            rules={[{ required: true, message: "Please select the harvest method!" }]}
-          >
-            <Select placeholder="Select harvest method" disabled={disableFields.harvestMethod}>
-              <Option value="Manual">Manual</Option>
-              <Option value="Mechanical">Mechanical</Option>
-            </Select>
           </Form.Item>
 
           {/* Submit Button */}

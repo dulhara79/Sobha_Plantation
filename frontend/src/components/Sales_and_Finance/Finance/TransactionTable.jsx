@@ -1,202 +1,188 @@
-import React, { useEffect, useState } from "react";
-import {
-  Table,
-  Input,
-  DatePicker,
-  Space,
-  Button,
-  Popconfirm,
-  Tooltip,
-  notification,
-} from "antd";
-import {
-  SearchOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  InfoCircleOutlined,
-} from "@ant-design/icons";
-import axios from "axios";
-import dayjs from "dayjs";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Table, Card, DatePicker, Select, Input, Button } from 'antd';
+import { format } from 'date-fns';
+import moment from 'moment';
+import Papa from 'papaparse';
+import * as XLSX from 'xlsx';
+
+const { RangePicker } = DatePicker;
+const { Option } = Select;
 
 const TransactionTable = () => {
-  // Ensure that transactions and filteredTransactions are initialized as empty arrays
   const [transactions, setTransactions] = useState([]);
-  const [filteredTransactions, setFilteredTransactions] = useState([]);
-  const [searchText, setSearchText] = useState("");
-  const [dateRange, setDateRange] = useState([null, null]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // useEffect(() => {
-  //   fetchTransactions();
-  // }, []);
-
-  // const fetchTransactions = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "http://localhost:5000/api/salesAndFinance/finance/transaction"
-  //     ).then((response) => {
-  //       const fetchedTransactions (response.data.data)
-  //     console.log(response.data); // Check what is returned
-
-      // Ensure the response is an array, if not, default to an empty array
-      // const fetchedTransactions = Array.isArray(response.data)
-      //   ? response.data
-      //   : [];
-  //       const fetchedTransactions = (response.data)
-  //       console.log(Array.isArray(response.data)); // Check what is returned
-  //     console.log(fetchedTransactions); // Check what is returned
-  //     setTransactions(fetchedTransactions);
-  //     setFilteredTransactions(fetchedTransactions);
-  //   } catch (error) {
-  //     console.error("Failed to fetch transactions:", error);
-  //   }
-  // };
+  // Filter states
+  const [dateRange, setDateRange] = useState([]);
+  const [typeFilter, setTypeFilter] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    axios
-        .get('http://localhost:5000/api/salesAndFinance/finance/transaction')
-        .then((response) => {
-          setTransactions(response.data.data);
-          setFilteredTransactions(response.data.data);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-}, []);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/salesAndFinance/finance/transaction');
+        const data = response.data.data;
+        setTransactions(data);
+        applyFilters(data);
+        const totalIncome = data.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0);
+        const totalExpense = data.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0);
+        setTotalAmount(totalIncome - totalExpense);
+      } catch (error) {
+        setError('Error fetching transactions');
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  
+    fetchData();
+  }, []);
 
-  const handleDelete = async (transactionId) => {
-    try {
-      await axios.delete(
-        `http://localhost:5000/api/salesAndFinance/finance/transaction/${transactionId}`
+  const applyFilters = (data) => {
+    let filtered = [...data];
+
+    if (dateRange.length === 2) {
+      const [startDate, endDate] = dateRange;
+      filtered = filtered.filter(transaction =>
+        moment(transaction.date).isBetween(startDate, endDate, null, '[]')
       );
-      notification.success({ message: "Transaction deleted successfully" });
-      fetchTransactions();
-    } catch (error) {
-      notification.error({
-        message: "Failed to delete transaction",
-        description: error.message,
-      });
     }
-  };
 
-  const handleSearch = (value) => {
-    setSearchText(value);
-    if (value) {
-      setFilteredTransactions(
-        transactions.filter((transaction) =>
-          transaction.description.toLowerCase().includes(value.toLowerCase())
-        )
-      );
-    } else {
-      setFilteredTransactions(transactions);
+    if (typeFilter) {
+      filtered = filtered.filter(transaction => transaction.type === typeFilter);
     }
+
+    if (searchTerm) {
+      filtered = filtered.filter(transaction =>
+        transaction.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setFilteredData(filtered);
+    const totalIncome = filtered.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0);
+    const totalExpense = filtered.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0);
+    setTotalAmount(totalIncome - totalExpense);
   };
 
   const handleDateRangeChange = (dates) => {
     setDateRange(dates);
-    if (dates && dates[0] && dates[1]) {
-      setFilteredTransactions(
-        transactions.filter((transaction) =>
-          dayjs(transaction.dateTime).isBetween(dates[0], dates[1], null, "[]")
-        )
-      );
-    } else {
-      setFilteredTransactions(transactions);
-    }
+  };
+
+  const handleTypeChange = (value) => {
+    setTypeFilter(value);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleFilter = () => {
+    applyFilters(transactions);
+  };
+
+  const exportToCSV = () => {
+    const csv = Papa.unparse(filteredData);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'petty_cash_transactions.csv');
+    link.click();
+  };
+
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(filteredData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Transactions');
+    XLSX.writeFile(wb, 'petty_cash_transactions.xlsx');
   };
 
   const columns = [
     {
-      title: "Date",
-      // dataIndex: "dateTime",
-      dataIndex: "date",
-      key: "date",
-      sorter: (a, b) => dayjs(a.date).unix() - dayjs(b.date).unix(),
-      render: (text) => dayjs(text).format("DD-MM-YYYY"),
+      title: 'Date',
+      dataIndex: 'date',
+      key: 'date',
+      render: text => <>{format(new Date(text), 'yyyy-MM-dd')}</>,
     },
     {
-      title: "Transaction Type",
-      dataIndex: "transactionType",
-      key: "transactionType",
-      render: (text) => (
-        <span className={text === "Income" ? "text-green-500" : "text-red-500"}>
-          {text}
-        </span>
-      ),
-      sorter: (a, b) => a.transactionType.localeCompare(b.transactionType),
+      title: 'Type',
+      dataIndex: 'type',
+      key: 'type',
     },
     {
-      title: "Category",
-      dataIndex: "transactionCategory",
-      key: "transactionCategory",
-      sorter: (a, b) => a.transactionCategory.localeCompare(b.transactionCategory),
-    },/* 
-    {
-      title: "Payment Method",
-      dataIndex: "paymentMethod",
-      key: "paymentMethod",
-      sorter: (a, b) => a.paymentMethod.localeCompare(b.paymentMethod),
-    }, */
-    /* {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-      sorter: (a, b) => a.description.localeCompare(b.description),
-    }, */
-    {
-      title: "Payer/Payee",
-      dataIndex: "payerPayee",
-      key: "payerPayee",
-      sorter: (a, b) => a.payerPayee.localeCompare(b.payerPayee),
+      title: 'Sub Type',
+      dataIndex: 'subtype',
+      key: 'subtype',
     },
     {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
-      sorter: (a, b) => a.amount - b.amount,
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
     },
     {
-      title: "Actions",
-      key: "actions",
-      render: (text, record) => (
-        <Space size="middle">
-          <Tooltip title="Edit">
-            <Button
-              type="primary"
-              icon={<EditOutlined />}
-              onClick={() => navigate(`/transactions/edit/${record._id}`)}
-            />
-          </Tooltip>
-          <Popconfirm
-            title="Are you sure you want to delete this transaction?"
-            onConfirm={() => handleDelete(record._id)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button type="danger" icon={<DeleteOutlined />} />
-          </Popconfirm>
-          <Tooltip title={record.description}>
-            <Button icon={<InfoCircleOutlined />} />
-          </Tooltip>
-        </Space>
-      ),
+      title: 'Payer/Payee',
+      dataIndex: 'payer_payee',
+      key: 'payer_payee',
+    },
+    {
+      title: 'Method',
+      dataIndex: 'method',
+      key: 'method',
+    },
+    {
+      title: 'Amount',
+      dataIndex: 'amount',
+      key: 'amount',
+      render: text => <>{text.toFixed(2)}</>,
     },
   ];
 
+  // Determine the balance color
+  const balanceColor = totalAmount > 0 ? 'green' : 'red';
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
-    <div>
-      <Space style={{ marginBottom: 16 }}>
-        <Input
-          placeholder="Search Transactions"
-          value={searchText}
-          onChange={(e) => handleSearch(e.target.value)}
-          style={{ width: 200 }}
-          suffix={<SearchOutlined />}
+    <div className="p-4">
+      <Card>
+        <div className="mb-4">
+          <RangePicker onChange={handleDateRangeChange} format="YYYY-MM-DD" />
+          <Select
+            placeholder="Select Type"
+            onChange={handleTypeChange}
+            className="ml-4"
+            style={{ width: 200 }}
+          >
+            <Option value="">All Types</Option>
+            <Option value="income">Income</Option>
+            <Option value="expense">Expense</Option>
+          </Select>
+          <Input
+            placeholder="Search Description"
+            onChange={handleSearch}
+            className="ml-4"
+            style={{ width: 300 }}
+          />
+          <Button onClick={handleFilter} type="primary" className="ml-4">Apply Filters</Button>
+          <Button onClick={exportToCSV} type="default" className="ml-4">Export to CSV</Button>
+          <Button onClick={exportToExcel} type="default" className="ml-4">Export to Excel</Button>
+        </div>
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          rowKey="_id"
+          pagination={false}
+          className="text-xl" // Increase font size for table
         />
-        <DatePicker.RangePicker onChange={handleDateRangeChange} />
-      </Space>
-      <Table columns={columns} dataSource={filteredTransactions} rowKey="_id" />
+        <div className="pr-16 mt-4 font-bold text-right text-10xl" style={{ color: balanceColor }}>
+          Balance: {totalAmount.toFixed(2)}
+        </div>
+      </Card>
     </div>
   );
 };
