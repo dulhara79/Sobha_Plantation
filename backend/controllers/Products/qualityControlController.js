@@ -1,17 +1,13 @@
 const QualityControl = require("../../models/Products/qualityControlModel");
 
-// Controller for creating a new inspection report
 exports.createQualityControl = async (req, res) => {
   try {
+    console.log(req.body); // Log the incoming request body for debugging
+
     const { productType, inspectionDate, status, inspectorName } = req.body;
 
     // Basic validation
-    if (
-      !productType || 
-      !inspectionDate || 
-      !status || 
-      inspectorName === undefined 
-    ) {
+    if (!productType || !inspectionDate || !status || inspectorName === undefined) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
@@ -26,10 +22,12 @@ exports.createQualityControl = async (req, res) => {
     await newInspectionReport.save();
     res.status(201).json({ message: "Inspection Report added successfully" });
   } catch (error) {
-    console.error("Server Error:", error.message);
-    res.status(500).json({ error: "Server error" });
+    console.error("Server Error:", error);
+    res.status(500).json({ error: "Server error", details: error.message });
   }
 };
+
+
 
 
 // Controller for getting all inspection reports

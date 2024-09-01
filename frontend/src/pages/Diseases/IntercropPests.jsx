@@ -5,27 +5,8 @@ import { HomeOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Breadcrumb, Button } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 
-const CoconutPests = () => {
+const IntercropPests = () => {
   const navigate = useNavigate(); // Hook to navigate between pages
-
-  // List of pests and diseases and their corresponding routes
-  const pests = [
-    { name: 'Coconut Leaf Miner', route: '/coconutLeafMiner' },
-    { name: 'The Black Beetle', route: '/blackBeetle' },
-    { name: 'Coconut Mites', route: '/C' },
-    { name: 'Termites', route: '/D' },
-    { name: 'The Red Weevil', route: '/E' },
-    { name: 'Mammalian Pests', route: '/F' },
-  ];
-
-  const diseases = [
-    { name: 'Bud Rot', route: '/G' },
-    { name: 'Leaf Spot', route: '/H' },
-    { name: 'Stem Bleeding', route: '/I' },
-    { name: 'Root Wilt', route: '/J' },
-    { name: 'Lethal Yellowing', route: '/K' },
-    { name: 'Ganoderma', route: '/L' },
-  ];
 
   return (
     <div>
@@ -73,7 +54,7 @@ const CoconutPests = () => {
             },
             {
               href: '',
-              title: 'Coconut Pests and Diseases',
+              title: 'Inter Crops Pests and Diseases',
             },
           ]}
         />
@@ -87,7 +68,7 @@ const CoconutPests = () => {
         <div className="flex justify-center space-x-8 mt-2">
           <Button
             style={{
-              backgroundColor: 'rgba(196, 196, 196, 0.44)',
+              backgroundColor: 'rgba(196, 196, 196, 0)',
               width: '300px',
               height: '28px',
             }}
@@ -97,7 +78,7 @@ const CoconutPests = () => {
           </Button>
           <Button
             style={{
-              backgroundColor: 'rgba(196, 196, 196, 0)',
+              backgroundColor: 'rgba(196, 196, 196, 0.44)',
               width: '300px',
               height: '28px',
             }}
@@ -109,19 +90,19 @@ const CoconutPests = () => {
 
         {/* Pest Section */}
         <div className="mt-8 mb-8">
-          <h1 className="text-2xl font-semibold mb-9">Common Coconut Pests</h1>
+          <h1 className="text-2xl font-semibold mb-9">Common Inter-Crop Pests</h1>
 
           {/* Grid for Pest Buttons */}
           <div className="grid grid-cols-2 gap-4">
             {/* Buttons for Different Pests */}
-            {pests.map(({ name, route }) => (
+            {['Fruit Flies', 'Banana Weevil', 'Pineapple Mealybug', 'Papaya Mealybug', 'Thrips', 'Aphids'].map((pest) => (
               <Button
-                key={name}
+                key={pest}
                 type="primary"
                 block
                 className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
                 style={{
-                  backgroundImage: 'linear-gradient(135deg, #4CAF50 30%, #E3F2FD 100%)',
+                  backgroundImage: 'linear-gradient(135deg, #FFB74D 30%, #E1F5FE 100%)',
                   border: 'none',
                   transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                 }}
@@ -133,28 +114,27 @@ const CoconutPests = () => {
                   e.currentTarget.style.transform = 'scale(1)';
                   e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
                 }}
-                onClick={() => navigate(route)}
               >
-                {name} <RightOutlined />
+                {pest} <RightOutlined />
               </Button>
             ))}
           </div>
 
           {/* Diseases Section */}
           <div className="mt-10">
-            <h1 className="text-2xl font-semibold mb-9">Common Coconut Diseases</h1>
+            <h1 className="text-2xl font-semibold mb-9">Common Inter-Crop Diseases</h1>
 
             {/* Grid for Disease Buttons */}
             <div className="grid grid-cols-2 gap-4">
               {/* Buttons for Different Diseases */}
-              {diseases.map(({ name, route }) => (
+              {['Anthracnose', 'Bacterial Wilt', 'Black Sigatoka', 'Papaya Ringspot', 'Fusarium Wilt', 'Powdery Mildew'].map((disease) => (
                 <Button
-                  key={name}
+                  key={disease}
                   type="primary"
                   block
                   className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
                   style={{
-                    backgroundImage: 'linear-gradient(135deg, #4CAF50 30%, #E3F2FD 100%)',
+                    backgroundImage: 'linear-gradient(135deg, #FFB74D 30%, #E1F5FE 100%)',
                     border: 'none',
                     transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                   }}
@@ -166,9 +146,8 @@ const CoconutPests = () => {
                     e.currentTarget.style.transform = 'scale(1)';
                     e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
                   }}
-                  onClick={() => navigate(route)}
                 >
-                  {name} <RightOutlined />
+                  {disease} <RightOutlined />
                 </Button>
               ))}
             </div>
@@ -179,4 +158,4 @@ const CoconutPests = () => {
   );
 };
 
-export default CoconutPests;
+export default IntercropPests;
