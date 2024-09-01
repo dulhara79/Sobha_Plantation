@@ -1,10 +1,10 @@
-import React from 'react';
-import Header from '../../components/Header';
-import Sidebar from '../../components/Sidebar';
-import { HomeOutlined } from '@ant-design/icons';
-import { Breadcrumb, Button } from 'antd';
-import { Link } from 'react-router-dom';
-import CoconutLeafMinerImage from '../../assets/DiseasesImages/CoconutLeafMiner.jpg';
+import React from "react";
+import Header from "../../components/Header";
+import Sidebar from "../../components/Sidebar";
+import { HomeOutlined } from "@ant-design/icons";
+import { Breadcrumb, Button } from "antd";
+import { Link } from "react-router-dom";
+import CoconutLeafMinerImage from "../../assets/DiseasesImages/CoconutLeafMiner.jpg";
 
 const CoconutLeafMiner = () => {
   return (
@@ -17,16 +17,16 @@ const CoconutLeafMiner = () => {
         <Breadcrumb
           items={[
             {
-              href: '',
+              href: "",
               title: <HomeOutlined />,
             },
             {
-              href: '',
-              title: 'Coconut Pests and Diseases',
+              href: "",
+              title: "Coconut Pests and Diseases",
             },
             {
-              href: '',
-              title: 'Coconut Leaf Miner',
+              href: "",
+              title: "Coconut Leaf Miner",
             },
           ]}
         />
@@ -34,7 +34,9 @@ const CoconutLeafMiner = () => {
         {/* Summary Section */}
         <div className="mt-4">
           {/* Topic Heading */}
-          <h1 className="text-4xl font-semibold text-center">Coconut Leaf Miner</h1>
+          <h1 className="text-4xl font-semibold text-center">
+            Coconut Leaf Miner
+          </h1>
 
           {/* Image Section */}
           <div className="flex justify-center mt-6">
@@ -49,7 +51,11 @@ const CoconutLeafMiner = () => {
           <div className="mt-10">
             <h2 className="text-2xl font-semibold">Description</h2>
             <p className="mt-2 text-lg">
-              The Coconut Leaf Miner is a pest that primarily affects coconut trees, causing significant damage to the leaves. The larvae of this pest burrow into the leaf tissue, creating mines that reduce the photosynthetic ability of the leaves, leading to a decline in overall tree health and productivity.
+              The Coconut Leaf Miner is a pest that primarily affects coconut
+              trees, causing significant damage to the leaves. The larvae of
+              this pest burrow into the leaf tissue, creating mines that reduce
+              the photosynthetic ability of the leaves, leading to a decline in
+              overall tree health and productivity.
             </p>
           </div>
 
@@ -71,7 +77,9 @@ const CoconutLeafMiner = () => {
               <li>Regular pruning and destruction of infested leaves.</li>
               <li>Application of systemic insecticides.</li>
               <li>Biological control using parasitoids or predators.</li>
-              <li>Use of pheromone traps to monitor and control adult populations.</li>
+              <li>
+                Use of pheromone traps to monitor and control adult populations.
+              </li>
             </ul>
           </div>
         </div>

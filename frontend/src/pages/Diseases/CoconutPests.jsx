@@ -1,30 +1,30 @@
-import React from 'react';
-import Header from '../../components/Header';
-import Sidebar from '../../components/Sidebar';
-import { HomeOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { Breadcrumb, Button } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import React from "react";
+import Header from "../../components/Header";
+import Sidebar from "../../components/Sidebar";
+import { HomeOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { Breadcrumb, Button } from "antd";
+import { Link, useNavigate } from "react-router-dom";
 
 const CoconutPests = () => {
   const navigate = useNavigate(); // Hook to navigate between pages
 
   // List of pests and diseases and their corresponding routes
   const pests = [
-    { name: 'Coconut Leaf Miner', route: '/coconutLeafMiner' },
-    { name: 'The Black Beetle', route: '/blackBeetle' },
-    { name: 'Coconut Mites', route: '/C' },
-    { name: 'Termites', route: '/D' },
-    { name: 'The Red Weevil', route: '/E' },
-    { name: 'Mammalian Pests', route: '/F' },
+    { name: "Coconut Leaf Miner", route: "/coconutLeafMiner" },
+    { name: "The Black Beetle", route: "/blackBeetle" },
+    { name: "Coconut Mites", route: "/C" },
+    { name: "Termites", route: "/D" },
+    { name: "The Red Weevil", route: "/E" },
+    { name: "Mammalian Pests", route: "/F" },
   ];
 
   const diseases = [
-    { name: 'Bud Rot', route: '/G' },
-    { name: 'Leaf Spot', route: '/H' },
-    { name: 'Stem Bleeding', route: '/I' },
-    { name: 'Root Wilt', route: '/J' },
-    { name: 'Lethal Yellowing', route: '/K' },
-    { name: 'Ganoderma', route: '/L' },
+    { name: "Bud Rot", route: "/G" },
+    { name: "Leaf Spot", route: "/H" },
+    { name: "Stem Bleeding", route: "/I" },
+    { name: "Root Wilt", route: "/J" },
+    { name: "Lethal Yellowing", route: "/K" },
+    { name: "Ganoderma", route: "/L" },
   ];
 
   return (
@@ -46,19 +46,31 @@ const CoconutPests = () => {
           <Link to="/diseases" className="text-[#3CCD65] hover:text-[#2b8f57]">
             Home
           </Link>
-          <Link to="/CoconutInspections" className="text-[#3CCD65] hover:text-[#2b8f57]">
+          <Link
+            to="/CoconutInspections"
+            className="text-[#3CCD65] hover:text-[#2b8f57]"
+          >
             Inspections
           </Link>
-          <Link to="/CoconutTreatments" className="text-[#3CCD65] hover:text-[#2b8f57]">
+          <Link
+            to="/CoconutTreatments"
+            className="text-[#3CCD65] hover:text-[#2b8f57]"
+          >
             Treatments
           </Link>
           <Link to="/CoconutPests" className="text-[#236A64] font-semibold">
             Pests and Diseases
           </Link>
-          <Link to="/Maintenance" className="text-[#3CCD65] hover:text-[#2b8f57]">
+          <Link
+            to="/Maintenance"
+            className="text-[#3CCD65] hover:text-[#2b8f57]"
+          >
             Maintenance
           </Link>
-          <Link to="/UserProfile" className="text-[#3CCD65] hover:text-[#2b8f57]">
+          <Link
+            to="/UserProfile"
+            className="text-[#3CCD65] hover:text-[#2b8f57]"
+          >
             My Profile
           </Link>
         </div>
@@ -68,12 +80,12 @@ const CoconutPests = () => {
         <Breadcrumb
           items={[
             {
-              href: '',
+              href: "",
               title: <HomeOutlined />,
             },
             {
-              href: '',
-              title: 'Coconut Pests and Diseases',
+              href: "",
+              title: "Coconut Pests and Diseases",
             },
           ]}
         />
@@ -87,21 +99,21 @@ const CoconutPests = () => {
         <div className="flex justify-center space-x-8 mt-2">
           <Button
             style={{
-              backgroundColor: 'rgba(196, 196, 196, 0.44)',
-              width: '300px',
-              height: '28px',
+              backgroundColor: "rgba(196, 196, 196, 0.44)",
+              width: "300px",
+              height: "28px",
             }}
-            onClick={() => navigate('/coconutPests')}
+            onClick={() => navigate("/coconutPests")}
           >
             Coconuts
           </Button>
           <Button
             style={{
-              backgroundColor: 'rgba(196, 196, 196, 0)',
-              width: '300px',
-              height: '28px',
+              backgroundColor: "rgba(196, 196, 196, 0)",
+              width: "300px",
+              height: "28px",
             }}
-            onClick={() => navigate('/intercropPests')}
+            onClick={() => navigate("/intercropPests")}
           >
             Inter Crops
           </Button>
@@ -121,17 +133,20 @@ const CoconutPests = () => {
                 block
                 className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
                 style={{
-                  backgroundImage: 'linear-gradient(135deg, #4CAF50 30%, #E3F2FD 100%)',
-                  border: 'none',
-                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  backgroundImage:
+                    "linear-gradient(135deg, #4CAF50 30%, #E3F2FD 100%)",
+                  border: "none",
+                  transition: "transform 0.2s ease, box-shadow 0.2s ease",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'scale(1.05)';
-                  e.currentTarget.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.2)';
+                  e.currentTarget.style.transform = "scale(1.05)";
+                  e.currentTarget.style.boxShadow =
+                    "0 8px 15px rgba(0, 0, 0, 0.2)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 10px rgba(0, 0, 0, 0.1)";
                 }}
                 onClick={() => navigate(route)}
               >
@@ -142,7 +157,9 @@ const CoconutPests = () => {
 
           {/* Diseases Section */}
           <div className="mt-10">
-            <h1 className="text-2xl font-semibold mb-9">Common Coconut Diseases</h1>
+            <h1 className="text-2xl font-semibold mb-9">
+              Common Coconut Diseases
+            </h1>
 
             {/* Grid for Disease Buttons */}
             <div className="grid grid-cols-2 gap-4">
@@ -154,17 +171,20 @@ const CoconutPests = () => {
                   block
                   className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
                   style={{
-                    backgroundImage: 'linear-gradient(135deg, #4CAF50 30%, #E3F2FD 100%)',
-                    border: 'none',
-                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                    backgroundImage:
+                      "linear-gradient(135deg, #4CAF50 30%, #E3F2FD 100%)",
+                    border: "none",
+                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.05)';
-                    e.currentTarget.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.2)';
+                    e.currentTarget.style.transform = "scale(1.05)";
+                    e.currentTarget.style.boxShadow =
+                      "0 8px 15px rgba(0, 0, 0, 0.2)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
+                    e.currentTarget.style.transform = "scale(1)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 10px rgba(0, 0, 0, 0.1)";
                   }}
                   onClick={() => navigate(route)}
                 >
