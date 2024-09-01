@@ -47,10 +47,15 @@ import EattendenceList from "./pages/employee/EattendenceList.jsx";
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
 import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
-import YieldRecords from "./pages/Harvest/YieldRecords.jsx";
-import TaskAssign from "./pages/Harvest/TaskAssign.jsx"
-import AddHarvestSchedule from "./pages/Harvest/AddHarvestSchedule.jsx";
+import YieldRecords from "./pages/Harvest/YieldRecords";
+import ComplianceCheckList from "./pages/Harvest/ComplianceCheckList";
+import AddYieldRecord from "./pages/Harvest/AddYeildRecord";
+import AddHarvestSchedule from  "./pages/Harvest/AddHarvestSchedule";
 import EditHarvestSchedule from './pages/Harvest/EditHarvestSchedule';
+import EditYieldRecords from './pages/Harvest/EditYieldRecords.jsx'
+import AddComplianceCheck from './pages/Harvest/AddComplianceCheck.jsx';
+import EditComplianceCheck from './pages/Harvest/EditComplianceCheck.jsx';
+import YieldBarChart from './pages/Harvest/YieldBarChart.jsx';
 
 // crop care (diseases)
 import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
@@ -59,8 +64,14 @@ import IntercropInspections from "./pages/Diseases/IntercropInspections.jsx";
 import AddCoconutDiseases from "./pages/Diseases/AddCoconutDiseases.jsx";
 import AddCropsDiseases from "./pages/Diseases/AddCropsDiseases.jsx";
 import CoconutTreatments from "./pages/Diseases/CoconutTreatments.jsx";
+import IntercropTreatments from "./pages/Diseases/IntercropTreatments.jsx";
 import CoconutPests from "./pages/Diseases/CoconutPests.jsx";
 import RegularMaintenance from "./pages/Diseases/RegularMaintenance.jsx";
+import IntercropPests from "./pages/Diseases/IntercropPests.jsx";
+import UserProfile from "./pages/Diseases/UserProfile.jsx";
+import CoconutLeafMiner from "./pages/Diseases/CoconutLeafMiner.jsx";
+import BlackBeetle from "./pages/Diseases/BlackBeetle.jsx";
+
 // product
 import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
 import ProductionScheduleOverview from "./pages/Products/ProductionScheduleOverview.jsx";
@@ -68,6 +79,8 @@ import QualityControl from "./pages/Products/QualityControl.jsx";
 import AddSchedule from "./pages/Products/AddSchedule.jsx";
 import EditSchedule from "./pages/Products/EditSchedule.jsx";
 import AddInspectionReport from "./pages/Products/AddInspectionReport.jsx";
+import EditInspectionReport from "./pages/Products/EditInspectionReport.jsx";
+
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
@@ -133,19 +146,31 @@ export default function App() {
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
       <Route path="/harvest/yield" element={<YieldRecords />} />
-      <Route path="/harvest/task" element={<TaskAssign/>} />
+      <Route path="/harvest/compliancechecklist" element={<ComplianceCheckList />} />
+      <Route path="/yield/addrecords" element={<AddYieldRecord />} />
       <Route path="/harvest/addschedule" element={<AddHarvestSchedule />} />
       <Route path="/harvest/edit/:id" element={<EditHarvestSchedule />} />
-        
-       {/* crop care */}
-      <Route path="/diseases" element={<DiseasesDashboard />} />
+      <Route path="/yield/editrecords/:id" element={<EditYieldRecords />} />
+      <Route path="/compliance-checks/addrecords" element={<AddComplianceCheck />} />
+      <Route path="/compliance-checks/editrecords/:id" element={<EditComplianceCheck />} />
+      <Route path="/yield-bar-chart" element={<YieldBarChart />} />
+
+
+      {/* crop care */}
+      {/* <Route path="/diseases" element={<DiseasesDashboard />} />
       <Route path="/coconutInspections" element={<CoconutInspections />} />
       <Route path="/intercropInspections" element={<IntercropInspections />} />
       <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
       <Route path="/addCropDiseases" element={<AddCropsDiseases />} />
       <Route path="/coconutTreatments" element={<CoconutTreatments />} />
+      <Route path="/intercropTreatments" element={<IntercropTreatments />} />
       <Route path="/coconutPests" element={<CoconutPests />} />
+      <Route path="/maintenance" element={<RegularMaintenance />} /> */}
+      <Route path="/intercropPests" element={<IntercropPests />} />
       <Route path="/maintenance" element={<RegularMaintenance />} />
+      <Route path="/UserProfile" element={<UserProfile />} />
+      <Route path="/coconutLeafMiner" element={<CoconutLeafMiner />} />
+      <Route path="/blackBeetle" element={<BlackBeetle />} />
 
       {/* product */}
       <Route path="/products/productdashboard" element={<ProductsDashboard />} />
@@ -154,6 +179,8 @@ export default function App() {
       <Route path="/products/addschedule" element={<AddSchedule />} />
       <Route path="/products/editschedule/:id" element={<EditSchedule />} />
       <Route path="/products/addInspectionReport" element={<AddInspectionReport />} />
+      <Route path="/products/editInspectionReport/:id" element={<EditInspectionReport />} />
+      
 
       {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
