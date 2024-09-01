@@ -9,18 +9,22 @@ import Dashboard from "./pages/Dashboard.jsx";
  * sales and finance
 */ 
 //sales
-// import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
-// import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
-// import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
-// import ViewSalesRecordDashboard from "./pages/SalesAndFinance/Sales/ViewSalesRecordDashboard.jsx";
-// import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage.jsx";
-// // finance
-// import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
-// import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
-// import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDisplay.jsx";
-// import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
+import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
+import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
+import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
+import ViewSalesRecordDashboard from "./pages/SalesAndFinance/Sales/ViewSalesRecordDashboard.jsx";
+import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage.jsx";
+// finance
+import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
+import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
+import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDisplay.jsx";
+import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
 
 // inventory
+ import FertilizerRecords from "./pages/Inventory/FertilizerRecords.jsx";
+ import EditFertilizerRecord from "./pages/Inventory/EditFertilizerRecord.jsx";
+ import AddFertilizerRecord from "./pages/Inventory/AddFertilizerRecord.jsx";
+ import InventoryDashboard from "./pages/Inventory/InventoryDashboard.jsx";
 
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
@@ -35,7 +39,6 @@ import EattendenceList from "./pages/employee/EattendenceList.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
-import ScheduleOptionsPage from './pages/Harvest/ScheduleOptionsPage.jsx';
 import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
 import YieldRecords from "./pages/Harvest/YieldRecords";
 import ComplianceCheckList from "./pages/Harvest/ComplianceCheckList";
@@ -46,7 +49,21 @@ import EditYieldRecords from './pages/Harvest/EditYieldRecords.jsx'
 import AddComplianceCheck from './pages/Harvest/AddComplianceCheck.jsx';
 import EditComplianceCheck from './pages/Harvest/EditComplianceCheck.jsx';
 import YieldBarChart from './pages/Harvest/YieldBarChart.jsx';
-// crop care
+
+// crop care (diseases)
+import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
+import CoconutInspections from "./pages/Diseases/CoconutInspections.jsx";
+import IntercropInspections from "./pages/Diseases/IntercropInspections.jsx";
+import AddCoconutDiseases from "./pages/Diseases/AddCoconutDiseases.jsx";
+import AddCropsDiseases from "./pages/Diseases/AddCropsDiseases.jsx";
+import CoconutTreatments from "./pages/Diseases/CoconutTreatments.jsx";
+import IntercropTreatments from "./pages/Diseases/IntercropTreatments.jsx";
+import CoconutPests from "./pages/Diseases/CoconutPests.jsx";
+import RegularMaintenance from "./pages/Diseases/RegularMaintenance.jsx";
+import IntercropPests from "./pages/Diseases/IntercropPests.jsx";
+import UserProfile from "./pages/Diseases/UserProfile.jsx";
+import CoconutLeafMiner from "./pages/Diseases/CoconutLeafMiner.jsx";
+import BlackBeetle from "./pages/Diseases/BlackBeetle.jsx";
 
 // product
 import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
@@ -85,7 +102,7 @@ export default function App() {
       <Route path="/dashboard" element={<Dashboard />} />
 
       {/* finance */}
-      {/* <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
+      <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
       <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
       <Route path="/salesAndFinance/sales/addSalesRecord" element={<AddSalesRecordDashboard />} />
       <Route path="/salesAndFinance/sales/viewSalesRecord" element={<ViewSalesRecordDashboard />} />
@@ -93,32 +110,28 @@ export default function App() {
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
       <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} />
       <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
-      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} /> */}
+      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />
 
       {/* inventory */}
-      {/* <Route path="/Inventory/Fertilizer" element={<Fertilizer/>} />
-      <Route path="/Inventory/Maintenance" element={<Maintenance/>} />
-      <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>} />
-      <Route path="/Inventory/FertilizerForm" element={<FertilizerForm/>} />
-      <Route path="/Inventory/MaintenanceForm" element={<MaintenanceForm/>} /> */}
+    <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} />
+    <Route path="/Inventory/EditFertilizerRecords/:id" element={<EditFertilizerRecord/>} />
+    <Route path="/Inventory/AddFertilizerRecord" element={<AddFertilizerRecord/>} />
+    <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>} />
 
       {/* employee */}        
       <Route path="/employee/dashboard" element={<Edashboard/>}/>
       <Route path="/employee/registration" element= {<Eregistration/>}/>
       <Route path="/employee/salary" element= {<Esalary/>}/>
       <Route path="/employee/task" element= {<EaddTask/>}/>
-      <Route path="/employee/taskedit" element= {<EditTaskPage/>}/>
+      <Route path="/employee/taskedit/:id" element= {<EditTaskPage/>}/>
       <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
       <Route path="/employee/attendance" element= {<GetAttendance/>}/>
       <Route path="/employee/employeelist" element= {<EmployeeList/>}/>
       <Route path="/employee/attendanceList" element= {<EattendenceList/>}/>
 
       {/* harvest */}
-    
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
-      <Route path="/harvest/schedule-options" element={<ScheduleOptionsPage />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
-      <Route path="/yield-options" element={<YieldOptionsPage />} />
       <Route path="/harvest/yield" element={<YieldRecords />} />
       <Route path="/harvest/compliancechecklist" element={<ComplianceCheckList />} />
       <Route path="/yield/addrecords" element={<AddYieldRecord />} />
@@ -128,10 +141,10 @@ export default function App() {
       <Route path="/compliance-checks/addrecords" element={<AddComplianceCheck />} />
       <Route path="/compliance-checks/editrecords/:id" element={<EditComplianceCheck />} />
       <Route path="/yield-bar-chart" element={<YieldBarChart />} />
-   
+
 
       {/* crop care */}
-      {/* <Route path="/diseases" element={<DiseasesDashboard />} />
+      <Route path="/diseases" element={<DiseasesDashboard />} />
       <Route path="/coconutInspections" element={<CoconutInspections />} />
       <Route path="/intercropInspections" element={<IntercropInspections />} />
       <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
@@ -139,7 +152,7 @@ export default function App() {
       <Route path="/coconutTreatments" element={<CoconutTreatments />} />
       <Route path="/intercropTreatments" element={<IntercropTreatments />} />
       <Route path="/coconutPests" element={<CoconutPests />} />
-      <Route path="/maintenance" element={<RegularMaintenance />} /> */}
+      <Route path="/maintenance" element={<RegularMaintenance />} />
       <Route path="/intercropPests" element={<IntercropPests />} />
       <Route path="/maintenance" element={<RegularMaintenance />} />
       <Route path="/UserProfile" element={<UserProfile />} />

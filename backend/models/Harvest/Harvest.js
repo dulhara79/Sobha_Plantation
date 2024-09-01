@@ -21,6 +21,7 @@ const harvestScheduleSchema = mongoose.Schema({
         type: String,
         required: [true, 'Field number is required'],
     },
+    
     numberOfWorkers: {
         type: Number,
         required: [true, 'Number of workers is required'],

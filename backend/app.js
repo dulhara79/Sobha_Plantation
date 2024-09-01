@@ -6,14 +6,14 @@ const http = require('http');
 const { Server } = require('socket.io');
 
 
-const employeeRoutes = require('./routes/employee');
+const employeeRoutes = require('./routes/Employee/employee.js');
 // const salesRoutes = require('./routes/sales');
 
 
 
 //inventory
-const fertilizerRoutes = require('./routes/Inventory/fertilizerRoute.js');
-const maintenanceRoutes = require('./routes/Inventory/maintenanceRoute.js');
+const fertilizerRoutes = require('./routes/Inventory/fertilizers.js');
+// const maintenanceRoutes = require('./routes/Inventory/maintenanceRoute.js');
  
 
 
@@ -60,11 +60,9 @@ const InvoiceRoutes = require('./routes/SalesAndFinance/InvoiceRoutes.js');
 const SalesAnalyticsRoutes = require('./routes/SalesAndFinance/SalesAnalyticsRoutes.js');
 const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoutes.js');
 
-/**
- * Employee
- */
-const salaryEmployeeRoutes = require("./routes/salaryEmployeeRoutes");
-const ETaskRoutes = require('./routes/ETaskRoutes');
+const salaryEmployeeRoutes = require("./routes/Employee/salaryEmployeeRoutes.js");
+const ETaskRoutes = require('./routes/Employee/ETaskRoutes.js');
+
 
 const app = express();
 
@@ -96,8 +94,10 @@ app.use('/api/production', productionRoutes);
 app.use('/api/quality-control', qualityControlRoute);
 
 //inventory
-app.use('/api/Inventory/fertilizer', fertilizerRoutes);
-app.use('/api/Inventory/maintenance', maintenanceRoutes);
+app.use('/api/fertilizers', fertilizerRoutes);
+//app.use('/api/maintenance', maintenanceRoutes);
+//app.use('/api/inventoryRecords', InventoryRecordRoutes);
+
 /**
 * crop
 */
@@ -149,3 +149,4 @@ const PORT = process.env.PORT || 8090;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+

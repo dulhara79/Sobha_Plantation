@@ -4,12 +4,20 @@ const mongoose = require("mongoose");
 // Controller for creating a new Harvest schedule
 exports.createHarvestSchedule = async (req, res) => {
     try {
+
         const { cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers } = req.body;
 
         if (!cropType || !harvestDate || !startTime || !endTime || !fieldNumber || !numberOfWorkers) {
             return res.status(400).json({
                 success: false,
                 message: 'Please provide all required fields: cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers',
+        const { harvestId, cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers } = req.body;
+
+        if (!harvestId || !cropType || !harvestDate || !startTime || !endTime || !fieldNumber ||  !numberOfWorkers) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide all required fields: harvestId, cropType, harvestDate, startTime, endTime, numberOfWorkers',
+
             });
         }
 
@@ -69,6 +77,7 @@ exports.getHarvestScheduleById = async (req, res) => {
 exports.updateHarvestSchedule = async (req, res) => {
     try {
         const { id } = req.params;
+
         const { cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers } = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -76,16 +85,28 @@ exports.updateHarvestSchedule = async (req, res) => {
         }
 
         if (!cropType || !harvestDate || !startTime || !endTime || !fieldNumber || !numberOfWorkers) {
+
+        const { cropType, harvestDate, startTime, endTime, fieldNumber,numberOfWorkers } = req.body;
+
+        if (!cropType || !harvestDate || !startTime || !endTime || !fieldNumber ||!numberOfWorkers) {
+
             return res.status(400).json({
                 success: false,
                 message: 'Send all required fields: cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers',
             });
         }
 
+
         const result = await HarvestSchedule.findByIdAndUpdate(
             id,
             { cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers },
             { new: true, runValidators: true }
+
+        const result = await HarvestSchedule.findOneAndUpdate(
+            { harvestId: id },
+            { cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers },
+            { new: true }
+
         );
 
         if (!result) {

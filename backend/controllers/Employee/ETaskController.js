@@ -1,6 +1,6 @@
 // ETaskController.js
-const ETask = require('../models/ETaskModel');
-const Employee = require('../models/Employee');
+const ETaskModel = require('../../models/Employee/ETaskModel');
+const Employee = require('../../models/Employee/Employee');
 
 // Create a new task
 exports.createTask = async (req, res) => {
@@ -15,7 +15,7 @@ exports.createTask = async (req, res) => {
     
         const emp_name = `${employee.firstName} ${employee.lastName}`;
     
-        const newETask = new ETask({
+        const newETask = new ETaskModel({
           emp_id,
           emp_name,
           task,
@@ -38,7 +38,7 @@ exports.getAllTasks = async (req, res) => {
     try {
         // const tasks = await ETask.find().populate('emp_id', 'name');
         // res.status(200).json({success:true , tasks});
-        const tasks = await ETask.find({});
+        const tasks = await ETaskModel.find({});
         res.status(200).json({
             success: true,
             data: tasks,
@@ -76,7 +76,7 @@ exports.updateTask = async (req, res) => {
 
         const emp_name = `${employee.firstName} ${employee.lastName}`;
 
-        const updatedTask = await ETask.findByIdAndUpdate(req.params.id, { ...req.body, emp_name }, {
+        const updatedTask = await ETaskModel.findByIdAndUpdate(req.params.id, { ...req.body, emp_name }, {
             new: true,
             runValidators: true,
         });
@@ -94,7 +94,7 @@ exports.updateTask = async (req, res) => {
 // Delete a task
 exports.deleteTask = async (req, res) => {
     try {
-        const deletedTask = await ETask.findByIdAndDelete(req.params.id);
+        const deletedTask = await ETaskModel.findByIdAndDelete(req.params.id);
         if (!deletedTask) {
             return res.status(404).json({ message: 'Task not found' });
         }
