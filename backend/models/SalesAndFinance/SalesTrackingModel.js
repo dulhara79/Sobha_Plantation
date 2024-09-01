@@ -1,4 +1,3 @@
-// models/SalesTracking.js
 const mongoose = require('mongoose');
 
 const salesTrackingSchema = new mongoose.Schema(
@@ -21,11 +20,6 @@ const salesTrackingSchema = new mongoose.Schema(
       type: Number,
       required: [true, 'Revenue generated is required'],
       min: [0, 'Revenue cannot be negative'],
-    },
-    invoice: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Invoice',
-      required: [true, 'Invoice reference is required'],
     },
   },
   { timestamps: true }
