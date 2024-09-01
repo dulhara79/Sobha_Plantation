@@ -82,6 +82,9 @@ const DiseasesDashboard = () => {
           <Link to="/Maintenance" className="text-[#3CCD65] hover:text-[#2b8f57]">
             Maintenance
           </Link>
+          <Link to="/UserProfile" className="text-[#3CCD65] hover:text-[#2b8f57]">
+            My Profile
+          </Link>
         </div>
       </nav>
 
@@ -134,22 +137,22 @@ const DiseasesDashboard = () => {
 
           {/* Right Section: Functions Overview */}
           <div className="col-span-2 grid grid-cols-2 gap-4">
-          <Link to="/CoconutInspections" className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block flex-col h-100">
+          <Link to="/CoconutInspections" className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-orange-400 to-green-500 transition cursor-pointer block flex-col h-100">
           <h1 className="text-3xl font-bold mb-2">Disease Identification</h1>
           <img src={diseaseIdentificationImg} alt="Disease Identification" className="w-full h-80 object-cover rounded-lg" />
           </Link>
 
-            <Link to="/CoconutTreatments" className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block flex-col h-100">
+            <Link to="/CoconutTreatments" className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-orange-500 transition cursor-pointer block flex-col h-100">
               <h1 className="text-3xl font-bold mb-2">Application of Treatments</h1>
               <img src={applicationOfTreatmentsImg} alt="Application of Treatments" className="w-full h-80 object-cover rounded-lg" />
             </Link>
 
-            <Link to="/maintenance-activities" className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block flex-col h-100">
+            <Link to="/maintenance-activities" className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-orange-500 transition cursor-pointer block flex-col h-100">
               <h1 className="text-3xl font-bold mb-2">Maintenance Activities</h1>
               <img src={maintenanceActivitiesImg} alt="Maintenance Activities" className="w-full h-80 object-cover rounded-lg" />
             </Link>
 
-            <Link to="/trend-analysis" className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition cursor-pointer block flex-col h-100">
+            <Link to="/trend-analysis" className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-orange-400 to-green-500 transition cursor-pointer block flex-col h-100">
               <h1 className="text-3xl font-bold mb-2">Trend Analysis</h1>
               <img src={trendAnalysisImg} alt="Trend Analysis" className="w-full h-80 object-cover rounded-lg" />
             </Link>

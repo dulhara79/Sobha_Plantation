@@ -95,3 +95,72 @@ a {
 .animate-bounce {
   animation: bounce 2s infinite;
 }
+
+/* products */
+
+/* Apply consistent padding and margin to navigation items */
+nav .container {
+  padding: 0 1rem;
+}
+
+/* Ensure flex container items are evenly spaced */
+nav .container .flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Apply spacing and alignment to buttons */
+.ant-btn {
+  margin: 0 8px;
+}
+
+/* Adjust header styles for better alignment */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Make sure the PDF content is styled consistently */
+#pdf-content {
+  margin-top: 1rem;
+}
+
+/* Card Styles */
+.card-container {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 16px;
+}
+
+.card {
+  width: 300px;
+  background: linear-gradient(135deg, #60DB19, #a5e837);
+  border: 1px solid #e0e0e0; /* Light border color */
+  border-radius: 16px;
+  color: #000000; /* Accent color for text */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+  text-align: center;
+  padding: 24px 16px; /* Padding for content */
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #4CAF50, #76e044); /* Slightly darker gradient on hover */
+  color: #ffffff; /* Change text color on hover for better contrast */
+}
+
+.card .card-content {
+  font-size: 2.3em; /* Increased text size */
+  font-weight: bold;
+  transition: color 0.3s ease; /* Smooth transition for text color */
+}
+
+.card:hover .card-content {
+  color: #ffffff; /* Change text color on hover for better contrast */
+}
+
+/* products */

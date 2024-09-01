@@ -1,14 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from '../../components/Header';
 import Sidebar from '../../components/Sidebar';
 import { HomeOutlined, LeftOutlined } from '@ant-design/icons';
 import { Breadcrumb, Button, Input, DatePicker, Form } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import { post } from '../../api/api';
 
 const AddCoconutDiseases = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+
+  // Track the validity of each field
+  const [fieldValidity, setFieldValidity] = useState({
+    dateOfInspection: false,
+    sectionOfLand: false,
+    identifiedPest: false,
+    identifiedDisease: false,
+    inspectedBy: false,
+    inspectionResult: false,
+    suggestedReInspectionDate: false,
+  });
 
   // Disable future dates for Date of Inspection
   const disableFutureDates = (current) => {
@@ -43,14 +55,32 @@ const AddCoconutDiseases = () => {
     },
   ];
 
-  const handleFinish = (values) => {
-    console.log('Form values:', values);
-    // Handle form submission logic here
-    navigate('/CoconutInspections'); // Navigate to CoconutInspections after form submission
+  const handleFinish = async (values) => {
+    try {
+      await post('/harvest', values); // '/harvest' is the endpoint for creating a new record
+      navigate('/CoconutInspections'); // Navigate to the CoconutInspections page after successful submission
+    } catch (error) {
+      console.error('Error creating disease record:', error);
+    }
   };
 
   const handleCancel = () => {
     navigate('/CoconutInspections'); // Navigate to CoconutInspections on cancel
+  };
+
+  // Handle field change and validation
+  const handleFieldChange = (changedFields, allFields) => {
+    const newFieldValidity = { ...fieldValidity };
+
+    allFields.forEach((field) => {
+      if (field.errors.length === 0 && field.value) {
+        newFieldValidity[field.name[0]] = true;
+      } else {
+        newFieldValidity[field.name[0]] = false;
+      }
+    });
+
+    setFieldValidity(newFieldValidity);
   };
 
   return (
@@ -82,6 +112,9 @@ const AddCoconutDiseases = () => {
               <Link to="/maintenance" className="text-[#3CCD65] hover:text-[#2b8f57]">
                 Maintenance
               </Link>
+              <Link to="/UserProfile" className="text-[#3CCD65] hover:text-[#2b8f57]">
+                My Profile
+              </Link>
             </div>
           </nav>
 
@@ -112,25 +145,8 @@ const AddCoconutDiseases = () => {
               layout="vertical"
               className="mt-6"
               onFinish={handleFinish}
+              onFieldsChange={handleFieldChange}
             >
-              {/* Identified Pest */}
-              <Form.Item
-                label="Identified Pest"
-                name="identifiedPest"
-                rules={alphabeticNumericRule}
-              >
-                <Input placeholder="Enter identified pest" />
-              </Form.Item>
-
-              {/* Identified Disease */}
-              <Form.Item
-                label="Identified Disease"
-                name="identifiedDisease"
-                rules={alphabeticNumericRule}
-              >
-                <Input placeholder="Enter identified disease" />
-              </Form.Item>
-
               {/* Date of Inspection */}
               <Form.Item
                 label="Date of Inspection"
@@ -157,14 +173,41 @@ const AddCoconutDiseases = () => {
                   }}
                 />
               </Form.Item>
-
+ 
               {/* Section of Land */}
               <Form.Item
                 label="Section of Land"
                 name="sectionOfLand"
                 rules={alphabeticRule}
               >
-                <Input placeholder="Enter section of land" />
+                <Input 
+                  placeholder="Enter section of land" 
+                  disabled={!fieldValidity.dateOfInspection}
+                />
+              </Form.Item>
+
+              {/* Identified Pest */}
+              <Form.Item
+                label="Identified Pest"
+                name="identifiedPest"
+                rules={alphabeticRule}
+              >
+                <Input 
+                  placeholder="Enter identified pest" 
+                  disabled={!fieldValidity.sectionOfLand}
+                />
+              </Form.Item>
+
+              {/* Identified Disease */}
+              <Form.Item
+                label="Identified Disease"
+                name="identifiedDisease"
+                rules={alphabeticRule}
+              >
+                <Input 
+                  placeholder="Enter identified disease" 
+                  disabled={!fieldValidity.identifiedPest}
+                />
               </Form.Item>
 
               {/* Inspected By */}
@@ -173,7 +216,22 @@ const AddCoconutDiseases = () => {
                 name="inspectedBy"
                 rules={alphabeticRule}
               >
-                <Input placeholder="Enter name of inspector" />
+                <Input 
+                  placeholder="Enter name of inspector" 
+                  disabled={!fieldValidity.identifiedDisease}
+                />
+              </Form.Item>
+
+              {/* Inspection Result */}
+              <Form.Item
+                label="Inspection Result"
+                name="inspectionResult"
+                rules={alphabeticRule}
+              >
+                <Input 
+                  placeholder="Enter the inspection result" 
+                  disabled={!fieldValidity.inspectedBy}
+                />
               </Form.Item>
 
               {/* Suggested Re-Inspection Date */}
@@ -183,19 +241,25 @@ const AddCoconutDiseases = () => {
                 rules={[
                   {
                     required: true,
-                    message: 'Please select a suggested re-inspection date.',
+                    message: 'Please select a re-inspection date.',
                   },
                 ]}
               >
                 <DatePicker
                   style={{ width: '100%' }}
                   disabledDate={disablePastDates}
+                  disabled={!fieldValidity.inspectionResult}
                 />
               </Form.Item>
 
               {/* Action Buttons */}
               <div className="flex justify-center space-x-4 mt-4">
-                <Button type="primary" htmlType="submit" style={{ backgroundColor: '#236A64', color: '#fff' }}>
+                <Button 
+                  type="primary" 
+                  htmlType="submit" 
+                  style={{ backgroundColor: '#236A64', color: '#fff' }}
+                  disabled={!fieldValidity.suggestedReInspectionDate}
+                >
                   Submit
                 </Button>
                 <Button type="default" htmlType="button" onClick={handleCancel}>

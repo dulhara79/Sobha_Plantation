@@ -46,7 +46,6 @@ import EditYieldRecords from './pages/Harvest/EditYieldRecords.jsx'
 import AddComplianceCheck from './pages/Harvest/AddComplianceCheck.jsx';
 import EditComplianceCheck from './pages/Harvest/EditComplianceCheck.jsx';
 import YieldBarChart from './pages/Harvest/YieldBarChart.jsx';
-import YieldOptionsPage from './pages/Harvest/YieldOptionsPage.jsx';
 // crop care
 
 // product
@@ -56,6 +55,8 @@ import QualityControl from "./pages/Products/QualityControl.jsx";
 import AddSchedule from "./pages/Products/AddSchedule.jsx";
 import EditSchedule from "./pages/Products/EditSchedule.jsx";
 import AddInspectionReport from "./pages/Products/AddInspectionReport.jsx";
+import EditInspectionReport from "./pages/Products/EditInspectionReport.jsx";
+
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
@@ -136,8 +137,14 @@ export default function App() {
       <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
       <Route path="/addCropDiseases" element={<AddCropsDiseases />} />
       <Route path="/coconutTreatments" element={<CoconutTreatments />} />
+      <Route path="/intercropTreatments" element={<IntercropTreatments />} />
       <Route path="/coconutPests" element={<CoconutPests />} />
       <Route path="/maintenance" element={<RegularMaintenance />} /> */}
+      <Route path="/intercropPests" element={<IntercropPests />} />
+      <Route path="/maintenance" element={<RegularMaintenance />} />
+      <Route path="/UserProfile" element={<UserProfile />} />
+      <Route path="/coconutLeafMiner" element={<CoconutLeafMiner />} />
+      <Route path="/blackBeetle" element={<BlackBeetle />} />
 
       {/* product */}
       <Route path="/products/productdashboard" element={<ProductsDashboard />} />
@@ -146,6 +153,8 @@ export default function App() {
       <Route path="/products/addschedule" element={<AddSchedule />} />
       <Route path="/products/editschedule/:id" element={<EditSchedule />} />
       <Route path="/products/addInspectionReport" element={<AddInspectionReport />} />
+      <Route path="/products/editInspectionReport/:id" element={<EditInspectionReport />} />
+      
 
       {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
