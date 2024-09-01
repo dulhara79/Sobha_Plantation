@@ -3,10 +3,12 @@ import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { HomeOutlined, UserOutlined, LeftOutlined } from "@ant-design/icons";
 import { Breadcrumb, Button } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate hook
 import ProfileImage from "../../assets/DiseasesImages/Dewdu.jpg";
 
 const UserProfile = () => {
+  const navigate = useNavigate(); // Initialize navigate
+
   return (
     <div>
       <Header />
@@ -127,6 +129,7 @@ const UserProfile = () => {
               <Button
                 type="default"
                 className="bg-[#3CCD65] text-white hover:bg-[#2b8f57] rounded-full px-15 py-5 shadow-md"
+                onClick={() => navigate("/addProfile")} // Navigate to AddProfile on click
               >
                 Update Profile
               </Button>
