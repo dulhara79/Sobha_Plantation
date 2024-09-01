@@ -113,7 +113,7 @@ export default function App() {
       <Route path="/employee/registration" element= {<Eregistration/>}/>
       <Route path="/employee/salary" element= {<Esalary/>}/>
       <Route path="/employee/task" element= {<EaddTask/>}/>
-      <Route path="/employee/taskedit" element= {<EditTaskPage/>}/>
+      <Route path="/employee/taskedit/:id" element= {<EditTaskPage/>}/>
       <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
       <Route path="/employee/attendance" element= {<GetAttendance/>}/>
       <Route path="/employee/employeelist" element= {<EmployeeList/>}/>
