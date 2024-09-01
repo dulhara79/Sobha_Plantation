@@ -1,7 +1,7 @@
 // ETaskRoutes.js
 const express = require('express');
 const router = express.Router();
-const ETaskController = require('../controllers/ETaskController');
+const ETaskController = require('../../controllers/Employee/ETaskController');
 
 // Define routes
 router.post('/', ETaskController.createTask);

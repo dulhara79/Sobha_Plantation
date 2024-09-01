@@ -1,8 +1,8 @@
 import React from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
-import ETaskForm from "../../components/ETaskForm";
-import EmployeeNavbar from "../../components/EmployeeNavbar";
+import ETaskForm from "../../components/Employee/ETaskForm";
+import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
 import { Breadcrumb } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createEmployeeSalary, getAllEmployeeSalaries, getEmployeeSalaryById, updateEmployeeSalary, deleteEmployeeSalary } = require('../controllers/salaryEmployeeController');
+const { createEmployeeSalary, getAllEmployeeSalaries, getEmployeeSalaryById, updateEmployeeSalary, deleteEmployeeSalary } = require('../../controllers/Employee/salaryEmployeeController');
 
 // Create a new employee salary
 router.post('/', createEmployeeSalary);
