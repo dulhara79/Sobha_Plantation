@@ -144,7 +144,7 @@ export default function App() {
 
 
       {/* crop care */}
-      {/* <Route path="/diseases" element={<DiseasesDashboard />} />
+      <Route path="/diseases" element={<DiseasesDashboard />} />
       <Route path="/coconutInspections" element={<CoconutInspections />} />
       <Route path="/intercropInspections" element={<IntercropInspections />} />
       <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
@@ -152,7 +152,7 @@ export default function App() {
       <Route path="/coconutTreatments" element={<CoconutTreatments />} />
       <Route path="/intercropTreatments" element={<IntercropTreatments />} />
       <Route path="/coconutPests" element={<CoconutPests />} />
-      <Route path="/maintenance" element={<RegularMaintenance />} /> */}
+      <Route path="/maintenance" element={<RegularMaintenance />} />
       <Route path="/intercropPests" element={<IntercropPests />} />
       <Route path="/maintenance" element={<RegularMaintenance />} />
       <Route path="/UserProfile" element={<UserProfile />} />
