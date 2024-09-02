@@ -70,6 +70,28 @@ import Insights from "./pages/Diseases/Insights.jsx";
 import DetailedOverview from "./pages/Diseases/DetailedOverview.jsx";
 import AddMaintenance from "./pages/Diseases/AddMaintenance.jsx";
 import AddProfile from "./pages/Diseases/AddProfile.jsx";
+import CoconutMite from "./pages/Diseases/CoconutMite.jsx";
+import Termite from "./pages/Diseases/Termite.jsx";
+import RedWeevil from "./pages/Diseases/RedWeevil.jsx";
+import MammalianPests from "./pages/Diseases/MammalianPests.jsx";
+import BudRot from "./pages/Diseases/BudRot.jsx";
+import LeafSpot from "./pages/Diseases/LeafSpot.jsx";
+import StemBleeding from "./pages/Diseases/StemBleeding.jsx";
+import RootWilt from "./pages/Diseases/RootWilt.jsx";
+import LethalYellowing from "./pages/Diseases/LethalYellowing.jsx";
+import Ganoderma from "./pages/Diseases/Ganoderma.jsx";
+import FruitFlies from "./pages/Diseases/FruitFlies.jsx";
+import BananaWeevil from "./pages/Diseases/BananaWeevil.jsx";
+import PineappleMealybug from "./pages/Diseases/PineappleMealybug.jsx";
+import PapayaMealybug from "./pages/Diseases/PapayaMealybug.jsx";
+import Thrips from "./pages/Diseases/Thrips.jsx";
+import Aphids from "./pages/Diseases/Aphids.jsx";
+import Anthracnose from "./pages/Diseases/Anthracnose.jsx";
+import BacterialWilt from "./pages/Diseases/BacterialWilt.jsx";
+import BlackSigatoka from "./pages/Diseases/BlackSigatoka.jsx";
+import PapayaRingspot from "./pages/Diseases/PapayaRingspot.jsx";
+import FusariumWilt from "./pages/Diseases/FusariumWilt.jsx";
+import PowderyMildew from "./pages/Diseases/PowderyMildew.jsx";
 
 // product
 import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
@@ -98,7 +120,6 @@ import Profile from './components/Profile';
 
 // import Test from "./pages/Test.jsx";
 import PageError from "./pages/PageError.jsx";
-
 
 export default function App() {
   return (
@@ -160,7 +181,6 @@ export default function App() {
       <Route path="/coconutPests" element={<CoconutPests />} />
       <Route path="/maintenance" element={<RegularMaintenance />} />
       <Route path="/intercropPests" element={<IntercropPests />} />
-      <Route path="/maintenance" element={<RegularMaintenance />} />
       <Route path="/UserProfile" element={<UserProfile />} />
       <Route path="/coconutLeafMiner" element={<CoconutLeafMiner />} />
       <Route path="/blackBeetle" element={<BlackBeetle />} />
@@ -170,6 +190,28 @@ export default function App() {
       <Route path="/detailedOverview" element={<DetailedOverview />} />
       <Route path="/addMaintenance" element={<AddMaintenance />} />
       <Route path="/addProfile" element={<AddProfile />} />
+      <Route path="/coconutMite" element={<CoconutMite />} />
+      <Route path="/termite" element={<Termite />} />
+      <Route path="/redWeevil" element={<RedWeevil />} />
+      <Route path="/mammalianPests" element={<MammalianPests />} />
+      <Route path="/budRot" element={<BudRot />} />
+      <Route path="/leafSpot" element={<LeafSpot />} />
+      <Route path="/stemBleeding" element={<StemBleeding />} />
+      <Route path="/rootWilt" element={<RootWilt />} />
+      <Route path="/lethalYellowing" element={<LethalYellowing />} />
+      <Route path="/ganoderma" element={<Ganoderma />} />
+      <Route path="/fruitFlies" element={<FruitFlies />} />
+      <Route path="/bananaWeevil" element={<BananaWeevil />} />
+      <Route path="/pineappleMealybug" element={<PineappleMealybug />} />
+      <Route path="/papayaMealybug" element={<PapayaMealybug />} />
+      <Route path="/thrips" element={<Thrips />} />
+      <Route path="/aphids" element={<Aphids />} />
+      <Route path="/anthracnose" element={<Anthracnose />} />
+      <Route path="/bacterialWilt" element={<BacterialWilt />} />
+      <Route path="/blackSigatoka" element={<BlackSigatoka />} />
+      <Route path="/papayaRingspot" element={<PapayaRingspot />} />
+      <Route path="/fusariumWilt" element={<FusariumWilt />} />
+      <Route path="/powderyMildew" element={<PowderyMildew />} />
 
       {/* product */}
       <Route path="/products/productdashboard" element={<ProductsDashboard />} />
