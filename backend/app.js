@@ -23,6 +23,7 @@ const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
  * buyer
  */
 // const BuyerRoutes = require('./routes/buyerRoute');
+
 const BuyerRoutes = require('./routes/buyerRoute');
 
 
