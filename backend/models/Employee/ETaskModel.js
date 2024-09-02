@@ -34,4 +34,4 @@ const ETaskSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('ETask', ETaskSchema);
+module.exports = mongoose.model('ETasks', ETaskSchema);
