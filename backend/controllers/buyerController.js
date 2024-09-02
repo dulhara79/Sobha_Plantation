@@ -35,6 +35,7 @@ exports.registerBuyer = async (req, res) => {
     // Save buyer to the database
     await buyer.save();
     res.status(201).json({ message: 'Buyer registered successfully', buyer });
+    
   } catch (error) {
     res.status(500).json({ message: 'Error registering buyer', error });
   }
