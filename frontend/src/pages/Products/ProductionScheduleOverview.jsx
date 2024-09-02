@@ -60,7 +60,7 @@ const ProductionScheduleOverview = () => {
   }, [navigate]);
 
   const onGroupContainerClick2 = useCallback(() => {
-    navigate("/packaging");
+    navigate("/products/packaging-labeling");
   }, [navigate]);
 
   // Function to format today's date
@@ -284,8 +284,7 @@ const generatePDF = async () => {
 
           {/* Breadcrumbs */}
           <Breadcrumb style={{ marginBottom: 16, marginLeft: 16 }}>
-          <Breadcrumb.Item>..</Breadcrumb.Item>
-            <Breadcrumb.Item onClick={onHomeClick}>Products</Breadcrumb.Item>
+            <Breadcrumb.Item onClick={onHomeClick}>Home</Breadcrumb.Item>
             <Breadcrumb.Item>Production Overview</Breadcrumb.Item>
           </Breadcrumb>
 
