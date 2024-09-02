@@ -46,7 +46,7 @@
 // }, { timestamps: true });
 
 // const Buyer = mongoose.model('Buyer', buyerSchema);
-// module.exports = Buyer;
+
 // backend/models/buyer.js
 
 const mongoose = require('mongoose');
