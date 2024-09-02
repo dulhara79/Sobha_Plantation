@@ -74,7 +74,6 @@ import EditSchedule from "./pages/Products/EditSchedule.jsx";
 import AddInspectionReport from "./pages/Products/AddInspectionReport.jsx";
 import EditInspectionReport from "./pages/Products/EditInspectionReport.jsx";
 
-
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
 import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
@@ -83,6 +82,7 @@ import Seedling from "./pages/CropVarieties/Seedling.jsx";
 import Schedules from "./pages/CropVarieties/Schedules.jsx";
 import ScheduleForm from "./pages/CropVarieties/ScheduleForm.jsx";
 import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
+import AddSeedlingForm from "./pages/CropVarieties/AddSeedlingForm.jsx";
 
 // buyers
 import BuyerRegistrationForm from "./pages/BuyerRegistrationForm.jsx";
@@ -167,7 +167,6 @@ export default function App() {
       <Route path="/products/editschedule/:id" element={<EditSchedule />} />
       <Route path="/products/addInspectionReport" element={<AddInspectionReport />} />
       <Route path="/products/editInspectionReport/:id" element={<EditInspectionReport />} />
-      
 
       {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
@@ -177,6 +176,7 @@ export default function App() {
       <Route path="/schedules" element={<Schedules />} />
       <Route path="/scheduleForm" element={<ScheduleForm />} />
       <Route path="/landPreparation" element={<LandPreparation />} />
+      <Route path="/seedlingForm" element={<AddSeedlingForm />} />
         
       {/* buyers */}
       <Route path="/buyer-registration" element={<BuyerRegistrationForm />} />
