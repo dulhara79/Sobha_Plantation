@@ -7,18 +7,17 @@ import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { post } from "../../api/api";
 
-const AddCropsDiseases = () => {
+const AddCoconutTreatments = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
   const [fieldValidity, setFieldValidity] = useState({
-    dateOfInspection: false,
-    sectionOfLand: false,
-    identifiedPest: false,
-    identifiedDisease: false,
-    inspectedBy: false,
-    inspectionResult: false,
-    suggestedReInspectionDate: false,
+    date: false,
+    pestOrDisease: false,
+    treatmentMethod: false,
+    healthRate: false,
+    treatedBy: false,
+    notes: false,
   });
 
   const disableFutureDates = (current) => {
@@ -51,17 +50,28 @@ const AddCropsDiseases = () => {
     },
   ];
 
+  const numericRule = [
+    {
+      pattern: /[0-9]%/,
+      message: "Only numeric characters are allowed.",
+    },
+    {
+      required: true,
+      message: "This field is required.",
+    },
+  ];
+
   const handleFinish = async (values) => {
     try {
       await post("/harvest", values);
-      navigate("/IntercropInspections");
+      navigate("/CoconutTreatments");
     } catch (error) {
-      console.error("Error creating disease record:", error);
+      console.error("Error creating treatments record:", error);
     }
   };
 
   const handleCancel = () => {
-    navigate("/IntercropInspections");
+    navigate("/CoconutTreatments");
   };
 
   const handleFieldChange = (changedFields, allFields) => {
@@ -140,7 +150,7 @@ const AddCropsDiseases = () => {
                 },
                 {
                   href: "",
-                  title: "Add New Record for Other Crop Diseases",
+                  title: "Add New Record for Coconut Treatments",
                 },
               ]}
             />
@@ -148,7 +158,7 @@ const AddCropsDiseases = () => {
 
           <div className="mt-4 p-6 bg-white shadow-md rounded-md">
             <h1 className="text-2xl font-bold text-center">
-              Pest / Disease Records - Inter Crops
+              Treatment Records - Coconuts
             </h1>
 
             <Form
@@ -159,12 +169,12 @@ const AddCropsDiseases = () => {
               onFieldsChange={handleFieldChange}
             >
               <Form.Item
-                label="Date of Inspection"
-                name="dateOfInspection"
+                label="Date of Treatment"
+                name="dateOfTreatment"
                 rules={[
                   {
                     required: true,
-                    message: "Please select a date of inspection.",
+                    message: "Please select a date of treatment.",
                   },
                 ]}
               >
@@ -175,7 +185,7 @@ const AddCropsDiseases = () => {
                     if (date && date > moment()) {
                       form.setFields([
                         {
-                          name: "dateOfInspection",
+                          name: "dateOfTreatment",
                           errors: [
                             "Please select a date that is not in the future.",
                           ],
@@ -187,74 +197,57 @@ const AddCropsDiseases = () => {
               </Form.Item>
 
               <Form.Item
-                label="Section of Land"
-                name="sectionOfLand"
+                label="Pest or Disease"
+                name="pestOrDisease"
                 rules={alphabeticRule}
               >
                 <Input
-                  placeholder="Enter section of land"
-                  disabled={!fieldValidity.dateOfInspection}
+                  placeholder="Enter the pest or disease treated"
+                  disabled={!fieldValidity.dateOfTreatment}
                 />
               </Form.Item>
 
               <Form.Item
-                label="Identified Pest"
-                name="identifiedPest"
-                rules={alphabeticRule}
+                label="Treatment Method"
+                name="treatmentMethod"
+                rules={alphabeticNumericRule}
               >
                 <Input
-                  placeholder="Enter identified pest"
-                  disabled={!fieldValidity.sectionOfLand}
+                  placeholder="Enter the treatment method"
+                  disabled={!fieldValidity.pestOrDisease}
                 />
               </Form.Item>
 
               <Form.Item
-                label="Identified Disease"
-                name="identifiedDisease"
-                rules={alphabeticRule}
+                label="Current Health Rate"
+                name="currentHealthRate"
+                rules={numericRule}
               >
                 <Input
-                  placeholder="Enter identified disease"
-                  disabled={!fieldValidity.identifiedPest}
+                  placeholder="Enter the current health rate"
+                  disabled={!fieldValidity.treatmentMethod}
                 />
               </Form.Item>
 
               <Form.Item
-                label="Inspected By"
-                name="inspectedBy"
+                label="Treated By"
+                name="treatedBy"
                 rules={alphabeticRule}
               >
                 <Input
-                  placeholder="Enter name of inspector"
-                  disabled={!fieldValidity.identifiedDisease}
+                  placeholder="Enter name of the person who treated"
+                  disabled={!fieldValidity.currentHealthRate}
                 />
               </Form.Item>
 
               <Form.Item
-                label="Inspection Result"
-                name="inspectionResult"
-                rules={alphabeticRule}
+                label="Notes"
+                name="notes"
+                rules={alphabeticNumericRule}
               >
                 <Input
-                  placeholder="Enter the inspection result"
-                  disabled={!fieldValidity.inspectedBy}
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Suggested Re-Inspection Date"
-                name="suggestedReInspectionDate"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select a re-inspection date.",
-                  },
-                ]}
-              >
-                <DatePicker
-                  style={{ width: "100%" }}
-                  disabledDate={disablePastDates}
-                  disabled={!fieldValidity.inspectionResult}
+                  placeholder="If treatments are over, press More and add a detailed overview"
+                  disabled={!fieldValidity.treatedBy}
                 />
               </Form.Item>
 
@@ -263,7 +256,7 @@ const AddCropsDiseases = () => {
                   type="primary"
                   htmlType="submit"
                   style={{ backgroundColor: "#236A64", color: "#fff" }}
-                  disabled={!fieldValidity.suggestedReInspectionDate}
+                  disabled={!fieldValidity.notes}
                   onClick={handleFinish}
                 >
                   Submit
@@ -280,4 +273,4 @@ const AddCropsDiseases = () => {
   );
 };
 
-export default AddCropsDiseases;
+export default AddCoconutTreatments;

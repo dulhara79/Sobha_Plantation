@@ -256,6 +256,7 @@ const CoconutInspections = () => {
                   width: "100%",
                   maxWidth: "400px",
                 }}
+                onClick={() => navigate("/CoconutPests")}
               >
                 Learn More
               </Button>
