@@ -26,38 +26,39 @@ const QualityControl = () => {
   });
   const [activeTab, setActiveTab] = useState("inspection"); 
   const navigate = useNavigate();
-  
-  // State to handle inspection data
-  const [inspectionData, setInspectionData] = useState([]);
+
+  // Fetch quality controls from API
+  const fetchQualityControls = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/quality-control");
+      if (response.data.success) {
+        const data = response.data.data;
+        setQualityControls(data);
+        setFilteredQualityControls(data);
+        calculateMetrics(data);
+      } else {
+        console.log("Error: Unable to fetch quality controls, success flag not true");
+      }
+    } catch (error) {
+      console.error("Error fetching quality controls:", error);
+    }
+  };
+
+  // Calculate metrics
+  const calculateMetrics = (data) => {
+    const total = data.length;
+    const passCount = data.filter(qc => qc.status === "Passed").length;
+    const failCount = data.filter(qc => qc.status === "Failed").length;
+
+    setMetrics({
+      totalInspections: total,
+      passRate: total > 0 ? (passCount / total * 100).toFixed(2) : 0,
+      failRate: total > 0 ? (failCount / total * 100).toFixed(2) : 0
+    });
+  };
+
   useEffect(() => {
-    // Fetch or update inspection data dynamically here
-    // Example: fetchInspectionData();
-
-    // Temporary placeholder for illustration, should be replaced with actual fetching logic
-    setInspectionData([
-      {
-        key: "1",
-        productType: "Coconut oil",
-        inspectionDate: "2024-08-01",
-        status: "Pass",
-        inspectorName: "Mr. Perera",
-      },
-      {
-        key: "2",
-        productType: "Coconut cream",
-        inspectionDate: "2024-08-02",
-        status: "Fail",
-        inspectorName: "Mr. Perera",
-      },
-      {
-        key: "3",
-        productType: "Coconut water",
-        inspectionDate: "2024-08-04",
-        status: "Pass",
-        inspectorName: "Mr. Jagath",
-      },
-    ]);
-
+    fetchQualityControls();
   }, []);
 
   // Handlers for navigation
@@ -83,58 +84,158 @@ const QualityControl = () => {
     filterQualityControls(value, filterStatus);
   };
 
-  // Table columns definition
-  const columns = [
-    {
-      title: "Product Type",
-      dataIndex: "productType",
-      key: "productType",
-    },
-    {
-      title: "Inspection Date",
-      dataIndex: "inspectionDate",
-      key: "inspectionDate",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (text) => (
-        <span
-          className={`${
-            text === "Pass" ? "text-green-500" : "text-red-500"
-          } font-semibold`}
-        >
-          {text}
-        </span>
-      ),
-    },
-    
-    {
-      title: "Inspector Name",
-      dataIndex: "inspectorName",
-      key: "inspectorName",
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (text, record) => (
-        <span>
-          <Button type="link" onClick={() => handleUpdate(record._id)}>
-            Edit
-          </Button>
-          <Button type="link" danger onClick={() => confirmDelete(record._id)}>
-            Delete
-          </Button>
-        </span>
-      ),
-    },
-  ];
+  // Handler for filter change
+  const onFilterChange = (value) => {
+    setFilterStatus(value);
+    filterQualityControls(searchText, value);
+  };
 
-  // Handlers for actions
-  const handleEdit = (key) => {
-    console.log(`Edit report with key: ${key}`);
-    // Implement edit functionality here
+  // Function to filter quality controls based on search text and filter status
+  const filterQualityControls = (searchText, filterStatus) => {
+    let filteredData = qualityControls;
+
+    if (searchText) {
+      filteredData = filteredData.filter((qc) =>
+        qc.productType.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+
+    if (filterStatus !== "All") {
+      filteredData = filteredData.filter((qc) => qc.status === filterStatus);
+    }
+
+    if (sorter.field) {
+      filteredData = [...filteredData].sort((a, b) => {
+        if (sorter.order === 'ascend') {
+          return a[sorter.field] > b[sorter.field] ? 1 : -1;
+        } else {
+          return a[sorter.field] < b[sorter.field] ? 1 : -1;
+        }
+      });
+    }
+
+    setFilteredQualityControls(filteredData);
+    calculateMetrics(filteredData); // Update metrics based on filtered data
+  };
+
+  // Sorting handler
+  const handleSort = (field, order) => {
+    setSorter({ field, order });
+    filterQualityControls(searchText, filterStatus);
+  };
+
+ // Handle update
+ const handleSubmit = (id) => {
+  navigate(`/products/editInspectionReport/${id}`);
+};
+
+  // Handle delete
+  const handleDelete = async (qualityControlId) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/quality-control/${qualityControlId}`);
+      fetchQualityControls(); // Refresh the quality control list
+    } catch (error) {
+      console.error("Error deleting quality control:", error);
+      Modal.error({
+        title: 'Error',
+        content: 'Failed to delete the quality control item. Please try again later.',
+      });
+    }
+  };
+
+  // Confirm delete
+  const confirmDelete = (qualityControlId) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this quality control item?",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk: () => handleDelete(qualityControlId),
+    });
+  };
+
+  // Function to get image data URL
+const getImageDataURL = (url) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'Anonymous'; // Ensure cross-origin images are handled
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      context.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+};
+  
+  // Generate PDF report
+  const generatePDF = async () => {
+    const doc = new jsPDF();
+
+    // Load the logo image
+  const logoUrl = '../src/assets/logo.png'; 
+  try {
+    const logoDataURL = await getImageDataURL(logoUrl);
+
+    // Add the logo image to the PDF
+    doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
+
+  } catch (error) {
+    console.error('Failed to load the logo image:', error);
+  }
+
+    // Define the table columns
+    const columns = [
+      { title: "Product Type", dataKey: "productType" },
+      { title: "Inspection Date", dataKey: "inspectionDate" },
+      { title: "Status", dataKey: "status" },
+      { title: "Inspector Name", dataKey: "inspectorName" },
+    ];
+
+    // Map the filteredQualityControls data to match the columns
+    const rows = filteredQualityControls.map(qc => ({
+      productType: qc.productType,
+      inspectionDate: moment(qc.inspectionDate).format('YYYY-MM-DD'),
+      status: qc.status,
+      inspectorName: qc.inspectorName,
+    }));
+
+    // Add title and table
+    doc.setFontSize(22);
+    doc.text("Quality Control Report", 70, 40); // Adjust y-coordinate as needed
+
+    doc.autoTable({
+      columns: columns,
+      body: rows,
+      startY: 50, 
+      margin: { horizontal: 10 },
+      styles: {
+        fontSize: 10,
+      },
+      headStyles: {
+        fillColor: [64, 133, 126], 
+        textColor: [255, 255, 255], 
+        fontSize: 12,
+        
+      },
+      theme: 'striped',
+      didDrawPage: (data) => {
+        // Add page number to footer
+        const pageNumber = doc.internal.getNumberOfPages();
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+
+        doc.setFontSize(10);
+        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10); // Adjust position as needed
+      },
+    });
+
+    // Save the PDF
+    doc.save("quality_control_report.pdf");
   };
 
   // Handler for "Add Inspection" button
@@ -241,14 +342,39 @@ const QualityControl = () => {
           </Card>
         </div>
 
-        {/* Inspection Reports Table */}
-        <div className="mt-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">Inspection Reports Table</h2>
-            <Button type="primary" onClick={() => navigate("/products/add-report")}
-              style={{ backgroundColor: "#60DB19", color: "#fff" }}>
-              Add New Report
-            </Button>
+
+          {/* Search and Filters */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Search
+                placeholder="Search by product type"
+                onSearch={onSearch}
+                style={{ width: 200, marginRight: 16 }} // Added marginRight for spacing
+                allowClear
+              />
+              <Select defaultValue="All" style={{ width: 120 }} onChange={onFilterChange}>
+                <Option value="All">All</Option>
+                <Option value="Passed">Pass</Option>
+                <Option value="Failed">Fail</Option>
+              </Select>
+            </div>
+            
+            {/* Buttons for actions */}
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button 
+                type="primary" 
+                style={{ marginRight: 8 }} 
+                onClick={generatePDF}
+              >
+                Generate Report
+              </Button>
+              <Button 
+                type="primary" 
+                onClick={handleAddInspection} // Added button for adding inspections
+              >
+                Add Inspection
+              </Button>
+            </div>
           </div>
 
 
