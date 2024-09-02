@@ -42,6 +42,7 @@
 // };
 // backend/controllers/buyerController.js
 
+
 const Buyer = require('../models/buyer');
 
 // Create a new buyer
