@@ -101,7 +101,12 @@ import AddSchedule from "./pages/Products/AddSchedule.jsx";
 import EditSchedule from "./pages/Products/EditSchedule.jsx";
 import AddInspectionReport from "./pages/Products/AddInspectionReport.jsx";
 import EditInspectionReport from "./pages/Products/EditInspectionReport.jsx";
-
+import PackagingLabeling from "./pages/Products/PackagingLabeling.jsx";
+import Packaging from "./pages/Products/Packaging.jsx";
+import Labeling from "./pages/Products/Labeling.jsx";
+import EditPrice from "./pages/Products/EditPrice.jsx";
+import AddLabeling from "./pages/Products/AddLabeling.jsx";
+import EditLabeling from "./pages/Products/EditLabeling.jsx";
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
@@ -111,6 +116,7 @@ import Seedling from "./pages/CropVarieties/Seedling.jsx";
 import Schedules from "./pages/CropVarieties/Schedules.jsx";
 import ScheduleForm from "./pages/CropVarieties/ScheduleForm.jsx";
 import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
+import AddSeedlingForm from "./pages/CropVarieties/AddSeedlingForm.jsx";
 
 // buyers
 import BuyerRegistrationForm from "./pages/BuyerRegistrationForm.jsx";
@@ -221,7 +227,12 @@ export default function App() {
       <Route path="/products/editschedule/:id" element={<EditSchedule />} />
       <Route path="/products/addInspectionReport" element={<AddInspectionReport />} />
       <Route path="/products/editInspectionReport/:id" element={<EditInspectionReport />} />
-      
+      <Route path="/products/packaging-labeling" element={<PackagingLabeling />} />
+      <Route path="/products/packaging" element={<Packaging />} />
+      <Route path="/products/packaging-labeling/labeling" element={<Labeling />} />
+      <Route path="/products/editPrice/:id" element={<EditPrice />} />
+      <Route path="/products/addLabeling" element={<AddLabeling />} />
+      <Route path="/products/editLabeling/:id" element={<EditLabeling />} />
 
       {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
@@ -231,6 +242,7 @@ export default function App() {
       <Route path="/schedules" element={<Schedules />} />
       <Route path="/scheduleForm" element={<ScheduleForm />} />
       <Route path="/landPreparation" element={<LandPreparation />} />
+      <Route path="/seedlingForm" element={<AddSeedlingForm />} />
         
       {/* buyers */}
       <Route path="/buyer-registration" element={<BuyerRegistrationForm />} />
