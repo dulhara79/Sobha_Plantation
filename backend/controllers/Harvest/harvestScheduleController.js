@@ -4,20 +4,12 @@ const mongoose = require("mongoose");
 // Controller for creating a new Harvest schedule
 exports.createHarvestSchedule = async (req, res) => {
     try {
-
         const { cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers } = req.body;
 
         if (!cropType || !harvestDate || !startTime || !endTime || !fieldNumber || !numberOfWorkers) {
             return res.status(400).json({
                 success: false,
                 message: 'Please provide all required fields: cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers',
-        const { harvestId, cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers } = req.body;
-
-        if (!harvestId || !cropType || !harvestDate || !startTime || !endTime || !fieldNumber ||  !numberOfWorkers) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please provide all required fields: harvestId, cropType, harvestDate, startTime, endTime, numberOfWorkers',
-
             });
         }
 
@@ -55,15 +47,16 @@ exports.getAllHarvestSchedule = async (req, res) => {
 // Controller for getting a single Harvest schedule by ID
 exports.getHarvestScheduleById = async (req, res) => {
     try {
-           const { id } = req.params;
+        const { id } = req.params;
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ message: 'Invalid ID format.' });
         }
+
         const schedule = await HarvestSchedule.findById(id);
 
         if (!schedule) {
-            return res.status(404).json({message: 'Schedule not found' });
+            return res.status(404).json({ message: 'Schedule not found' });
         }
 
         return res.status(200).json(schedule);
@@ -77,7 +70,6 @@ exports.getHarvestScheduleById = async (req, res) => {
 exports.updateHarvestSchedule = async (req, res) => {
     try {
         const { id } = req.params;
-
         const { cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers } = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -85,28 +77,16 @@ exports.updateHarvestSchedule = async (req, res) => {
         }
 
         if (!cropType || !harvestDate || !startTime || !endTime || !fieldNumber || !numberOfWorkers) {
-
-        const { cropType, harvestDate, startTime, endTime, fieldNumber,numberOfWorkers } = req.body;
-
-        if (!cropType || !harvestDate || !startTime || !endTime || !fieldNumber ||!numberOfWorkers) {
-
             return res.status(400).json({
                 success: false,
                 message: 'Send all required fields: cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers',
             });
         }
 
-
         const result = await HarvestSchedule.findByIdAndUpdate(
             id,
             { cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers },
             { new: true, runValidators: true }
-
-        const result = await HarvestSchedule.findOneAndUpdate(
-            { harvestId: id },
-            { cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers },
-            { new: true }
-
         );
 
         if (!result) {
@@ -124,6 +104,10 @@ exports.updateHarvestSchedule = async (req, res) => {
 exports.deleteHarvestSchedule = async (req, res) => {
     try {
         const { id } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'Invalid ID format.' });
+        }
 
         const deletedSchedule = await HarvestSchedule.findByIdAndDelete(id);
 
