@@ -78,6 +78,7 @@ app.use("/api/salesAndFinance/sales/tracking", SalesTrackingRoutes);
  * buyer
  */
 // app.use('/api/buyer', BuyerRoutes);
+
 app.use('/api/buyer', BuyerRoutes);
 
 
