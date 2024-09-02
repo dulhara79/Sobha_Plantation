@@ -50,7 +50,7 @@ const AddEquipmentRecord = () => {
         setLoading(false);
         form.resetFields();  // Optionally reset the form after successful submission
 
-        // Navigate to /harvest/yield page after successful submission
+       
         navigate('/Inventory/EquipmentRecords');
     } catch (error) {
         console.error('Error adding record:', error);

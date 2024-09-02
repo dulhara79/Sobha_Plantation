@@ -10,9 +10,9 @@ import moment from "moment";
 
 const { Search } = Input;
 
-const OrderRecords = () => {
-  const [orders, setOrders] = useState([]);
-  const [filteredOrders, setFilteredOrders] = useState([]);
+const RequestPaymentRecords = () => {
+  const [requests, setRequests] = useState([]);
+  const [filteredRequests, setFilteredRequests] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [sorter, setSorter] = useState({ field: null, order: null });
@@ -24,14 +24,14 @@ const OrderRecords = () => {
   };
 
   useEffect(() => {
-    fetchOrders();
+    fetchRequests();
   }, []);
 
-  const fetchOrders = async () => {
+  const fetchRequests = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/orders');
-      setOrders(response.data.data);
-      setFilteredOrders(response.data.data);
+      const response = await axios.get('http://localhost:5000/api/requests');
+      setRequests(response.data.data);
+      setFilteredRequests(response.data.data);
     } catch (error) {
       console.error('Error fetching records:', error);
     }
@@ -58,15 +58,15 @@ const OrderRecords = () => {
   }, [navigate]);
 
   const onGroupContainerClick3 = useCallback(() => {
-    navigate("/Inventory/OrderRecords");
+    navigate("/Inventory/RequestPaymentRecords");
   }, [navigate]);
 
   const onSearch = (value) => {
     setSearchText(value);
-    filterOrders(value, filterStatus);
+    filterRequests(value, filterStatus);
   };
 
-  const filterOrders = (searchText, filterStatus) => {
+  const filterRequests = (searchText, filterStatus) => {
     let filteredData = orders;
   
     if (searchText) {
@@ -92,22 +92,22 @@ const OrderRecords = () => {
       });
     }
   
-    setFilteredOrders(filteredData);
+    setFilteredRequests(filteredData);
   };
-
+  
   
   const handleSort = (field, order) => {
     setSorter({ field, order });
-    filterOrders(searchText, filterStatus);
+    filterRequests(searchText, filterStatus);
   };
 
   const cancelSorting = () => {
     setSorter({ field: null, order: null });
-    filterOrders(searchText, filterStatus);
+    filterRequests(searchText, filterStatus);
   };
 
   const handleUpdate = (id) => {
-    navigate(`/Inventory/EditOrderRecords/${id}`);
+    navigate(`/Inventory/EditRequestPaymentRecord/${id}`);
   };
   
   const confirmDelete = (id) => {
@@ -122,14 +122,14 @@ const OrderRecords = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/orders/${id}`);
+      const response = await axios.delete(`http://localhost:5000/api/requests/${id}`);
       if(response.status === 200) {
         notification.success({
           message: 'Success',
           description: ' record deleted successfully!',
         });
         // Update local state to remove the deleted record
-        setFilteredOrders(filteredOrders.filter(record => record._id !== id));
+        setFilteredRequests(filteredRequests.filter(record => record._id !== id));
       } else {
         notification.error({
           message: 'Error',
@@ -197,7 +197,7 @@ const OrderRecords = () => {
               onClick={onGroupContainerClick3}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Order Details
+              Request Payment Details
               </a>
             </div>
             </div>
@@ -206,7 +206,7 @@ const OrderRecords = () => {
           <Breadcrumb
             items={[
               { title: 'Home', href: '/' },
-              { title: 'orders', href: '/Inventory/OrderRecords' }
+              { title: 'requests', href: '/Inventory/RequestPaymentRecords' }
             ]}
           />
           {/* Welcome Message Component 
@@ -225,7 +225,7 @@ const OrderRecords = () => {
                 />
                 <Button 
                   style={{ backgroundColor: "#60DB19", color: "#fff" }} 
-                  onClick={() => navigate("/Inventory/AddFertilizerRecord")}
+                  onClick={() => navigate("/Inventory/AddRequestPaymentRecord")}
                 >
                   Add Records
                 </Button>
@@ -239,55 +239,42 @@ const OrderRecords = () => {
             </div>
             <Table
               columns={[
+              
                 {
-                  title: "Order Date",
-                  dataIndex: "orderdate",
-                  key: "orderdate",
+                  title: "Section",
+                  dataIndex: "section",
+                  key: "section",
                   sorter: true,
-                  sortOrder: sorter.field === 'orderdate' ? sorter.order : null,
-                  render: (text) => moment(text).format("YYYY-MM-DD"),
+                  sortOrder: sorter.field === 'section' ? sorter.order : null,
                 },
                 {
-                  title: "Order Type",
-                  dataIndex: "ordertype",
-                  key: "ordertype",
-                  sorter: true,
-                  sortOrder: sorter.field === 'ordertype' ? sorter.order : null,
-                },
-                {
-                    title: "Item Name",
-                    dataIndex: "itemname",
-                    key: "itemname",
+                    title: "Item ",
+                    dataIndex: "item",
+                    key: "item",
                     sorter: true,
-                    sortOrder: sorter.field === 'itemname' ? sorter.order : null,
+                    sortOrder: sorter.field === 'item' ? sorter.order : null,
                 },
                 {
-                  title: "Quantity",
-                  dataIndex: "quantity",
-                  key: "quantity",
+                  title: "Amount",
+                  dataIndex: "amount",
+                  key: "amount",
                   sorter: true,
-                  sortOrder: sorter.field === 'quantity' ? sorter.order : null,
+                  sortOrder: sorter.field === 'amount' ? sorter.order : null,
+                },
+               
+                {
+                  title: "Description",
+                  dataIndex: "description",
+                  key: "description",
+                  sorter: true,
+                  sortOrder: sorter.field === 'description' ? sorter.order : null,
                 },
                 {
-                  title: "Unit",
-                  dataIndex: "unit",
-                  key: "unit",
+                  title: "Submitted Date",
+                  dataIndex: "submitteddate",
+                  key: "submitteddate",
                   sorter: true,
-                  sortOrder: sorter.field === 'unit' ? sorter.order : null,
-                },
-                {
-                  title: "Referred Location",
-                  dataIndex: "referredlocation",
-                  key: "referredlocation",
-                  sorter: true,
-                  sortOrder: sorter.field === 'referredlocation' ? sorter.order : null,
-                },
-                {
-                  title: "Received Date",
-                  dataIndex: "receiveddate",
-                  key: "receiveddate",
-                  sorter: true,
-                  sortOrder: sorter.field === 'receiveddate' ? sorter.order : null,
+                  sortOrder: sorter.field === 'submitteddate' ? sorter.order : null,
                   render: (text) => moment(text).format("YYYY-MM-DD"),
                 },
                 {
@@ -312,7 +299,7 @@ const OrderRecords = () => {
                   ),
                 },
               ]}
-              dataSource={filteredOrders}
+              dataSource={filteredRequests}
               rowKey="_id"
               pagination={false}  // Disable pagination
               scroll={{ y: 400 }} // Optional: Add vertical scroll if there are many rows
@@ -331,4 +318,4 @@ const OrderRecords = () => {
   );
 };
 
-export default OrderRecords;
+export default RequestPaymentRecords;

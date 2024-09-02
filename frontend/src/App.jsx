@@ -33,6 +33,10 @@ import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAna
  import EquipmentRecords from "./pages/Inventory/EquipmentRecords.jsx";
  import EditEquipmentRecord from "./pages/Inventory/EditEquipmentRecord.jsx";
  import AddEquipmentRecord from "./pages/Inventory/AddEquipmentRecord.jsx";
+ import RequestPaymentRecords from "./pages/Inventory/RequestPaymentRecords.jsx";
+ import AddRequestPaymentRecord from "./pages/Inventory/AddRequestPaymentRecord.jsx";
+ import EditRequestPaymentRecord from "./pages/Inventory/EditRequestPaymentRecord.jsx";
+ 
 
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
@@ -118,7 +122,7 @@ export default function App() {
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
       <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} />
       <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
-      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} /> 
+      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />  
 
        {/* inventory */}
        <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} />
@@ -131,8 +135,11 @@ export default function App() {
     <Route path="/Inventory/EquipmentRecords" element={<EquipmentRecords/>} />
     <Route path="/Inventory/EditEquipmentRecords/:id" element={<EditEquipmentRecord/>} />
     <Route path="/Inventory/AddEquipmentRecord" element={<AddEquipmentRecord/>} />
-
-      {/* employee */}       
+    <Route path="/Inventory/RequestPaymentRecords" element={<RequestPaymentRecords/>} />
+    <Route path="/Inventory/AddRequestPaymentRecord" element={<AddRequestPaymentRecord/>} />
+    <Route path="/Inventory/EditRequestPaymentRecords/:id" element={<EditRequestPaymentRecord/>} />
+    
+      {/* employee   */}  
       <Route path="/employee/dashboard" element={<Edashboard/>}/>
       <Route path="/employee/registration" element= {<Eregistration/>}/>
       <Route path="/employee/salary" element= {<Esalary/>}/>
@@ -140,8 +147,8 @@ export default function App() {
       <Route path="/employee/taskedit/:id" element= {<EditTaskPage/>}/>
       <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
       <Route path="/employee/attendance" element= {<GetAttendance/>}/>
-      <Route path="/employee/employeelist" element= {<EmployeeList/>}/>
-      <Route path="/employee/attendanceList" element= {<EattendenceList/>}/> 
+       <Route path="/employee/employeelist" element= {<EmployeeList/>}/>
+      <Route path="/employee/attendanceList" element= {<EattendenceList/>}/>    
 
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
@@ -183,7 +190,7 @@ export default function App() {
       <Route path="/products/editInspectionReport/:id" element={<EditInspectionReport />} />
       
 
-      {/* field view  */}
+      {/* field view   */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="/varietyCrop" element={<VarietyCrop />} />
       <Route path="/cvForm" element={<CropVarietyForm />} />

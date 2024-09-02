@@ -58,7 +58,7 @@ const EquipmentRecords = () => {
   }, [navigate]);
 
   const onGroupContainerClick3 = useCallback(() => {
-    navigate("/Inventory/OrderRecords");
+    navigate("/Inventory/RequestPaymentRecords");
   }, [navigate]);
 
   const onSearch = (value) => {
@@ -197,7 +197,7 @@ const EquipmentRecords = () => {
               onClick={onGroupContainerClick3}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-              Order Details
+              Request Payment Details
               </a>
             </div>
             </div>

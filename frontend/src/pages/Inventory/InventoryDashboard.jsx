@@ -91,7 +91,7 @@ const InventoryDashboard = () => {
   }, [navigate]);
 
   const onGroupContainerClick3 = useCallback(() => {
-    navigate("/Inventory/OrderRecords");
+    navigate("/Inventory/RequestPaymentRecords");
   }, [navigate]);
 
   
@@ -154,7 +154,7 @@ const InventoryDashboard = () => {
               onClick={onGroupContainerClick3}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-              Order Details
+              Request Payment Details
               </a>
             </div>
       
@@ -180,14 +180,14 @@ const InventoryDashboard = () => {
           <div className="w-full max-w-[1200px]">
             <Row gutter={[16, 16]} justify="center" className="mt-5">
               <Col span={8}>
-                <Card title="Tools">
+                <Card title="Equipments and Machines">
                   <Row align="middle" justify="center">
                     <Col span={12}>
                       <img src={Tools} alt="Tools" style={{ width: "100px", height: "120px" }} />
                     </Col>
                     <Col span={12}>
                       <Pie data={toolsData} />
-                      <p>78% tools are available.</p>
+                      <p>78% Equipments and Machines are available.</p>
                     </Col>
                   </Row>
                 </Card>
@@ -217,10 +217,10 @@ const InventoryDashboard = () => {
                     </Col>
                   </Row>
                 </Card>
-              </Col>*/}
+              </Col>
             </Row>
 
-            <Row gutter={[16, 16]} justify="center" className="mt-5">
+          <Row gutter={[16, 16]} justify="center" className="mt-5">*/}
               <Col span={8}>
                 <Card title="Agro Chemicals">
                   <Row align="middle" justify="center">

@@ -16,6 +16,7 @@ const employeeRoutes = require('./routes/Employee/employee.js');
 const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
 const maintenanceRoutes = require('./routes/Inventory/maintenance.js'); 
 const equipmentRoutes = require('./routes/Inventory/equipments.js'); 
+const requestRoutes = require('./routes/Inventory/requests.js'); 
  
 
 
@@ -100,6 +101,7 @@ app.use('/api/quality-control', qualityControlRoute);
 app.use('/api/fertilizers', fertilizerRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/equipments', equipmentRoutes);
+app.use('/api/requests', requestRoutes);
 
 
 /**
