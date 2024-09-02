@@ -6,6 +6,7 @@ import Sidebar from '../../components/Sidebar';
 import { HomeOutlined, LeftCircleOutlined } from '@ant-design/icons';
 import { Breadcrumb, Button, Input, Select } from 'antd';
 
+
 const { Search } = Input;
 const { Option } = Select;
 
@@ -31,6 +32,7 @@ const VarietyCrop = () => {
     fetchData();
   }, []);
 
+
   const deleteCropVariety = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/api/crop-varieties/${id}`);
@@ -39,6 +41,7 @@ const VarietyCrop = () => {
       console.error('Error deleting data:', error);
     }
   };
+
 
   const filteredData = cropVarieties.filter(item => (
     (filter === 'All' || item.status === filter) &&
@@ -148,6 +151,4 @@ const VarietyCrop = () => {
     </div>
   );
 };
-
 export default VarietyCrop;
-

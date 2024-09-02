@@ -15,13 +15,13 @@ const AddInspectionReport = () => {
     return current && current < moment().startOf('day');
   };
 
-  // Function to validate inspector name
-  const validateInspectorName = (_, value) => {
-    if (!value || value.trim() === '') {
-      return Promise.reject(new Error('Inspector Name is required'));
-    }
-    return Promise.resolve();
-  };
+  // // Function to validate inspector name
+  // const validateInspectorName = (_, value) => {
+  //   if (!value || value.trim() === '') {
+  //     return Promise.reject(new Error('Inspector Name is required'));
+  //   }
+  //   return Promise.resolve();
+  // };
 
   const handleSubmit = async (values) => {
     try {
@@ -48,6 +48,36 @@ const AddInspectionReport = () => {
       });
     }
   };
+
+    // Custom validation function
+    const validateInspectorName = (rule, value) => {
+      if (!value) {
+        return Promise.reject("Please enter the inspector name");
+      }
+      if (!/^[A-Z][a-z\s]*$/.test(value)) {
+        return Promise.reject("Inspector name must start with an uppercase letter and only contain lowercase letters and spaces after the first letter");
+      }
+      return Promise.resolve();
+    };
+  
+    // Restrict input to only allow a valid inspector name format
+    const handleInspectorNameChange = (e) => {
+      let { value } = e.target;
+  
+      // If the first character is not uppercase, restrict input
+      if (value.length === 1 && value.charAt(0) !== value.charAt(0).toUpperCase()) {
+        value = '';
+      } else {
+        // Format input to start with uppercase and allow only lowercase letters and spaces
+        value = value.replace(/[^A-Za-z\s]/g, ''); // Remove invalid characters
+        if (value.length > 0) {
+          // Ensure first letter is uppercase
+          value = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+        }
+      }
+  
+      form.setFieldsValue({ inspectorName: value });
+    };
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
@@ -85,14 +115,17 @@ const AddInspectionReport = () => {
           </Form.Item>
 
           <Form.Item
-            label="Inspector Name"
+            label="Inspector Name (Mr/Ms)"
             name="inspectorName"
             rules={[
               { required: true, message: 'Please enter the inspector name!' },
-              { validator: validateInspectorName },
+              { validator: validateInspectorName }
             ]}
           >
-            <Input placeholder="Enter inspector name" />
+            <Input 
+              placeholder="Enter inspector name" 
+              onChange={handleInspectorNameChange}
+            />
           </Form.Item>
 
           <Form.Item
@@ -101,8 +134,8 @@ const AddInspectionReport = () => {
             rules={[{ required: true, message: 'Please select the status!' }]}
           >
             <Select placeholder="Select status">
-              <Option value="Passed">Passed</Option>
-              <Option value="Failed">Failed</Option>
+              <Option value="Passed">Pass</Option>
+              <Option value="Failed">Fail</Option>
               {/* Add more status options as needed */}
             </Select>
           </Form.Item>

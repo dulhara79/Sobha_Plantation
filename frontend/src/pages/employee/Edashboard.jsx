@@ -1,10 +1,10 @@
 import React from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
-import EmployeeDash from "../../components/EmployeeDash";
+import EmployeeDash from "../../components/Employee/EmployeeDash";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
-import EmployeeNavbar from "../../components/EmployeeNavbar";
+import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
 const Edashboard = () => {
   return (
     <div>
