@@ -179,7 +179,7 @@ const DiseasesDashboard = () => {
             </Link>
 
             <Link
-              to="/maintenance-activities"
+              to="/Maintenance"
               className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-orange-500 transition cursor-pointer block flex-col h-100"
             >
               <h1 className="text-3xl font-bold mb-2">
@@ -193,7 +193,7 @@ const DiseasesDashboard = () => {
             </Link>
 
             <Link
-              to="/trend-analysis"
+              to="/insights"
               className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-orange-400 to-green-500 transition cursor-pointer block flex-col h-100"
             >
               <h1 className="text-3xl font-bold mb-2">Trend Analysis</h1>

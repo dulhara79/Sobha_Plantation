@@ -257,17 +257,12 @@ const RegularMaintenance = () => {
           Maintenance Schedule
         </h2>
 
-        {/* Search and Sort Buttons */}
-        <div className="flex space-x-4 mt-4">
+        {/* Search Button */}
+        <div className="flex space-x-4 mt-7">
           <Input
             placeholder="Search for Tasks"
             onChange={(e) => handleSearch(e.target.value)}
           />
-          <Dropdown overlay={sortMenu} trigger={["click"]}>
-            <Button>
-              Sort by <SortAscendingOutlined />
-            </Button>
-          </Dropdown>
         </div>
 
         {/* Maintenance Table */}
@@ -295,19 +290,14 @@ const RegularMaintenance = () => {
         {/* Analytics Section */}
         <div className="flex justify-between items-start mt-8 mb-10 ml-30">
           {/* Analytics Chart */}
-          <div className="w-1/2">
+          <div className="w-1/2 ml-12 mt-5">
             <Bar data={data} options={options} />
           </div>
 
           {/* Analytics Data */}
-          <div className="w-1/2 ml-12">
-            <div className="flex justify-between items-center mb-4">
+          <div className="w-1/2 ml-32">
+            <div className="flex ml-13 mb-4">
               <h3 className="text-xl font-bold">Analytics</h3>
-              {/* Sort By Button */}
-              <div className="flex items-center space-x-2 mr-12">
-                <span className="text-gray-600">Sort by</span>
-                <Button icon={<SortAscendingOutlined />} />
-              </div>
             </div>
             <ul className="list-none space-y-2">
               <li>Current Temperature: 30°C</li>
