@@ -84,8 +84,6 @@ const HarvestSchedule = () => {
     { title: "Start Time", dataIndex: "startTime", key: "startTime" },
     { title: "End Time", dataIndex: "endTime", key: "endTime" },
     { title: "Field Number", dataIndex: "fieldNumber", key: "fieldNumber" },
-    { title: "Harvest Method", dataIndex: "harvestMethod", key: "harvestMethod" },
-    { title: "Estimated Yield", dataIndex: "estimatedYield", key: "estimatedYield" },
     { title: "Number of Workers", dataIndex: "numberOfWorkers", key: "numberOfWorkers" },
     {
       title: "Actions",
@@ -109,7 +107,7 @@ const HarvestSchedule = () => {
   }, [navigate]);
 
   const onGroupContainerClick2 = useCallback(() => {
-    navigate("/harvest/task");
+    navigate("/harvest/compliancechecklist");
   }, [navigate]);
 
   const onHomeClick = useCallback(() => {
@@ -160,7 +158,7 @@ const HarvestSchedule = () => {
               onClick={onGroupContainerClick1}
             >
               <a className="relative font-bold text-[inherit] inline-block w-full text-center">
-                Yield Records
+              Yield Records
               </a>
             </div>
             <div
@@ -168,7 +166,7 @@ const HarvestSchedule = () => {
               onClick={onGroupContainerClick2}
             >
               <a className="relative font-bold text-[inherit] inline-block w-full text-center">
-                Task Assign
+              Compliance Check List
               </a>
             </div>
           </div>

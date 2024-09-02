@@ -7,6 +7,14 @@ const DiseasesSchema = new mongoose.Schema({
         required: true, //validate
         unique: true,
     },
+    inspectionDate: {
+        type: String,
+        required: true,
+    },
+    section: {
+        type: String,
+        required: true,
+    },
     pest: {
         type: String,
         required: true,
@@ -17,22 +25,15 @@ const DiseasesSchema = new mongoose.Schema({
         required: true,
         default: "None",
     },
-    inspectionDate: {
-        type: String,
-        required: true,
-    },
-    section: {
-        type: String,
-        required: true,
-        enum: ['A', 'B', 'C', 'D'],
-        default: 'Complicated',
-
-    },
     inspector: {
         type: String,
         required: true,
     },
-    nextDate: {
+    result: {
+        type: String,
+        required: true,
+    },
+    comments: {
         type: String,
         required: true,
     },
