@@ -120,20 +120,19 @@ const EditTask = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+
+    if (name === "emp_id") {
+      const selectedEmployee = employees.find(
+        (employee) => employee.id === value
+      );
+      if (selectedEmployee) {
+        setFormData({ ...formData, emp_id: value, emp_name: selectedEmployee.name });
+      }
+    }
   };
 
   const handleCancel = () => {
     navigate(-1);
-  };
-
-  // Get employee name based on emp_id
-  const getEmployeeName = (emp_id) => {
-    axios
-      .get(`http://localhost:5000/api/taskRecords/${emp_id}`)
-      .then((response) => {
-        const employee = response.data;
-        console.log(employee);
-      });
   };
 
   return (
@@ -158,7 +157,7 @@ const EditTask = () => {
                 <div className="mt-2">
                   <select
                     name="emp_id"
-                    value={formData.emp_name}
+                    value={formData.emp_id}
                     onChange={handleInputChange}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     required
@@ -238,7 +237,7 @@ const EditTask = () => {
                     name="task_des"
                     value={formData.task_des}
                     onChange={handleInputChange}
-                    rows="3"
+                    rows={4}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     required
                   />
@@ -256,8 +255,8 @@ const EditTask = () => {
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     required
                   >
-                    <option value="">Select status</option>
-                    <option value="Not Started">Not Started</option>
+                    <option value="">Select task status</option>
+                    <option value="Pending">Pending</option>
                     <option value="In Progress">In Progress</option>
                     <option value="Completed">Completed</option>
                   </select>
@@ -265,20 +264,20 @@ const EditTask = () => {
               </div>
             </div>
           </div>
-          <div className="flex justify-between mt-6">
-            <button
-              type="submit"
-              className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-gray-900/10 hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-600"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Updating..." : "Update Task"}
-            </button>
+          <div className="flex justify-end space-x-4">
             <button
               type="button"
               onClick={handleCancel}
-              className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-gray-900/10 hover:bg-gray-700 focus:ring-2 focus:ring-gray-600"
+              className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Updating..." : "Update Task"}
             </button>
           </div>
         </div>
