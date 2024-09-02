@@ -6,7 +6,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 
 
-const employeeRoutes = require('./routes/employee');
+const employeeRoutes = require('./routes/Employee/employee.js');
 // const salesRoutes = require('./routes/sales');
 
 const yieldRoutes = require('./routes/Harvest/yield');
@@ -64,11 +64,9 @@ const InvoiceRoutes = require('./routes/SalesAndFinance/InvoiceRoutes.js');
 const SalesAnalyticsRoutes = require('./routes/SalesAndFinance/SalesAnalyticsRoutes.js');
 const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoutes.js');
 
-/**
- * Employee
- */
-const salaryEmployeeRoutes = require("./routes/salaryEmployeeRoutes");
-const ETaskRoutes = require('./routes/ETaskRoutes');
+const salaryEmployeeRoutes = require("./routes/Employee/salaryEmployeeRoutes.js");
+const ETaskRoutes = require('./routes/Employee/ETaskRoutes.js');
+
 
 const app = express();
 

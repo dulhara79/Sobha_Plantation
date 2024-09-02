@@ -1,4 +1,4 @@
-const Employee = require('../models/Employee');
+const Employee = require('../../models/Employee/Employee');
 
 // Helper function for validating input data
 const validateInput = (data) => {
