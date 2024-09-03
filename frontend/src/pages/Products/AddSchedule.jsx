@@ -1,8 +1,8 @@
 import React from 'react';
-import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
-import axios from 'axios';
-import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { Form, Input, DatePicker, Select, Button, notification } from 'antd';
+import moment from 'moment';
 
 const { Option } = Select;
 
@@ -25,11 +25,11 @@ const AddSchedule = () => {
 
   const handleSubmit = async (values) => {
     try {
-      // Check if the values have the correct date format
+      // Prepare the payload with formatted dates
       const payload = {
         ...values,
-        startDate: values.startDate ? moment(values.startDate).toISOString() : null,
-        endDate: values.endDate ? moment(values.endDate).toISOString() : null,
+        startDate: values.startDate ? values.startDate.toISOString() : null,
+        endDate: values.endDate ? values.endDate.toISOString() : null,
       };
 
       // Send POST request to the API
@@ -41,8 +41,6 @@ const AddSchedule = () => {
       form.resetFields();
       navigate('/products/production-overview');
     } catch (error) {
-      // Log detailed error information
-      console.error('Failed to add production schedule:', error.response || error.message);
       notification.error({
         message: 'Error',
         description: `Failed to add production schedule. ${error.response?.data?.message || 'Please try again.'}`,
@@ -50,10 +48,14 @@ const AddSchedule = () => {
     }
   };
 
+  const handleCancel = () => {
+    navigate('/products/production-overview');
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="mb-6 text-2xl font-bold text-center">Add Production Schedule</h2>
+        <h2 className="mb-6 text-2xl font-bold text-center" style={{ color: '#1D6660' }}>Add Production Schedule</h2>
         <Form
           form={form}
           onFinish={handleSubmit}
@@ -90,6 +92,7 @@ const AddSchedule = () => {
             <DatePicker
               format="YYYY-MM-DD"
               disabledDate={disablePastDates}
+              style={{ width: '100%' }}
             />
           </Form.Item>
 
@@ -101,6 +104,7 @@ const AddSchedule = () => {
             <DatePicker
               format="YYYY-MM-DD"
               disabledDate={disablePastDates}
+              style={{ width: '100%' }}
             />
           </Form.Item>
 
@@ -129,9 +133,14 @@ const AddSchedule = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              Add Schedule
-            </Button>
+            <div className="flex justify-between">
+              <Button type="primary" htmlType="submit" style={{ width: '48%', backgroundColor: '#1D6660', borderColor: '#1D6660' }}>
+                Add Schedule
+              </Button>
+              <Button type="default" onClick={handleCancel} style={{ width: '48%' }}>
+                Cancel
+              </Button>
+            </div>
           </Form.Item>
         </Form>
       </div>

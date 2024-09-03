@@ -1,14 +1,16 @@
-// controllers/financialTransactionController.js
 const FinancialTransaction = require('../../models/SalesAndFinance/FinancialTransactionModel');
+const { join } = require('node:path');
 
 // Create Financial Transaction
 exports.createFinancialTransaction = async (req, res, next) => {
   try {
-    const transaction = await FinancialTransaction.create(req.body);
+    const transaction = new FinancialTransaction(req.body);
+    console.log(transaction);
     res.status(201).json({
       success: true,
       data: transaction,
     });
+    transaction.save();
   } catch (error) {
     console.log(error);    
     next(error);

@@ -7,18 +7,15 @@ import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { post } from "../../api/api";
 
-const AddCropsDiseases = () => {
+const AddMaintenance = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
   const [fieldValidity, setFieldValidity] = useState({
-    dateOfInspection: false,
-    sectionOfLand: false,
-    identifiedPest: false,
-    identifiedDisease: false,
-    inspectedBy: false,
-    inspectionResult: false,
-    suggestedReInspectionDate: false,
+    dateOfMaintenance: false,
+    task: false,
+    managerInCharge: false,
+    progress: false,
   });
 
   const disableFutureDates = (current) => {
@@ -51,17 +48,28 @@ const AddCropsDiseases = () => {
     },
   ];
 
+  const numericRule = [
+    {
+      pattern: /[0-9]%/,
+      message: "Only numeric characters are allowed.",
+    },
+    {
+      required: true,
+      message: "This field is required.",
+    },
+  ];
+
   const handleFinish = async (values) => {
     try {
       await post("/harvest", values);
-      navigate("/IntercropInspections");
+      navigate("/Maintenance");
     } catch (error) {
-      console.error("Error creating disease record:", error);
+      console.error("Error creating maintenance record:", error);
     }
   };
 
   const handleCancel = () => {
-    navigate("/IntercropInspections");
+    navigate("/Maintenance");
   };
 
   const handleFieldChange = (changedFields, allFields) => {
@@ -140,7 +148,7 @@ const AddCropsDiseases = () => {
                 },
                 {
                   href: "",
-                  title: "Add New Record for Other Crop Diseases",
+                  title: "Add New Record for Maintenance",
                 },
               ]}
             />
@@ -148,7 +156,7 @@ const AddCropsDiseases = () => {
 
           <div className="mt-4 p-6 bg-white shadow-md rounded-md">
             <h1 className="text-2xl font-bold text-center">
-              Pest / Disease Records - Inter Crops
+              New Maintenance Record
             </h1>
 
             <Form
@@ -159,12 +167,12 @@ const AddCropsDiseases = () => {
               onFieldsChange={handleFieldChange}
             >
               <Form.Item
-                label="Date of Inspection"
-                name="dateOfInspection"
+                label="Date of Maintenance"
+                name="dateOfMaintenance"
                 rules={[
                   {
                     required: true,
-                    message: "Please select a date of inspection.",
+                    message: "Please select a date of maintenance.",
                   },
                 ]}
               >
@@ -175,7 +183,7 @@ const AddCropsDiseases = () => {
                     if (date && date > moment()) {
                       form.setFields([
                         {
-                          name: "dateOfInspection",
+                          name: "dateOfTreatment",
                           errors: [
                             "Please select a date that is not in the future.",
                           ],
@@ -187,83 +195,44 @@ const AddCropsDiseases = () => {
               </Form.Item>
 
               <Form.Item
-                label="Section of Land"
-                name="sectionOfLand"
+                label="Task"
+                name="task"
                 rules={alphabeticRule}
               >
                 <Input
-                  placeholder="Enter section of land"
-                  disabled={!fieldValidity.dateOfInspection}
+                  placeholder="Enter the task"
+                  disabled={!fieldValidity.dateOfMaintenance}
                 />
               </Form.Item>
 
               <Form.Item
-                label="Identified Pest"
-                name="identifiedPest"
+                label="Manager in Charge"
+                name="managerInCharge"
                 rules={alphabeticRule}
               >
                 <Input
-                  placeholder="Enter identified pest"
-                  disabled={!fieldValidity.sectionOfLand}
+                  placeholder="Enter the name of the manager in charge"
+                  disabled={!fieldValidity.task}
                 />
               </Form.Item>
 
               <Form.Item
-                label="Identified Disease"
-                name="identifiedDisease"
-                rules={alphabeticRule}
+                label="Progress"
+                name="progress"
+                rules={numericRule}
               >
                 <Input
-                  placeholder="Enter identified disease"
-                  disabled={!fieldValidity.identifiedPest}
+                  placeholder="Enter the percentage progress rate"
+                  disabled={!fieldValidity.managerInCharge}
                 />
               </Form.Item>
 
-              <Form.Item
-                label="Inspected By"
-                name="inspectedBy"
-                rules={alphabeticRule}
-              >
-                <Input
-                  placeholder="Enter name of inspector"
-                  disabled={!fieldValidity.identifiedDisease}
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Inspection Result"
-                name="inspectionResult"
-                rules={alphabeticRule}
-              >
-                <Input
-                  placeholder="Enter the inspection result"
-                  disabled={!fieldValidity.inspectedBy}
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Suggested Re-Inspection Date"
-                name="suggestedReInspectionDate"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select a re-inspection date.",
-                  },
-                ]}
-              >
-                <DatePicker
-                  style={{ width: "100%" }}
-                  disabledDate={disablePastDates}
-                  disabled={!fieldValidity.inspectionResult}
-                />
-              </Form.Item>
 
               <div className="flex justify-center space-x-4 mt-4">
                 <Button
                   type="primary"
                   htmlType="submit"
                   style={{ backgroundColor: "#236A64", color: "#fff" }}
-                  disabled={!fieldValidity.suggestedReInspectionDate}
                   onClick={handleFinish}
                 >
                   Submit
@@ -280,4 +249,4 @@ const AddCropsDiseases = () => {
   );
 };
 
-export default AddCropsDiseases;
+export default AddMaintenance;
