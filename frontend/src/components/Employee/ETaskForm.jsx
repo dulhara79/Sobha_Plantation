@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import Swal from "sweetalert2";
+import Swal from "sweetalert2"; // Import SweetAlert
 
-const EditTask = () => {
-  const { id } = useParams();
-  const [formData, setFormData] = useState({
-    emp_id: "",
-    emp_name: "",
-    task: "",
-    assign_date: "",
-    due_date: "",
-    task_des: "",
-    task_status: "",
-  });
+const ETaskForm = () => {
+  const [emp_id, setEmp_id] = useState("");
+  const [emp_name, setEmp_name] = useState(""); // Store the selected employee's full name
+  const [task, setTask] = useState("");
+  const [assign_date, setAssign_date] = useState("");
+  const [due_date, setDue_date] = useState("");
+  const [task_des, setTask_des] = useState("");
+  const [task_status, setTask_status] = useState("");
   const [employees, setEmployees] = useState([]);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,30 +19,6 @@ const EditTask = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch task data
-    axios
-      .get(`http://localhost:5000/api/taskRecords/${id}`)
-      .then((response) => {
-        const taskData = response.data;
-
-        setFormData({
-          emp_id: taskData.emp_id || "",
-          emp_name: taskData.emp_name || "", // Set employee name
-          task: taskData.task || "",
-          assign_date: taskData.assign_date
-            ? taskData.assign_date.split("T")[0]
-            : "",
-          due_date: taskData.due_date ? taskData.due_date.split("T")[0] : "",
-          task_des: taskData.task_des || "",
-          task_status: taskData.task_status || "",
-        });
-      })
-      .catch((error) => {
-        console.error("Error fetching task data:", error);
-        enqueueSnackbar("Error fetching task data", { variant: "error" });
-      });
-
-    // Fetch employees list
     axios
       .get("http://localhost:5000/api/employee")
       .then((response) => {
@@ -59,57 +32,45 @@ const EditTask = () => {
         console.error("Error fetching employees:", error);
         enqueueSnackbar("Error fetching employees", { variant: "error" });
       });
-  }, [id]);
+  }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to update this task?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, update it!",
-      cancelButtonText: "No, cancel!",
-    });
-
-    if (result.isConfirmed) {
-      if (validateForm()) {
-        setIsSubmitting(true);
-        try {
-          await axios.put(
-            `http://localhost:5000/api/taskRecords/${id}`,
-            formData
-          );
-          enqueueSnackbar("Task updated successfully", { variant: "success" });
-          navigate("/employee/TaskListview", { state: { highlighted: true } });
-        } catch (error) {
-          enqueueSnackbar("Error updating task", { variant: "error" });
-          console.error("Error updating task:", error);
-        } finally {
-          setIsSubmitting(false);
-        }
-      }
-    }
-  };
+  useEffect(() => {
+    validateForm();
+  }, [task, assign_date, due_date, task_des, task_status]);
 
   const validateForm = () => {
     let valid = true;
-    let newErrors = {};
+    let newErrors = { ...errors };
 
     // Validate task
-    if (!/^[a-zA-Z\s]*$/.test(formData.task)) {
+    if (!/^[a-zA-Z\s]*$/.test(task)) {
       newErrors.task = "Task must only contain letters.";
       valid = false;
+    } else {
+      newErrors.task = "";
     }
 
     // Validate assign_date and due_date
     if (
-      formData.assign_date &&
-      formData.due_date &&
-      new Date(formData.due_date) <= new Date(formData.assign_date)
+      assign_date &&
+      due_date &&
+      new Date(due_date) <= new Date(assign_date)
     ) {
       newErrors.due_date = "Due date must be later than the assign date.";
+      valid = false;
+    } else {
+      newErrors.due_date = "";
+    }
+
+    // Check if all required fields are filled
+    if (
+      !emp_id ||
+      !task ||
+      !assign_date ||
+      !due_date ||
+      !task_des ||
+      !task_status
+    ) {
       valid = false;
     }
 
@@ -117,31 +78,79 @@ const EditTask = () => {
     return valid;
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to submit this form?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, submit it!",
+      cancelButtonText: "No, cancel!",
+    });
+
+    if (result.isConfirmed) {
+      if (validateForm()) {
+        setIsSubmitting(true);
+        const data = {
+          emp_id,
+          emp_name,
+          task,
+          assign_date,
+          due_date,
+          task_des,
+          task_status,
+        };
+        try {
+          await axios.post("http://localhost:5000/api/taskRecords", data);
+          enqueueSnackbar("Record Created successfully", {
+            variant: "success",
+          });
+          navigate("/employee/TaskListview", { state: { highlighted: true } });
+        } catch (error) {
+          enqueueSnackbar("Error creating record", { variant: "error" });
+          console.error(error);
+        } finally {
+          setIsSubmitting(false);
+        }
+      }
+    }
+  };
+
+  const handleEmployeeChange = (e) => {
+    const selectedEmpId = e.target.value;
+    const selectedEmp = employees.find((emp) => emp.id === selectedEmpId);
+    setEmp_id(selectedEmpId);
+    setEmp_name(selectedEmp ? selectedEmp.name : ""); // Set the full name of the selected employee
   };
 
   const handleCancel = () => {
     navigate(-1);
   };
 
-  // Get employee name based on emp_id
-  const getEmployeeName = (emp_id) => {
-    axios
-      .get(`http://localhost:5000/api/taskRecords/${emp_id}`)
-      .then((response) => {
-        const employee = response.data;
-        console.log(employee);
-      });
+  const handleViewAllTasks = () => {
+    navigate("/employee/TaskListview");
+  };
+
+  // Helper function to get today's date in YYYY-MM-DD format
+  const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split("T")[0]; // Returns date in 'YYYY-MM-DD' format
   };
 
   return (
     <div className="pt-2">
       <div className="flex items-center justify-between mt-6 ml-80">
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-          Edit Task
+          Assign Tasks
         </h1>
+        <button
+          onClick={handleViewAllTasks}
+          className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mr-60"
+        >
+          View All Tasks
+        </button>
       </div>
       <form
         className="flex flex-col items-center justify-center"
@@ -150,7 +159,6 @@ const EditTask = () => {
         <div className="w-6/12 px-0 py-16 ml-1 space-y-12">
           <div className="pb-12 border-b border-gray-900/10">
             <div className="grid grid-cols-1 mt-10 gap-x-6 gap-y-8 sm:grid-cols-6">
-              {/* Employee Name Field */}
               <div className="col-span-full">
                 <label className="block text-sm font-medium leading-6 text-gray-900">
                   Employee Name
@@ -158,8 +166,8 @@ const EditTask = () => {
                 <div className="mt-2">
                   <select
                     name="emp_id"
-                    value={formData.emp_name}
-                    onChange={handleInputChange}
+                    value={emp_id}
+                    onChange={handleEmployeeChange}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     required
                   >
@@ -172,8 +180,6 @@ const EditTask = () => {
                   </select>
                 </div>
               </div>
-
-              {/* Other Fields */}
               <div className="col-span-full">
                 <label className="block text-sm font-medium leading-6 text-gray-900">
                   Task
@@ -182,8 +188,8 @@ const EditTask = () => {
                   <input
                     type="text"
                     name="task"
-                    value={formData.task}
-                    onChange={handleInputChange}
+                    value={task}
+                    onChange={(e) => setTask(e.target.value)}
                     className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       errors.task ? "border-red-500" : ""
                     }`}
@@ -202,9 +208,12 @@ const EditTask = () => {
                   <input
                     type="date"
                     name="assign_date"
-                    value={formData.assign_date}
-                    onChange={handleInputChange}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    value={assign_date}
+                    min={getTodayDate()} // Set minimum date to today
+                    onChange={(e) => setAssign_date(e.target.value)}
+                    className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
+                      errors.assign_date ? "border-red-500" : ""
+                    }`}
                     required
                   />
                 </div>
@@ -217,8 +226,9 @@ const EditTask = () => {
                   <input
                     type="date"
                     name="due_date"
-                    value={formData.due_date}
-                    onChange={handleInputChange}
+                    value={due_date}
+                    min={assign_date || getTodayDate()} // Set minimum date to assign_date or today
+                    onChange={(e) => setDue_date(e.target.value)}
                     className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       errors.due_date ? "border-red-500" : ""
                     }`}
@@ -236,12 +246,12 @@ const EditTask = () => {
                 <div className="mt-2">
                   <textarea
                     name="task_des"
-                    value={formData.task_des}
-                    onChange={handleInputChange}
-                    rows="3"
+                    value={task_des}
+                    onChange={(e) => setTask_des(e.target.value)}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    rows="4"
                     required
-                  />
+                  ></textarea>
                 </div>
               </div>
               <div className="col-span-full">
@@ -251,8 +261,8 @@ const EditTask = () => {
                 <div className="mt-2">
                   <select
                     name="task_status"
-                    value={formData.task_status}
-                    onChange={handleInputChange}
+                    value={task_status}
+                    onChange={(e) => setTask_status(e.target.value)}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     required
                   >
@@ -265,26 +275,26 @@ const EditTask = () => {
               </div>
             </div>
           </div>
-          <div className="flex justify-between mt-6">
-            <button
-              type="submit"
-              className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-gray-900/10 hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-600"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Updating..." : "Update Task"}
-            </button>
-            <button
-              type="button"
-              onClick={handleCancel}
-              className="inline-flex justify-center rounded-md border border-transparent bg-gray-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm ring-1 ring-gray-900/10 hover:bg-gray-700 focus:ring-2 focus:ring-gray-600"
-            >
-              Cancel
-            </button>
-          </div>
+        </div>
+        <div className="flex items-center justify-center mt-6 gap-x-6">
+          <button
+            type="submit"
+            className="px-3 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </button>
+          <button
+            type="button"
+            className="px-3 py-2 text-sm font-semibold text-gray-900 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
         </div>
       </form>
     </div>
   );
 };
 
-export default EditTask;
+export default ETaskForm;

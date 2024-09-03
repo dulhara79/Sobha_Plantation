@@ -3,8 +3,8 @@ import Sidebar from "../../components/Sidebar";
 import { Breadcrumb } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import React from "react";
-import EmployeeNavbar from "../../components/EmployeeNavbar";
-import EattendenceTable from "../../components/EattendenceTable";
+import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
+import EattendenceTable from "../../components/Employee/EattendenceTable";
 
 export default function EditTaskPage() {
   const breadcrumbItems = [

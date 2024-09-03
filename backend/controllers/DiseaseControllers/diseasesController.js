@@ -22,12 +22,12 @@ const getAllDiseases = async (req, res, next) => {
 
 // Create a new disease record
 const createDiseases = async (req, res, next) => {
-    const { recordId, pest, disease, inspectionDate, section, inspector, nextDate } = req.body;
+    const { recordId, inspectionDate, section, pest, disease, inspector, result, comments } = req.body;
 
     let newDiseaseRecord;
 
     try {
-        newDiseaseRecord = new diseases({recordId, pest, disease, inspectionDate, section, inspector, nextDate});
+        newDiseaseRecord = new diseases({recordId, inspectionDate, section, pest, disease, inspector, result, comments});
         await newDiseaseRecord.save();
     }catch (error) {
         console.log(error);
@@ -68,12 +68,12 @@ const getDiseasesById = async (req, res, next) => {
 const updateDiseases = async (req, res, next) => {
 
     const diseaseId = req.params.id;
-    const { recordId, pest, disease, inspectionDate, section, inspector, nextDate } = req.body;
+    const { recordId, inspectionDate, section, pest, disease, inspector, result, comments } = req.body;
 
     let updatedDiseaseRecord;
 
     try {
-        updatedDiseaseRecord = await diseases.findByIdAndUpdate(diseaseId, {recordId, pest, disease, inspectionDate, section, inspector, nextDate});
+        updatedDiseaseRecord = await diseases.findByIdAndUpdate(diseaseId, {recordId, inspectionDate, section, pest, disease, inspector, result, comments});
         updatedDiseaseRecord = await updatedDiseaseRecord.save();
     }catch (error) {
         console.log(error);

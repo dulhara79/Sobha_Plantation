@@ -4,7 +4,8 @@ import Header from '../../components/Header';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import { HomeOutlined, LeftCircleOutlined } from '@ant-design/icons';
-import { Breadcrumb, Button, Input, Select, Modal } from 'antd';
+import { Breadcrumb, Button, Input, Select } from 'antd';
+
 
 const { Search } = Input;
 const { Option } = Select;
@@ -17,10 +18,9 @@ const VarietyCrop = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch all crop varieties
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/crop-varieties'); // Adjust your API endpoint if necessary
+        const response = await axios.get('http://localhost:5000/api/crop-varieties'); // Ensure this URL is correct
         setCropVarieties(response.data);
         setLoading(false);
       } catch (error) {
@@ -32,7 +32,7 @@ const VarietyCrop = () => {
     fetchData();
   }, []);
 
-  // Delete a crop variety
+
   const deleteCropVariety = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/api/crop-varieties/${id}`);
@@ -42,7 +42,7 @@ const VarietyCrop = () => {
     }
   };
 
-  // Filter and search logic
+
   const filteredData = cropVarieties.filter(item => (
     (filter === 'All' || item.status === filter) &&
     (item.assignedPerson.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -151,5 +151,4 @@ const VarietyCrop = () => {
     </div>
   );
 };
-
 export default VarietyCrop;

@@ -80,7 +80,6 @@ import EditPrice from "./pages/Products/EditPrice.jsx";
 import AddLabeling from "./pages/Products/AddLabeling.jsx";
 import EditLabeling from "./pages/Products/EditLabeling.jsx";
 
-
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
 import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
@@ -89,6 +88,7 @@ import Seedling from "./pages/CropVarieties/Seedling.jsx";
 import Schedules from "./pages/CropVarieties/Schedules.jsx";
 import ScheduleForm from "./pages/CropVarieties/ScheduleForm.jsx";
 import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
+import AddSeedlingForm from "./pages/CropVarieties/AddSeedlingForm.jsx";
 
 // buyers
 import BuyerRegistrationForm from "./pages/BuyerRegistrationForm.jsx";
@@ -129,7 +129,7 @@ export default function App() {
       <Route path="/employee/registration" element= {<Eregistration/>}/>
       <Route path="/employee/salary" element= {<Esalary/>}/>
       <Route path="/employee/task" element= {<EaddTask/>}/>
-      <Route path="/employee/taskedit" element= {<EditTaskPage/>}/>
+      <Route path="/employee/taskedit/:id" element= {<EditTaskPage/>}/>
       <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
       <Route path="/employee/attendance" element= {<GetAttendance/>}/>
       <Route path="/employee/employeelist" element= {<EmployeeList/>}/>
@@ -150,7 +150,7 @@ export default function App() {
 
 
       {/* crop care */}
-      {/* <Route path="/diseases" element={<DiseasesDashboard />} />
+      <Route path="/diseases" element={<DiseasesDashboard />} />
       <Route path="/coconutInspections" element={<CoconutInspections />} />
       <Route path="/intercropInspections" element={<IntercropInspections />} />
       <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
@@ -158,7 +158,7 @@ export default function App() {
       <Route path="/coconutTreatments" element={<CoconutTreatments />} />
       <Route path="/intercropTreatments" element={<IntercropTreatments />} />
       <Route path="/coconutPests" element={<CoconutPests />} />
-      <Route path="/maintenance" element={<RegularMaintenance />} /> */}
+      <Route path="/maintenance" element={<RegularMaintenance />} />
       <Route path="/intercropPests" element={<IntercropPests />} />
       <Route path="/maintenance" element={<RegularMaintenance />} />
       <Route path="/UserProfile" element={<UserProfile />} />
@@ -188,6 +188,7 @@ export default function App() {
       <Route path="/schedules" element={<Schedules />} />
       <Route path="/scheduleForm" element={<ScheduleForm />} />
       <Route path="/landPreparation" element={<LandPreparation />} />
+      <Route path="/seedlingForm" element={<AddSeedlingForm />} />
         
       {/* buyers */}
       <Route path="/buyer-registration" element={<BuyerRegistrationForm />} />
