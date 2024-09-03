@@ -37,4 +37,3 @@ const FinanceSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("TransactionsRecord", FinanceSchema);
-// export const TransactionsRecord = mongoose.model('TransactionsRecord', FinanceSchema);

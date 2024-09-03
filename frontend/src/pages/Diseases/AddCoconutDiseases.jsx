@@ -264,6 +264,7 @@ const AddCoconutDiseases = () => {
                   htmlType="submit"
                   style={{ backgroundColor: "#236A64", color: "#fff" }}
                   disabled={!fieldValidity.suggestedReInspectionDate}
+                  onClick={handleFinish}
                 >
                   Submit
                 </Button>

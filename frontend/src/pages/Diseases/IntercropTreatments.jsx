@@ -87,7 +87,7 @@ const IntercropTreatments = () => {
       key: "date",
     },
     {
-      title: "Pest / Disease",
+      title: "Pest or Disease",
       dataIndex: "pestOrDisease",
       key: "pestOrDisease",
     },
@@ -97,14 +97,19 @@ const IntercropTreatments = () => {
       key: "treatmentMethod",
     },
     {
-      title: "Health Rate",
+      title: "Current Health Rate",
       dataIndex: "healthRate",
       key: "healthRate",
     },
     {
-      title: "Reapplying Date",
-      dataIndex: "reapplyingDate",
-      key: "reapplyingDate",
+      title: "Treated By",
+      dataIndex: "treatedBy",
+      key: "treatedBy",
+    },
+    {
+      title: "Notes",
+      dataIndex: "notes",
+      key: "notes",
     },
     {
       title: "Actions",
@@ -263,7 +268,7 @@ const IntercropTreatments = () => {
                   marginTop: "16px",
                   marginBottom: "16px",
                 }}
-                onClick={() => navigate("/AddIntercropTreatments")}
+                onClick={() => navigate("/addIntercropTreatments")}
               >
                 + Add
               </Button>
