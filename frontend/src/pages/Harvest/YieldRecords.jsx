@@ -35,24 +35,24 @@ const YieldRecords = () => {
     }
   };
 
-  const onHomeClick = useCallback(() => {
-    navigate("/harvest/harvestdashboard");
-  }, [navigate]);
-
-  const onBackClick = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
-
   const onGroupContainerClick = useCallback(() => {
-    navigate("/harvest/schedule-options");
+    navigate("/harvest/harvest-schedule");
   }, [navigate]);
 
   const onGroupContainerClick1 = useCallback(() => {
-    navigate("/yield-options");
+    navigate("/harvest/yield");
   }, [navigate]);
 
   const onGroupContainerClick2 = useCallback(() => {
     navigate("/harvest/compliancechecklist");
+  }, [navigate]);
+
+  const onHomeClick = useCallback(() => {
+    navigate("/harvest/harvestdashboard"); // Navigate to HarvestDashboard
+  }, [navigate]);
+
+  const onBackClick = useCallback(() => {
+    navigate(-1); // Navigate back to the previous page
   }, [navigate]);
 
   const onSearch = (value) => {
