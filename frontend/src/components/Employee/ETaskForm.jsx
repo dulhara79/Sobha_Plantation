@@ -51,11 +51,7 @@ const ETaskForm = () => {
     }
 
     // Validate assign_date and due_date
-    if (
-      assign_date &&
-      due_date &&
-      new Date(due_date) <= new Date(assign_date)
-    ) {
+    if (assign_date && due_date && new Date(due_date) <= new Date(assign_date)) {
       newErrors.due_date = "Due date must be later than the assign date.";
       valid = false;
     } else {
@@ -63,14 +59,7 @@ const ETaskForm = () => {
     }
 
     // Check if all required fields are filled
-    if (
-      !emp_id ||
-      !task ||
-      !assign_date ||
-      !due_date ||
-      !task_des ||
-      !task_status
-    ) {
+    if (!emp_id || !task || !assign_date || !due_date || !task_des || !task_status) {
       valid = false;
     }
 
@@ -104,9 +93,7 @@ const ETaskForm = () => {
         };
         try {
           await axios.post("http://localhost:5000/api/taskRecords", data);
-          enqueueSnackbar("Record Created successfully", {
-            variant: "success",
-          });
+          enqueueSnackbar("Record Created successfully", { variant: "success" });
           navigate("/employee/TaskListview", { state: { highlighted: true } });
         } catch (error) {
           enqueueSnackbar("Error creating record", { variant: "error" });
@@ -142,7 +129,7 @@ const ETaskForm = () => {
   return (
     <div className="pt-2">
       <div className="flex items-center justify-between mt-6 ml-80">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+        <h1 className="text-3xl font-bold tracking-tight text-black sm:text-3xl">
           Assign Tasks
         </h1>
         <button
@@ -160,7 +147,7 @@ const ETaskForm = () => {
           <div className="pb-12 border-b border-gray-900/10">
             <div className="grid grid-cols-1 mt-10 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="col-span-full">
-                <label className="block text-sm font-medium leading-6 text-gray-900">
+                <label className="block text-sm font-medium leading-6 text-black">
                   Employee Name
                 </label>
                 <div className="mt-2">
@@ -168,7 +155,7 @@ const ETaskForm = () => {
                     name="emp_id"
                     value={emp_id}
                     onChange={handleEmployeeChange}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     required
                   >
                     <option value="">Select an employee</option>
@@ -181,7 +168,7 @@ const ETaskForm = () => {
                 </div>
               </div>
               <div className="col-span-full">
-                <label className="block text-sm font-medium leading-6 text-gray-900">
+                <label className="block text-sm font-medium leading-6 text-black">
                   Task
                 </label>
                 <div className="mt-2">
@@ -190,7 +177,7 @@ const ETaskForm = () => {
                     name="task"
                     value={task}
                     onChange={(e) => setTask(e.target.value)}
-                    className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
+                    className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       errors.task ? "border-red-500" : ""
                     }`}
                     required
@@ -201,7 +188,7 @@ const ETaskForm = () => {
                 </div>
               </div>
               <div className="col-span-full">
-                <label className="block text-sm font-medium leading-6 text-gray-900">
+                <label className="block text-sm font-medium leading-6 text-black">
                   Assign Date
                 </label>
                 <div className="mt-2">
@@ -211,7 +198,7 @@ const ETaskForm = () => {
                     value={assign_date}
                     min={getTodayDate()} // Set minimum date to today
                     onChange={(e) => setAssign_date(e.target.value)}
-                    className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
+                    className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       errors.assign_date ? "border-red-500" : ""
                     }`}
                     required
@@ -219,7 +206,7 @@ const ETaskForm = () => {
                 </div>
               </div>
               <div className="col-span-full">
-                <label className="block text-sm font-medium leading-6 text-gray-900">
+                <label className="block text-sm font-medium leading-6 text-black">
                   Due Date
                 </label>
                 <div className="mt-2">
@@ -229,7 +216,7 @@ const ETaskForm = () => {
                     value={due_date}
                     min={assign_date || getTodayDate()} // Set minimum date to assign_date or today
                     onChange={(e) => setDue_date(e.target.value)}
-                    className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
+                    className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       errors.due_date ? "border-red-500" : ""
                     }`}
                     required
@@ -240,7 +227,7 @@ const ETaskForm = () => {
                 </div>
               </div>
               <div className="col-span-full">
-                <label className="block text-sm font-medium leading-6 text-gray-900">
+                <label className="block text-sm font-medium leading-6 text-black">
                   Task Description
                 </label>
                 <div className="mt-2">
@@ -248,14 +235,13 @@ const ETaskForm = () => {
                     name="task_des"
                     value={task_des}
                     onChange={(e) => setTask_des(e.target.value)}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    rows="4"
+                    className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     required
-                  ></textarea>
+                  />
                 </div>
               </div>
               <div className="col-span-full">
-                <label className="block text-sm font-medium leading-6 text-gray-900">
+                <label className="block text-sm font-medium leading-6 text-black">
                   Task Status
                 </label>
                 <div className="mt-2">
@@ -263,34 +249,34 @@ const ETaskForm = () => {
                     name="task_status"
                     value={task_status}
                     onChange={(e) => setTask_status(e.target.value)}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     required
                   >
-                    <option value="">Select status</option>
-                    <option value="Not Started">Not Started</option>
+                    <option value="">Select a status</option>
                     <option value="In Progress">In Progress</option>
                     <option value="Completed">Completed</option>
+                    <option value="Pending">Pending</option>
                   </select>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="flex items-center justify-center mt-6 gap-x-6">
-          <button
-            type="submit"
-            className="px-3 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </button>
-          <button
-            type="button"
-            className="px-3 py-2 text-sm font-semibold text-gray-900 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-            onClick={handleCancel}
-          >
-            Cancel
-          </button>
+          <div className="flex items-center justify-end space-x-3">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="px-4 py-2 text-sm font-semibold text-gray-900 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </button>
+          </div>
         </div>
       </form>
     </div>
