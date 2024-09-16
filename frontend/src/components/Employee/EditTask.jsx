@@ -138,7 +138,7 @@ const EditTask = () => {
   return (
     <div className="pt-2">
       <div className="flex items-center justify-between mt-6 ml-80">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+        <h1 className="text-3xl font-bold tracking-tight text-black sm:text-3xl">
           Edit Task
         </h1>
       </div>
@@ -151,7 +151,7 @@ const EditTask = () => {
             <div className="grid grid-cols-1 mt-10 gap-x-6 gap-y-8 sm:grid-cols-6">
               {/* Employee Name Field */}
               <div className="col-span-full">
-                <label className="block text-sm font-medium leading-6 text-gray-900">
+                <label className="block text-sm font-medium leading-6 text-black">
                   Employee Name
                 </label>
                 <div className="mt-2">
@@ -159,7 +159,7 @@ const EditTask = () => {
                     name="emp_id"
                     value={formData.emp_id}
                     onChange={handleInputChange}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     required
                   >
                     <option value="">Select an employee</option>
@@ -174,7 +174,7 @@ const EditTask = () => {
 
               {/* Other Fields */}
               <div className="col-span-full">
-                <label className="block text-sm font-medium leading-6 text-gray-900">
+                <label className="block text-sm font-medium leading-6 text-black">
                   Task
                 </label>
                 <div className="mt-2">
@@ -183,7 +183,7 @@ const EditTask = () => {
                     name="task"
                     value={formData.task}
                     onChange={handleInputChange}
-                    className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
+                    className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       errors.task ? "border-red-500" : ""
                     }`}
                     required
@@ -194,7 +194,7 @@ const EditTask = () => {
                 </div>
               </div>
               <div className="col-span-full">
-                <label className="block text-sm font-medium leading-6 text-gray-900">
+                <label className="block text-sm font-medium leading-6 text-black">
                   Assign Date
                 </label>
                 <div className="mt-2">
@@ -203,13 +203,13 @@ const EditTask = () => {
                     name="assign_date"
                     value={formData.assign_date}
                     onChange={handleInputChange}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     required
                   />
                 </div>
               </div>
               <div className="col-span-full">
-                <label className="block text-sm font-medium leading-6 text-gray-900">
+                <label className="block text-sm font-medium leading-6 text-black">
                   Due Date
                 </label>
                 <div className="mt-2">
@@ -218,7 +218,7 @@ const EditTask = () => {
                     name="due_date"
                     value={formData.due_date}
                     onChange={handleInputChange}
-                    className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
+                    className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       errors.due_date ? "border-red-500" : ""
                     }`}
                     required
@@ -229,7 +229,7 @@ const EditTask = () => {
                 </div>
               </div>
               <div className="col-span-full">
-                <label className="block text-sm font-medium leading-6 text-gray-900">
+                <label className="block text-sm font-medium leading-6 text-black">
                   Task Description
                 </label>
                 <div className="mt-2">
@@ -238,13 +238,13 @@ const EditTask = () => {
                     value={formData.task_des}
                     onChange={handleInputChange}
                     rows={4}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     required
                   />
                 </div>
               </div>
               <div className="col-span-full">
-                <label className="block text-sm font-medium leading-6 text-gray-900">
+                <label className="block text-sm font-medium leading-6 text-black">
                   Task Status
                 </label>
                 <div className="mt-2">
@@ -252,7 +252,7 @@ const EditTask = () => {
                     name="task_status"
                     value={formData.task_status}
                     onChange={handleInputChange}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     required
                   >
                     <option value="">Select task status</option>
