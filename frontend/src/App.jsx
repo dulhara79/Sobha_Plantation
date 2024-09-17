@@ -19,6 +19,7 @@ import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.j
 import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
 import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDisplay.jsx";
 import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
+import AddNewValuationPage from "./pages/SalesAndFinance/Finance/AddNewValuationPage.jsx";
 
 // inventory
  import Fertilizer from "./pages/Inventory/Fertilizer.jsx";
@@ -69,9 +70,10 @@ import BuyerTable from "./pages/BuyerTable.jsx";
 import Profile from './components/Profile';
 
 
-// import Test from "./pages/Test.jsx";
 import PageError from "./pages/PageError.jsx";
+import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
 
+import Test from "./pages/Test.jsx";
 
 export default function App() {
   return (
@@ -88,8 +90,10 @@ export default function App() {
       <Route path="/salesAndFinance/sales/analytics" element={<SalesAnalyticsPage />} />
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
       <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} />
+      <Route path="/salesAndFinance/finance/transaction-update/:id" element={<UpdateTransactionPage />} />
       <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
       <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />
+      <Route path="/salesAndFinance/finance/add-valuation" element={<AddNewValuationPage />} />
 
       {/* inventory */}
       <Route path="/Inventory/Fertilizer" element={<Fertilizer/>} />
@@ -141,7 +145,7 @@ export default function App() {
       <Route path="/profile" element={<Profile />} />
 
       {/* page not found & error page */}
-      {/* <Route path="/test" element={<Test />} /> */}
+      <Route path="/test" element={<Test />} />
 
       <Route path="*" element={<PageError />} />
     </Routes>
