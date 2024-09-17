@@ -12,6 +12,7 @@ import {
   SearchOutlined,
   EditOutlined,
   DeleteOutlined,
+  MoreOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import "../../index.css";
@@ -82,12 +83,12 @@ const CoconutTreatments = () => {
   // Columns definition
   const columns = [
     {
-      title: "Date",
+      title: "Date of Treatment",
       dataIndex: "date",
       key: "date",
     },
     {
-      title: "Pest / Disease",
+      title: "Pest or Disease",
       dataIndex: "pestOrDisease",
       key: "pestOrDisease",
     },
@@ -97,14 +98,19 @@ const CoconutTreatments = () => {
       key: "treatmentMethod",
     },
     {
-      title: "Health Rate",
+      title: "Current Health Rate",
       dataIndex: "healthRate",
       key: "healthRate",
     },
     {
-      title: "Reapplying Date",
-      dataIndex: "reapplyingDate",
-      key: "reapplyingDate",
+      title: "Treated By",
+      dataIndex: "treatedBy",
+      key: "treatedBy",
+    },
+    {
+      title: "Notes",
+      dataIndex: "notes",
+      key: "notes",
     },
     {
       title: "Actions",
@@ -120,6 +126,11 @@ const CoconutTreatments = () => {
             type="link"
             icon={<DeleteOutlined />}
             onClick={() => confirmDelete(record.key)}
+          />
+          <Button
+            type="link"
+            icon={<MoreOutlined />}
+            onClick={() => navigate(`/detailedOverview`)}
           />
         </div>
       ),
@@ -263,7 +274,7 @@ const CoconutTreatments = () => {
                   marginTop: "16px",
                   marginBottom: "16px",
                 }}
-                onClick={() => navigate("/AddCoconutTreatments")}
+                onClick={() => navigate("/addCoconutTreatments")}
               >
                 + Add
               </Button>

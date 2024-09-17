@@ -13,7 +13,7 @@ import Header from '../../components/Header';
 import Sidebar from '../../components/Sidebar';
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
-import EmployeeNavbar from '../../components/EmployeeNavbar';
+import EmployeeNavbar from '../../components/Employee/EmployeeNavbar';
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 

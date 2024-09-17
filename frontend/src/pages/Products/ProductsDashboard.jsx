@@ -21,14 +21,12 @@ const ProductsDashboard = () => {
   }, [navigate]);
 
   const onGroupContainerClick2 = useCallback(() => {
-    navigate("/packaging");
+    navigate("/products/packaging-labeling");
   }, [navigate]);
 
   const onHomeClick = useCallback(() => {
-    if (location.pathname !== "/") {
-      navigate("/");
-    }
-  }, [navigate, location]);
+      navigate("/products/productdashboard");
+  }, [navigate]);
 
   const onBackClick = useCallback(() => {
     navigate(-1); // Navigate back to the previous page

@@ -323,5 +323,4 @@ const FertilizerRecords = () => {
     </div>
   );
 };
-
 export default FertilizerRecords;

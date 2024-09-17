@@ -18,27 +18,19 @@ const AddSchedule = () => {
     return current && current < moment().startOf('day');
   };
 
-  // Function to validate progress value
-  const validateProgress = (_, value) => {
-    if (value < 0 || value > 100) {
-      return Promise.reject(new Error('Progress must be between 0 and 100'));
-    }
-    return Promise.resolve();
-  };
+
 
   // Function to handle form submission
   const handleSubmit = async (values) => {
     try {
         setLoading(true);
         // Extract form values
-        const { harvestdate, cropType, ageofYieldDate, quantity, wayPicked, treesPicked, storageLocation } = values;
+        const { harvestdate, cropType, quantity, treesPicked, storageLocation } = values;
 
         await axios.post('http://localhost:5000/api/yield', {
           harvestdate,
           cropType,
-          ageofYieldDate,
           quantity,
-          wayPicked,
           treesPicked,
           storageLocation
         });
@@ -97,26 +89,11 @@ const AddSchedule = () => {
           </Form.Item>
 
           <Form.Item
-            label="Age of Yield Date"
-            name="ageofYieldDate"
-            rules={[{ required: true, message: 'Please enter the age of Yield Date!' }]}
-          >
-            <Input type="number" placeholder="Enter age" />
-          </Form.Item>
-
-          <Form.Item
             label="Quantity"
             name="quantity"
             rules={[{ required: true, message: 'Please enter the quantity!' }]}
           >
             <Input type="number" placeholder="Enter quantity" />
-          </Form.Item>
-          <Form.Item
-            label="Way Picked"
-            name="wayPicked"
-            rules={[{ required: true, message: 'Please enter how it was picked!' }]}
-          >
-            <Input placeholder="Enter Way Picked" />
           </Form.Item>
           <Form.Item
             label="Trees Picked"

@@ -12,7 +12,6 @@ const employeeRoutes = require('./routes/Employee/employee.js');
 
 
 //inventory
-
 const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
 const maintenanceRoutes = require('./routes/Inventory/maintenance.js'); 
 const equipmentRoutes = require('./routes/Inventory/equipments.js'); 
@@ -26,6 +25,9 @@ const requestRoutes = require('./routes/Inventory/requests.js');
  */
 const productionRoutes = require('./routes/Products/productionRoute.js');
 const qualityControlRoute = require('./routes/Products/qualityControlRoute.js');
+const labelingPricesRoute = require('./routes/Products/labelingPricesRoute.js');
+const labelingRoute = require('./routes/Products/labelingRoute.js');
+
 
 /**
  * harvest
@@ -86,6 +88,8 @@ app.use("/api/salary-employees", salaryEmployeeRoutes);
 app.use("/api/crop-varieties", cropVarietiesRoutes);
 // app.use("/api/employee", employeeRoutes);
 app.use('/api/taskRecords', ETaskRoutes);
+// app.use('/api/harvest', harvestRoutes);
+// app.use('/api/yield', yieldRoutes);
 
 // harvest
 app.use('/api/harvest', harvestRoutes);
@@ -95,14 +99,14 @@ app.use('/api/compliance-checks', complianceCheckRoutes);// Ensure the route pat
 //products
 app.use('/api/production', productionRoutes);
 app.use('/api/quality-control', qualityControlRoute);
-
+app.use('/api/labeling-prices', labelingPricesRoute);
+app.use('/api/labeling', labelingRoute);
 
 //inventory
 app.use('/api/fertilizers', fertilizerRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/equipments', equipmentRoutes);
 app.use('/api/requests', requestRoutes);
-
 
 /**
 * crop

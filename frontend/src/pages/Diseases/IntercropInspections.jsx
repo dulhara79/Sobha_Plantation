@@ -257,6 +257,7 @@ const IntercropInspections = () => {
                   width: "100%",
                   maxWidth: "400px",
                 }}
+                onClick={() => navigate("/intercropPests")}
               >
                 Learn More
               </Button>
@@ -266,7 +267,7 @@ const IntercropInspections = () => {
                   color: "#fff",
                   marginTop: "16px",
                 }}
-                onClick={() => navigate("/AddIntercropDiseases")}
+                onClick={() => navigate("/addCropDiseases")}
               >
                 + Add
               </Button>
