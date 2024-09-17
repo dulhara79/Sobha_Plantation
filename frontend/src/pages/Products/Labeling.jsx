@@ -136,162 +136,159 @@ const Labeling = () => {
   const viewModalDetails = getViewModalDetails();
 
  // Function to get image data URL
-const getImageDataURL = (url) => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = 'Anonymous'; // Ensure cross-origin images are handled
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      context.drawImage(img, 0, 0);
-      resolve(canvas.toDataURL('image/png'));
-    };
-    img.onerror = reject;
-    img.src = url;
-  });
-};
-
-const generatePDF = async () => {
-  const doc = new jsPDF();
-
-  // Load the logo image
-  const logoUrl = '../src/assets/logo.png'; 
-  let logoDataURL;
-  try {
-    logoDataURL = await getImageDataURL(logoUrl);
-  } catch (error) {
-    console.error('Failed to load the logo image:', error);
-  }
-
-  // Function to draw header, footer, and horizontal line
-  const drawHeaderFooter = (data) => {
-    const pageWidth = doc.internal.pageSize.width;
-    const pageHeight = doc.internal.pageSize.height;
-
-    // Draw the header
-    if (logoDataURL) {
-      doc.addImage(logoDataURL, 'PNG', 5, 5, 40, 10); // Adjust x, y, width, height as needed
-    }
-
-    // Add the title next to the logo
-    doc.setFontSize(10);
-    doc.text("Sobha Plantation", 165, 10); // Adjust x, y position as needed
-    doc.addFont("Roboto");
-
-    // Draw a horizontal line after the header
-    doc.setDrawColor(64, 133, 126); // Line color
-    doc.setLineWidth(1); // Line width
-    doc.line(10, 20, pageWidth - 10, 20); // Draw line from (x1, y1) to (x2, y2)
-
-    // Draw the footer with page number
-    doc.setFontSize(10);
-    doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10); // Adjust position as needed
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous'; // Ensure cross-origin images are handled
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
   };
 
-  // Add title after the logo
-  doc.setFontSize(22);
-  doc.text("Labeling Report", 80, 35); // Adjust x, y position as needed
-
-  // First Table: Upper table details
-  const upperTableHeaders = [['Detail', 'Value']];
-  const upperTableRows = [
-    ['Total Products', `${filteredData.length}`],
-    ['Total Quantity', `${filteredData.reduce((sum, item) => sum + item.quantity, 0)}`],
-    ['Total Price (Rs)', `Rs ${filteredData.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)}`],
-  ];
-
-  doc.autoTable({
-    startY: 50,  // Adjust startY as needed
-    head: upperTableHeaders,
-    body: upperTableRows,
-    padding: 5,
-    margin: { horizontal: 10 },
-    styles: {
-      fontSize: 10,
-    },
-    headStyles: {
-      fillColor: [64, 133, 126],
-      textColor: [255, 255, 255],
-      fontSize: 12,
-    },
-    theme: 'grid',
-    didDrawPage: drawHeaderFooter, // Add header, footer, and line to each page
-  });
-
-  // Adjust startY for the second table to start below the first table
-  let finalY = doc.lastAutoTable.finalY + 10;  // Add a gap between the two tables
-
-  // Second Table: Map the filteredData for the labeling details
-  const labelingRows = filteredData.map(item => [
-    item.productName,
-    moment(item.labelingDate).format('YYYY-MM-DD'),
-    item.status,
-    item.quantity,
-    `Rs ${item.price.toFixed(2)}`,
-  ]);
-
-  // Define the table headers for the second table
-  const labelingHeaders = [['Product Name', 'Labeling Date', 'Status', 'Quantity', 'Price (Rs)']];
-
-  // Add second table to the PDF
-  doc.autoTable({
-    startY: finalY,  // Start this table right below the first table
-    head: labelingHeaders,
-    body: labelingRows,
-    margin: { horizontal: 10 },
-    styles: {
-      fontSize: 10,
-    },
-    headStyles: {
-      fillColor: [64, 133, 126], 
-      textColor: [255, 255, 255], 
-      fontSize: 12,
-    },
-    theme: 'striped',
-    didDrawPage: drawHeaderFooter, // Add header, footer, and line to each page
-  });
-
-  // Adjust startY for the third table to start below the second table
-  finalY = doc.lastAutoTable.finalY + 10;  // Add a gap between the second and third tables
-
-  // Add heading for Unit Prices Table
-  doc.setFontSize(14);
-  doc.text("Unit Prices Table", 80, finalY); // Adjust x position as needed
-  finalY += 10; // Add a little space after the heading
-
-  // Third Table: Unit Prices Table details
-  const unitPriceRows = filteredData.map(item => [
-    item.productName,
-    `Rs ${item.price.toFixed(2)}`
-  ]);
-
-  // Define the table headers for the third table
-  const unitPriceHeaders = [['Product Name', 'Unit Price (Rs)']];
-
-  // Add third table to the PDF
-  doc.autoTable({
-    startY: finalY,  // Start this table right below the heading
-    head: unitPriceHeaders,
-    body: unitPriceRows,
-    margin: { horizontal: 10 },
-    styles: {
-      fontSize: 10,
-    },
-    headStyles: {
-      fillColor: [64, 133, 126], 
-      textColor: [255, 255, 255], 
-      fontSize: 12,
-    },
-    theme: 'striped',
-    didDrawPage: drawHeaderFooter, // Add header, footer, and line to each page
-  });
-
-  // Save the PDF
-  doc.save('labeling_report.pdf');
-};
-
+  const generatePDF = async () => {
+    const doc = new jsPDF();
+  
+    // Load the logo image
+    const logoUrl = '../src/assets/logo.png'; 
+    let logoDataURL;
+    try {
+      logoDataURL = await getImageDataURL(logoUrl);
+    } catch (error) {
+      console.error('Failed to load the logo image:', error);
+    }
+  
+    // Function to draw header, footer, and horizontal line
+    const drawHeaderFooter = (data) => {
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+  
+      // Draw the header
+      if (logoDataURL) {
+        doc.addImage(logoDataURL, 'PNG', 5, 5, 40, 10); // Adjust x, y, width, height as needed
+      }
+  
+      // Add the title next to the logo
+      doc.setFontSize(12);
+      doc.text("Sobha Plantation", 170, 10); // Adjust x, y position as needed
+  
+      // Draw a horizontal line after the header
+      //doc.setDrawColor(64, 133, 126); // Line color
+      //doc.setLineWidth(1); // Line width
+      doc.line(10, 20, pageWidth - 10, 20); // Draw line from (x1, y1) to (x2, y2)
+  
+      // Draw the footer with page number
+      doc.setFontSize(10);
+      doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10); // Adjust position as needed
+    };
+  
+    // Add title after the logo
+    doc.setFontSize(22);
+    doc.text("Labeling Report", 80, 35); // Adjust x, y position as needed
+  
+    // First Table: Upper table details
+    const upperTableHeaders = [['Detail', 'Value']];
+    const upperTableRows = [
+      ['Total Products', `${filteredData.length}`],
+      ['Total Quantity', `${filteredData.reduce((sum, item) => sum + item.quantity, 0)}`],
+      ['Total Price (Rs)', `Rs ${filteredData.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)}`],
+    ];
+  
+    doc.autoTable({
+      startY: 50,  // Adjust startY as needed
+      head: upperTableHeaders,
+      body: upperTableRows,
+      margin: { horizontal: 10 },
+      styles: {
+        fontSize: 10,
+      },
+      headStyles: {
+        fillColor: [64, 133, 126],
+        textColor: [255, 255, 255],
+        fontSize: 12,
+      },
+      theme: 'grid',
+      didDrawPage: drawHeaderFooter, // Add header, footer, and line to each page
+    });
+  
+    // Adjust startY for the second table to start below the first table
+    let finalY = doc.lastAutoTable.finalY + 10;  // Add a gap between the two tables
+  
+    // Second Table: Map the filteredData for the labeling details
+    const labelingRows = filteredData.map(item => [
+      item.productName,
+      moment(item.labelingDate).format('YYYY-MM-DD'),
+      item.status,
+      item.quantity,
+      `Rs ${item.price.toFixed(2)}`,
+    ]);
+  
+    // Define the table headers for the second table
+    const labelingHeaders = [['Product Name', 'Labeling Date', 'Status', 'Quantity', 'Price (Rs)']];
+  
+    // Add second table to the PDF
+    doc.autoTable({
+      startY: finalY,  // Start this table right below the first table
+      head: labelingHeaders,
+      body: labelingRows,
+      margin: { horizontal: 10 },
+      styles: {
+        fontSize: 10,
+      },
+      headStyles: {
+        fillColor: [64, 133, 126], 
+        textColor: [255, 255, 255], 
+        fontSize: 12,
+      },
+      theme: 'striped',
+      didDrawPage: drawHeaderFooter, // Add header, footer, and line to each page
+    });
+  
+    // Adjust startY for the third table to start below the second table
+    finalY = doc.lastAutoTable.finalY + 10;  // Add a gap between the second and third tables
+  
+    // Add heading for Unit Prices Table
+    doc.setFontSize(14);
+    doc.text("Unit Prices Table", 80, finalY); // Adjust x position as needed
+    finalY += 10; // Add a little space after the heading
+  
+    // Third Table: Unit Prices Table details
+    const unitPriceRows = filteredData.map(item => [
+      item.productName,
+      `Rs ${item.price.toFixed(2)}`
+    ]);
+  
+    // Define the table headers for the third table
+    const unitPriceHeaders = [['Product Name', 'Unit Price (Rs)']];
+  
+    // Add third table to the PDF
+    doc.autoTable({
+      startY: finalY,  // Start this table right below the heading
+      head: unitPriceHeaders,
+      body: unitPriceRows,
+      margin: { horizontal: 10 },
+      styles: {
+        fontSize: 10,
+      },
+      headStyles: {
+        fillColor: [64, 133, 126], 
+        textColor: [255, 255, 255], 
+        fontSize: 12,
+      },
+      theme: 'striped',
+      didDrawPage: drawHeaderFooter, // Add header, footer, and line to each page
+    });
+  
+    // Save the PDF
+    doc.save('labeling_report.pdf');
+  };
 
   return (
     <div style={{ padding: '24px' }}>
@@ -312,11 +309,30 @@ const generatePDF = async () => {
       <Title level={3} style={{ marginBottom: '24px', fontWeight: 'bold' }}>
         Labeling Management
       </Title>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '24px' }}>
+        <Button
+          type="primary"
+          onClick={() => navigate('/products/addLabeling')}
+          style={{ marginRight: '16px', backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
+        >
+          Add Label
+        </Button>
+        
+        <Button
+          type="default"
+          icon={<FilePdfOutlined />}
+          onClick={generatePDF}
+          style={{ backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
+        >
+          Generate PDF
+        </Button>
+      </div>
 
 
       <Title level={4} style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>
         Unit Prices Table
       </Title>
+
       <Table
         dataSource={productTypes}
         rowKey="_id"
@@ -345,9 +361,10 @@ const generatePDF = async () => {
       <Title level={4} style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>
         Products Labeling Table
       </Title>
+      
+       <div>
+        <Space style={{ marginBottom: '16px' }}>
 
-      <div>
-      <Space style={{ marginBottom: '16px' }}>
           <Search 
             placeholder="Search by product name"
             onSearch={handleSearch}
@@ -365,25 +382,6 @@ const generatePDF = async () => {
             {/* Add other status options as needed */}
           </Select>
         </Space>
-      </div>
-      
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '24px' }}>
-        <Button
-          type="primary"
-          onClick={() => navigate('/products/addLabeling')}
-          style={{ marginRight: '16px', backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
-        >
-          Add Label
-        </Button>
-        
-        <Button
-          type="default"
-          icon={<FilePdfOutlined />}
-          onClick={generatePDF}
-          style={{ backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
-        >
-          Generate PDF
-        </Button>
       </div>
 
       <Table
@@ -418,17 +416,18 @@ const generatePDF = async () => {
           render={(text, record) => (
             <div>
               <Button
-              icon={<EyeOutlined  />}
+                icon={<EyeOutlined />}
                 onClick={() => handleViewLabeling(record)}
                 style={{ marginRight: 8, backgroundColor: '#52c41a', borderColor: '#52c41a', color: '#fff' }}
               >
-                
+
               </Button>
               <Button
                 icon={<EditOutlined  />}
                 onClick={() => handleEditLabeling(record._id)}
                 style={{ marginRight: 8, backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff' }}
               >
+
               </Button>
               <Button
                 icon={<DeleteOutlined />}  // Use DeleteOutlined icon for delete button
@@ -440,8 +439,9 @@ const generatePDF = async () => {
         />
       </Table>
 
-      {/* View Modal */}
-      <Modal
+     {/* View Details Modal */}
+     <Modal
+
         title="Labeling Details"
         visible={isViewModalVisible}
         onCancel={handleViewModalClose}

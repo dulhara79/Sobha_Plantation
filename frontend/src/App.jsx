@@ -105,19 +105,20 @@ import FusariumWilt from "./pages/Diseases/FusariumWilt.jsx";
 import PowderyMildew from "./pages/Diseases/PowderyMildew.jsx";
 
 // product
-// import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
-// import ProductionScheduleOverview from "./pages/Products/ProductionScheduleOverview.jsx";
-// import QualityControl from "./pages/Products/QualityControl.jsx";
-// import AddSchedule from "./pages/Products/AddSchedule.jsx";
-// import EditSchedule from "./pages/Products/EditSchedule.jsx";
-// import AddInspectionReport from "./pages/Products/AddInspectionReport.jsx";
-// import EditInspectionReport from "./pages/Products/EditInspectionReport.jsx";
-// import PackagingLabeling from "./pages/Products/PackagingLabeling.jsx";
-// import Packaging from "./pages/Products/Packaging.jsx";
-// import Labeling from "./pages/Products/Labeling.jsx";
-// import EditPrice from "./pages/Products/EditPrice.jsx";
-// import AddLabeling from "./pages/Products/AddLabeling.jsx";
-// import EditLabeling from "./pages/Products/EditLabeling.jsx";
+import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
+import ProductionScheduleOverview from "./pages/Products/ProductionScheduleOverview.jsx";
+import QualityControl from "./pages/Products/QualityControl.jsx";
+import AddSchedule from "./pages/Products/AddSchedule.jsx";
+import EditSchedule from "./pages/Products/EditSchedule.jsx";
+import AddInspectionReport from "./pages/Products/AddInspectionReport.jsx";
+import EditInspectionReport from "./pages/Products/EditInspectionReport.jsx";
+import PackagingLabeling from "./pages/Products/PackagingLabeling.jsx";
+import Packaging from "./pages/Products/Packaging.jsx";
+import Labeling from "./pages/Products/Labeling.jsx";
+import EditPrice from "./pages/Products/EditPrice.jsx";
+import AddLabeling from "./pages/Products/AddLabeling.jsx";
+import EditLabeling from "./pages/Products/EditLabeling.jsx";
+import Gallery  from "./pages/Products/Gallery.jsx";
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
@@ -256,7 +257,8 @@ export default function App() {
       <Route path="/products/packaging-labeling/labeling" element={<Labeling />} />
       <Route path="/products/editPrice/:id" element={<EditPrice />} />
       <Route path="/products/addLabeling" element={<AddLabeling />} />
-      <Route path="/products/editLabeling/:id" element={<EditLabeling />} /> */}
+      <Route path="/products/editLabeling/:id" element={<EditLabeling />} />
+      <Route path="/products/gallery" element={<Gallery/>} />
 
       {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
