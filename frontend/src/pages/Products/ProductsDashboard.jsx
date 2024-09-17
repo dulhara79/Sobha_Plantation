@@ -7,6 +7,8 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Breadcrumb } from 'antd';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import CollectionsSharpIcon from '@mui/icons-material/CollectionsSharp';
 
 const ProductsDashboard = () => {
   const navigate = useNavigate();
@@ -88,20 +90,32 @@ const ProductsDashboard = () => {
           </div>
         </nav>
 
-        <Breadcrumb
-          items={[
-            {
-              href: '',
-              title: <HomeOutlined />,
-            },
-            {
-              title: "Products",
-            },
-            {
-              title: "Dashboard",
-            },
-          ]}
-        />
+        {/* Breadcrumb and Gallery Button */}
+        <div className="flex items-center justify-between mb-5">
+          {/* Breadcrumb Navigation */}
+          <Breadcrumb
+            items={[
+              {
+                href: '',
+                title: <HomeOutlined />,
+              },
+              {
+                title: "Products",
+              },
+              {
+                title: "Dashboard",
+              },
+            ]}
+          />
+          {/* Gallery Button */}
+          <Button
+            className="flex items-center text-white bg-blue-500 rounded-md shadow-md hover:bg-blue-600"
+            onClick={() => navigate("/products/gallery")}
+          >
+            <CollectionsSharpIcon className="mr-2" />
+            Gallery
+          </Button>
+        </div>
         <div className="mt-5">
           {/* Welcome message section */}
           <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
