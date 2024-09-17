@@ -129,6 +129,7 @@ app.use("/api/salesAndFinance/finance/transaction", FinancialTransactionRoutes);
 app.use("/api/salesAndFinance/finance/invoice", InvoiceRoutes);
 app.use("/api/salesAndFinance/sales/analytics", SalesAnalyticsRoutes);
 app.use("/api/salesAndFinance/sales/tracking", SalesTrackingRoutes);
+app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
 
 /**
  * buyer
