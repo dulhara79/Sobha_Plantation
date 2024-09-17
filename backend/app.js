@@ -38,7 +38,7 @@ const complianceCheckRoutes = require('./routes/Harvest/compliance.js')
 /**
  * crop care
  */
-const diseasesRoute = require('./routes/DiseaseRoutes/diseasesRoute');
+const diseasesRoute = require('./routes/DiseaseRoutes/diseasesRoute.js');
 
 
 /**
