@@ -1,120 +1,153 @@
-// src/pages/harvest/EditHarvestSchedule.jsx
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Form, Input, DatePicker, TimePicker, Button, notification, Card, Spin } from 'antd';
+import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const { Item: FormItem } = Form;
+const { Option } = Select;
 
 const EditHarvestSchedule = () => {
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
-  const [submitLoading, setSubmitLoading] = useState(false); // For submit button loading state
+  const [record, setRecord] = useState(null);
   const navigate = useNavigate();
-  const { id } = useParams(); // Extracting harvestId from URL
+  const { id } = useParams(); // Get the record ID from the route parameters
 
-  // Fetch harvest schedule data
-  const fetchHarvestSchedule = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`http://localhost:5000/api/harvest/${id}`);
-      if (response.data.success) {
-        const data = response.data.data;
-        form.setFieldsValue({
-          harvestId: data.harvestId,
-          cropType: data.cropType,
-          harvestDate: moment(data.harvestDate),
-          startTime: moment(data.startTime, 'HH:mm'),
-          endTime: moment(data.endTime, 'HH:mm'),
-          fieldNumber: data.fieldNumber,
-          estimatedYield: data.estimatedYield,
-          numberOfWorkers: data.numberOfWorkers,
-          harvestMethod: data.harvestMethod,
-        });
-      } else {
-        notification.error({ message: response.data.message });
-      }
-    } catch (error) {
-      console.error('Error fetching harvest schedule:', error);
-      notification.error({ message: 'Failed to fetch harvest schedule' });
-    } finally {
-      setLoading(false);
-    }
+  const disablePastDates = (current) => {
+    return current && current < moment().startOf('day');
   };
 
+  // Fetch harvest schedule data
   useEffect(() => {
-    fetchHarvestSchedule();
-  }, [id]);
+    const fetchRecord = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/harvest/${id}`);
+        const data = response.data;
+
+        setRecord(data);
+        form.setFieldsValue({
+          cropType: data.cropType,
+          harvestdate: moment(data.harvestDate), // Ensure field name matches backend
+          startTime: data.startTime,
+          endTime: data.endTime,
+          fieldNumber: data.fieldNumber,
+          numberOfWorkers: data.numberOfWorkers,
+        });
+      } catch (error) {
+        console.error('Error fetching schedule:', error);
+      }
+    };
+    fetchRecord();
+  }, [id, form]);
 
   // Handle form submission
   const handleSubmit = async (values) => {
-    setSubmitLoading(true);
     try {
-      const response = await axios.put(`http://localhost:5000/api/harvest/${id}`, {
-        ...values,
-        harvestDate: values.harvestDate.format('YYYY-MM-DD'),
-        startTime: values.startTime.format('HH:mm'),
-        endTime: values.endTime.format('HH:mm'),
+      // Prepare payload with the correct date format
+      const payload = {
+        cropType: values.cropType,
+        harvestDate: values.harvestdate.format('YYYY-MM-DD'), // Ensure this matches backend
+        startTime: values.startTime,
+        endTime: values.endTime,
+        fieldNumber: values.fieldNumber,
+        numberOfWorkers: values.numberOfWorkers,
+      };
+  
+      console.log('Submitting payload:', payload);
+  
+      // Send PUT request to update the record
+      const response = await axios.put(`http://localhost:5000/api/harvest/${id}`, payload);
+  
+      notification.success({
+        message: 'Success',
+        description: 'Harvest updated successfully!',
       });
-      if (response.data.success) {
-        notification.success({ message: 'Harvest schedule updated successfully!' });
-        navigate('/harvest/harvest-schedule'); // Redirect after successful update
-      } else {
-        notification.error({ message: response.data.message });
-      }
+      navigate('/harvest/harvest-schedule'); // Redirect to the list page after successful update
     } catch (error) {
-      console.error('Error updating harvest schedule:', error);
-      notification.error({ message: 'Error updating harvest schedule' });
-    } finally {
-      setSubmitLoading(false);
+      console.error('Failed to update harvest:', error.response?.data);
+      notification.error({
+        message: 'Error',
+        description: `Failed to update harvest. ${error.response?.data?.message || 'Please try again.'}`,
+      });
     }
   };
-
+  
   return (
-    <div className="edit-harvest-schedule" style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <Card title="Edit Harvest Schedule" bordered={false} style={{ width: '100%' }}>
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '50px' }}>
-            <Spin size="large" />
-          </div>
-        ) : (
-          <Form form={form} onFinish={handleSubmit} layout="vertical">
-            <FormItem name="harvestId" label="Harvest ID" rules={[{ required: true }]}>
-              <Input disabled />
-            </FormItem>
-            <FormItem name="cropType" label="Crop Type" rules={[{ required: true }]}>
-              <Input />
-            </FormItem>
-            <FormItem name="harvestDate" label="Harvest Date" rules={[{ required: true }]}>
-              <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
-            </FormItem>
-            <FormItem name="startTime" label="Start Time" rules={[{ required: true }]}>
-              <TimePicker format="HH:mm" style={{ width: '100%' }} />
-            </FormItem>
-            <FormItem name="endTime" label="End Time" rules={[{ required: true }]}>
-              <TimePicker format="HH:mm" style={{ width: '100%' }} />
-            </FormItem>
-            <FormItem name="fieldNumber" label="Field Number" rules={[{ required: true }]}>
-              <Input type="number" />
-            </FormItem>
-            <FormItem name="estimatedYield" label="Estimated Yield" rules={[{ required: true }]}>
-              <Input type="number" />
-            </FormItem>
-            <FormItem name="numberOfWorkers" label="Number of Workers" rules={[{ required: true }]}>
-              <Input type="number" />
-            </FormItem>
-            <FormItem name="harvestMethod" label="Harvest Method" rules={[{ required: true }]}>
-              <Input />
-            </FormItem>
-            <FormItem>
-              <Button type="primary" htmlType="submit" loading={submitLoading} style={{ width: '100%' }}>
-                Update Schedule
-              </Button>
-            </FormItem>
-          </Form>
-        )}
-      </Card>
+    <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
+      <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
+        <h2 className="mb-6 text-2xl font-bold text-center">Edit Harvest Schedule</h2>
+        <Form
+          form={form}
+          onFinish={handleSubmit}
+          layout="vertical"
+        >
+          <Form.Item
+            label="Crop Type"
+            name="cropType"
+            rules={[{ required: true, message: 'Please select a crop type!' }]}
+          >
+            <Select placeholder="Select a crop type">
+              <Option value="coconut">Coconut</Option>
+              <Option value="banana">Banana</Option>
+              <Option value="pepper">Pepper</Option>
+              <Option value="papaya">Papaya</Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            label="Harvest Date"
+            name="harvestdate"
+            rules={[{ required: true, message: 'Please select the harvest date!' }]}
+          >
+            <DatePicker
+              format="YYYY-MM-DD"
+              disabledDate={disablePastDates}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Start Time"
+            name="startTime"
+            rules={[{ required: true, message: 'Please enter the Start Time!' }]}
+          >
+            <Input type="time" placeholder="Enter Start Time" />
+          </Form.Item>
+
+          <Form.Item
+            label="End Time"
+            name="endTime"
+            rules={[{ required: true, message: 'Please enter End Time!' }]}
+          >
+            <Input type="time" placeholder="Enter End Time" />
+          </Form.Item>
+
+          <Form.Item
+            label="Field Number"
+            name="fieldNumber"
+            rules={[{ required: true, message: 'Please enter the Field Number!' }]}
+          >
+            <Select placeholder="Select a field number">
+              <Option value="AA1">AA1</Option>
+              <Option value="BB1">BB1</Option>
+              <Option value="CC1">CC1</Option>
+              <Option value="DD1">DD1</Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            label="Number of Workers"
+            name="numberOfWorkers"
+            rules={[{ required: true, message: 'Please enter the Number of Workers!' }]}
+          >
+            <Input type="number" placeholder="Enter Number of Workers" />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Update Record
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
     </div>
   );
 };

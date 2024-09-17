@@ -4,7 +4,7 @@ import  { Breadcrumb } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 
-import EmployeeNavbar from "../../components/EmployeeNavbar";
+import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import html2canvas from "html2canvas";
@@ -28,7 +28,7 @@ export default function ViewTaskDetails() {
     useEffect(() => {
         setLoading(true);
         axios
-            .get(`https://Sobha_Plantation.vercel.app/taskRecords/${id}`)
+            .get(`http://localhost:5000/api/taskRecords/${id}`)
             .then((response) => {
                 setTaskRecord(response.data);
                 setLoading(false);

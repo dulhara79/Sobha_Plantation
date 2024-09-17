@@ -1,31 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { InformationCircleIcon, TrashIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { InformationCircleIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { Link } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import autoTable from 'jspdf-autotable';
 import { useSnackbar } from "notistack";
-import { DatePicker, Select, Button, Table } from 'antd';
-import { DownOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Table } from 'antd';
+import { SearchOutlined, DownOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-
-const { RangePicker } = DatePicker;
-const { Option } = Select;
+import Header from '../../components/Header';
+import Sidebar from '../../components/Sidebar';
+import { HomeOutlined } from "@ant-design/icons";
+import { Breadcrumb } from "antd";
+import EmployeeNavbar from '../../components/Employee/EmployeeNavbar';
 
 const EmployeeList = () => {
     const [employeeRecords, setEmployeeRecords] = useState([]);
     const [filteredEmployeeRecords, setFilteredEmployeeRecords] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedTypeFilter, setSelectedTypeFilter] = useState('All Types');
-    const [dateRange, setDateRange] = useState([null, null]);
-    const { enqueueSnackbar } = useSnackbar();
     const [loading, setLoading] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
 
-    // Define employee types
-    const employeeTypes = ['Full-Time', 'Part-Time', 'Contract']; // Example types
-
-    // Fetch employee data
     useEffect(() => {
         setLoading(true);
         axios.get(`http://localhost:5000/api/employee`)
@@ -68,7 +64,7 @@ const EmployeeList = () => {
     };
 
     const handleDownloadPDF = () => {
-        if (employeeRecords.length === 0) {
+        if (filteredEmployeeRecords.length === 0) {
             enqueueSnackbar('No employee records to generate report', { variant: 'error' });
             return;
         }
@@ -77,7 +73,7 @@ const EmployeeList = () => {
         doc.text(`Employee Report`, 10, 10);
 
         const headers = ["First Name", "Last Name", "Date of Birth", "Gender", "Contact Number", "Email", "NIC", "Address", "Employee Type", "Hired Date", "Hourly Rate"];
-        const tableData = employeeRecords.map(record => [
+        const tableData = filteredEmployeeRecords.map(record => [
             record.firstName,
             record.lastName,
             dayjs(record.dateOfBirth).format('YYYY-MM-DD'),
@@ -103,31 +99,19 @@ const EmployeeList = () => {
     };
 
     const handleSearch = () => {
-        getFilteredEmployeeRecords(searchQuery, selectedTypeFilter, dateRange);
+        getFilteredEmployeeRecords(searchQuery);
     };
 
-    const handleFilterChange = (value) => {
-        setSelectedTypeFilter(value);
-        getFilteredEmployeeRecords(searchQuery, value, dateRange);
-    };
-
-    const handleDateChange = (dates) => {
-        setDateRange(dates);
-        getFilteredEmployeeRecords(searchQuery, selectedTypeFilter, dates);
-    };
-
-    const getFilteredEmployeeRecords = (searchQuery, selectedTypeFilter, dateRange) => {
+    const getFilteredEmployeeRecords = (searchQuery) => {
         if (Array.isArray(employeeRecords) && employeeRecords.length > 0) {
             const filtered = employeeRecords.filter((record) => {
                 const fullName = `${record.firstName} ${record.lastName}`.toLowerCase();
-                const hiredDate = dayjs(record.hiredDate).startOf('day');
-                const [startDate, endDate] = dateRange;
-                const withinDateRange = startDate && endDate ? hiredDate.isBetween(dayjs(startDate).startOf('day'), dayjs(endDate).endOf('day'), 'day', '[)') : true;
 
                 return (
-                    (fullName.includes(searchQuery.toLowerCase()) || record.email.toLowerCase().includes(searchQuery.toLowerCase())) &&
-                    (selectedTypeFilter === 'All Types' || record.employeeType === selectedTypeFilter) &&
-                    withinDateRange
+                    fullName.includes(searchQuery.toLowerCase()) ||
+                    record.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    record.nic.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    record.contactNumber.includes(searchQuery)
                 );
             });
             setFilteredEmployeeRecords(filtered);
@@ -137,13 +121,6 @@ const EmployeeList = () => {
     };
 
     const columns = [
-        {
-            title: 'No',
-            dataIndex: 'index',
-            key: 'index',
-            render: (text, record, index) => index + 1,
-            sorter: (a, b) => a.index - b.index,
-        },
         {
             title: 'First Name',
             dataIndex: 'firstName',
@@ -192,8 +169,6 @@ const EmployeeList = () => {
             title: 'Employee Type',
             dataIndex: 'employeeType',
             key: 'employeeType',
-            filters: employeeTypes.map(type => ({ text: type, value: type })),
-            onFilter: (value, record) => record.employeeType === value,
         },
         {
             title: 'Hired Date',
@@ -216,6 +191,13 @@ const EmployeeList = () => {
             ),
         },
         {
+            title: 'Edit',
+            key: 'edit',
+            render: (text, record) => (
+                <PencilIcon className="w-5 h-5 text-blue-500 cursor-pointer hover:text-blue-700" />
+            ),
+        },
+        {
             title: 'Delete',
             key: 'delete',
             render: (text, record) => (
@@ -230,60 +212,59 @@ const EmployeeList = () => {
     const dataSource = filteredEmployeeRecords.map(record => ({ ...record, key: record._id }));
 
     return (
-        <div className="p-8">
-            <h1 className="text-lg font-semibold">Employee Details</h1>
-            <p className="text-sm text-gray-500">Manage employee information and generate reports.</p>
-
-            <div className="flex items-center my-4 space-x-4">
-                <Select
-                    defaultValue="All Types"
-                    style={{ width: 120 }}
-                    onChange={handleFilterChange}
-                    allowClear
-                >
-                    <Option value="All Types">All Types</Option>
-                    {employeeTypes.map(type => (
-                        <Option key={type} value={type}>{type}</Option>
-                    ))}
-                </Select>
-
-                <RangePicker
-                    format="YYYY-MM-DD"
-                    onChange={handleDateChange}
+        <div className="">
+            <Header />
+            <Sidebar />
+            <div className="ml-[300px] ">
+                <Breadcrumb
+                    items={[
+                        {
+                            href: "",
+                            title: <HomeOutlined />,
+                        },
+                    ]}
                 />
+                <EmployeeNavbar />
+                <div className="p-8 ">
+                    <div className="flex justify-between items-center mb-4">
+                        <h1 className="text-lg font-semibold">Employee Details</h1>
+                        <Link to="/employee/registration">
+                            <Button type="primary">Add New Employee</Button>
+                        </Link>
+                    </div>
+                    <p className="text-sm text-gray-500">Manage employee information and generate reports.</p>
 
-                <div className="relative">
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="p-2 border rounded"
+                    <div className="flex items-center my-4 gap-2">
+                        <input
+                            type="text"
+                            placeholder="Search employees..."
+                            className="border rounded-md p-2"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <Button
+                            type="primary"
+                            icon={<SearchOutlined />}
+                            onClick={handleSearch}
+                        >
+                            Search
+                        </Button>
+                        <Button
+                            onClick={handleDownloadPDF}
+                            icon={<DownOutlined />}
+                        >
+                            Export PDF
+                        </Button>
+                    </div>
+
+                    <Table
+                        columns={columns}
+                        dataSource={dataSource}
+                        loading={loading}
+                        pagination={{ pageSize: 8 }}
                     />
-                    <button
-                        onClick={handleSearch}
-                        className="absolute top-0 right-0 px-4 py-2 text-white bg-blue-500 rounded-r"
-                    >
-                        <SearchOutlined />
-                    </button>
                 </div>
             </div>
-
-            <Table
-                dataSource={dataSource}
-                columns={columns}
-                loading={loading}
-                pagination={{ pageSize: 10 }}
-                scroll={{ x: true }}
-            />
-
-            <Button
-                type="primary"
-                className="mt-4"
-                onClick={handleDownloadPDF}
-            >
-                Download PDF
-            </Button>
         </div>
     );
 };

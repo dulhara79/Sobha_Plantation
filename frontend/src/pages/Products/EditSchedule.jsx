@@ -65,6 +65,10 @@ const EditSchedule = () => {
     }
   };
 
+  const handleCancel = () => {
+    navigate('/products/production-overview');
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
@@ -146,9 +150,14 @@ const EditSchedule = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              Update Schedule
-            </Button>
+            <div className="flex justify-between">
+              <Button type="primary" htmlType="submit" style={{ width: '48%' }}>
+                Update Schedule
+              </Button>
+              <Button type="default" onClick={handleCancel} style={{ width: '48%' }}>
+                Cancel
+              </Button>
+            </div>
           </Form.Item>
         </Form>
       </div>

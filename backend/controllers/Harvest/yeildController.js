@@ -1,36 +1,37 @@
-const YieldRecords = require('../../models/Harvest/Yield');
+const mongoose = require('mongoose');
+const YieldRecords = require('../../models/Harvest/Yield'); // Ensure this path is correct
 
-// Controller for creating a new Yield Records
+// Controller for creating a new Yield Record
 exports.createYieldRecords = async (req, res) => {
     try {
-        const { id,harvestdate, cropType, ageofYieldDate, quantity, wayPicked, treesPicked, storageLocation } = req.body;
+        const { harvestdate, cropType, quantity, treesPicked, storageLocation } = req.body;
 
-        if (!id || !harvestdate || !cropType || !ageofYieldDate || !quantity || !wayPicked || !treesPicked || !storageLocation) {
-            return res.status(400).send({
-                message: 'Please provide all required fields: id, harvestdate, cropType, ageofYieldDate, quantity, wayPicked, treesPicked, storageLocation',
+        // Validate required fields
+        if (!harvestdate || !cropType || !quantity || !treesPicked || !storageLocation) {
+            return res.status(400).json({
+                message: 'Please provide all required fields: harvestdate, cropType, quantity, treesPicked, storageLocation',
             });
         }
 
-        const newRecord = {
-            id,
+        // Create a new yield record
+        const newRecord = new YieldRecords({
             harvestdate,
             cropType,
-            ageofYieldDate,
             quantity,
-            wayPicked,
             treesPicked,
-            storageLocation
-        };
+            storageLocation,
+        });
 
-        const yieldRecords = await YieldRecords.create(newRecord);
-        return res.status(201).send(yieldRecords);
+        // Save the record to the database
+        const savedRecord = await newRecord.save();
+        return res.status(201).json(savedRecord);
     } catch (error) {
-        console.log('Error creating yield Records:', error.message);
-        res.status(500).send({ message: error.message });
+        console.error('Error creating yield record:', error);
+        res.status(500).json({ message: 'Failed to create yield record.', error: error.message });
     }
 };
 
-// Controller for getting all yield Records
+// Controller for getting all Yield Records
 exports.getAllYieldRecords = async (req, res) => {
     try {
         const records = await YieldRecords.find({});
@@ -39,86 +40,85 @@ exports.getAllYieldRecords = async (req, res) => {
             data: records,
         });
     } catch (error) {
-        console.log('Error fetching records:', error.message);
-        res.status(500).send({ message: error.message });
+        console.error('Error fetching records:', error);
+        res.status(500).json({ message: 'Failed to fetch records.', error: error.message });
     }
 };
 
-// Controller for getting a single Yield Records by Id
+// Controller for getting a single Yield Record by Id
 exports.getYieldRecordsById = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log('Searching for records with Id:', id);
-        
-        const records = await YieldRecords.findOne({ id: id }).exec();
 
-        if (!records) {
-            console.log('No records found with Id:', id);
+        // Check for a valid MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'Invalid ID format.' });
+        }
+
+        const record = await YieldRecords.findById(id);
+
+        if (!record) {
             return res.status(404).json({ message: 'Record not found' });
         }
 
-        return res.status(200).json(records);
+        return res.status(200).json(record);
     } catch (error) {
-        console.log('Error fetching records:', error.message);
-        res.status(500).send({ message: error.message });
+        console.error('Error fetching record by id:', error);
+        res.status(500).json({ message: 'Failed to fetch record.', error: error.message });
     }
 };
 
-// Controller for updating a Yield Records by Id
+// Controller for updating a Yield Record by Id
 exports.updateYieldRecords = async (req, res) => {
     try {
-        // Extract Id from URL parameters and data from request body
         const { id } = req.params;
-        const { harvestdate, cropType, ageofYieldDate, quantity, wayPicked, treesPicked, storageLocation } = req.body;
+        const { harvestdate, cropType, quantity, treesPicked, storageLocation } = req.body;
 
-        // Log the incoming parameters and data
-        console.log('Updating record with id:', id);
-        console.log('Update data:', req.body);
+        // Check for a valid MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'Invalid ID format.' });
+        }
 
-        // Check if required fields are present
-        if (!harvestdate || !cropType || !ageofYieldDate || !quantity || !wayPicked || !treesPicked || !storageLocation) {
-            return res.status(400).send({
-                message: 'Please provide all required fields: harvestdate, cropType, ageofYieldDate, quantity, wayPicked, treesPicked, storageLocation',
+        // Ensure all required fields are present
+        if (!harvestdate || !cropType || !quantity || !treesPicked || !storageLocation) {
+            return res.status(400).json({
+                message: 'Please provide all required fields: harvestdate, cropType, quantity, treesPicked, storageLocation',
             });
         }
 
-        // Perform the update operation
-        const result = await YieldRecords.findOneAndUpdate(
-            { id: id }, // Find document with matching id
-            { harvestdate, cropType, ageofYieldDate, quantity, wayPicked, treesPicked, storageLocation }, // Data to update
-            { new: true, runValidators: true } // Options: return new document and run schema validations
-        ).exec();
+        // Update the record
+        const result = await YieldRecords.findByIdAndUpdate(
+            id,
+            { harvestdate, cropType, quantity, treesPicked, storageLocation },
+            { new: true, runValidators: true }
+        );
 
-        // Check if the record was found and updated
+        // Handle case where record is not found
         if (!result) {
             return res.status(404).json({ message: 'Yield Record not found' });
         }
 
-        // Send the updated record
-        return res.status(200).send({ message: 'Yield Record updated successfully', data: result });
+        // Successfully updated the record
+        return res.status(200).json({ message: 'Yield Record updated successfully', data: result });
     } catch (error) {
-        // Log any errors and send a response
-        console.log('Error updating record:', error.message);
-        res.status(500).send({ message: error.message });
+        console.error('Error updating record:', error);
+        res.status(500).json({ message: 'Failed to update record.', error: error.message });
     }
 };
 
-
-
-// Controller for deleting a Yield Records by Id
+// Controller for deleting a Yield Record by Id
 exports.deleteYieldRecords = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id } = req.params; // Ensure this is correctly obtained
+        const deletedRecord = await YieldRecords.findByIdAndDelete(id);
 
-        const deletedRecords = await YieldRecords.findOneAndDelete({id: id });
-
-        if (!deletedRecords) {
-            return res.status(404).json({ message: 'Records not found' });
+        if (!deletedRecord) {
+            return res.status(404).json({ message: 'Record not found' });
         }
 
-        return res.status(200).send({ message: 'Records deleted successfully' });
+        return res.status(200).json({ message: 'Record deleted successfully' });
     } catch (error) {
-        console.log('Error deleting Records:', error.message);
-        res.status(500).send({ message: error.message });
+        console.error('Error deleting record:', error.message);
+        res.status(500).json({ message: 'Failed to delete record.' });
     }
 };

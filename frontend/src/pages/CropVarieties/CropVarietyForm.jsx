@@ -1,141 +1,289 @@
-import React from 'react'
-import Header from '../../components/Header'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from '../../components/Sidebar'
-import { HomeOutlined, UserOutlined } from '@ant-design/icons';
-import { Breadcrumb,Button, Input, Form,Select, DatePicker } from 'antd';
-import {LeftCircleOutlined} from "@ant-design/icons"
-import moment from 'moment';
 
-const { Option } = Select;
-
-const CropVarietyForm = () => {
+const CropVarietyForm = ({ cropVarietyId, onSuccess }) => {
     const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        id: '',
+        assignedPerson: '',
+        fieldName: '',
+        varieties: '',
+        plantationDate: '',
+        status: 'Planned',
+    });
 
-    const validateAssignedPerson = (_, value) => {
-        // Regex to only allow letters (no numbers or special characters)
-        if (!value || /^[A-Za-z\s]+$/.test(value)) {
-          return Promise.resolve();
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const cropVarietyOptions = [
+        'Coconut',
+        'Papaya',
+        'Pineapple',
+        'Banana',
+    ];
+
+    const fieldNameOptions = [
+        'Field A',
+        'Field B',
+        'Field C',
+        'Field D',
+    ];
+
+    useEffect(() => {
+        if (cropVarietyId) {
+            setLoading(true);
+            axios.get(`http://localhost:5000/api/crop-varieties/${cropVarietyId}`)
+                .then((response) => {
+                    setFormData(response.data);
+                    setLoading(false);
+                })
+                .catch((err) => {
+                    setError('Failed to load crop variety data'); // Show error message if data loading fails
+                    setLoading(false);
+                });
         }
-        return Promise.reject(new Error('Assigned Person cannot include numbers or special characters.'));
-      };
+    }, [cropVarietyId]);
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
 
-      // Function to disable dates that are not today's date
-      const disabledDate = (current) => {
-        // Only allow the current date
-        return current && current.format('YYYY-MM-DD') !== moment().format('YYYY-MM-DD');
-      };
+        if (name === 'assignedPerson') {
+            // Allow only alphabetic characters and spaces
+            const validValue = value.replace(/[^a-zA-Z\s]/g, '');
+            setFormData({
+                ...formData,
+                [name]: validValue,
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
+    };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(''); // Clear any previous error message
+        setSuccess(''); // Clear any previous success message
 
-  return (
-    <div>
-      
-      <Header/>
-      <Sidebar/>
+        const method = cropVarietyId ? 'put' : 'post';
+        const url = cropVarietyId 
+            ? `http://localhost:5000/api/crop-varieties/${cropVarietyId}` 
+            : 'http://localhost:5000/api/crop-varieties';
 
-      <div className={`ml-[300px] `}>
-      <Breadcrumb
-    items={[
-      {
-        href: '',
-        title: <HomeOutlined />,
-      },
-      {
-        href: '',
-        title: 'Field View',
-      },
-      {
-        href: '',
-        title: 'Dashboard',
-      },
-      {
-        href: '',
-        title: 'Crop Varieties',
-      },
-      {
-        href: '',
-        title: 'Add New Activity',
-      },
-    ]}
-  />
-  {/* Back Button */}
-  <div className="mb-4">
-          {/* <Button onClick={() => navigate(-1)} className="bg-gray-300 text-black"> */}
-          <LeftCircleOutlined onClick={() => navigate(-1)}/>
-          {/* </Button> */}
+        axios[method](url, formData)
+            .then((response) => {
+                setSuccess('Crop variety saved successfully!'); // Set success message
+                onSuccess(response.data);
+            })
+            .catch((err) => {
+                console.log('Error response:', err.response); // Debugging
+                setError(err.response?.data?.error || 'An error occurred while saving the crop variety'); // Set error message
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
+
+    const handleReset = () => {
+        setFormData({
+            id: '',
+            assignedPerson: '',
+            fieldName: '',
+            varieties: '',
+            plantationDate: '',
+            status: 'Planned',
+        });
+        setError('');
+        setSuccess('');
+    };
+
+    const handleCancel = () => {
+        navigate(-1); // Navigate to the previous page
+    };
+
+    const todayDate = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+
+    return (
+        <div style={styles.container}>
+            <style>
+                {`
+                .form-group label {
+                    display: block;
+                    margin-bottom: 5px;
+                    font-weight: bold;
+                }
+                `}
+            </style>
+            <h2 style={styles.heading}>{cropVarietyId ? 'Update' : 'Create'} Crop Variety</h2>
+            {error && <p style={styles.error}>{error}</p>}
+            {success && <p style={styles.success}>{success}</p>}
+            <form onSubmit={handleSubmit}>
+                <div style={styles.formGroup}>
+                    <label htmlFor="id">ID</label>
+                    <input 
+                        type="text" 
+                        id="id" 
+                        name="id" 
+                        placeholder="Enter a unique ID"
+                        value={formData.id} 
+                        onChange={handleChange} 
+                        required 
+                        disabled={!!cropVarietyId} 
+                        style={styles.input}
+                    />
+                </div>
+                <div style={styles.formGroup}>
+                    <label htmlFor="assignedPerson">Assigned Person</label>
+                    <input 
+                        type="text" 
+                        id="assignedPerson" 
+                        name="assignedPerson" 
+                        placeholder="Enter the name of the assigned person"
+                        value={formData.assignedPerson} 
+                        onChange={handleChange} 
+                        required 
+                        style={styles.input}
+                    />
+                </div>
+                <div style={styles.formGroup}>
+                    <label htmlFor="fieldName">Field Name</label>
+                    <select 
+                        id="fieldName" 
+                        name="fieldName" 
+                        value={formData.fieldName} 
+                        onChange={handleChange} 
+                        required 
+                        style={styles.input}
+                    >
+                        <option value="" disabled>Select a field</option>
+                        {fieldNameOptions.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div style={styles.formGroup}>
+                    <label htmlFor="varieties">Varieties</label>
+                    <select 
+                        id="varieties" 
+                        name="varieties" 
+                        value={formData.varieties} 
+                        onChange={handleChange} 
+                        required 
+                        style={styles.input}
+                    >
+                        <option value="" disabled>Select a variety</option>
+                        {cropVarietyOptions.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div style={styles.formGroup}>
+                    <label htmlFor="plantationDate">Plantation Date</label>
+                    <input 
+                        type="date" 
+                        id="plantationDate" 
+                        name="plantationDate" 
+                        value={formData.plantationDate} 
+                        onChange={handleChange} 
+                        required 
+                        min={todayDate} // Disable past dates
+                        style={styles.input}
+                    />
+                </div>
+                <div style={styles.formGroup}>
+                    <label htmlFor="status">Status</label>
+                    <select 
+                        id="status" 
+                        name="status" 
+                        value={formData.status} 
+                        onChange={handleChange} 
+                        required 
+                        style={styles.input}
+                    >
+                        <option value="Planned">Planned</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <button type="submit" disabled={loading} style={styles.button}>
+                    {loading ? 'Saving...' : cropVarietyId ? 'Update' : 'Create'}
+                </button>
+                <button type="button" onClick={handleReset} disabled={loading} style={{ ...styles.button, ...styles.resetButton }}>
+                    Reset
+                </button>
+                <button type="button" onClick={handleCancel} disabled={loading} style={{ ...styles.button, ...styles.cancelButton }}>
+                    Cancel
+                </button>
+            </form>
         </div>
+    );
+};
 
+const styles = {
+    container: {
+        maxWidth: '500px',
+        margin: '0 auto',
+        padding: '20px',
+        border: '1px solid #ccc',
+        borderRadius: '8px',
+        backgroundColor: '#f9f9f9',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+    },
+    heading: {
+        textAlign: 'center',
+        marginBottom: '20px',
+        fontSize: '1.5em',
+    },
+    formGroup: {
+        marginBottom: '15px',
+    },
+    input: {
+        width: '100%',
+        padding: '8px',
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        fontSize: '1em',
+    },
+    button: {
+        width: '100%',
+        padding: '10px',
+        backgroundColor: '#4CAF50',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '1em',
+        marginTop: '10px',
+    },
+    resetButton: {
+        backgroundColor: '#f44336',
+        marginTop: '5px',
+    },
+    cancelButton: {
+        backgroundColor: '#777',
+        marginTop: '5px',
+    },
+    error: {
+        color: 'red',
+        marginBottom: '15px',
+        fontSize: '0.9em',
+        textAlign: 'center',
+    },
+    success: {
+        color: 'green',
+        marginBottom: '15px',
+        fontSize: '0.9em',
+        textAlign: 'center',
+    },
+};
 
-        <div className="flex justify-center mt-5">
-          <div className="mt-5 bg-white p-6 shadow-md rounded-md w-[600px] ">
-            <h2 className="text-2xl font-bold mb-4">Plantation Form</h2>
-
-            <Form layout="vertical">
-              {/* Assigned Person with Validation */}
-              <Form.Item
-                label="Assigned Person"
-                name="assignedPerson"
-                rules={[{ validator: validateAssignedPerson }]}
-              >
-                <Input placeholder="Enter Assigned Person" />
-              </Form.Item>
-
-              <Form.Item label="Field Name" name="fieldName">
-                <Select placeholder="Select Field Name">
-                  <Option value="Field A">Field A</Option>
-                  <Option value="Field B">Field B</Option>
-                  <Option value="Field C">Field C</Option>
-                  <Option value="Field D">Field D</Option>
-                  {/* Add more fields as needed */}
-                </Select>
-              </Form.Item>
-
-              {/* Updated Variety Field as Dropdown */}
-              <Form.Item label="Variety" name="variety">
-                <Select placeholder="Select Variety">
-                  <Option value="Dwarf Coconut">Coconut</Option>
-                  <Option value="Tall Coconut">Papaya</Option>
-                  <Option value="Hybrid Coconut">Pepper</Option>
-                  <Option value="King Coconut">Pineapple</Option>
-                  <Option value="King Coconut">Bananna</Option>
-                  {/* Add more varieties as needed */}
-                </Select>
-              </Form.Item>
-
-              <Form.Item label="Date" name="date">
-                <DatePicker
-                  disabledDate={disabledDate}
-                  defaultValue={moment()}
-                  format="YYYY-MM-DD"
-                />
-              </Form.Item>
-
-              {/* Updated Status as Dropdown */}
-              <Form.Item label="Status" name="status">
-                <Select placeholder="Select Status">
-                  <Option value="Scheduled">Scheduled</Option>
-                  <Option value="In Progress">In Progress</Option>
-                  <Option value="Completed">Completed</Option>
-                  <Option value="Delayed">Delayed</Option>
-                </Select>
-              </Form.Item>
-
-              <Form.Item>
-                <Button type="primary" htmlType="submit">
-                  Submit
-                </Button>
-                <Button type="default" htmlType="button" className="ml-2"  onClick={() => navigate(-1)}>
-                  Cancel
-                </Button>
-              </Form.Item>
-            </Form>
-          </div>
-        </div>
-    </div>
-    </div>
-
-  )
-}
-
-export default CropVarietyForm
+export default CropVarietyForm;
