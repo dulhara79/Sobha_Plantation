@@ -1,117 +1,109 @@
-const { get } = require("mongoose");
-const diseases = require("../../models/DiseaseModels/diseases");
+const mongoose = require("mongoose");
+const DiseaseRecords = require("../../models/DiseaseModels/diseases");
 
-// Get all disease records
-const getAllDiseases = async (req, res, next) => {
-
-    let diseaseRecords;
-
+exports.createDiseases = async (req, res) => {
     try {
-        diseaseRecords = await diseases.find();
-    } catch (error) {  
-        console.log(error);
-    }
+        const { dateOfInspection, sectionOfLand, identifiedPest, identifiedDisease, inspectedBy, inspectionResult, suggestedReInspectionDate } = req.body;
 
-    if(!diseaseRecords) {
-        return res.status(404).json({ message: "No diseases found" });
-    }
+        //validate request
+        if (!dateOfInspection || !sectionOfLand || !identifiedPest || !identifiedDisease || !inspectedBy || !inspectionResult || !suggestedReInspectionDate) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
 
-    //display all diseases
-    return res.status(200).json({ diseaseRecords });
-};
 
 // Create a new disease record
-const createDiseases = async (req, res, next) => {
-    const { recordId, inspectionDate, section, pest, disease, inspector, result, comments } = req.body;
+const newRecord = new DiseaseRecords({
+    dateOfInspection,
+    sectionOfLand,
+    identifiedPest,
+    identifiedDisease,
+    inspectedBy,
+    inspectionResult,
+    suggestedReInspectionDate
+});
 
-    let newDiseaseRecord;
+// Save the disease record
+const saveDiseaseRecord = await newRecord.save();
+return res.status(201).json(saveDiseaseRecord);
+} catch (error) {
+    console.error('Error creating disease record:', error.message || error);
+    res.status(500).json({ message: "Server error", error: error.message || error });
+}
+};
 
+// Get all disease records
+exports.getAllDiseases = async (req, res) => {
     try {
-        newDiseaseRecord = new diseases({recordId, inspectionDate, section, pest, disease, inspector, result, comments});
-        await newDiseaseRecord.save();
-    }catch (error) {
-        console.log(error);
-    }   
-
-    if(!newDiseaseRecord) {
-        return res.status(400).json({ message: "Failed to create a new disease record" });
+        const allDiseaseRecords = await DiseaseRecords.find();
+        return res.status(200).json({ count: allDiseaseRecords.length, data: allDiseaseRecords });
+    } catch (error) {
+        console.error('Error fetching disease records:', error.message || error);
+        res.status(500).json({ message: "Server error", error: error.message || error });
     }
-
-    return res.status(200).json({ newDiseaseRecord });
-
 };
 
 // Get a specific disease by ID
-
-const getDiseasesById = async (req, res, next) => {
-
-    const diseaseId = req.params.id;
-
-    let diseaseRecord;
-
+exports.getDiseasesById = async (req, res) => {
     try {
-        diseaseRecord = await diseases.findById(diseaseId);
-    }catch (error) {
-        console.log(error);
+        const { diseaseId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(diseaseId)) {
+            return res.status(400).json({ message: "Invalid disease ID" });
+        }
+
+        const diseaseRecord = await DiseaseRecords.findById(diseaseId);
+
+        if (!diseaseRecord) {
+            return res.status(404).json({ message: "Disease not found" });
+        }
+        return res.status(200).json({ diseaseRecord });
+    } catch (error) {
+        console.error('Error fetching disease by ID:', error.message || error);
+        return res.status(500).json({ message: "Server error", error: error.message || error });
     }
-
-    if(!diseaseRecord) {
-        return res.status(404).json({ message: "Disease not found" });
-    }
-    return res.status(200).json({ diseaseRecord });
-
-}
-
-
-// Update a diseases record
-
-const updateDiseases = async (req, res, next) => {
-
-    const diseaseId = req.params.id;
-    const { recordId, inspectionDate, section, pest, disease, inspector, result, comments } = req.body;
-
-    let updatedDiseaseRecord;
-
-    try {
-        updatedDiseaseRecord = await diseases.findByIdAndUpdate(diseaseId, {recordId, inspectionDate, section, pest, disease, inspector, result, comments});
-        updatedDiseaseRecord = await updatedDiseaseRecord.save();
-    }catch (error) {
-        console.log(error);
-    }
-
-    if(!updatedDiseaseRecord) {
-        return res.status(404).json({ message: "Disease not found" });
-    }
-
-    return res.status(200).json({ updatedDiseaseRecord });
-
-}
-
-
-// Delete a diseases record
-
-const deleteDiseases = async (req, res, next) => {
-
-    const diseaseId = req.params.id;
-
-    let deletedDiseaseRecord;
-
-    try {
-        deletedDiseaseRecord = await diseases.findByIdAndDelete(diseaseId);
-    }catch (error) {
-        console.log(error);
-    }
-
-    if(!deletedDiseaseRecord) {
-        return res.status(404).json({ message: "Disease not found" });
-    }
-
-    return res.status(200).json({ message: "Disease record deleted successfully" });
 };
 
+// Update a disease record
+exports.updateDiseases = async (req, res) => {
+        try {
+            const { diseaseId } = req.params;
+            const { dateOfInspection, sectionOfLand, identifiedPest, identifiedDisease, inspectedBy, inspectionResult, suggestedReInspectionDate } = req.body;
 
-exports.getAllDiseases = getAllDiseases;
-exports.createDiseases = createDiseases;
-exports.getDiseasesById = getDiseasesById;
-exports.updateDiseases = updateDiseases;
-exports.deleteDiseases = deleteDiseases;
+            if (!mongoose.Types.ObjectId.isValid(diseaseId)) {
+                return res.status(400).json({ message: "Invalid disease ID" });
+            }
+
+            if (!dateOfInspection || !sectionOfLand || !identifiedPest || !identifiedDisease || !inspectedBy || !inspectionResult || !suggestedReInspectionDate) {
+                return res.status(400).json({ message: "All fields are required" });
+            }
+
+            // Update the disease record
+            const updatedDiseaseRecord = await DiseaseRecords.findByIdAndUpdate(diseaseId, 
+                { dateOfInspection, sectionOfLand, identifiedPest, identifiedDisease, inspectedBy, inspectionResult, suggestedReInspectionDate },
+                { new: true, runValidators: true });
+
+        if (!updatedDiseaseRecord) {
+            return res.status(404).json({ message: "Disease not found" });
+        }
+        return res.status(200).json({ message: "Disease record updated successfully", data: updatedDiseaseRecord });
+    } catch (error) {
+        console.error('Error updating disease record:', error.message || error);
+        res.status(500).json({ message: "Server error", error: error.message || error });
+    }
+};
+
+// Delete a disease record
+exports.deleteDiseases = async (req, res) => {
+    try {
+        const { diseaseId } = req.params;
+
+        const deletedDiseaseRecord = await DiseaseRecords.findByIdAndDelete(diseaseId);
+        if (!deletedDiseaseRecord) {
+            return res.status(404).json({ message: "Disease not found" });
+        }
+        return res.status(200).json({ message: "Disease record deleted successfully" });
+    } catch (error) {
+        console.error('Error deleting disease record:', error.message || error);
+        res.status(500).json({ message: "Server error", error: error.message || error });
+    }
+};
