@@ -33,5 +33,4 @@ const ETaskSchema = new mongoose.Schema({
     enum: ['Not Started', 'In Progress', 'Completed'],
   },
 });
-
-module.exports = mongoose.model('ETask', ETaskSchema);
+module.exports = mongoose.model('ETasks', ETaskSchema);

@@ -64,10 +64,9 @@ const FinancialTransactionRoutes = require('./routes/SalesAndFinance/FinancialTr
 const InvoiceRoutes = require('./routes/SalesAndFinance/InvoiceRoutes.js');
 const SalesAnalyticsRoutes = require('./routes/SalesAndFinance/SalesAnalyticsRoutes.js');
 const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoutes.js');
-
+const attendanceRoute = require('./routes/Employee/AttendanceRoute.js');
 const salaryEmployeeRoutes = require("./routes/Employee/salaryEmployeeRoutes.js");
 const ETaskRoutes = require('./routes/Employee/ETaskRoutes.js');
-
 
 const app = express();
 
@@ -83,14 +82,15 @@ app.use(cors());
 connectDB();
 
 // Define routes
+//employee
 app.use('/api/employee', employeeRoutes);
 app.use("/api/salary-employees", salaryEmployeeRoutes);
-app.use("/api/crop-varieties", cropVarietiesRoutes);
-// app.use("/api/employee", employeeRoutes);
+app.use('/api/attendance', attendanceRoute);
 app.use('/api/taskRecords', ETaskRoutes);
 // app.use('/api/harvest', harvestRoutes);
 // app.use('/api/yield', yieldRoutes);
 
+app.use("/api/crop-varieties", cropVarietiesRoutes);
 // harvest
 app.use('/api/harvest', harvestRoutes);
 app.use('/api/yield', yieldRoutes);
