@@ -42,8 +42,8 @@ const SalesDashboard = () => {
             },
           ]}
         />
+        <NavigationButtons />
         <div className="p-4 bg-gray-100">
-        <NavigationButtons activePage="sales" />
           {/* Rectangle Icons */}
           <div className="grid grid-cols-2 gap-4">
             <div

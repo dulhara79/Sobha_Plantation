@@ -1,31 +1,39 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const FinancialTransactionSchema = new mongoose.Schema(
+const FinanceSchema = new mongoose.Schema(
   {
-    transactionType: {
+    date: {
       type: String,
-      required: [true, 'Transaction type is required'],
-      enum: {
-        values: ['Credit', 'Debit', 'Other'],
-        message: 'Transaction type must be Credit, Debit, or Other',
-      },
+      required: true,
+    },
+    type: {
+      type: String,
+      required: true,
+    },
+    subtype: {
+      type: String,
+      required: true,
     },
     amount: {
       type: Number,
-      required: [true, 'Amount is required'],
-      min: [0, 'Amount cannot be negative'],
+      required: true,
     },
-    date: {
-      type: Date,
-      required: [true, 'Date is required'],
-      default: Date.now,
+    description: {
+      type: String,
+      required: true,
     },
-    associatedEntity: {
-      type: mongoose.Schema.Types.Mixed, // Can reference different entities like Buyer, Supplier, etc.
-      required: [true, 'Associated entity is required'],
+    payer_payee: {
+      type: String,
+      required: true,
+    },
+    method: {
+      type: String,
+      required: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-module.exports = mongoose.model('FinancialTransaction', FinancialTransactionSchema);
+module.exports = mongoose.model("TransactionsRecord", FinanceSchema);
