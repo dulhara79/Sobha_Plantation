@@ -24,10 +24,14 @@ const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
  */
 const BuyerRoutes = require('./routes/buyerRoute');
 
+/**
+ * Sales and Finance Routes
+ */
 const FinancialTransactionRoutes = require('./routes/SalesAndFinance/financialTransactionRoutes.js');
 const InvoiceRoutes = require('./routes/SalesAndFinance/InvoiceRoutes.js');
 const SalesAnalyticsRoutes = require('./routes/SalesAndFinance/SalesAnalyticsRoutes.js');
 const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoutes.js');
+const valuationRoutes = require('./routes/SalesAndFinance/valuationRoutes.js');
 
 const salaryEmployeeRoutes = require("./routes/salaryEmployeeRoutes");
 const ETaskRoutes = require('./routes/ETaskRoutes');
@@ -70,6 +74,7 @@ app.use("/api/salesAndFinance/finance/transaction", FinancialTransactionRoutes);
 app.use("/api/salesAndFinance/finance/invoice", InvoiceRoutes);
 app.use("/api/salesAndFinance/sales/analytics", SalesAnalyticsRoutes);
 app.use("/api/salesAndFinance/sales/tracking", SalesTrackingRoutes);
+app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
 
 /**
  * buyer
