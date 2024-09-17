@@ -62,25 +62,47 @@ import YieldBarChart from './pages/Harvest/YieldBarChart.jsx';
 import YieldOptionsPage from './pages/Harvest/YieldOptionsPage.jsx';
 
 // crop care (diseases)
-// import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
-// import CoconutInspections from "./pages/Diseases/CoconutInspections.jsx";
-// import IntercropInspections from "./pages/Diseases/IntercropInspections.jsx";
-// import AddCoconutDiseases from "./pages/Diseases/AddCoconutDiseases.jsx";
-// import AddCropsDiseases from "./pages/Diseases/AddCropsDiseases.jsx";
-// import CoconutTreatments from "./pages/Diseases/CoconutTreatments.jsx";
-// import IntercropTreatments from "./pages/Diseases/IntercropTreatments.jsx";
-// import CoconutPests from "./pages/Diseases/CoconutPests.jsx";
-// import RegularMaintenance from "./pages/Diseases/RegularMaintenance.jsx";
-// import IntercropPests from "./pages/Diseases/IntercropPests.jsx";
-// import UserProfile from "./pages/Diseases/UserProfile.jsx";
-// import CoconutLeafMiner from "./pages/Diseases/CoconutLeafMiner.jsx";
-// import BlackBeetle from "./pages/Diseases/BlackBeetle.jsx";
-// import AddCoconutTreatments from "./pages/Diseases/AddCoconutTreatments.jsx";
-// import AddIntercropTreatments from "./pages/Diseases/AddIntercropTreatments.jsx";
-// import Insights from "./pages/Diseases/Insights.jsx";
-// import DetailedOverview from "./pages/Diseases/DetailedOverview.jsx";
-// import AddMaintenance from "./pages/Diseases/AddMaintenance.jsx";
-// import AddProfile from "./pages/Diseases/AddProfile.jsx";
+import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
+import CoconutInspections from "./pages/Diseases/CoconutInspections.jsx";
+import IntercropInspections from "./pages/Diseases/IntercropInspections.jsx";
+import AddCoconutDiseases from "./pages/Diseases/AddCoconutDiseases.jsx";
+import AddCropsDiseases from "./pages/Diseases/AddCropsDiseases.jsx";
+import CoconutTreatments from "./pages/Diseases/CoconutTreatments.jsx";
+import IntercropTreatments from "./pages/Diseases/IntercropTreatments.jsx";
+import CoconutPests from "./pages/Diseases/CoconutPests.jsx";
+import RegularMaintenance from "./pages/Diseases/RegularMaintenance.jsx";
+import IntercropPests from "./pages/Diseases/IntercropPests.jsx";
+import UserProfile from "./pages/Diseases/UserProfile.jsx";
+import CoconutLeafMiner from "./pages/Diseases/CoconutLeafMiner.jsx";
+import BlackBeetle from "./pages/Diseases/BlackBeetle.jsx";
+import AddCoconutTreatments from "./pages/Diseases/AddCoconutTreatments.jsx";
+import AddIntercropTreatments from "./pages/Diseases/AddIntercropTreatments.jsx";
+import Insights from "./pages/Diseases/Insights.jsx";
+import DetailedOverview from "./pages/Diseases/DetailedOverview.jsx";
+import AddMaintenance from "./pages/Diseases/AddMaintenance.jsx";
+import AddProfile from "./pages/Diseases/AddProfile.jsx";
+import CoconutMite from "./pages/Diseases/CoconutMite.jsx";
+import Termite from "./pages/Diseases/Termite.jsx";
+import RedWeevil from "./pages/Diseases/RedWeevil.jsx";
+import MammalianPests from "./pages/Diseases/MammalianPests.jsx";
+import BudRot from "./pages/Diseases/BudRot.jsx";
+import LeafSpot from "./pages/Diseases/LeafSpot.jsx";
+import StemBleeding from "./pages/Diseases/StemBleeding.jsx";
+import RootWilt from "./pages/Diseases/RootWilt.jsx";
+import LethalYellowing from "./pages/Diseases/LethalYellowing.jsx";
+import Ganoderma from "./pages/Diseases/Ganoderma.jsx";
+import FruitFlies from "./pages/Diseases/FruitFlies.jsx";
+import BananaWeevil from "./pages/Diseases/BananaWeevil.jsx";
+import PineappleMealybug from "./pages/Diseases/PineappleMealybug.jsx";
+import PapayaMealybug from "./pages/Diseases/PapayaMealybug.jsx";
+import Thrips from "./pages/Diseases/Thrips.jsx";
+import Aphids from "./pages/Diseases/Aphids.jsx";
+import Anthracnose from "./pages/Diseases/Anthracnose.jsx";
+import BacterialWilt from "./pages/Diseases/BacterialWilt.jsx";
+import BlackSigatoka from "./pages/Diseases/BlackSigatoka.jsx";
+import PapayaRingspot from "./pages/Diseases/PapayaRingspot.jsx";
+import FusariumWilt from "./pages/Diseases/FusariumWilt.jsx";
+import PowderyMildew from "./pages/Diseases/PowderyMildew.jsx";
 
 // product
 // import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
@@ -115,7 +137,6 @@ import Profile from './components/Profile';
 
 // import Test from "./pages/Test.jsx";
 import PageError from "./pages/PageError.jsx";
-
 
 export default function App() {
   return (
@@ -188,7 +209,6 @@ export default function App() {
       <Route path="/coconutPests" element={<CoconutPests />} />
       <Route path="/maintenance" element={<RegularMaintenance />} />
       <Route path="/intercropPests" element={<IntercropPests />} />
-      <Route path="/maintenance" element={<RegularMaintenance />} />
       <Route path="/UserProfile" element={<UserProfile />} />
       <Route path="/coconutLeafMiner" element={<CoconutLeafMiner />} />
       <Route path="/blackBeetle" element={<BlackBeetle />} />
@@ -197,7 +217,31 @@ export default function App() {
       <Route path="/insights" element={<Insights />} />
       <Route path="/detailedOverview" element={<DetailedOverview />} />
       <Route path="/addMaintenance" element={<AddMaintenance />} />
-      <Route path="/addProfile" element={<AddProfile />} /> */}
+
+      <Route path="/addProfile" element={<AddProfile />} />
+      <Route path="/coconutMite" element={<CoconutMite />} />
+      <Route path="/termite" element={<Termite />} />
+      <Route path="/redWeevil" element={<RedWeevil />} />
+      <Route path="/mammalianPests" element={<MammalianPests />} />
+      <Route path="/budRot" element={<BudRot />} />
+      <Route path="/leafSpot" element={<LeafSpot />} />
+      <Route path="/stemBleeding" element={<StemBleeding />} />
+      <Route path="/rootWilt" element={<RootWilt />} />
+      <Route path="/lethalYellowing" element={<LethalYellowing />} />
+      <Route path="/ganoderma" element={<Ganoderma />} />
+      <Route path="/fruitFlies" element={<FruitFlies />} />
+      <Route path="/bananaWeevil" element={<BananaWeevil />} />
+      <Route path="/pineappleMealybug" element={<PineappleMealybug />} />
+      <Route path="/papayaMealybug" element={<PapayaMealybug />} />
+      <Route path="/thrips" element={<Thrips />} />
+      <Route path="/aphids" element={<Aphids />} />
+      <Route path="/anthracnose" element={<Anthracnose />} />
+      <Route path="/bacterialWilt" element={<BacterialWilt />} />
+      <Route path="/blackSigatoka" element={<BlackSigatoka />} />
+      <Route path="/papayaRingspot" element={<PapayaRingspot />} />
+      <Route path="/fusariumWilt" element={<FusariumWilt />} />
+      <Route path="/powderyMildew" element={<PowderyMildew />} />
+
 
       {/* product */}
       {/* <Route path="/products/productdashboard" element={<ProductsDashboard />} />

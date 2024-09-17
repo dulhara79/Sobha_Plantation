@@ -9,8 +9,6 @@ const { Server } = require('socket.io');
 const employeeRoutes = require('./routes/Employee/employee.js');
 // const salesRoutes = require('./routes/sales');
 
-
-
 //inventory
 const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
 const maintenanceRoutes = require('./routes/Inventory/maintenance.js'); 

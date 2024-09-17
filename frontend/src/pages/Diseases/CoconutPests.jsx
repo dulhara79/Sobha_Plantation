@@ -12,19 +12,19 @@ const CoconutPests = () => {
   const pests = [
     { name: "Coconut Leaf Miner", route: "/coconutLeafMiner" },
     { name: "The Black Beetle", route: "/blackBeetle" },
-    { name: "Coconut Mites", route: "/C" },
-    { name: "Termites", route: "/D" },
-    { name: "The Red Weevil", route: "/E" },
-    { name: "Mammalian Pests", route: "/F" },
+    { name: "Coconut Mites", route: "/coconutMite" },
+    { name: "Termites", route: "/termite" },
+    { name: "The Red Weevil", route: "/redWeevil" },
+    { name: "Mammalian Pests", route: "/mammalianPests" },
   ];
 
   const diseases = [
-    { name: "Bud Rot", route: "/G" },
-    { name: "Leaf Spot", route: "/H" },
-    { name: "Stem Bleeding", route: "/I" },
-    { name: "Root Wilt", route: "/J" },
-    { name: "Lethal Yellowing", route: "/K" },
-    { name: "Ganoderma", route: "/L" },
+    { name: "Bud Rot", route: "/budRot" },
+    { name: "Leaf Spot", route: "/leafSpot" },
+    { name: "Stem Bleeding", route: "/stemBleeding" },
+    { name: "Root Wilt", route: "/rootWilt" },
+    { name: "Lethal Yellowing", route: "/lethalYellowing" },
+    { name: "Ganoderma", route: "/ganoderma" },
   ];
 
   return (
