@@ -163,5 +163,68 @@ header {
   color: #ffffff; /* Change text color on hover for better contrast */
 }
 
+/* Gallery item styles */
+/* Masonry layout */
+.masonry-layout {
+  column-count: 1;
+  column-gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .masonry-layout {
+    column-count: 2;
+  }
+}
+
+@media (min-width: 768px) {
+  .masonry-layout {
+    column-count: 3;
+  }
+}
+
+@media (min-width: 1024px) {
+  .masonry-layout {
+    column-count: 4;
+  }
+}
+
+/* Filter button styles */
+button {
+  cursor: pointer;
+}
+
+button.bg-blue-500 {
+  background-color: #3b82f6;
+}
+
+button.bg-gray-200 {
+  background-color: #e5e7eb;
+}
+
+button.text-white {
+  color: #ffffff;
+}
+
+button.text-gray-800 {
+  color: #1f2937;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.5);
+  }
+  to {
+    transform: scale(1);
+  }
+}
 
 /* products */
