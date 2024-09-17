@@ -30,7 +30,7 @@ const Sidebar = ({ className = "" }) => {
     { name: "Inventory", icon: <InventoryOutlined />, path: "/inventory/InventoryDashboard" },
     { name: "Employees", icon: <BadgeOutlined />, path: "/employee/dashboard" },
     { name: "Harvest", icon: <ForestOutlined />, path: "/harvest/harvestdashboard" },
-    { name: "Crop Care", icon: <BugReportOutlined />, path: "/crop-care/dashboard" },
+    { name: "Crop Care", icon: <BugReportOutlined />, path: "/diseases" },
     { name: "Products", icon: <ViewInAr />, path: "/products/productdashboard" },
     { name: "Field View", icon: <FilterVintageOutlined />, path: "/cultivationDashboard" },
     { name: "Buyers", icon: <Person />, path: "/buyer-registration" },

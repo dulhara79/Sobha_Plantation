@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import Swal from 'sweetalert2';  // Import SweetAlert
 
 const ETaskForm = () => {
-
     const [emp_id, setEmp_id] = useState('');
     const [task, setTask] = useState('');
     const [assign_date, setAssign_date] = useState('');
@@ -24,9 +24,13 @@ const ETaskForm = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get('https://Sobha_Plantation-backend.vercel.app/employees')
+        axios.get('http://localhost:5000/api/employee')
             .then(response => {
-                setEmployees(response.data);
+                const formattedEmployees = response.data.map(employee => ({
+                    id: employee._id,
+                    name: `${employee.firstName} ${employee.lastName}`
+                }));
+                setEmployees(formattedEmployees);
             })
             .catch(error => {
                 console.error('Error fetching employees:', error);
@@ -67,31 +71,44 @@ const ETaskForm = () => {
         return valid;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (validateForm()) {
-            setIsSubmitting(true);
-            const data = {
-                emp_id,
-                task,
-                assign_date,
-                due_date,
-                task_des,
-                task_status,
-            };
-            axios
-                .post('https://Sobha_Plantation-backend.vercel.app/taskRecords', data)
-                .then(() => {
-                    enqueueSnackbar('Record Created successfully', { variant: 'success' });
-                    navigate('/employees/tasks', { state: { highlighted: true } });
-                })
-                .catch((error) => {
-                    enqueueSnackbar('Error creating record', { variant: 'error' });
-                    console.error(error);
-                })
-                .finally(() => {
-                    setIsSubmitting(false);
-                });
+
+        // SweetAlert confirmation
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to submit this form?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, submit it!",
+            cancelButtonText: "No, cancel!",
+        });
+
+        if (result.isConfirmed) {
+            if (validateForm()) {
+                setIsSubmitting(true);
+                const data = {
+                    emp_id,
+                    task,
+                    assign_date,
+                    due_date,
+                    task_des,
+                    task_status,
+                };
+                axios
+                    .post('http://localhost:5000/api/taskRecords', data)
+                    .then(() => {
+                        enqueueSnackbar('Record Created successfully', { variant: 'success' });
+                        navigate('/employees/tasks', { state: { highlighted: true } });
+                    })
+                    .catch((error) => {
+                        enqueueSnackbar('Error creating record', { variant: 'error' });
+                        console.error(error);
+                    })
+                    .finally(() => {
+                        setIsSubmitting(false);
+                    });
+            }
         }
     };
 
@@ -103,23 +120,29 @@ const ETaskForm = () => {
         navigate('/employee/TaskListview');
     };
 
+    // Helper function to get today's date in YYYY-MM-DD format
+    const getTodayDate = () => {
+        const today = new Date();
+        return today.toISOString().split('T')[0];  // Returns date in 'YYYY-MM-DD' format
+    };
+
     return (
         <div className="pt-2">
-            <div className="flex justify-between items-center ml-80 mt-6">
+            <div className="flex items-center justify-between mt-6 ml-80">
                 <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                     Assign Tasks
                 </h1>
                 <button
                     onClick={handleViewAllTasks}
-                    className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mr-60"
+                    className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mr-60"
                 >
                     View All Tasks
                 </button>
             </div>
             <form className="flex flex-col items-center justify-center" onSubmit={handleSubmit}>
-                <div className="space-y-12 px-0 py-16 w-6/12 ml-1">
-                    <div className="border-b border-gray-900/10 pb-12">
-                        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                <div className="w-6/12 px-0 py-16 ml-1 space-y-12">
+                    <div className="pb-12 border-b border-gray-900/10">
+                        <div className="grid grid-cols-1 mt-10 gap-x-6 gap-y-8 sm:grid-cols-6">
                             <div className="col-span-full">
                                 <label className="block text-sm font-medium leading-6 text-gray-900">
                                     Employee Name
@@ -134,7 +157,7 @@ const ETaskForm = () => {
                                     >
                                         <option value="">Select an employee</option>
                                         {employees.map((employee) => (
-                                            <option key={employee._id} value={employee._id}>
+                                            <option key={employee.id} value={employee.id}>
                                                 {employee.name}
                                             </option>
                                         ))}
@@ -154,7 +177,7 @@ const ETaskForm = () => {
                                         className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${errors.task ? 'border-red-500' : ''}`}
                                         required
                                     />
-                                    {errors.task && <p className="text-red-500 text-sm">{errors.task}</p>}
+                                    {errors.task && <p className="text-sm text-red-500">{errors.task}</p>}
                                 </div>
                             </div>
                             <div className="col-span-full">
@@ -166,6 +189,7 @@ const ETaskForm = () => {
                                         type="date"
                                         name="assign_date"
                                         value={assign_date}
+                                        min={getTodayDate()}  // Set minimum date to today
                                         onChange={(e) => setAssign_date(e.target.value)}
                                         className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${errors.assign_date ? 'border-red-500' : ''}`}
                                         required
@@ -181,11 +205,12 @@ const ETaskForm = () => {
                                         type="date"
                                         name="due_date"
                                         value={due_date}
+                                        min={assign_date || getTodayDate()}  // Set minimum date to assign_date or today
                                         onChange={(e) => setDue_date(e.target.value)}
                                         className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${errors.due_date ? 'border-red-500' : ''}`}
                                         required
                                     />
-                                    {errors.due_date && <p className="text-red-500 text-sm">{errors.due_date}</p>}
+                                    {errors.due_date && <p className="text-sm text-red-500">{errors.due_date}</p>}
                                 </div>
                             </div>
                             <div className="col-span-full">
@@ -194,55 +219,52 @@ const ETaskForm = () => {
                                 </label>
                                 <div className="mt-2">
                                     <textarea
-                                        id="task_des"
                                         name="task_des"
                                         value={task_des}
                                         onChange={(e) => setTask_des(e.target.value)}
-                                        rows={3}
-                                        className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6 ${errors.task_des ? 'border-red-500' : ''}`}
+                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        rows="4"
                                         required
-                                    />
-                                    {errors.task_des && <p className="text-red-500 text-sm">{errors.task_des}</p>}
+                                    ></textarea>
                                 </div>
                             </div>
                             <div className="col-span-full">
                                 <label className="block text-sm font-medium leading-6 text-gray-900">
-                                    Status
+                                    Task Status
                                 </label>
-                                <select
-                                    required
-                                    className={`w-full p-2 border rounded mb-4 ${errors.task_status ? 'border-red-500' : ''}`}
-                                    name="task_status"
-                                    value={task_status}
-                                    onChange={(e) => setTask_status(e.target.value)}
-                                >
-                                    <option value="">Select status</option>
-                                    <option value="pending">Pending</option>
-                                    <option value="inprogress">In progress</option>
-                                    <option value="completed">Completed</option>
-                                    <option value="onhold">On hold</option>
-                                    <option value="cancelled">Cancelled</option>
-                                </select>
-                                {errors.task_status && <p className="text-red-500 text-sm">{errors.task_status}</p>}
+                                <div className="mt-2">
+                                    <select
+                                        name="task_status"
+                                        value={task_status}
+                                        onChange={(e) => setTask_status(e.target.value)}
+                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                        required
+                                    >
+                                        <option value="">Select status</option>
+                                        <option value="Not Started">Not Started</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Completed">Completed</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div className="mt-6 flex items-center justify-end gap-x-6">
-                        <button
-                            type="submit"
-                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                            disabled={isSubmitting || Object.values(errors).some(error => error)}
-                        >
-                            Assign Task
-                        </button>
-                        <button
-                            type="button"
-                            className="text-sm font-semibold leading-6 text-gray-900"
-                            onClick={handleCancel}
-                        >
-                            Cancel
-                        </button>
-                    </div>
+                </div>
+                <div className="flex items-center justify-center mt-6 gap-x-6">
+                    <button
+                        type="submit"
+                        className="px-3 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? 'Submitting...' : 'Submit'}
+                    </button>
+                    <button
+                        type="button"
+                        className="px-3 py-2 text-sm font-semibold text-gray-900 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                        onClick={handleCancel}
+                    >
+                        Cancel
+                    </button>
                 </div>
             </form>
         </div>

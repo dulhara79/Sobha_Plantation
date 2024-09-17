@@ -1,8 +1,8 @@
-import React from 'react';
-import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
-import axios from 'axios';
-import moment from 'moment';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { Form, Input, DatePicker, Select, Button, notification, Row, Col } from 'antd';
+import moment from 'moment';
 
 const { Option } = Select;
 
@@ -10,28 +10,28 @@ const AddInspectionReport = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  // Function to disable past dates
+  // Function to disable past dates but allow today
   const disablePastDates = (current) => {
     return current && current < moment().startOf('day');
   };
 
   // Function to validate inspector name
   const validateInspectorName = (_, value) => {
-    if (!value || value.trim() === '') {
-      return Promise.reject(new Error('Inspector Name is required'));
+    if (!value) {
+      return Promise.reject(new Error('Please enter the inspector name'));
+    }
+    if (!/^[A-Z][a-z\s]*$/.test(value)) {
+      return Promise.reject(new Error('Inspector name must start with an uppercase letter and only contain lowercase letters and spaces after the first letter'));
     }
     return Promise.resolve();
   };
 
   const handleSubmit = async (values) => {
     try {
-      // Convert inspectionDate to ISO string
       const payload = {
         ...values,
-        inspectionDate: values.inspectionDate ? moment(values.inspectionDate).toISOString() : null,
+        inspectionDate: values.inspectionDate ? values.inspectionDate.toISOString() : null,
       };
-
-      // Send POST request to the API
       await axios.post('http://localhost:5000/api/quality-control', payload);
       notification.success({
         message: 'Success',
@@ -40,19 +40,22 @@ const AddInspectionReport = () => {
       form.resetFields();
       navigate('/products/quality-control');
     } catch (error) {
-      // Log detailed error information
-      console.error('Failed to add inspection report:', error.response?.data || error.message);
+      console.error('Error adding inspection report:', error);
       notification.error({
         message: 'Error',
-        description: `Failed to add inspection report. ${error.response?.data?.message || 'Please try again.'}`,
+        description: 'Failed to add inspection report',
       });
     }
+  };
+
+  const handleCancel = () => {
+    navigate('/products/quality-control');
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="mb-6 text-2xl font-bold text-center">Add Inspection Report</h2>
+        <h2 className="mb-6 text-2xl font-bold text-center" style={{ color: '#1D6660' }}>Add Inspection Report</h2>
         <Form
           form={form}
           onFinish={handleSubmit}
@@ -63,7 +66,7 @@ const AddInspectionReport = () => {
             name="productType"
             rules={[{ required: true, message: 'Please select a product type!' }]}
           >
-            <Select placeholder="Select a product type">
+            <Select placeholder="Select a product type" style={{ width: '100%' }}>
               <Option value="coconut-oil">Coconut Oil</Option>
               <Option value="coconut-water">Coconut Water</Option>
               <Option value="coconut-milk">Coconut Milk</Option>
@@ -73,44 +76,58 @@ const AddInspectionReport = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            label="Inspection Date"
-            name="inspectionDate"
-            rules={[{ required: true, message: 'Please select the inspection date!' }]}
-          >
-            <DatePicker
-              format="YYYY-MM-DD"
-              disabledDate={disablePastDates}
-            />
-          </Form.Item>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="inspectionDate"
+                label="Inspection Date"
+                rules={[{ required: true, message: 'Please select the inspection date!' }]}
+              >
+                <DatePicker
+                  format="YYYY-MM-DD"
+                  disabledDate={disablePastDates}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item
+                name="status"
+                label="Status"
+                rules={[{ required: true, message: 'Please select the status!' }]}
+              >
+                <Select placeholder="Select status" style={{ width: '100%' }}>
+                  <Option value="Passed">Pass</Option>
+                  <Option value="Failed">Fail</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item
-            label="Inspector Name"
+            label="Inspector Name (Mr/Ms)"
             name="inspectorName"
             rules={[
               { required: true, message: 'Please enter the inspector name!' },
               { validator: validateInspectorName },
             ]}
           >
-            <Input placeholder="Enter inspector name" />
-          </Form.Item>
-
-          <Form.Item
-            label="Status"
-            name="status"
-            rules={[{ required: true, message: 'Please select the status!' }]}
-          >
-            <Select placeholder="Select status">
-              <Option value="Passed">Passed</Option>
-              <Option value="Failed">Failed</Option>
-              {/* Add more status options as needed */}
-            </Select>
+            <Input 
+              placeholder="Enter inspector name" 
+              style={{ width: '100%' }}
+            />
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              Add Report
-            </Button>
+            <div className="flex justify-between">
+              <Button type="primary" htmlType="submit" style={{ width: '48%', backgroundColor: '#1D6660', borderColor: '#1D6660' }}>
+                Add Report
+              </Button>
+              <Button type="default" onClick={handleCancel} style={{ width: '48%' }}>
+                Cancel
+              </Button>
+            </div>
           </Form.Item>
         </Form>
       </div>

@@ -1,78 +1,33 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-// Define a schema for harvest records
-const harvestrecordsSchema = mongoose.Schema(
-  {
-    id: {
-      type: String,
-      required: [true, "ID is required."],
-      unique: true,
-      trim: true,
-    },
+const yieldSchema = new mongoose.Schema({
     harvestdate: {
-      type: Date,
-      required: [true, "Harvest date is required."],
-      validate: {
-        validator: function (value) {
-          // Current date
-          const today = new Date();
-          // Check if the date is in the future
-          if (value > today) {
-            return false;
-          }
-          // Check if the date is within the last 10 years
-          const tenYearsAgo = new Date(today.getFullYear() - 10, today.getMonth(), today.getDate());
-          if (value < tenYearsAgo) {
-            return false;
-          }
-          return true;
-        },
-        message: "Harvest date must be in the past and within the last 10 years.",
-      },
+        type: Date,
+        required: true,
     },
     cropType: {
-      type: String,
-      required: [true, "Crop type is required."],
-      enum: {
-        values: ["Papaya", "Banana", "Coconut", "Pepper"],
-        message: "{VALUE} is not a valid crop type.",
-      },
-    },
-    ageofYieldDate: {
-      type: Number,
-      required: [true, "Age of yield date is required."],
-      min: [0, "Age of yield date must be at least 0."],
+        type: String,
+        required: true,
     },
     quantity: {
-      type: Number,
-      required: [true, "Quantity is required."],
-      min: [0, "Quantity must be at least 0."],
-    },
-    wayPicked: {
-      type: String,
-      required: [true, "Way of picking is required."],
-      enum: {
-        values: ["manual", "mechanisms"],
-        message: "{VALUE} is not a valid way of picking.",
-      },
+        type: Number,
+        required: true,
     },
     treesPicked: {
-      type: Number,
-      required: [true, "Number of trees picked is required."],
-      min: [0, "Trees picked must be at least 0."],
+        type: Number,
+        required: true,
     },
     storageLocation: {
-      type: String,
-      required: [true, "Storage location is required."],
-      trim: true,
-      minlength: [3, "Storage location must be at least 3 characters long."],
-      maxlength: [100, "Storage location must be at most 100 characters long."],
+        type: String,
+        required: true,
     },
-  },
-  {
-    timestamps: true,
-  }
-);
+    // Optional: Remove if not needed
+     id: {
+       type: mongoose.Schema.Types.ObjectId,
+       default: () => new mongoose.Types.ObjectId(), // Generates a new ObjectId if 'id' is needed
+       unique: true, // Ensure unique index if needed
+       sparse: true  // Allows null values if unique index is still desired
+    }
+});
 
-// Export the model
-module.exports = mongoose.model("harvestrecords", harvestrecordsSchema);
+module.exports = mongoose.model('YieldRecords', yieldSchema);
