@@ -53,6 +53,8 @@ const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
 /**
  * buyer
  */
+// const BuyerRoutes = require('./routes/buyerRoute');
+
 const BuyerRoutes = require('./routes/buyerRoute');
 
 /**
@@ -134,6 +136,8 @@ app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
 /**
  * buyer
  */
+// app.use('/api/buyer', BuyerRoutes);
+
 app.use('/api/buyer', BuyerRoutes);
 
 // Socket.IO setup
