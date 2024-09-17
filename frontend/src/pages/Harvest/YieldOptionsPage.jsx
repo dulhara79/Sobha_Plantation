@@ -1,17 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
-import { Bar } from 'react-chartjs-2';
-import 'chart.js/auto';
-import { useNavigate } from 'react-router-dom';
+import React, { useCallback } from "react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
-import ArrowBack from '@mui/icons-material/ArrowBack'; // Adjust the import based on your icon setup
+import { useNavigate } from "react-router-dom";
+import { ArrowBack } from "@mui/icons-material";
+import "../../index.css";
 
-const YieldBarChartPage = () => {
-  const [yieldData, setYieldData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
+const ScheduleOptionsPage = () => {
   const navigate = useNavigate();
 
   const onHomeClick = useCallback(() => {
@@ -34,54 +28,23 @@ const YieldBarChartPage = () => {
     navigate("/harvest/compliancechecklist");
   }, [navigate]);
 
-  useEffect(() => {
-    const fetchYieldData = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/yield'); // Update the endpoint as needed
-        console.log('API response:', response.data);
-        setYieldData(response.data.data); // Ensure this matches your API response structure
-      } catch (err) {
-        console.error('Error fetching yield data:', err);
-        setError(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const handleAddYieldRecord = useCallback(() => {
+    navigate('/yield/addrecords'); // Adjust the route according to your routing setup
+  }, [navigate]);
 
-    fetchYieldData();
-  }, []);
+  const handleReviewYield = useCallback(() => {
+    navigate('/harvest/yield'); // Adjust the route according to your routing setup
+  }, [navigate]);
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>Error loading yield data: {error.message}</p>;
-  }
-
-  if (!yieldData || yieldData.length === 0) {
-    return <p>No yield data available.</p>;
-  }
-
-  // Preparing data for the bar chart
-  const barData = {
-    labels: yieldData.map((record) => record.cropType),
-    datasets: [
-      {
-        label: 'Yield Quantity',
-        data: yieldData.map((record) => record.quantity),
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1,
-      },
-    ],
-  };
+  const handleAnalysis = useCallback(() => {
+    navigate('/yield-bar-chart'); // Ensure this route matches your routing setup
+  }, [navigate]);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Header />
       <div className="flex flex-1">
-        <Sidebar/>
+        <Sidebar />
         <div className="ml-[300px] pt-3 flex-1">
           <nav className="p-4 mb-5">
             {/* Navigation Buttons */}
@@ -126,14 +89,48 @@ const YieldBarChartPage = () => {
               </div>
             </div>
           </nav>
-            <h1 className="text-5xl font-bold mb-6 text-center">Yield Bar Chart</h1>
-            <div style={{ width: '1000px', height: '500px', margin: '0 auto' }}>
-              <Bar data={barData} />
+
+          <div className="flex flex-col items-center justify-center flex-1 p-1 bg-white rounded-lg shadow-lg">
+            <h1 className="text-5xl font-bold mb-6 text-center">Manage Yield Records</h1>
+
+            <div className="flex flex-col items-center space-y-4 p-4 bg-gray-50 rounded-lg shadow-1xl">
+              {/* First row with two buttons */}
+              <div className="flex space-x-4">
+                <button
+                  onClick={handleAddYieldRecord}
+                  className="bg-green-500 text-white py-4 px-6 rounded-lg transition-transform duration-300 ease-in-out transform hover:scale-105 flex flex-col items-center justify-center"
+                  style={{ width: '500px', height: '220px', fontSize: '24px', boxShadow: '0 6px 12px rgba(0, 0, 0, 0.7)' }}
+                >
+                  <span style={{ fontSize: '4rem' }}>➕</span>
+                  <span className="mt-2 text-xl">Add Yield Record</span>
+                </button>
+                <button
+                  onClick={handleReviewYield}
+                  className="bg-green-500 text-white py-4 px-6 rounded-lg transition-transform duration-300 ease-in-out transform hover:scale-105 flex flex-col items-center justify-center"
+                  style={{ width: '500px', height: '220px', fontSize: '24px', boxShadow: '0 6px 12px rgba(0, 0, 0, 0.7)' }}
+                >
+                  <span style={{ fontSize: '4rem' }}>📋</span>
+                  <span className="mt-2 text-xl">Review Yield</span>
+                </button>
+              </div>
+
+              {/* Second row with one button */}
+              <div className="flex justify-center mt-6">
+                <button
+                  onClick={handleAnalysis}
+                  className="bg-green-500 text-white py-4 px-6 rounded-lg transition-transform duration-300 ease-in-out transform hover:scale-105 flex flex-col items-center justify-center"
+                  style={{ width: '500px', height: '220px', fontSize: '24px', boxShadow: '0 6px 12px rgba(0, 0, 0, 0.7)' }}
+                >
+                  <span style={{ fontSize: '4rem' }}>📊</span>
+                  <span className="mt-2 text-xl">Analysis</span>
+                </button>
+              </div>
             </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default YieldBarChartPage;
+export default ScheduleOptionsPage;

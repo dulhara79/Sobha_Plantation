@@ -1,3 +1,4 @@
+
 require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const cors = require("cors");
@@ -9,8 +10,7 @@ const { Server } = require('socket.io');
 const employeeRoutes = require('./routes/Employee/employee.js');
 // const salesRoutes = require('./routes/sales');
 
-const yieldRoutes = require('./routes/Harvest/yield');
-const harvestRoutes = require('./routes/Harvest/harvest');
+
 
 //inventory
 const fertilizerRoutes = require('./routes/Inventory/fertilizers.js');
@@ -157,3 +157,4 @@ const PORT = process.env.PORT || 8090;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
