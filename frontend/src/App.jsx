@@ -103,6 +103,7 @@ import BlackSigatoka from "./pages/Diseases/BlackSigatoka.jsx";
 import PapayaRingspot from "./pages/Diseases/PapayaRingspot.jsx";
 import FusariumWilt from "./pages/Diseases/FusariumWilt.jsx";
 import PowderyMildew from "./pages/Diseases/PowderyMildew.jsx";
+import UpdateCoconutDiseases from "./pages/Diseases/UpdateCoconutDiseases.jsx";
 
 // product
 // import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
@@ -241,6 +242,7 @@ export default function App() {
       <Route path="/papayaRingspot" element={<PapayaRingspot />} />
       <Route path="/fusariumWilt" element={<FusariumWilt />} />
       <Route path="/powderyMildew" element={<PowderyMildew />} />
+      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />} />
 
 
       {/* product */}
