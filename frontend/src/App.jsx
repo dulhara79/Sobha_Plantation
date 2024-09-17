@@ -136,7 +136,6 @@ import BuyerTable from "./pages/BuyerTable.jsx";
 import Profile from './components/Profile';
 
 
-// import Test from "./pages/Test.jsx";
 import PageError from "./pages/PageError.jsx";
 
 export default function App() {
@@ -154,6 +153,7 @@ export default function App() {
       <Route path="/salesAndFinance/sales/analytics" element={<SalesAnalyticsPage />} />
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
       <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} />
+      <Route path="/salesAndFinance/finance/transaction-update/:id" element={<UpdateTransactionPage />} />
       <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
       <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} /> */}
 
@@ -276,7 +276,7 @@ export default function App() {
       <Route path="/profile" element={<Profile />} />
 
       {/* page not found & error page */}
-      {/* <Route path="/test" element={<Test />} /> */}
+      <Route path="/test" element={<Test />} />
 
       <Route path="*" element={<PageError />} />
     </Routes>
