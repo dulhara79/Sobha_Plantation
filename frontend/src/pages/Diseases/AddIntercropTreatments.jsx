@@ -5,7 +5,7 @@ import { HomeOutlined, LeftOutlined } from "@ant-design/icons";
 import { Breadcrumb, Button, Input, DatePicker, Form } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
-import { post } from "../../api/api";
+import axios from "axios";
 
 const AddIntercropTreatments = () => {
   const [form] = Form.useForm();
