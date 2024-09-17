@@ -365,7 +365,7 @@ const getImageDataURL = (url) => {
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button 
                 type="primary" 
-                style={{ marginRight: 8 }} 
+                style={{ marginBottom: '24px', backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }} 
                 onClick={generatePDF}
                 
               >
