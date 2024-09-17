@@ -1,14 +1,13 @@
-
 const mongoose = require('mongoose');
 
-const fertilizerSchema = new mongoose.Schema({
+const maintenanceSchema = new mongoose.Schema({
 
-    addeddate: {
+    reffereddate: {
         type: Date,
         required: true,
         
     },
-    fertilizertype: {
+    eqname: {
         type: String,
         required: true,
       
@@ -18,17 +17,12 @@ const fertilizerSchema = new mongoose.Schema({
         required: true,
      
     },
-    unit: {
+    referredlocation: {
         type: String,
         required: true,
       
     },
-    storagelocation: {
-        type: String,
-        required: true,
-      
-    },
-    expireddate: {
+    receiveddate: {
         type: Date,
         required: true,
        
@@ -48,4 +42,4 @@ const fertilizerSchema = new mongoose.Schema({
 });
 
 // Export the model with a singular name
-module.exports = mongoose.model('FertilizerRecords', fertilizerSchema);
+module.exports = mongoose.model('MaintenanceRecords', maintenanceSchema);

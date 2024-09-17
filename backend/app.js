@@ -1,4 +1,3 @@
-
 require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const cors = require("cors");
@@ -13,8 +12,10 @@ const employeeRoutes = require('./routes/Employee/employee.js');
 
 
 //inventory
-const fertilizerRoutes = require('./routes/Inventory/fertilizers.js');
-// const maintenanceRoutes = require('./routes/Inventory/maintenanceRoute.js');
+const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
+const maintenanceRoutes = require('./routes/Inventory/maintenance.js'); 
+const equipmentRoutes = require('./routes/Inventory/equipments.js'); 
+const requestRoutes = require('./routes/Inventory/requests.js'); 
  
 
 
@@ -103,8 +104,9 @@ app.use('/api/labeling', labelingRoute);
 
 //inventory
 app.use('/api/fertilizers', fertilizerRoutes);
-//app.use('/api/maintenance', maintenanceRoutes);
-//app.use('/api/inventoryRecords', InventoryRecordRoutes);
+app.use('/api/maintenance', maintenanceRoutes);
+app.use('/api/equipments', equipmentRoutes);
+app.use('/api/requests', requestRoutes);
 
 /**
 * crop
@@ -157,4 +159,3 @@ const PORT = process.env.PORT || 8090;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
@@ -26,6 +25,15 @@ import Dashboard from "./pages/Dashboard.jsx";
  import EditFertilizerRecord from "./pages/Inventory/EditFertilizerRecord.jsx";
  import AddFertilizerRecord from "./pages/Inventory/AddFertilizerRecord.jsx";
  import InventoryDashboard from "./pages/Inventory/InventoryDashboard.jsx";
+ import MaintenanceRecords from "./pages/Inventory/MaintenanceRecords.jsx";
+ import EditMaintenanceRecord from "./pages/Inventory/EditMaintenanceRecord.jsx";
+ import AddMaintenanceRecord from "./pages/Inventory/AddMaintenanceRecord.jsx";
+ import EquipmentRecords from "./pages/Inventory/EquipmentRecords.jsx";
+ import EditEquipmentRecord from "./pages/Inventory/EditEquipmentRecord.jsx";
+ import AddEquipmentRecord from "./pages/Inventory/AddEquipmentRecord.jsx";
+ import RequestPaymentRecords from "./pages/Inventory/RequestPaymentRecords.jsx";
+ import AddRequestPaymentRecord from "./pages/Inventory/AddRequestPaymentRecord.jsx";
+ import EditRequestPaymentRecord from "./pages/Inventory/EditRequestPaymentRecord.jsx";
 
 // employee
 // import Edashboard from "./pages/employee/Edashboard.jsx";
@@ -128,10 +136,19 @@ export default function App() {
       <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} /> */}
 
       {/* inventory */}
-    <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} />
+     <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} />
     <Route path="/Inventory/EditFertilizerRecords/:id" element={<EditFertilizerRecord/>} />
     <Route path="/Inventory/AddFertilizerRecord" element={<AddFertilizerRecord/>} />
     <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>} />
+    <Route path="/Inventory/MaintenanceRecords" element={<MaintenanceRecords/>} />
+    <Route path="/Inventory/EditMaintenanceRecord/:id" element={<EditMaintenanceRecord/>} />
+    <Route path="/Inventory/AddMaintenanceRecord" element={<AddMaintenanceRecord/>} />
+    <Route path="/Inventory/EquipmentRecords" element={<EquipmentRecords/>} />
+    <Route path="/Inventory/EditEquipmentRecords/:id" element={<EditEquipmentRecord/>} />
+    <Route path="/Inventory/AddEquipmentRecord" element={<AddEquipmentRecord/>} />
+    <Route path="/Inventory/RequestPaymentRecords" element={<RequestPaymentRecords/>} />
+    <Route path="/Inventory/AddRequestPaymentRecord" element={<AddRequestPaymentRecord/>} />
+    <Route path="/Inventory/EditRequestPaymentRecords/:id" element={<EditRequestPaymentRecord/>} />
 
       {/* employee */}        
       {/* <Route path="/employee/dashboard" element={<Edashboard/>}/>

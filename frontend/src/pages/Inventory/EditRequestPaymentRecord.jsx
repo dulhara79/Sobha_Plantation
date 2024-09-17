@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
@@ -6,7 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 const { Option } = Select;
 
-const EditFertilizerRecord = () => {
+const EditRequestPaymentRecord = () => {
   const [form] = Form.useForm();
   const [record, setRecord] = useState(null);
   const navigate = useNavigate();
@@ -21,22 +22,22 @@ const EditFertilizerRecord = () => {
   useEffect(() => {
     const fetchRecord = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/fertilizers/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/requests/${id}`);
         const data = response.data;
         setRecord(data);
 
         // Convert dates to moment objects if they are valid
-        const addedDate = moment(data.addeddate);
-        const expiredDate = moment(data.expireddate);
+        const submittedDate = moment(data.submitteddate);
+       
 
-        if (addedDate.isValid() && expiredDate.isValid()) {
+        if (submittedDate.isValid()) {
           form.setFieldsValue({
             ...data,
-            addeddate: addedDate,
-            expireddate: expiredDate,
+            submitteddate: submittedDate,
+          
           });
         } else {
-          console.error('Invalid date format:', data.addeddate, data.expireddate);
+          console.error('Invalid date format:', data.submitteddate);
         }
       } catch (error) {
         console.error('Error fetching record:', error);
@@ -50,18 +51,18 @@ const EditFertilizerRecord = () => {
       // Prepare payload with the correct date format
       const payload = {
         ...values,
-        addeddate: values.addeddate ? moment(values.addeddate).toISOString() : null,
-        expireddate: values.expireddate ? moment(values.expireddate).toISOString() : null,
+        submitteddate: values.submitteddate ? moment(values.submitteddate).toISOString() : null,
+        
       };
 
       // Send PUT request to update the record
-      await axios.put(`http://localhost:5000/api/fertilizers/${id}`, payload);
+      await axios.put(`http://localhost:5000/api/requests/${id}`, payload);
 
       notification.success({
         message: 'Success',
         description: ' Record updated successfully!',
       });
-      navigate('/Inventory/FertilizerRecords'); // Redirect to the list page after successful update
+      navigate('/Inventory/RequestPaymentRecords'); // Redirect to the list page after successful update
     } catch (error) {
       console.error('Failed to update record:', error);
       notification.error({
@@ -74,29 +75,33 @@ const EditFertilizerRecord = () => {
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="mb-6 text-2xl font-bold text-center">Edit Fertilizer/AgroChemical Record</h2>
+        <h2 className="mb-6 text-2xl font-bold text-center">Edit Request Payment Records </h2>
         <Form
           form={form}
           onFinish={handleSubmit}
           layout="vertical"
         >
           <Form.Item
-            label="Added Date"
-            name="addeddate"
-            rules={[{ required: true, message: 'Please select the added date!' }]}
+            label="Section "
+            name="section"
+            rules={[{ required: true, message: 'Please select a section !' }]}
           >
-            <DatePicker
-              format="YYYY-MM-DD"
-              disabledDate={disablePastDates}
-            />
+               <Select placeholder="Select a section ">
+              <Option value="fertilizer">fertilizer</Option>
+              <Option value="equipment">equipment</Option>
+              <Option value="agro chemical">agro chemical</Option>
+        
+            
+            </Select>
           </Form.Item>
 
-          <Form.Item
-            label="Fertilizer/Agrochemical Name "
-            name="fertilizertype"
-            rules={[{ required: true, message: 'Please select a fertilizer/agrochemical type!' }]}
-          >
-            <Select placeholder="Select a fertilizer type">
+
+              <Form.Item
+              label="Item "
+              name="item"
+              rules={[{ required: true, message: 'Please select an item !' }]}
+>
+             <Select placeholder="Select an item " >
               <Option value="Coconut fertilizer">Coconut fertilizer</Option>
               <Option value="Banana fertilizer">Banana fertilizer</Option>
               <Option value="Pepper fertilizer">Pepper fertilizer</Option>
@@ -111,45 +116,41 @@ const EditFertilizerRecord = () => {
               <Option value="Alberts solution">Alberts solution</Option>
               <Option value="Crop Master solution">Crop Master solution</Option>
               <Option value="Oasis Thiram (thiuram disulfide) fungicide">Oasis Thiram (thiuram disulfide) fungicide</Option>
-              <Option value="weeGlyphosate weedicideicide">Glyphosate weedicide</Option>
+              <Option value="Glyphosate weedicide">Glyphosate weedicide</Option>
               <Option value="Rootone">Rootone</Option>
-            </Select>
+              { /*<Option value="Bush cutter">Bush cutter</Option>
+              <Option value="4L disel cans">4L disel cans</Option>
+              <Option value="Metal chemical sprayer">Metal chemical sprayer</Option>
+              <Option value="4hp diesel water pump">4hp diesel water pump</Option>
+              <Option value="Boots pairs">Boots pairs</Option>
+              <Option value="8hp petrol hand tractor">8hp petrol hand tractor</Option>
+              <Option value="1hp tube well pump">1hp tube well pump</Option> */}
+           </Select>
           </Form.Item>
 
+             <Form.Item
+                label="Amount"
+                name="amount"
+                rules={[{ required: true, message: 'Please enter the amount!' }]}
+            >
+             <Input placeholder="Enter amount"
+               type="number"
+            
+             />
+            </Form.Item>
+       
           <Form.Item
-            label="Quantity"
-            name="quantity"
-            rules={[{ required: true, message: 'Please enter the quantity!' }]}
+            label="Description"
+            name="description"
+            rules={[{ required: true, message: 'Please enter the description!' }]}
           >
-            <Input type="number" placeholder="Enter quantity" />
+            <Input placeholder="Enter description" />
           </Form.Item>
 
           <Form.Item
-            label="Unit"
-            name="unit"
-            rules={[{ required: true, message: 'Please select unit!' }]}
-          >
-            <Select placeholder="Select unit">
-              <Option value="l">l</Option>
-              <Option value="ml">ml</Option>
-              <Option value="kg">kg</Option>
-              <Option value="g">g</Option>
-   
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            label="Storage Location"
-            name="storagelocation"
-            rules={[{ required: true, message: 'Please enter the storage location!' }]}
-          >
-            <Input type="text" placeholder="Enter storage location" />
-          </Form.Item>
-
-          <Form.Item
-            label="Expired Date"
-            name="expireddate"
-            rules={[{ required: true, message: 'Please select the expired date!' }]}
+            label="submitted Date"
+            name="submitteddate"
+            rules={[{ required: true, message: 'Please select the submitted date!' }]}
           >
             <DatePicker
               format="YYYY-MM-DD"
@@ -163,9 +164,8 @@ const EditFertilizerRecord = () => {
             rules={[{ required: true, message: 'Please select status!' }]}
           >
             <Select placeholder="Select status">
-            <Option value="In Stock">In Stock</Option>
-              <Option value="Out Of Stock">Out Of Stock</Option>
-              <Option value="Expired">Expired</Option>
+              <Option value="Pending">Pending</Option>
+              <Option value="Paid">Paid</Option>        
    
             </Select>
           </Form.Item>
@@ -181,4 +181,5 @@ const EditFertilizerRecord = () => {
   );
 };
 
-export default EditFertilizerRecord;
+export default EditRequestPaymentRecord;
+

@@ -1,26 +1,25 @@
 const mongoose = require('mongoose');
-const FertilizerRecords = require('../../models/Inventory/fertilizers'); // Ensure this path is correct
+const MaintenanceRecords = require('../../models/Inventory/maintenance'); // Ensure this path is correct
 
 
-exports.createFertilizerRecords = async (req, res) => {
+exports.createMaintenanceRecords = async (req, res) => {
     try {
-        const { addeddate, fertilizertype, quantity, unit, storagelocation, expireddate, status } = req.body;
+        const { reffereddate,eqname,quantity,referredlocation,receiveddate,status } = req.body;
 
         // Validate required fields
-        if (!addeddate || !fertilizertype || !quantity || !unit || !storagelocation || !expireddate ||!status) {
+        if (!reffereddate || !eqname || !quantity || !referredlocation || !receiveddate || !status ) {
             return res.status(400).json({
-                message: 'Please provide all required fields: addeddate, fertilizertype, quantity, unit, storagelocation, expireddate, status',
+                message: 'Please provide all required fields: reffereddate,eqname,quantity,referredlocation,receiveddate,status',
             });
         }
 
         // Create a new yield record
-        const newRecord = new FertilizerRecords({
-            addeddate,
-            fertilizertype,
+        const newRecord = new MaintenanceRecords({
+            reffereddate,
+            eqname,
             quantity,
-            unit,
-            storagelocation,
-            expireddate,
+            referredlocation,
+            receiveddate,
             status
 
             // Ensure id field is either auto-generated or removed if not required
@@ -30,16 +29,16 @@ exports.createFertilizerRecords = async (req, res) => {
         const savedRecord = await newRecord.save();
         return res.status(201).json(savedRecord);
     } catch (error) {
-        console.error('Error creating record:', error);
-        res.status(500).json({ message: 'Failed to create record.', error: error.message });
+        console.error('Error creating  fertilizer record:', error);
+        res.status(500).json({ message: 'Failed to create maintenance record.', error: error.message });
     }
 };
 
 
 // Controller for getting all Yield Records
-exports.getAllFertilizerRecords = async (req, res) => {
+exports.getAllMaintenanceRecords = async (req, res) => {
     try {
-        const records = await FertilizerRecords.find({});
+        const records = await MaintenanceRecords.find({});
         return res.status(200).json({
             count: records.length,
             data: records,
@@ -51,7 +50,7 @@ exports.getAllFertilizerRecords = async (req, res) => {
 };
 
 // Controller for getting a single Yield Record by Id
-exports.getFertilizerRecordsById = async (req, res) => {
+exports.getMaintenanceRecordsById = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -60,7 +59,7 @@ exports.getFertilizerRecordsById = async (req, res) => {
             return res.status(400).json({ message: 'Invalid ID format.' });
         }
 
-        const record = await FertilizerRecords.findById(id);
+        const record = await MaintenanceRecords.findById(id);
 
         if (!record) {
             return res.status(404).json({ message: 'Record not found' });
@@ -74,10 +73,10 @@ exports.getFertilizerRecordsById = async (req, res) => {
 };
 
 // Controller for updating a Yield Record by Id
-exports.updateFertilizerRecords = async (req, res) => {
+exports.updateMaintenanceRecords = async (req, res) => {
     try {
         const { id } = req.params;
-        const { addeddate, fertilizertype, quantity, unit, storagelocation, expireddate, status } = req.body;
+        const { reffereddate,eqname,quantity,referredlocation,receiveddate,status } = req.body;
 
         // Check for a valid MongoDB ObjectId
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -85,26 +84,26 @@ exports.updateFertilizerRecords = async (req, res) => {
         }
 
         // Ensure all required fields are present
-        if (!addeddate || !fertilizertype || !quantity || !unit || !storagelocation || !expireddate ||!status ) {
+        if (!reffereddate || !eqname || !quantity || !referredlocation || !receiveddate || !status ) {
             return res.status(400).json({
-                message: 'Please provide all required fields: addeddate, fertilizertype, quantity, unit, storagelocation, expireddate, status ',
+                message: 'Please provide all required fields: reffereddate,eqname,quantity,referredlocation,receiveddate,status ',
             });
         }
 
         // Update the record
-        const result = await FertilizerRecords.findByIdAndUpdate(
+        const result = await MaintenanceRecords.findByIdAndUpdate(
             id,
-            { addeddate, fertilizertype, quantity, unit, storagelocation, expireddate, status },
+            { reffereddate,eqname,quantity,referredlocation,receiveddate,status },
             { new: true, runValidators: true }
         );
 
         // Handle case where record is not found
         if (!result) {
-            return res.status(404).json({ message: 'Record not found' });
+            return res.status(404).json({ message: 'Maintenance Record not found' });
         }
 
         // Successfully updated the record
-        return res.status(200).json({ message: ' Record updated successfully', data: result });
+        return res.status(200).json({ message: 'Maintenance Record updated successfully', data: result });
     } catch (error) {
         console.error('Error updating record:', error);
         res.status(500).json({ message: 'Failed to update record.', error: error.message });
@@ -112,10 +111,10 @@ exports.updateFertilizerRecords = async (req, res) => {
 };
 
 // Controller for deleting a Yield Record by Id
-exports.deleteFertilizerRecords = async (req, res) => {
+exports.deleteMaintenanceRecords = async (req, res) => {
     try {
       const { id } = req.params; // Ensure this is correctly obtained
-      const deletedRecord = await FertilizerRecords.findByIdAndDelete(id);
+      const deletedRecord = await MaintenanceRecords.findByIdAndDelete(id);
   
       if (!deletedRecord) {
         return res.status(404).json({ message: 'Record not found' });
