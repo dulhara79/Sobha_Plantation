@@ -106,19 +106,20 @@ import PowderyMildew from "./pages/Diseases/PowderyMildew.jsx";
 import UpdateCoconutDiseases from "./pages/Diseases/UpdateCoconutDiseases.jsx";
 
 // product
-// import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
-// import ProductionScheduleOverview from "./pages/Products/ProductionScheduleOverview.jsx";
-// import QualityControl from "./pages/Products/QualityControl.jsx";
-// import AddSchedule from "./pages/Products/AddSchedule.jsx";
-// import EditSchedule from "./pages/Products/EditSchedule.jsx";
-// import AddInspectionReport from "./pages/Products/AddInspectionReport.jsx";
-// import EditInspectionReport from "./pages/Products/EditInspectionReport.jsx";
-// import PackagingLabeling from "./pages/Products/PackagingLabeling.jsx";
-// import Packaging from "./pages/Products/Packaging.jsx";
-// import Labeling from "./pages/Products/Labeling.jsx";
-// import EditPrice from "./pages/Products/EditPrice.jsx";
-// import AddLabeling from "./pages/Products/AddLabeling.jsx";
-// import EditLabeling from "./pages/Products/EditLabeling.jsx";
+import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
+import ProductionScheduleOverview from "./pages/Products/ProductionScheduleOverview.jsx";
+import QualityControl from "./pages/Products/QualityControl.jsx";
+import AddSchedule from "./pages/Products/AddSchedule.jsx";
+import EditSchedule from "./pages/Products/EditSchedule.jsx";
+import AddInspectionReport from "./pages/Products/AddInspectionReport.jsx";
+import EditInspectionReport from "./pages/Products/EditInspectionReport.jsx";
+import PackagingLabeling from "./pages/Products/PackagingLabeling.jsx";
+import Packaging from "./pages/Products/Packaging.jsx";
+import Labeling from "./pages/Products/Labeling.jsx";
+import EditPrice from "./pages/Products/EditPrice.jsx";
+import AddLabeling from "./pages/Products/AddLabeling.jsx";
+import EditLabeling from "./pages/Products/EditLabeling.jsx";
+import Gallery  from "./pages/Products/Gallery.jsx";
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
@@ -136,7 +137,6 @@ import BuyerTable from "./pages/BuyerTable.jsx";
 import Profile from './components/Profile';
 
 
-// import Test from "./pages/Test.jsx";
 import PageError from "./pages/PageError.jsx";
 
 export default function App() {
@@ -154,6 +154,7 @@ export default function App() {
       <Route path="/salesAndFinance/sales/analytics" element={<SalesAnalyticsPage />} />
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
       <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} />
+      <Route path="/salesAndFinance/finance/transaction-update/:id" element={<UpdateTransactionPage />} />
       <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
       <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} /> */}
 
@@ -200,7 +201,7 @@ export default function App() {
 
 
       {/* crop care */}
-      {/* <Route path="/diseases" element={<DiseasesDashboard />} />
+      <Route path="/diseases" element={<DiseasesDashboard />} />
       <Route path="/coconutInspections" element={<CoconutInspections />} />
       <Route path="/intercropInspections" element={<IntercropInspections />} />
       <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
@@ -242,7 +243,7 @@ export default function App() {
       <Route path="/papayaRingspot" element={<PapayaRingspot />} />
       <Route path="/fusariumWilt" element={<FusariumWilt />} />
       <Route path="/powderyMildew" element={<PowderyMildew />} />
-      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />} />
+      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />}
 
 
       {/* product */}
@@ -258,7 +259,8 @@ export default function App() {
       <Route path="/products/packaging-labeling/labeling" element={<Labeling />} />
       <Route path="/products/editPrice/:id" element={<EditPrice />} />
       <Route path="/products/addLabeling" element={<AddLabeling />} />
-      <Route path="/products/editLabeling/:id" element={<EditLabeling />} /> */}
+      <Route path="/products/editLabeling/:id" element={<EditLabeling />} />
+      <Route path="/products/gallery" element={<Gallery/>} />
 
       {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
@@ -276,7 +278,7 @@ export default function App() {
       <Route path="/profile" element={<Profile />} />
 
       {/* page not found & error page */}
-      {/* <Route path="/test" element={<Test />} /> */}
+      <Route path="/test" element={<Test />} />
 
       <Route path="*" element={<PageError />} />
     </Routes>
