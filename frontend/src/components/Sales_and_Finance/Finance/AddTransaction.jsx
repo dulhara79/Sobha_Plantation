@@ -1,181 +1,360 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { Button, Form, Input, Select, DatePicker, InputNumber, notification, Modal } from 'antd';
-import { useNavigate } from 'react-router-dom';
-import dayjs from 'dayjs';
-import { LoadingOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { SnackbarProvider, useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import { DatePicker } from "antd";
 
-const { Option } = Select;
-
-const AddTransactionPage = () => {
+export default function AddTransaction() {
+  const [date, setDate] = useState("");
+  const [type, setType] = useState("income");
+  const [subtype, setSubType] = useState("");
+  const [amount, setAmount] = useState("");
+  const [description, setDescription] = useState("");
+  const [payerPayee, setPayerPayee] = useState("");
+  const [method, setMethod] = useState("Cheque");
   const [loading, setLoading] = useState(false);
-  const [form] = Form.useForm();
+  const [products, setProducts] = useState([]);
+  const [productTypes, setProductTypes] = useState([]);
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
-  const validateField = (name, value) => {
-    const errors = {};
+  const today = new Date();
 
-    switch (name) {
-      case 'transactionType':
-        if (!value) {
-          errors[name] = 'Transaction type is required.';
-        }
-        break;
-      case 'amount':
-        if (!value || value <= 0) {
-          errors[name] = 'Amount must be a positive number.';
-        }
-        break;
-      case 'date':
-        if (!value) {
-          errors[name] = 'Transaction date is required.';
-        } else if (dayjs(value).isAfter(dayjs())) {
-          errors[name] = 'Transaction date cannot be in the future.';
-        }
-        break;
-      case 'entityModel':
-        if (!value) {
-          errors[name] = 'Entity model is required.';
-        }
-        break;
-      case 'transactionCategory':
-        if (!value) {
-          errors[name] = 'Transaction category is required.';
-        }
-        break;
-      case 'payeePayer':
-        if (!value) {
-          errors[name] = 'Payee/Payer is required.';
-        }
-        break;
-      default:
-        break;
+  const [validation, setValidation] = useState({
+    amount: true,
+  });
+
+  const handleSaveTransactionRecord = async (e) => {
+    e.preventDefault();
+
+    if (
+      !date ||
+      !type ||
+      !subtype ||
+      !amount ||
+      !description ||
+      !payerPayee ||
+      !method
+    ) {
+      enqueueSnackbar("Please fill in all fields.", { variant: "error" });
+      return;
     }
 
-    return errors;
+    if (!amount || amount <= 0 || amount > 10000000) {
+      enqueueSnackbar("Please enter a valid amount between 0 and 10 million.", {
+        variant: "error",
+      });
+      return;
+    }
+
+    if (!date || new Date(date) > new Date()) {
+      enqueueSnackbar("Please select a date on or before today.", {
+        variant: "error",
+      });
+      return;
+    }
+
+    if (!description || description.length > 300) {
+      enqueueSnackbar(
+        "Please enter a description with less than 300 characters.",
+        { variant: "error" }
+      );
+      return;
+    }
+
+    const data = {
+      date,
+      type,
+      subtype,
+      amount,
+      description,
+      payer_payee: payerPayee,
+      method,
+    };
+
+    setLoading(true);
+    try {
+      await axios.post(
+        "http://localhost:5000/api/salesAndFinance/finance/transaction/",
+        data
+      );
+      setLoading(false);
+      enqueueSnackbar("Transaction record has successfully saved.", {
+        variant: "success",
+      });
+      navigate("/salesAndFinance/finance/transaction-display");
+    } catch (error) {
+      setLoading(false);
+      enqueueSnackbar("Transaction record saving failed.", {
+        variant: "error",
+      });
+      console.error(error);
+      navigate("/salesAndFinance/finance/transaction-display");
+    }
   };
 
-  const onFinish = async (values) => {
-    Modal.confirm({
-      title: 'Confirm Transaction',
-      content: 'Are you sure you want to add this transaction?',
-      onOk: async () => {
-        setLoading(true);
-        try {
-          const response = await axios.post('http://localhost:5000/api/salesAndFinance/finance/transaction', values);
-
-          if (response.status === 201) {
-            notification.success({
-              message: 'Transaction Added',
-              description: 'The transaction was successfully added.',
-            });
-            navigate('/transactions');
-          } else {
-            throw new Error('Failed to add transaction');
-          }
-        } catch (error) {
-          notification.error({
-            message: 'Transaction Failed',
-            description: error.response ? error.response.data.message : error.message,
-          });
-        } finally {
-          setLoading(false);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/production");
+        const productData = response.data.data;
+        
+        console.log("Fetched productData:", productData);
+  
+        if (Array.isArray(productData)) {
+          setProducts(productData);
+          const types = productData.map((product) => product.productType);
+          setProductTypes([...new Set(types)]); 
+        } else {
+          console.error("Expected an array but received:", productData);
+          
+          setProductTypes([]);
         }
-      },
-    });
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+        
+        setProductTypes([]); 
+      }
+    };
+  
+    fetchProducts();
+  }, []);
+  
+  
+  const handleCancel = () => {
+    navigate(-1);
   };
 
-  const onValuesChange = (changedValues, allValues) => {
-    const newErrors = {};
-    Object.keys(changedValues).forEach((key) => {
-      const fieldErrors = validateField(key, changedValues[key]);
-      Object.assign(newErrors, fieldErrors);
-    });
+  const handleTypeChange = (e) => {
+    setType(e.target.value);
+    setSubType("Electricity Bill");
+  };
 
-    form.setFields(Object.keys(newErrors).map((key) => ({
-      name: key,
-      errors: newErrors[key] ? [newErrors[key]] : [],
-    })));
+  const validateAmount = (value) => {
+    const regex = /^(?=.+)(?:[1-9]\d*|0)?(?:\.\d+)?$/;
+    return regex.test(value) && value.trim() !== "";
+  };
+
+  const handleAmountChange = (event) => {
+    const { value } = event.target;
+    const filteredValue = value.replace(/[^0-9]/g, "");
+    setAmount(filteredValue);
+    setValidation({ ...validation, amount: validateAmount(filteredValue) });
+  };
+
+  const handlePayeeChange = (e) => {
+    const { value } = e.target;
+    const filteredValue = value.replace(/[^a-zA-Z  ]/g, "");
+    setPayerPayee(filteredValue);
   };
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      onFinish={onFinish}
-      onValuesChange={onValuesChange}
-    >
-      <Form.Item
-        label="Transaction Type"
-        name="transactionType"
-        rules={[{ required: true, message: 'Please select a transaction type!' }]}
-      >
-        <Select placeholder="Select transaction type">
-          <Option value="income">Income</Option>
-          <Option value="expense">Expense</Option>
-        </Select>
-      </Form.Item>
+    <SnackbarProvider>
+      <form className="flex flex-col items-center justify-center p-8 bg-white border border-gray-300 rounded-lg shadow-lg">
+        <div className="w-full space-y-6">
+          <h1 className="text-5xl font-bold text-center text-black mb-11">Add Transaction</h1>
+          <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-6">
+            <fieldset className="sm:col-span-4">
+              <legend className="text-base font-medium text-black">
+                Transaction Type
+              </legend>
+              <div className="flex gap-4 mt-4">
+                <div className="flex items-center gap-x-3">
+                  <input
+                    id="income"
+                    name="type"
+                    type="radio"
+                    value="income"
+                    checked={type === "income"}
+                    onChange={handleTypeChange}
+                    className="w-4 h-4 border-gray-300 text-lime-600 focus:ring-lime-600"
+                  />
+                  <label
+                    htmlFor="income"
+                    className="text-base font-medium text-gray-700"
+                  >
+                    Income
+                  </label>
+                </div>
+                <div className="flex items-center gap-x-3">
+                  <input
+                    id="expense"
+                    name="type"
+                    type="radio"
+                    value="expense"
+                    checked={type === "expense"}
+                    onChange={handleTypeChange}
+                    className="w-4 h-4 border-gray-300 text-lime-600 focus:ring-lime-600"
+                  />
+                  <label
+                    htmlFor="expense"
+                    className="text-base font-medium text-gray-700"
+                  >
+                    Expense
+                  </label>
+                </div>
+              </div>
+            </fieldset>
 
-      <Form.Item
-        label="Amount"
-        name="amount"
-        rules={[
-          { required: true, message: 'Please enter the amount!' },
-          { type: 'number', min: 1, message: 'Amount must be a positive number!' },
-        ]}
-      >
-        <InputNumber min={1} prefix="LKR " />
-      </Form.Item>
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="subtype"
+                className="block text-base font-medium text-gray-700"
+              >
+                Sub Type
+              </label>
+              <select
+                name="subtype"
+                onChange={(e) => setSubType(e.target.value)}
+                required
+                id="subtype"
+                className="block w-full h-8 p-2 mt-2 text-base text-black border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
+              >
+                {type === "income" ? (
+                  productTypes.length > 0 ? (
+                    productTypes.map((productType) => (
+                      <option key={productType} value={productType}>
+                        {productType}
+                      </option>
+                    ))
+                  ) : (
+                    <option>No products available</option>
+                  )
+                ) : (
+                  <>
+                    <option>Electricity Bill</option>
+                    <option>Water Bill</option>
+                    <option>Salary Payment</option>
+                    <option>Machine Purchase</option>
+                    <option>Transportation</option>
+                    <option>Land Purchase</option>
+                    <option>Other</option>
+                  </>
+                )}
+              </select>
+            </div>
 
-      <Form.Item
-        label="Transaction Date"
-        name="date"
-        rules={[
-          { required: true, message: 'Please select the transaction date!' },
-          { validator: (_, value) => 
-              value && dayjs(value).isAfter(dayjs())
-              ? Promise.reject(new Error('Transaction date cannot be in the future!'))
-              : Promise.resolve(),
-          },
-        ]}
-      >
-        <DatePicker />
-      </Form.Item>
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="date"
+                className="block text-base font-medium text-gray-700"
+              >
+                Date
+              </label>
+              <DatePicker
+                value={date ? moment(date) : null}
+                onChange={(date) => setDate(date ? date.toISOString() : "")}
+                id="date"
+                disabledDate={(current) =>
+                  current && current > moment().endOf("day")
+                }
+                required
+                className="block w-full mt-2 text-base text-black border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
+              />
+            </div>
 
-      <Form.Item
-        label="Entity Model"
-        name="entityModel"
-        rules={[{ required: true, message: 'Please select an entity model!' }]}
-      >
-        <Input placeholder="Enter entity model" />
-      </Form.Item>
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="amount"
+                className="block text-base font-medium text-black"
+              >
+                Amount
+              </label>
+              <input
+                id="amount"
+                name="amount"
+                value={amount}
+                required
+                onChange={handleAmountChange}
+                type="number"
+                className={`block w-full mt-2 text-black border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600 text-base h-8 p-2 ${
+                  validation.amount ? "" : "border-red-500"
+                }`}
+              />
+              {!validation.amount && (
+                <p className="mt-2 text-sm text-red-600">
+                  Amount must be a positive number.
+                </p>
+              )}
+            </div>
 
-      <Form.Item
-        label="Transaction Category"
-        name="transactionCategory"
-        rules={[{ required: true, message: 'Please select a transaction category!' }]}
-      >
-        <Select placeholder="Select category">
-          <Option value="salary">Salary</Option>
-          <Option value="purchase">Purchase</Option>
-        </Select>
-      </Form.Item>
+            <div className="col-span-full">
+              <label
+                htmlFor="description"
+                className="block text-base font-medium text-black"
+              >
+                Description
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                rows={3}
+                required
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="block w-full h-20 p-4 mt-2 text-base text-black border border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
+                placeholder="Enter a brief description (max 300 characters)"
+              />
+            </div>
 
-      <Form.Item
-        label="Payee/Payer"
-        name="payeePayer"
-        rules={[{ required: true, message: 'Please enter the payee/payer!' }]}
-      >
-        <Input placeholder="Enter payee/payer" />
-      </Form.Item>
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="payer_payee"
+                className="block text-base font-medium text-black"
+              >
+                Payer / Payee
+              </label>
+              <input
+                id="payer_payee"
+                name="payer_payee"
+                value={payerPayee}
+                required
+                onChange={handlePayeeChange}
+                className="block w-full h-8 p-2 mt-2 text-base text-black border border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-liborder"
+              />
+            </div>
 
-      <Form.Item>
-        <Button type="primary" htmlType="submit" loading={loading} icon={loading ? <LoadingOutlined /> : null}>
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="method"
+                className="block text-base font-medium text-black"
+              >
+                Payment Method
+              </label>
+              <select
+                id="method"
+                name="method"
+                value={method}
+                onChange={(e) => setMethod(e.target.value)}
+                className="block w-full p-2 mt-2 text-base text-black border border-gray-900 rounded-md shadow-sm h-11 focus:ring-lime-600 focus:border-lime-600"
+              >
+                <option value="Cash">Cash</option>
+                <option value="Cheque">Cheque</option>
+                <option value="Card">Card</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div className="items-center justify-between w-full mt-10 space-x-4 lex">
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="px-4 py-2 text-base font-medium text-white bg-red-600 rounded-md shadow hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            onClick={handleSaveTransactionRecord}
+            className="px-4 py-2 text-base font-medium text-white rounded-md shadow bg-lime-600 hover:bg-lime-700 focus:ring-2 focus:ring-lime-500 focus:ring-offset-2"
+            disabled={loading}
+          >
+            {loading ? "Saving..." : "Save Transaction"}
+          </button>
+        </div>
+      </form>
+    </SnackbarProvider>
   );
-};
-
-export default AddTransactionPage;
+}

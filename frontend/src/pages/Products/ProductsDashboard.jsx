@@ -186,7 +186,6 @@ const ProductsDashboard = () => {
             Gallery
           </Button>
         </div>
-
         {/* Welcome message section */}
         <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
           <div className="flex flex-row items-center justify-between">

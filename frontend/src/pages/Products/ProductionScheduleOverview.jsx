@@ -44,8 +44,6 @@ const ProductionScheduleOverview = () => {
     fetchSchedules();
   }, []);
 
-  
-
   // Handlers for navigation
   const onHomeClick = useCallback(() => {
     navigate("/products/productdashboard");
