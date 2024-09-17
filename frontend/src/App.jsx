@@ -104,6 +104,7 @@ import PapayaRingspot from "./pages/Diseases/PapayaRingspot.jsx";
 import FusariumWilt from "./pages/Diseases/FusariumWilt.jsx";
 import PowderyMildew from "./pages/Diseases/PowderyMildew.jsx";
 import UpdateCoconutDiseases from "./pages/Diseases/UpdateCoconutDiseases.jsx";
+import UpdateCropsDiseases from "./pages/Diseases/UpdateCropsDiseases.jsx";
 
 // product
 import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
@@ -219,7 +220,6 @@ export default function App() {
       <Route path="/insights" element={<Insights />} />
       <Route path="/detailedOverview" element={<DetailedOverview />} />
       <Route path="/addMaintenance" element={<AddMaintenance />} />
-
       <Route path="/addProfile" element={<AddProfile />} />
       <Route path="/coconutMite" element={<CoconutMite />} />
       <Route path="/termite" element={<Termite />} />
@@ -243,7 +243,8 @@ export default function App() {
       <Route path="/papayaRingspot" element={<PapayaRingspot />} />
       <Route path="/fusariumWilt" element={<FusariumWilt />} />
       <Route path="/powderyMildew" element={<PowderyMildew />} />
-      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />}
+      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />} />
+      <Route path="/updateCropsDiseases/:id" element={<UpdateCropsDiseases />} />
 
 
       {/* product */}
