@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { HomeOutlined, LeftOutlined } from "@ant-design/icons";
-import { Breadcrumb, Button, Input, DatePicker, Form } from "antd";
+import { Breadcrumb, Button, Input, DatePicker, Form, Select, notification } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
-import { post } from "../../api/api";
+import axios from "axios";
 
 const AddCropsDiseases = () => {
   const [form] = Form.useForm();
