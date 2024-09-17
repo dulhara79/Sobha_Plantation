@@ -31,32 +31,34 @@ const AddFertilizerRecord = () => {
     try {
         setLoading(true);
         // Extract form values
-        const { addeddate, fertilizertype, quantity, storagelocation,expireddate } = values;
+        const { addeddate, fertilizertype, quantity,unit, storagelocation,expireddate,status } = values;
 
         await axios.post('http://localhost:5000/api/fertilizers', {
           addeddate,
           fertilizertype,
           quantity,
+          unit,
           storagelocation,
-          expireddate
+          expireddate,
+          status
         });
         
         // Handle success, reset loading or form fields if needed
         notification.success({
             message: 'Success',
-            description: 'Fertilizer record added successfully!',
+            description: 'record added successfully!',
         });
         setLoading(false);
         form.resetFields();  // Optionally reset the form after successful submission
 
-        // Navigate to /harvest/yield page after successful submission
+       
         navigate('/Inventory/FertilizerRecords');
     } catch (error) {
-        console.error('Error adding fertilizer record:', error);
+        console.error('Error adding record:', error);
         setLoading(false);
         notification.error({
             message: 'Error',
-            description: 'There was an error adding the fertilizer record.',
+            description: 'There was an error adding the record.',
         });
     }
   };
@@ -64,22 +66,34 @@ const AddFertilizerRecord = () => {
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="mb-6 text-2xl font-bold text-center">Add Fertilizer Records</h2>
+        <h2 className="mb-6 text-2xl font-bold text-center">Add Fertilizer/AgroChemical Records</h2>
         <Form
           form={form}
           onFinish={handleSubmit}
           layout="vertical"
         >
           <Form.Item
-            label="Fertilizer Type "
+            label="Fertilizer/Agrochemical Name "
             name="fertilizertype"
-            rules={[{ required: true, message: 'Please select a fertilizer type!' }]}
+            rules={[{ required: true, message: 'Please select a fertilizer/agrochemical type!' }]}
           >
-            <Select placeholder="Select a fertilizer type">
-              <Option value="coconut">Coconut</Option>
-              <Option value="banana">Banana</Option>
-              <Option value="pepper">Pepper</Option>
-              <Option value="papaya">Papaya</Option>
+               <Select placeholder="Select a fertilizer/AgroChemical type">
+              <Option value="Coconut fertilizer">Coconut fertilizer</Option>
+              <Option value="Banana fertilizer">Banana fertilizer</Option>
+              <Option value="Pepper fertilizer">Pepper fertilizer</Option>
+              <Option value="Papaya fertilizer">Papaya fertilizer</Option>
+              <Option value="Urea">Urea</Option>
+              <Option value="Dolomite">Dolomite</Option>
+              <Option value="YPM">YPM</Option> 
+              <Option value="Booster K 45%">Booster K 45%</Option>
+              <Option value="Daconil Chlorothalonil (chlorothalonil 500g/l SC) fungicide">Daconil Chlorothalonil (chlorothalonil 500g/l SC) fungicide</Option>
+              <Option value="Marshal 20 SC (carbosulfan 200g/l SC) insecticide">Marshal 20 SC (carbosulfan 200g/l SC) insecticide</Option>
+              <Option value="Mitsu Abamectin (abamectin 18g/l EC) insecticide">Mitsu Abamectin (abamectin 18g/l EC) insecticide</Option>
+              <Option value="Alberts solution">Alberts solution</Option>
+              <Option value="Crop Master solution">Crop Master solution</Option>
+              <Option value="Oasis Thiram (thiuram disulfide) fungicide">Oasis Thiram (thiuram disulfide) fungicide</Option>
+              <Option value="weeGlyphosate weedicideicide">Glyphosate weedicide</Option>
+              <Option value="Rootone">Rootone</Option>
             </Select>
           </Form.Item>
 
@@ -101,7 +115,20 @@ const AddFertilizerRecord = () => {
           >
             <Input type="number" placeholder="Enter quantity" />
           </Form.Item>
-         
+
+          <Form.Item
+            label="Unit"
+            name="unit"
+            rules={[{ required: true, message: 'Please select unit!' }]}
+          >
+            <Select placeholder="Select unit">
+              <Option value="l">l</Option>
+              <Option value="ml">ml</Option>
+              <Option value="kg">kg</Option>
+              <Option value="g">g</Option>
+   
+            </Select>
+          </Form.Item>
         
           <Form.Item
             label="Storage Location"
@@ -121,6 +148,20 @@ const AddFertilizerRecord = () => {
               disabledDate={disablePastDates}
             />
           </Form.Item>
+
+          <Form.Item
+            label="Status"
+            name="status"
+            rules={[{ required: true, message: 'Please select status!' }]}
+          >
+            <Select placeholder="Select status">
+              <Option value="In Stock">In Stock</Option>
+              <Option value="Out Of Stock">Out Of Stock</Option>
+              <Option value="Expired">Expired</Option>
+   
+            </Select>
+          </Form.Item>
+
 
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={loading}>
