@@ -39,14 +39,6 @@ const ComplianceCheckList = () => {
     }
   };
 
-  const onHomeClick = useCallback(() => {
-    navigate("/harvest/harvestdashboard");
-  }, [navigate]);
-
-  const onBackClick = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
-
   const onGroupContainerClick = useCallback(() => {
     navigate("/harvest/harvest-schedule");
   }, [navigate]);
@@ -57,6 +49,14 @@ const ComplianceCheckList = () => {
 
   const onGroupContainerClick2 = useCallback(() => {
     navigate("/harvest/compliancechecklist");
+  }, [navigate]);
+
+  const onHomeClick = useCallback(() => {
+    navigate("/harvest/harvestdashboard"); // Navigate to HarvestDashboard
+  }, [navigate]);
+
+  const onBackClick = useCallback(() => {
+    navigate(-1); // Navigate back to the previous page
   }, [navigate]);
 
   const onSearch = (value) => {
