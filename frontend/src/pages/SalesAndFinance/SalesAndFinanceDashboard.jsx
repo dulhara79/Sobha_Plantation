@@ -75,7 +75,7 @@ const FinanceDashboard = () => {
             },
           ]}
         />
-        <NavigationButtons activePage="home" />
+        <NavigationButtons />
         <div className="min-h-screen p-6 bg-gray-100">
           <UserGreetingCard
             unreadNotifications={unreadNotifications}
