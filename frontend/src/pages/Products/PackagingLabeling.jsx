@@ -3,11 +3,11 @@ import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import "../../index.css";
 import { HomeOutlined } from "@mui/icons-material";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Breadcrumb } from 'antd';
-import { useNavigate, useLocation } from 'react-router-dom';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Breadcrumb } from "antd";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Tabs, Tab } from "@mui/material";
-import Labeling from './Labeling'; // Import the Labeling component
+import Labeling from "./Labeling"; // Import the Labeling component
 import Packaging from "./Packaging";
 
 const PackagingLabeling = () => {
@@ -29,7 +29,7 @@ const PackagingLabeling = () => {
 
   const onHomeClick = useCallback(() => {
     navigate("/products/productdashboard");
-}, [navigate]);
+  }, [navigate]);
 
   const onBackClick = useCallback(() => {
     navigate(-1); // Navigate back to the previous page
@@ -93,7 +93,7 @@ const PackagingLabeling = () => {
         <Breadcrumb
           items={[
             {
-              href: '',
+              href: "",
               title: <HomeOutlined />,
             },
             {
@@ -104,11 +104,35 @@ const PackagingLabeling = () => {
             },
           ]}
         />
+
         {/* Tabs for Packaging and Labeling */}
         <Tabs value={activeTab} onChange={handleTabChange} className="mt-5">
-          <Tab label="Packaging" />
-          <Tab label="Labeling" />
+          <Tab
+            label={
+              <span
+                style={{
+                  fontWeight: "bold",
+                  color: activeTab === 0 ? "#1D6660" : "#000",
+                }}
+              >
+                Packaging
+              </span>
+            }
+          />
+          <Tab
+            label={
+              <span
+                style={{
+                  fontWeight: "bold",
+                  color: activeTab === 1 ? "#1D6660" : "#000",
+                }}
+              >
+                Labeling
+              </span>
+            }
+          />
         </Tabs>
+
         {/* Content based on selected tab */}
         <div className="mt-5">
           {activeTab === 0 && <Packaging />}
