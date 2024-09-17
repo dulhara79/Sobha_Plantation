@@ -82,7 +82,7 @@ const IntercropTreatments = () => {
   // Columns definition
   const columns = [
     {
-      title: "Date",
+      title: "Date of Treatment",
       dataIndex: "date",
       key: "date",
     },

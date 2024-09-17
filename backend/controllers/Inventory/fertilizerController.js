@@ -4,12 +4,12 @@ const FertilizerRecords = require('../../models/Inventory/fertilizers'); // Ensu
 
 exports.createFertilizerRecords = async (req, res) => {
     try {
-        const { addeddate, fertilizertype, quantity, storagelocation, expireddate } = req.body;
+        const { addeddate, fertilizertype, quantity, unit, storagelocation, expireddate, status } = req.body;
 
         // Validate required fields
-        if (!addeddate || !fertilizertype || !quantity || !storagelocation || !expireddate ) {
+        if (!addeddate || !fertilizertype || !quantity || !unit || !storagelocation || !expireddate ||!status) {
             return res.status(400).json({
-                message: 'Please provide all required fields: addeddate, fertilizertype, quantity, storagelocation, expireddate',
+                message: 'Please provide all required fields: addeddate, fertilizertype, quantity, unit, storagelocation, expireddate, status',
             });
         }
 
@@ -18,8 +18,10 @@ exports.createFertilizerRecords = async (req, res) => {
             addeddate,
             fertilizertype,
             quantity,
+            unit,
             storagelocation,
-            expireddate
+            expireddate,
+            status
 
             // Ensure id field is either auto-generated or removed if not required
         });
@@ -28,8 +30,8 @@ exports.createFertilizerRecords = async (req, res) => {
         const savedRecord = await newRecord.save();
         return res.status(201).json(savedRecord);
     } catch (error) {
-        console.error('Error creating  fertilizer record:', error);
-        res.status(500).json({ message: 'Failed to create  fertilizer record.', error: error.message });
+        console.error('Error creating record:', error);
+        res.status(500).json({ message: 'Failed to create record.', error: error.message });
     }
 };
 
@@ -75,7 +77,7 @@ exports.getFertilizerRecordsById = async (req, res) => {
 exports.updateFertilizerRecords = async (req, res) => {
     try {
         const { id } = req.params;
-        const { addeddate, fertilizertype, quantity, storagelocation, expireddate } = req.body;
+        const { addeddate, fertilizertype, quantity, unit, storagelocation, expireddate, status } = req.body;
 
         // Check for a valid MongoDB ObjectId
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -83,26 +85,26 @@ exports.updateFertilizerRecords = async (req, res) => {
         }
 
         // Ensure all required fields are present
-        if (!addeddate || !fertilizertype || !quantity || !storagelocation || !expireddate ) {
+        if (!addeddate || !fertilizertype || !quantity || !unit || !storagelocation || !expireddate ||!status ) {
             return res.status(400).json({
-                message: 'Please provide all required fields: addeddate, fertilizertype, quantity, storagelocation, expireddate ',
+                message: 'Please provide all required fields: addeddate, fertilizertype, quantity, unit, storagelocation, expireddate, status ',
             });
         }
 
         // Update the record
         const result = await FertilizerRecords.findByIdAndUpdate(
             id,
-            { addeddate, fertilizertype, quantity, storagelocation, expireddate },
+            { addeddate, fertilizertype, quantity, unit, storagelocation, expireddate, status },
             { new: true, runValidators: true }
         );
 
         // Handle case where record is not found
         if (!result) {
-            return res.status(404).json({ message: 'Fertilizer Record not found' });
+            return res.status(404).json({ message: 'Record not found' });
         }
 
         // Successfully updated the record
-        return res.status(200).json({ message: 'Fertilizer Record updated successfully', data: result });
+        return res.status(200).json({ message: ' Record updated successfully', data: result });
     } catch (error) {
         console.error('Error updating record:', error);
         res.status(500).json({ message: 'Failed to update record.', error: error.message });

@@ -289,7 +289,6 @@ const Labeling = () => {
     // Save the PDF
     doc.save('labeling_report.pdf');
   };
-  
 
   return (
     <div style={{ padding: '24px' }}>
@@ -329,6 +328,7 @@ const Labeling = () => {
         </Button>
       </div>
 
+
       <Title level={4} style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>
         Unit Prices Table
       </Title>
@@ -364,6 +364,7 @@ const Labeling = () => {
       
        <div>
         <Space style={{ marginBottom: '16px' }}>
+
           <Search 
             placeholder="Search by product name"
             onSearch={handleSearch}
@@ -419,13 +420,14 @@ const Labeling = () => {
                 onClick={() => handleViewLabeling(record)}
                 style={{ marginRight: 8, backgroundColor: '#52c41a', borderColor: '#52c41a', color: '#fff' }}
               >
+
               </Button>
               <Button
                 icon={<EditOutlined  />}
                 onClick={() => handleEditLabeling(record._id)}
                 style={{ marginRight: 8, backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff' }}
               >
-                
+
               </Button>
               <Button
                 icon={<DeleteOutlined />}  // Use DeleteOutlined icon for delete button
@@ -439,21 +441,25 @@ const Labeling = () => {
 
      {/* View Details Modal */}
      <Modal
+
         title="Labeling Details"
         visible={isViewModalVisible}
         onCancel={handleViewModalClose}
-        footer={null}
-        width={600}
+        footer={[
+          <Button key="close" onClick={handleViewModalClose} style={{ backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}>
+            Close
+          </Button>,
+        ]}
       >
         {selectedLabeling && (
-          <div style={{ textAlign: 'center', padding: '20px' }}>
+          <>
             <p><strong>Product Name:</strong> {selectedLabeling.productName}</p>
             <p><strong>Labeling Date:</strong> {moment(selectedLabeling.labelingDate).format('YYYY-MM-DD')}</p>
             <p><strong>Status:</strong> {selectedLabeling.status}</p>
-            <p><strong>Total Quantity:</strong> {selectedLabeling.quantity}</p>
-            <p><strong>Unit Price (Rs):</strong> {viewModalDetails.unitPrice.toFixed(2)}</p>
-            <p><strong>Total Price (Rs):</strong> {viewModalDetails.totalPrice.toFixed(2)}</p>
-          </div>
+            <p><strong>Quantity:</strong> {selectedLabeling.quantity}</p>
+            <p><strong>Unit Price:</strong> Rs {viewModalDetails.unitPrice.toFixed(2)}</p>
+            <p><strong>Total Price:</strong> Rs {viewModalDetails.totalPrice.toFixed(2)}</p>
+          </>
         )}
       </Modal>
 
