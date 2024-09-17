@@ -6,7 +6,7 @@ import moment from 'moment';
 
 const { Option } = Select;
 
-const EditRecords = () => {
+const EditSchedule = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -63,6 +63,10 @@ const EditRecords = () => {
         description: 'Error updating schedule',
       });
     }
+  };
+
+  const handleCancel = () => {
+    navigate('/products/production-overview');
   };
 
   return (
@@ -146,9 +150,14 @@ const EditRecords = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              Update Schedule
-            </Button>
+            <div className="flex justify-between">
+              <Button type="primary" htmlType="submit" style={{ width: '48%' }}>
+                Update Schedule
+              </Button>
+              <Button type="default" onClick={handleCancel} style={{ width: '48%' }}>
+                Cancel
+              </Button>
+            </div>
           </Form.Item>
         </Form>
       </div>
@@ -156,4 +165,4 @@ const EditRecords = () => {
   );
 };
 
-export default EditRecords;
+export default EditSchedule;

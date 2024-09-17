@@ -75,7 +75,7 @@ const QualityControl = () => {
   }, [navigate]);
 
   const onPackagingClick = useCallback(() => {
-    navigate("/packaging");
+    navigate("/products/packaging-labeling");
   }, [navigate]);
 
   // Handler for search input
@@ -303,8 +303,7 @@ const getImageDataURL = (url) => {
 
           {/* Breadcrumbs */}
           <Breadcrumb style={{ marginBottom: 16, marginLeft: 16 }}>
-          <Breadcrumb.Item>..</Breadcrumb.Item>
-            <Breadcrumb.Item onClick={onHomeClick}>Products</Breadcrumb.Item>
+            <Breadcrumb.Item onClick={onHomeClick}>Home</Breadcrumb.Item>
             <Breadcrumb.Item>Quality Control</Breadcrumb.Item>
           </Breadcrumb>
 
@@ -341,7 +340,9 @@ const getImageDataURL = (url) => {
             </div>
           </Card>
         </div>
-
+        
+        <div className="flex flex-col p-4 bg-white rounded shadow-md">
+        <h2 className="mb-4 text-xl font-semibold" style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>Inspection Table</h2>
 
           {/* Search and Filters */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
@@ -359,27 +360,29 @@ const getImageDataURL = (url) => {
               </Select>
             </div>
             
+            
             {/* Buttons for actions */}
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button 
                 type="primary" 
                 style={{ marginRight: 8 }} 
                 onClick={generatePDF}
+                
               >
                 Generate Report
               </Button>
               <Button 
                 type="primary" 
                 onClick={handleAddInspection} // Added button for adding inspections
+                style={{ marginBottom: '24px', backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
               >
                 Add Inspection
               </Button>
             </div>
           </div>
 
-
-
           {/* Table */}
+          
           <Table
             dataSource={filteredQualityControls}
             rowKey="_id"
@@ -412,7 +415,7 @@ const getImageDataURL = (url) => {
               )}
             />
           </Table>
-
+          </div>
         </div>
       </div>
     </div>

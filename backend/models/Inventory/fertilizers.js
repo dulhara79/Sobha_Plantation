@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose');
 
 const fertilizerSchema = new mongoose.Schema({
@@ -17,6 +18,11 @@ const fertilizerSchema = new mongoose.Schema({
         required: true,
      
     },
+    unit: {
+        type: String,
+        required: true,
+      
+    },
     storagelocation: {
         type: String,
         required: true,
@@ -26,6 +32,11 @@ const fertilizerSchema = new mongoose.Schema({
         type: Date,
         required: true,
        
+    },
+    status: {
+        type: String,
+        required: true,
+      
     },
     // Remove or adjust this field as needed
     id: {

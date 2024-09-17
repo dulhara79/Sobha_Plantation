@@ -4,7 +4,7 @@ import  { Breadcrumb } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import React, {useEffect, useState} from "react";
 
-import EmployeeNavbar from "../../components/EmployeeNavbar";
+import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import html2canvas from "html2canvas";
