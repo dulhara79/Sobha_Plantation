@@ -5,7 +5,7 @@ import { HomeOutlined, LeftOutlined } from "@ant-design/icons";
 import { Breadcrumb, Button, Input, DatePicker, Form } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
-import { post } from "../../api/api";
+// import { post } from "../../api/api";
 
 const AddMaintenance = () => {
   const [form] = Form.useForm();
@@ -154,7 +154,7 @@ const AddMaintenance = () => {
             />
           </div>
 
-          <div className="mt-4 p-6 bg-white shadow-md rounded-md">
+          <div className="p-6 mt-4 bg-white rounded-md shadow-md">
             <h1 className="text-2xl font-bold text-center">
               New Maintenance Record
             </h1>
@@ -228,7 +228,7 @@ const AddMaintenance = () => {
               </Form.Item>
 
 
-              <div className="flex justify-center space-x-4 mt-4">
+              <div className="flex justify-center mt-4 space-x-4">
                 <Button
                   type="primary"
                   htmlType="submit"
