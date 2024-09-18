@@ -34,7 +34,7 @@ return res.status(201).json(saveDiseaseRecord);
 // Get all disease records
 exports.getAllDiseases = async (req, res) => {
     try {
-        const allDiseaseRecords = await DiseaseRecords.find();
+        const allDiseaseRecords = await CropDiseaseRecords.find();
         return res.status(200).json({ count: allDiseaseRecords.length, data: allDiseaseRecords });
     } catch (error) {
         console.error('Error fetching disease records:', error.message || error);
@@ -51,7 +51,7 @@ exports.getDiseasesById = async (req, res) => {
             return res.status(400).json({ message: "Invalid disease ID" });
         }
 
-        const diseaseRecord = await DiseaseRecords.findById(diseaseId);
+        const diseaseRecord = await CropDiseaseRecords.findById(diseaseId);
 
         if (!diseaseRecord) {
             return res.status(404).json({ message: "Disease not found" });
@@ -78,7 +78,7 @@ exports.updateDiseases = async (req, res) => {
             }
 
             // Update the disease record
-            const updatedDiseaseRecord = await DiseaseRecords.findByIdAndUpdate(diseaseId, 
+            const updatedDiseaseRecord = await CropDiseaseRecords.findByIdAndUpdate(diseaseId, 
                 { dateOfInspection, sectionOfLand, identifiedPest, identifiedDisease, inspectedBy, inspectionResult, suggestedReInspectionDate },
                 { new: true, runValidators: true });
 
@@ -97,7 +97,7 @@ exports.deleteDiseases = async (req, res) => {
     try {
         const { diseaseId } = req.params;
 
-        const deletedDiseaseRecord = await DiseaseRecords.findByIdAndDelete(diseaseId);
+        const deletedDiseaseRecord = await CropDiseaseRecords.findByIdAndDelete(diseaseId);
         if (!deletedDiseaseRecord) {
             return res.status(404).json({ message: "Disease not found" });
         }
