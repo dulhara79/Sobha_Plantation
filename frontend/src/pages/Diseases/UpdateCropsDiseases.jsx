@@ -26,7 +26,7 @@ const UpdateCropsDiseases = () => {
   useEffect(() => {
     const fetchRecord = async () => {
       try {
-        const response = await axios.get(`http://localhost:8090/api/diseases/${id}`);
+        const response = await axios.get(`http://localhost:8090/api/cropDiseases/${id}`);
         const data = response.data.diseaseRecord;
 
         // Set form values including DatePicker values
@@ -63,7 +63,7 @@ const UpdateCropsDiseases = () => {
         suggestedReInspectionDate: suggestedReInspectionDate ? suggestedReInspectionDate.toISOString() : null,
       };
 
-      await axios.put(`http://localhost:8090/api/diseases/${id}`, payload);
+      await axios.put(`http://localhost:8090/api/cropDiseases/${id}`, payload);
 
       notification.success({
         message: "Record updated successfully",
