@@ -310,6 +310,7 @@ const CoconutInspections = () => {
                 bordered
               />
             </div>
+            
             {/* Learn More and Add Buttons */}
             <div className="flex flex-col items-center mt-8 pb-8">
               <Button

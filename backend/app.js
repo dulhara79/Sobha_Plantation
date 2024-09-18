@@ -5,7 +5,6 @@ const connectDB = require('./config/db'); // Import MongoDB connection function
 const http = require('http');
 const { Server } = require('socket.io');
 
-
 const employeeRoutes = require('./routes/Employee/employee.js');
 // const salesRoutes = require('./routes/sales');
 
@@ -18,7 +17,6 @@ const maintenanceRoutes = require('./routes/Inventory/maintenance.js');
 const equipmentRoutes = require('./routes/Inventory/equipments.js'); 
 const requestRoutes = require('./routes/Inventory/requests.js'); 
  
-
 
 
 /**
@@ -42,6 +40,8 @@ const complianceCheckRoutes = require('./routes/Harvest/compliance.js')
  * crop care
  */
 const diseasesRoute = require('./routes/DiseaseRoutes/diseasesRoute.js');
+const cropDiseasesRoute = require('./routes/DiseaseRoutes/cropDiseasesRoute.js')
+
 
 
 /**
@@ -67,6 +67,7 @@ const FinancialTransactionRoutes = require('./routes/SalesAndFinance/FinancialTr
 const InvoiceRoutes = require('./routes/SalesAndFinance/InvoiceRoutes.js');
 const SalesAnalyticsRoutes = require('./routes/SalesAndFinance/SalesAnalyticsRoutes.js');
 const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoutes.js');
+
 const attendanceRoute = require('./routes/Employee/AttendanceRoute.js');
 const salaryEmployeeRoutes = require("./routes/Employee/salaryEmployeeRoutes.js");
 const ETaskRoutes = require('./routes/Employee/ETaskRoutes.js');
@@ -90,10 +91,12 @@ app.use('/api/employee', employeeRoutes);
 app.use("/api/salary-employees", salaryEmployeeRoutes);
 app.use('/api/attendance', attendanceRoute);
 app.use('/api/taskRecords', ETaskRoutes);
+
 // app.use('/api/harvest', harvestRoutes);
 // app.use('/api/yield', yieldRoutes);
 
 app.use("/api/crop-varieties", cropVarietiesRoutes);
+
 // harvest
 app.use('/api/harvest', harvestRoutes);
 app.use('/api/yield', yieldRoutes);
@@ -127,6 +130,7 @@ app.use('/api/diseases', diseasesRoute);
 
 
 
+
 /**
  * Sales and Finance Routes
  */
@@ -142,6 +146,7 @@ app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
 // app.use('/api/buyer', BuyerRoutes);
 
 app.use('/api/buyer', BuyerRoutes);
+
 
 // Socket.IO setup
 io.on('connection', (socket) => {
