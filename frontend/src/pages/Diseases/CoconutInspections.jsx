@@ -121,7 +121,7 @@ const CoconutInspections = () => {
       // Add title
       pdf.setFontSize(16);
       pdf.setTextColor(40, 40, 40);
-      pdf.text("Coconut Inspections and Disease Identification", 105, 20, { align: "center" });
+      pdf.text("Coconut Inspections and Disease Identification Report", 105, 20, { align: "center" });
   
       // Add the table image
       let positionY = 30; // Start position for the image on the first page
