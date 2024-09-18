@@ -9,8 +9,8 @@ const { Server } = require('socket.io');
 const employeeRoutes = require('./routes/Employee/employee.js');
 // const salesRoutes = require('./routes/sales');
 
-const yieldRoutes = require('./routes/Harvest/yield');
-const harvestRoutes = require('./routes/Harvest/harvest');
+// const yieldRoutes = require('./routes/Harvest/yield');
+// const harvestRoutes = require('./routes/Harvest/harvest');
 
 //inventory
 const fertilizerRoutes = require('./routes/Inventory/fertilizers.js');
@@ -87,7 +87,7 @@ app.use("/api/salary-employees", salaryEmployeeRoutes);
 app.use("/api/crop-varieties", cropVarietiesRoutes);
 // app.use("/api/employee", employeeRoutes);
 app.use('/api/taskRecords', ETaskRoutes);
-// app.use('/api/harvest', harvestRoutes);
+//app.use('/api/harvest', harvestRoutes);
 // app.use('/api/yield', yieldRoutes);
 
 // harvest
