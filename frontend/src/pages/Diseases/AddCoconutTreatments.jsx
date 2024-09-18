@@ -2,23 +2,42 @@ import React, { useState } from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { HomeOutlined, LeftOutlined } from "@ant-design/icons";
-import { Breadcrumb, Button, Input, DatePicker, Form } from "antd";
+import { Breadcrumb, Button, Input, DatePicker, Form, Select, notification  } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import axios from "axios";
+
+const { Option } = Select;
 
 const AddCoconutTreatments = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
+
+  const validateProgress = (_, value) => {
+    if (value < 0 || value > 100) {
+      return Promise.reject(new Error("Health Rate must be between 0 and 100"));
+    }
+    return Promise.resolve();
+  };
+
   const [fieldValidity, setFieldValidity] = useState({
-    date: false,
+    dateOfTreatment: false,
     pestOrDisease: false,
     treatmentMethod: false,
     healthRate: false,
     treatedBy: false,
     notes: false,
   });
+
+  const handleFieldChange = (changedFields) => {
+    const updatedFieldValidity = { ...fieldValidity };
+    Object.keys(changedFields).forEach((field) => {
+      updatedFieldValidity[field] = !!changedFields[field];
+    });
+    setFieldValidity(updatedFieldValidity);
+  }; 
 
   const disableFutureDates = (current) => {
     return current && current > moment().endOf("day");
@@ -52,21 +71,49 @@ const AddCoconutTreatments = () => {
 
   const numericRule = [
     {
-      pattern: /[0-9]%/,
+      pattern: /^[0-9]/,
       message: "Only numeric characters are allowed.",
     },
     {
       required: true,
       message: "This field is required.",
     },
+    {
+      validator: validateProgress, // Between 0 and 100
+    },
   ];
 
-  const handleFinish = async (values) => {
+  const handleSubmit = async (values) => {
     try {
-      await post("/harvest", values);
+      setLoading(true);
+
+      //Extract values from the form
+      const { dateOfTreatment, pestOrDisease, treatmentMethod, healthRate, treatedBy, notes } = values;
+
+      await axios.post("http://localhost:8090/api/treatments", {
+        dateOfTreatment,
+        pestOrDisease,
+        treatmentMethod,
+        healthRate,
+        treatedBy,
+        notes,
+      });
+   
+      notification.success({
+        message: "Record added successfully",
+        description: "Record has been added successfully",
+      });
+      setLoading(false);
+      form.resetFields();
+
       navigate("/CoconutTreatments");
     } catch (error) {
-      console.error("Error creating treatments record:", error);
+      console.error("An error occurred:", error);
+      setLoading(false);
+      notification.error({
+        message: "Failed to add record",
+        description: "An error occurred while adding the record."
+      });
     }
   };
 
@@ -74,19 +121,7 @@ const AddCoconutTreatments = () => {
     navigate("/CoconutTreatments");
   };
 
-  const handleFieldChange = (changedFields, allFields) => {
-    const newFieldValidity = { ...fieldValidity };
 
-    allFields.forEach((field) => {
-      if (field.errors.length === 0 && field.value) {
-        newFieldValidity[field.name[0]] = true;
-      } else {
-        newFieldValidity[field.name[0]] = false;
-      }
-    });
-
-    setFieldValidity(newFieldValidity);
-  };
 
   return (
     <div>
@@ -165,8 +200,8 @@ const AddCoconutTreatments = () => {
               form={form}
               layout="vertical"
               className="mt-6"
-              onFinish={handleFinish}
-              onFieldsChange={handleFieldChange}
+              onFinish={handleSubmit}
+              onValuesChange={(_, values) => handleFieldChange(values)}
             >
               <Form.Item
                 label="Date of Treatment"
@@ -220,7 +255,7 @@ const AddCoconutTreatments = () => {
 
               <Form.Item
                 label="Current Health Rate"
-                name="currentHealthRate"
+                name="healthRate"
                 rules={numericRule}
               >
                 <Input
@@ -236,7 +271,7 @@ const AddCoconutTreatments = () => {
               >
                 <Input
                   placeholder="Enter name of the person who treated"
-                  disabled={!fieldValidity.currentHealthRate}
+                  disabled={!fieldValidity.healthRate}
                 />
               </Form.Item>
 
@@ -255,9 +290,9 @@ const AddCoconutTreatments = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
+                  loading={loading}
                   style={{ backgroundColor: "#236A64", color: "#fff" }}
                   disabled={!fieldValidity.notes}
-                  onClick={handleFinish}
                 >
                   Submit
                 </Button>
