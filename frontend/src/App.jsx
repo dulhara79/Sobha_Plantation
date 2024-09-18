@@ -137,7 +137,7 @@ import BuyerRegistrationForm from "./pages/BuyerRegistrationForm.jsx";
 import BuyerTable from "./pages/BuyerTable.jsx";
 import Profile from './components/Profile';
 
-
+//import Test from "./pages/Test.jsx";
 import PageError from "./pages/PageError.jsx";
 
 export default function App() {
@@ -279,7 +279,7 @@ export default function App() {
       <Route path="/profile" element={<Profile />} />
 
       {/* page not found & error page */}
-      <Route path="/test" element={<Test />} />
+      {/* <Route path="/test" element={<Test />} /> */}
 
       <Route path="*" element={<PageError />} />
     </Routes>
