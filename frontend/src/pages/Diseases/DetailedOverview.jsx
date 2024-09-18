@@ -166,7 +166,7 @@ const DetailedOverview = () => {
             />
           </div>
 
-          <div className="mt-4 p-6 bg-white shadow-md rounded-md">
+          <div className="p-6 mt-4 bg-white rounded-md shadow-md">
             <h1 className="text-2xl font-bold text-center">
               Detailed Overview of the Treatment
             </h1>
@@ -262,12 +262,12 @@ const DetailedOverview = () => {
               </div>
 
               {successRate !== null && (
-                <div className="mt-4 text-center text-xl font-bold">
+                <div className="mt-4 text-xl font-bold text-center">
                   Success Rate: {successRate.toFixed(2)}%
                 </div>
               )}
 
-              <div className="flex justify-center space-x-4 mt-4">
+              <div className="flex justify-center mt-4 space-x-4">
                 <Button
                   type="primary"
                   htmlType="submit"
