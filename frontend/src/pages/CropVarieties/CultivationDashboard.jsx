@@ -69,7 +69,7 @@ const CultivationDashboard = () => {
           </Link>
 
           <Link
-            to="/plantGrowth"
+            to="/pGrowth"
             className="bg-[#8fd68b] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-blue-500 transition-transform transform hover:scale-105 shadow-lg hover:shadow-xl cursor-pointer block"
           >
             <span className="text-10xl">🌱</span>
