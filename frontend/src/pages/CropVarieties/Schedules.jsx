@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Breadcrumb, Button, Table, notification, Popconfirm, Input, Select, Space } from 'antd';
+import { Layout, Breadcrumb, Button, Table, notification, Popconfirm, Input, Select, Modal, Form, DatePicker } from 'antd';
 import { HomeOutlined, EditOutlined, DeleteOutlined, LeftCircleOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Sidebar from '../../components/Sidebar'; // Assuming you have a Sidebar component
-import Header from '../../components/Header';   // Assuming you have a Header component
+import Sidebar from '../../components/Sidebar';
+import Header from '../../components/Header';
+import moment from 'moment';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -16,6 +19,9 @@ const VarietySchedule = () => {
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [statusFilter, setStatusFilter] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [currentRecord, setCurrentRecord] = useState(null); 
+  const [form] = Form.useForm();
 
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -23,7 +29,6 @@ const VarietySchedule = () => {
         const response = await axios.get('http://localhost:5000/api/schedules');
         const schedules = response.data;
 
-        // Format the data for the table
         const formattedData = schedules.map(schedule => ({
           key: schedule._id,
           date: new Date(schedule.plantationDate).toLocaleDateString('en-US'),
@@ -49,11 +54,11 @@ const VarietySchedule = () => {
   }, []);
 
   useEffect(() => {
-    // Filter data based on search text and status filter
     const filtered = data.filter(item => {
-      const matchesSearch = item.fieldName.toLowerCase().includes(searchText.toLowerCase()) ||
-                            item.team.toLowerCase().includes(searchText.toLowerCase()) ||
-                            item.varieties.toLowerCase().includes(searchText.toLowerCase());
+      const matchesSearch = searchText ? 
+        (item.team.toLowerCase().includes(searchText.toLowerCase()) ||
+         item.fieldName.toLowerCase().includes(searchText.toLowerCase()) ||
+         item.varieties.toLowerCase().includes(searchText.toLowerCase())) : true;
       const matchesStatus = statusFilter ? item.status === statusFilter : true;
       return matchesSearch && matchesStatus;
     });
@@ -61,7 +66,13 @@ const VarietySchedule = () => {
   }, [searchText, statusFilter, data]);
 
   const handleEdit = (record) => {
-    navigate(`/scheduleForm/${record.key}`);
+    setCurrentRecord(record);
+    form.setFieldsValue({
+      ...record,
+      date: moment(record.date, 'MM/DD/YYYY'), 
+      scheduledDate: moment(record.scheduledDate, 'MM/DD/YYYY'), 
+    });
+    setIsModalVisible(true);
   };
 
   const handleDelete = async (id) => {
@@ -74,26 +85,112 @@ const VarietySchedule = () => {
     }
   };
 
+  const handleUpdate = async () => {
+    try {
+      const updatedValues = form.getFieldsValue();
+      const formattedValues = {
+        ...updatedValues,
+        date: updatedValues.date.format('MM/DD/YYYY'),
+        scheduledDate: updatedValues.scheduledDate.format('MM/DD/YYYY'),
+      };
+
+      await axios.put(`http://localhost:5000/api/schedules/${currentRecord.key}`, formattedValues);
+      setData(data.map(item => (item.key === currentRecord.key ? { ...item, ...formattedValues } : item)));
+      notification.success({ message: 'Schedule updated successfully' });
+      setIsModalVisible(false);
+    } catch (error) {
+      notification.error({ message: 'Error updating schedule', description: error.message });
+    }
+  };
+
+  const generateReport = () => {
+    const doc = new jsPDF();
+
+    doc.text('Variety Schedule Report', 10, 10);
+
+    const tableHeaders = [
+      ['Date', 'Assigned Team', 'Field Name', 'Varieties', 'Scheduled Date', 'Status', 'Seeds Used'],
+    ];
+
+    const tableRows = filteredData.map(item => [
+      item.date,
+      item.team,
+      item.fieldName,
+      item.varieties,
+      item.scheduledDate,
+      item.status,
+      item.seedsUsed || 'N/A',
+    ]);
+
+    doc.autoTable({
+      head: tableHeaders,
+      body: tableRows,
+      startY: 20,
+    });
+
+    doc.save('VarietyScheduleReport.pdf');
+  };
+
   const columns = [
     {
       title: 'Date',
       dataIndex: 'date',
       key: 'date',
+      filterDropdown: () => (
+        <div style={{ padding: 8 }}>
+          <Input
+            placeholder="Search Date"
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
+            onPressEnter={() => setSearchText(searchText)}
+          />
+        </div>
+      ),
     },
     {
       title: 'Assigned Team',
       dataIndex: 'team',
       key: 'team',
+      filterDropdown: () => (
+        <div style={{ padding: 8 }}>
+          <Input
+            placeholder="Search Team"
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
+            onPressEnter={() => setSearchText(searchText)}
+          />
+        </div>
+      ),
     },
     {
       title: 'Field Name',
       dataIndex: 'fieldName',
       key: 'fieldName',
+      filterDropdown: () => (
+        <div style={{ padding: 8 }}>
+          <Input
+            placeholder="Search Field Name"
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
+            onPressEnter={() => setSearchText(searchText)}
+          />
+        </div>
+      ),
     },
     {
       title: 'Varieties',
       dataIndex: 'varieties',
       key: 'varieties',
+      filterDropdown: () => (
+        <div style={{ padding: 8 }}>
+          <Input
+            placeholder="Search Varieties"
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
+            onPressEnter={() => setSearchText(searchText)}
+          />
+        </div>
+      ),
     },
     {
       title: 'Date Comparison',
@@ -104,18 +201,27 @@ const VarietySchedule = () => {
       title: 'Scheduled Date',
       dataIndex: 'scheduledDate',
       key: 'scheduledDate',
+      filterDropdown: () => (
+        <div style={{ padding: 8 }}>
+          <Input
+            placeholder="Search Scheduled Date"
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
+            onPressEnter={() => setSearchText(searchText)}
+          />
+        </div>
+      ),
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      render: (text) => {
-        let color;
-        if (text === 'Completed') color = 'green';
-        else if (text === 'In Progress') color = 'blue';
-        else if (text === 'Scheduled') color = 'orange';
-        return <span style={{ color }}>{text}</span>;
-      }
+      filters: [
+        { text: 'Planned', value: 'Planned' },
+        { text: 'In Progress', value: 'In Progress' },
+        { text: 'Completed', value: 'Completed' },
+      ],
+      onFilter: (value, record) => record.status.includes(value),
     },
     {
       title: 'Seeds Used',
@@ -148,62 +254,94 @@ const VarietySchedule = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sidebar />
+      <Header />
       <Layout className="site-layout" style={{ marginLeft: 300 }}>
-        <Header />
+        
         <Content style={{ margin: '24px 16px', padding: 24, background: '#fff' }}>
           <Breadcrumb style={{ marginBottom: '16px' }}>
             <Breadcrumb.Item href="">
               <HomeOutlined />
             </Breadcrumb.Item>
-            <Breadcrumb.Item>Land prepare</Breadcrumb.Item>
-            <Breadcrumb.Item>Crop Variety</Breadcrumb.Item>
-            <Breadcrumb.Item>Seedling</Breadcrumb.Item>
-            <Breadcrumb.Item>Growth</Breadcrumb.Item>
+            <Breadcrumb.Item>Field View</Breadcrumb.Item>
+            <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
             <Breadcrumb.Item>Schedule</Breadcrumb.Item>
           </Breadcrumb>
 
-          {/* Back Button */}
           <div className="mb-4">
             <LeftCircleOutlined onClick={() => navigate(-1)} />
           </div>
 
-          {/* Page Header */}
           <div className="bg-white shadow-md rounded-lg p-4 my-4">
             <h2 className="text-xl font-semibold">Schedule</h2>
             <p>Today is {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
           </div>
 
-          {/* Search and Filter Bar */}
-          <div className="flex items-center space-x-4 mb-4">
-            <Input.Search
-              placeholder="Search..."
-              onSearch={value => setSearchText(value)}
-              onChange={e => setSearchText(e.target.value)}
-              style={{ width: 200 }}
-            />
-            <Select
-              placeholder="Select Status"
-              allowClear
-              style={{ width: 200 }}
-              onChange={value => setStatusFilter(value)}
-            >
-              <Option value="Planned">Planned</Option>
-              <Option value="In Progress">In Progress</Option>
-              <Option value="Completed">Completed</Option>
-            </Select>
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex space-x-4">
+              <Input.Search
+                placeholder="Search..."
+                onSearch={value => setSearchText(value)}
+                onChange={e => setSearchText(e.target.value)}
+                style={{ width: 200 }}
+              />
+              <Select
+                placeholder="Select Status"
+                allowClear
+                style={{ width: 200 }}
+                onChange={value => setStatusFilter(value)}
+              >
+                <Option value="Planned">Planned</Option>
+                <Option value="In Progress">In Progress</Option>
+                <Option value="Completed">Completed</Option>
+              </Select>
+            </div>
+
+            <div className="flex space-x-4">
+              <Button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => navigate('/scheduleForm')}>
+                + Add New Activity
+              </Button>
+              <Button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={generateReport}>
+                Generate Reports
+              </Button>
+            </div>
           </div>
 
-          <div className="flex justify-center space-x-20 mb-4">
-            <Button className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => navigate('/scheduleForm')}>
-              <span>+ Add New Activity</span>
-            </Button>
-            <Button className="flex items-center bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-              <span>Generate Reports</span>
-            </Button>
-          </div>
-
-          {/* Table */}
           <Table columns={columns} dataSource={filteredData} pagination={false} loading={loading} />
+
+          <Modal
+            title="Edit Schedule"
+            visible={isModalVisible}
+            onOk={handleUpdate}
+            onCancel={() => setIsModalVisible(false)}
+          >
+            <Form form={form} layout="vertical">
+              <Form.Item name="team" label="Assigned Team" rules={[{ required: true, message: 'Please input the team!' }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item name="fieldName" label="Field Name" rules={[{ required: true, message: 'Please input the field name!' }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item name="varieties" label="Varieties" rules={[{ required: true, message: 'Please input the crop variety!' }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item name="date" label="Date" rules={[{ required: true, message: 'Please select the date!' }]}>
+                <DatePicker format="MM/DD/YYYY" />
+              </Form.Item>
+              <Form.Item name="scheduledDate" label="Scheduled Date" rules={[{ required: true, message: 'Please select the scheduled date!' }]}>
+                <DatePicker format="MM/DD/YYYY" />
+              </Form.Item>
+              <Form.Item name="status" label="Status" rules={[{ required: true, message: 'Please select the status!' }]}>
+                <Select>
+                  <Option value="Planned">Planned</Option>
+                  <Option value="In Progress">In Progress</Option>
+                  <Option value="Completed">Completed</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item name="seedsUsed" label="Seeds Used">
+                <Input />
+              </Form.Item>
+            </Form>
+          </Modal>
         </Content>
       </Layout>
     </Layout>

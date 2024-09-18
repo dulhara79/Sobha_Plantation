@@ -5,7 +5,11 @@ const connectDB = require('./config/db'); // Import MongoDB connection function
 const http = require('http');
 const { Server } = require('socket.io');
 
+const employeeRoutes = require('./routes/Employee/employee.js');
 // const salesRoutes = require('./routes/sales');
+
+const yieldRoutes = require('./routes/Harvest/yield');
+const harvestRoutes = require('./routes/Harvest/harvest');
 
 //inventory
 const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
@@ -13,6 +17,7 @@ const maintenanceRoutes = require('./routes/Inventory/maintenance.js');
 const equipmentRoutes = require('./routes/Inventory/equipments.js'); 
 const requestRoutes = require('./routes/Inventory/requests.js'); 
  
+
 
 /**
  * production
@@ -38,6 +43,7 @@ const diseasesRoute = require('./routes/DiseaseRoutes/diseasesRoute.js');
 const cropDiseasesRoute = require('./routes/DiseaseRoutes/cropDiseasesRoute.js')
 
 
+
 /**
  * crop
  */
@@ -50,6 +56,8 @@ const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
 /**
  * buyer
  */
+// const BuyerRoutes = require('./routes/buyerRoute');
+
 const BuyerRoutes = require('./routes/buyerRoute');
 
 /**
@@ -59,14 +67,10 @@ const FinancialTransactionRoutes = require('./routes/SalesAndFinance/FinancialTr
 const InvoiceRoutes = require('./routes/SalesAndFinance/InvoiceRoutes.js');
 const SalesAnalyticsRoutes = require('./routes/SalesAndFinance/SalesAnalyticsRoutes.js');
 const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoutes.js');
-const valuationRoutes = require('./routes/SalesAndFinance/valuationRoutes.js');
-//const financialAnalyticsRoutes = require('./routes/SalesAndFinance/financialAnalyticsRoutes.js');
 
-//employee
 const attendanceRoute = require('./routes/Employee/AttendanceRoute.js');
 const salaryEmployeeRoutes = require("./routes/Employee/salaryEmployeeRoutes.js");
 const ETaskRoutes = require('./routes/Employee/ETaskRoutes.js');
-const employeeRoutes = require('./routes/Employee/employee.js');
 
 const app = express();
 
@@ -87,6 +91,11 @@ app.use('/api/employee', employeeRoutes);
 app.use("/api/salary-employees", salaryEmployeeRoutes);
 app.use('/api/attendance', attendanceRoute);
 app.use('/api/taskRecords', ETaskRoutes);
+
+// app.use('/api/harvest', harvestRoutes);
+// app.use('/api/yield', yieldRoutes);
+
+app.use("/api/crop-varieties", cropVarietiesRoutes);
 
 // harvest
 app.use('/api/harvest', harvestRoutes);
@@ -118,7 +127,7 @@ app.use("/api/plant-growth", plantGrowthRoutes);
  * crop care
  */
 app.use('/api/diseases', diseasesRoute);
-app.use('/api/cropDiseases', cropDiseasesRoute);
+
 
 
 
@@ -130,16 +139,13 @@ app.use("/api/salesAndFinance/finance/invoice", InvoiceRoutes);
 app.use("/api/salesAndFinance/sales/analytics", SalesAnalyticsRoutes);
 app.use("/api/salesAndFinance/sales/tracking", SalesTrackingRoutes);
 app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
-//app.use("/api/salesAndFinance/finance/analytics", financialAnalyticsRoutes);
 
 /**
  * buyer
  */
-//app.use('/api/buyer', BuyerRoutes);
+// app.use('/api/buyer', BuyerRoutes);
 
-//app.use('/api/sales', salesRoutes);
-
-
+app.use('/api/buyer', BuyerRoutes);
 
 
 // Socket.IO setup
