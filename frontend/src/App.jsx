@@ -33,9 +33,11 @@ import Esalary from "./pages/employee/Esalary";
 import EaddTask from "./pages/employee/EaddTask.jsx";
 import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
+import ViewTaskDetails from "./pages/employee/ViewTaskDetails.jsx";
 import GetAttendance from "./pages/employee/GetAttendance.jsx";
 import EmployeeList from "./pages/employee/EmployeeList.jsx";
 import EattendenceList from "./pages/employee/EattendenceList.jsx";
+import ViewOneAttendance from "./pages/employee/ViewOneAttendance.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
@@ -94,6 +96,7 @@ import Profile from './components/Profile';
 import PageError from "./pages/PageError.jsx";
 
 
+
 export default function App() {
   return (
     <Routes>
@@ -128,6 +131,8 @@ export default function App() {
       <Route path="/employee/attendance" element= {<GetAttendance/>}/>
       <Route path="/employee/employeelist" element= {<EmployeeList/>}/>
       <Route path="/employee/attendanceList" element= {<EattendenceList/>}/>
+      <Route path="/employee/taskdetails/:id" element= {<ViewTaskDetails/>}/>
+      <Route path= "/employee/veiwattendence/:id" element= {<ViewOneAttendance/>}/>
 
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
