@@ -201,7 +201,7 @@ export default function App() {
 
 
       {/* crop care */}
-      {/* <Route path="/diseases" element={<DiseasesDashboard />} />
+      <Route path="/diseases" element={<DiseasesDashboard />} />
       <Route path="/coconutInspections" element={<CoconutInspections />} />
       <Route path="/intercropInspections" element={<IntercropInspections />} />
       <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
