@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/charts": "^2.2.1",
     "@ant-design/icons": "^5.4.0",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
@@ -23,7 +24,7 @@
     "@mui/x-data-grid": "^7.15.0",
     "@react-pdf/renderer": "^3.4.4",
     "antd": "^5.20.2",
-    "axios": "^1.7.5",
+    "axios": "^1.7.7",
     "dayjs": "^1.11.13",
     "html2canvas": "^1.4.1",
     "json2csv": "^6.0.0-alpha.2",
