@@ -26,6 +26,15 @@ import Dashboard from "./pages/Dashboard.jsx";
  import EditFertilizerRecord from "./pages/Inventory/EditFertilizerRecord.jsx";
  import AddFertilizerRecord from "./pages/Inventory/AddFertilizerRecord.jsx";
  import InventoryDashboard from "./pages/Inventory/InventoryDashboard.jsx";
+ import MaintenanceRecords from "./pages/Inventory/MaintenanceRecords.jsx";
+ import EditMaintenanceRecord from "./pages/Inventory/EditMaintenanceRecord.jsx";
+ import AddMaintenanceRecord from "./pages/Inventory/AddMaintenanceRecord.jsx";
+ import EquipmentRecords from "./pages/Inventory/EquipmentRecords.jsx";
+ import EditEquipmentRecord from "./pages/Inventory/EditEquipmentRecord.jsx";
+ import AddEquipmentRecord from "./pages/Inventory/AddEquipmentRecord.jsx";
+ import RequestPaymentRecords from "./pages/Inventory/RequestPaymentRecords.jsx";
+ import AddRequestPaymentRecord from "./pages/Inventory/AddRequestPaymentRecord.jsx";
+ import EditRequestPaymentRecord from "./pages/Inventory/EditRequestPaymentRecord.jsx";
 
 // employee
 // import Edashboard from "./pages/employee/Edashboard.jsx";
@@ -54,40 +63,40 @@ import YieldBarChart from './pages/Harvest/YieldBarChart.jsx';
 import YieldOptionsPage from './pages/Harvest/YieldOptionsPage.jsx';
 
 // crop care (diseases)
-// import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
-// import CoconutInspections from "./pages/Diseases/CoconutInspections.jsx";
-// import IntercropInspections from "./pages/Diseases/IntercropInspections.jsx";
-// import AddCoconutDiseases from "./pages/Diseases/AddCoconutDiseases.jsx";
-// import AddCropsDiseases from "./pages/Diseases/AddCropsDiseases.jsx";
-// import CoconutTreatments from "./pages/Diseases/CoconutTreatments.jsx";
-// import IntercropTreatments from "./pages/Diseases/IntercropTreatments.jsx";
-// import CoconutPests from "./pages/Diseases/CoconutPests.jsx";
-// import RegularMaintenance from "./pages/Diseases/RegularMaintenance.jsx";
-// import IntercropPests from "./pages/Diseases/IntercropPests.jsx";
-// import UserProfile from "./pages/Diseases/UserProfile.jsx";
-// import CoconutLeafMiner from "./pages/Diseases/CoconutLeafMiner.jsx";
-// import BlackBeetle from "./pages/Diseases/BlackBeetle.jsx";
-// import AddCoconutTreatments from "./pages/Diseases/AddCoconutTreatments.jsx";
-// import AddIntercropTreatments from "./pages/Diseases/AddIntercropTreatments.jsx";
-// import Insights from "./pages/Diseases/Insights.jsx";
-// import DetailedOverview from "./pages/Diseases/DetailedOverview.jsx";
-// import AddMaintenance from "./pages/Diseases/AddMaintenance.jsx";
-// import AddProfile from "./pages/Diseases/AddProfile.jsx";
+import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
+import CoconutInspections from "./pages/Diseases/CoconutInspections.jsx";
+import IntercropInspections from "./pages/Diseases/IntercropInspections.jsx";
+import AddCoconutDiseases from "./pages/Diseases/AddCoconutDiseases.jsx";
+import AddCropsDiseases from "./pages/Diseases/AddCropsDiseases.jsx";
+import CoconutTreatments from "./pages/Diseases/CoconutTreatments.jsx";
+import IntercropTreatments from "./pages/Diseases/IntercropTreatments.jsx";
+import CoconutPests from "./pages/Diseases/CoconutPests.jsx";
+import RegularMaintenance from "./pages/Diseases/RegularMaintenance.jsx";
+import IntercropPests from "./pages/Diseases/IntercropPests.jsx";
+import UserProfile from "./pages/Diseases/UserProfile.jsx";
+import CoconutLeafMiner from "./pages/Diseases/CoconutLeafMiner.jsx";
+import BlackBeetle from "./pages/Diseases/BlackBeetle.jsx";
+import AddCoconutTreatments from "./pages/Diseases/AddCoconutTreatments.jsx";
+import AddIntercropTreatments from "./pages/Diseases/AddIntercropTreatments.jsx";
+import Insights from "./pages/Diseases/Insights.jsx";
+import DetailedOverview from "./pages/Diseases/DetailedOverview.jsx";
+import AddMaintenance from "./pages/Diseases/AddMaintenance.jsx";
+import AddProfile from "./pages/Diseases/AddProfile.jsx";
 
 // product
-// import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
-// import ProductionScheduleOverview from "./pages/Products/ProductionScheduleOverview.jsx";
-// import QualityControl from "./pages/Products/QualityControl.jsx";
-// import AddSchedule from "./pages/Products/AddSchedule.jsx";
-// import EditSchedule from "./pages/Products/EditSchedule.jsx";
-// import AddInspectionReport from "./pages/Products/AddInspectionReport.jsx";
-// import EditInspectionReport from "./pages/Products/EditInspectionReport.jsx";
-// import PackagingLabeling from "./pages/Products/PackagingLabeling.jsx";
-// import Packaging from "./pages/Products/Packaging.jsx";
-// import Labeling from "./pages/Products/Labeling.jsx";
-// import EditPrice from "./pages/Products/EditPrice.jsx";
-// import AddLabeling from "./pages/Products/AddLabeling.jsx";
-// import EditLabeling from "./pages/Products/EditLabeling.jsx";
+import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
+import ProductionScheduleOverview from "./pages/Products/ProductionScheduleOverview.jsx";
+import QualityControl from "./pages/Products/QualityControl.jsx";
+import AddSchedule from "./pages/Products/AddSchedule.jsx";
+import EditSchedule from "./pages/Products/EditSchedule.jsx";
+import AddInspectionReport from "./pages/Products/AddInspectionReport.jsx";
+import EditInspectionReport from "./pages/Products/EditInspectionReport.jsx";
+import PackagingLabeling from "./pages/Products/PackagingLabeling.jsx";
+import Packaging from "./pages/Products/Packaging.jsx";
+import Labeling from "./pages/Products/Labeling.jsx";
+import EditPrice from "./pages/Products/EditPrice.jsx";
+import AddLabeling from "./pages/Products/AddLabeling.jsx";
+import EditLabeling from "./pages/Products/EditLabeling.jsx";
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
@@ -105,9 +114,7 @@ import BuyerTable from "./pages/BuyerTable.jsx";
 import Profile from './components/Profile';
 
 
-// import Test from "./pages/Test.jsx";
 import PageError from "./pages/PageError.jsx";
-
 
 export default function App() {
   return (
@@ -124,14 +131,24 @@ export default function App() {
       <Route path="/salesAndFinance/sales/analytics" element={<SalesAnalyticsPage />} />
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
       <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} />
+      <Route path="/salesAndFinance/finance/transaction-update/:id" element={<UpdateTransactionPage />} />
       <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
       <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} /> */}
 
       {/* inventory */}
-    <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} />
+     <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} />
     <Route path="/Inventory/EditFertilizerRecords/:id" element={<EditFertilizerRecord/>} />
     <Route path="/Inventory/AddFertilizerRecord" element={<AddFertilizerRecord/>} />
     <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>} />
+    <Route path="/Inventory/MaintenanceRecords" element={<MaintenanceRecords/>} />
+    <Route path="/Inventory/EditMaintenanceRecord/:id" element={<EditMaintenanceRecord/>} />
+    <Route path="/Inventory/AddMaintenanceRecord" element={<AddMaintenanceRecord/>} />
+    <Route path="/Inventory/EquipmentRecords" element={<EquipmentRecords/>} />
+    <Route path="/Inventory/EditEquipmentRecords/:id" element={<EditEquipmentRecord/>} />
+    <Route path="/Inventory/AddEquipmentRecord" element={<AddEquipmentRecord/>} />
+    <Route path="/Inventory/RequestPaymentRecords" element={<RequestPaymentRecords/>} />
+    <Route path="/Inventory/AddRequestPaymentRecord" element={<AddRequestPaymentRecord/>} />
+    <Route path="/Inventory/EditRequestPaymentRecords/:id" element={<EditRequestPaymentRecord/>} />
 
       {/* employee */}        
       {/* <Route path="/employee/dashboard" element={<Edashboard/>}/>
@@ -171,7 +188,6 @@ export default function App() {
       <Route path="/coconutPests" element={<CoconutPests />} />
       <Route path="/maintenance" element={<RegularMaintenance />} />
       <Route path="/intercropPests" element={<IntercropPests />} />
-      <Route path="/maintenance" element={<RegularMaintenance />} />
       <Route path="/UserProfile" element={<UserProfile />} />
       <Route path="/coconutLeafMiner" element={<CoconutLeafMiner />} />
       <Route path="/blackBeetle" element={<BlackBeetle />} />
@@ -180,7 +196,7 @@ export default function App() {
       <Route path="/insights" element={<Insights />} />
       <Route path="/detailedOverview" element={<DetailedOverview />} />
       <Route path="/addMaintenance" element={<AddMaintenance />} />
-      <Route path="/addProfile" element={<AddProfile />} /> */}
+      <Route path="/addProfile" element={<AddProfile />} />
 
       {/* product */}
       {/* <Route path="/products/productdashboard" element={<ProductsDashboard />} />
@@ -195,7 +211,7 @@ export default function App() {
       <Route path="/products/packaging-labeling/labeling" element={<Labeling />} />
       <Route path="/products/editPrice/:id" element={<EditPrice />} />
       <Route path="/products/addLabeling" element={<AddLabeling />} />
-      <Route path="/products/editLabeling/:id" element={<EditLabeling />} /> */}
+      <Route path="/products/editLabeling/:id" element={<EditLabeling />} />
 
       {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
@@ -213,7 +229,7 @@ export default function App() {
       <Route path="/profile" element={<Profile />} />
 
       {/* page not found & error page */}
-      {/* <Route path="/test" element={<Test />} /> */}
+      <Route path="/test" element={<Test />} />
 
       <Route path="*" element={<PageError />} />
     </Routes>

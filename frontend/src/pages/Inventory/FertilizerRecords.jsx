@@ -33,7 +33,7 @@ const FertilizerRecords = () => {
       setFertilizers(response.data.data);
       setFilteredFertilizers(response.data.data);
     } catch (error) {
-      console.error('Error fetching fertilizer records:', error);
+      console.error('Error fetching records:', error);
     }
   };
 
@@ -50,11 +50,15 @@ const FertilizerRecords = () => {
   }, [navigate]);
 
   const onGroupContainerClick1 = useCallback(() => {
-    navigate("/Inventory/maintenance");
+    navigate("/Inventory/MaintenanceRecords");
   }, [navigate]);
 
   const onGroupContainerClick2 = useCallback(() => {
-    navigate("/Inventory/Order");
+    navigate("/Inventory/EquipmentRecords");
+  }, [navigate]);
+
+  const onGroupContainerClick3 = useCallback(() => {
+    navigate("/Inventory/RequestPaymentRecords");
   }, [navigate]);
 
   const onSearch = (value) => {
@@ -108,7 +112,7 @@ const FertilizerRecords = () => {
   
   const confirmDelete = (id) => {
     Modal.confirm({
-      title: "Are you sure you want to delete this schedule?",
+      title: "Are you sure you want to delete this record?",
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
@@ -122,21 +126,21 @@ const FertilizerRecords = () => {
       if(response.status === 200) {
         notification.success({
           message: 'Success',
-          description: 'fertilizers record deleted successfully!',
+          description: ' record deleted successfully!',
         });
         // Update local state to remove the deleted record
         setFilteredFertilizers(filteredFertilizers.filter(record => record._id !== id));
       } else {
         notification.error({
           message: 'Error',
-          description: 'There was an error deleting the fertilizers record.',
+          description: 'There was an error deleting the record.',
         });
       }
     } catch (error) {
-      console.error('Error deleting fertilizer:', error.response?.data?.message || error.message);
+      console.error('Error deleting record:', error.response?.data?.message || error.message);
       notification.error({
         message: 'Error',
-        description: error.response?.data?.message || 'There was an error deleting the fertilizer record.',
+        description: error.response?.data?.message || 'There was an error deleting the  record.',
       });
     }
   };
@@ -165,29 +169,37 @@ const FertilizerRecords = () => {
                 </a>
               </div>
               <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
                 onClick={onGroupContainerClick}
               >
                 <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Fertilizer Record
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick1}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Maintenance
+                  Fertilizers & Agrochemicals
                 </a>
               </div>
               <div
                 className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick2}
+                onClick={onGroupContainerClick1}
               >
                 <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Order
+                  Maintenance Records
                 </a>
               </div>
+              <div
+              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
+              onClick={onGroupContainerClick2}
+            >
+              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+                Equipments & Machines
+              </a>
+            </div>
+            <div
+              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
+              onClick={onGroupContainerClick3}
+            >
+              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+              Request Payment Details
+              </a>
+            </div>
             </div>
           </nav>
 
@@ -197,10 +209,10 @@ const FertilizerRecords = () => {
               { title: 'fertilizers', href: '/Inventory/FertilizerRecords' }
             ]}
           />
-          {/* Welcome Message Component */}
+          {/* Welcome Message Component 
           <div className="flex flex-row items-center justify-between shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-[98%] mb-5">
             <b className="text-3xl">Welcome Maheesha</b>
-          </div>
+          </div> */}
 
           <div className="p-6 bg-white rounded-lg shadow-lg">
             <div className="flex items-center justify-between mb-4">
@@ -236,7 +248,7 @@ const FertilizerRecords = () => {
                   render: (text) => moment(text).format("YYYY-MM-DD"),
                 },
                 {
-                  title: "Fertilizer Type",
+                  title: "Fertilizer/Agrochemical Name",
                   dataIndex: "fertilizertype",
                   key: "fertilizertype",
                   sorter: true,
@@ -249,7 +261,13 @@ const FertilizerRecords = () => {
                   sorter: true,
                   sortOrder: sorter.field === 'quantity' ? sorter.order : null,
                 },
-             
+                {
+                  title: "Unit",
+                  dataIndex: "unit",
+                  key: "unit",
+                  sorter: true,
+                  sortOrder: sorter.field === 'unit' ? sorter.order : null,
+                },
                 {
                   title: "Storage Location",
                   dataIndex: "storagelocation",
@@ -264,6 +282,13 @@ const FertilizerRecords = () => {
                   sorter: true,
                   sortOrder: sorter.field === 'expireddate' ? sorter.order : null,
                   render: (text) => moment(text).format("YYYY-MM-DD"),
+                },
+                {
+                  title: "Status",
+                  dataIndex: "status",
+                  key: "status",
+                  sorter: true,
+                  sortOrder: sorter.field === 'status' ? sorter.order : null,
                 },
                 {
                   title: "Actions",
@@ -298,5 +323,4 @@ const FertilizerRecords = () => {
     </div>
   );
 };
-
 export default FertilizerRecords;
