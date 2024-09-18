@@ -245,17 +245,12 @@ return (
             </div>
             {/* Buttons Row */}
             <div className="flex space-x-4 mt-4">
-              <Input
+              <Search
                 placeholder="Search for Pests and Diseases"
                 prefix={<SearchOutlined />}
                 onChange={(e) => handleSearch(e.target.value)}
                 style={{ width: "100%" }}
               />
-              <Dropdown overlay={sortMenu} trigger={["click"]}>
-                <Button>
-                  Sort by <DownOutlined />
-                </Button>
-              </Dropdown>
               <Button icon={<FilePdfOutlined />}>Generate Reports</Button>
             </div>
             {/* Centered Buttons */}
