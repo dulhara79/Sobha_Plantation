@@ -25,6 +25,15 @@ import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAna
  import EditFertilizerRecord from "./pages/Inventory/EditFertilizerRecord.jsx";
  import AddFertilizerRecord from "./pages/Inventory/AddFertilizerRecord.jsx";
  import InventoryDashboard from "./pages/Inventory/InventoryDashboard.jsx";
+ import MaintenanceRecords from "./pages/Inventory/MaintenanceRecords.jsx";
+ import EditMaintenanceRecord from "./pages/Inventory/EditMaintenanceRecord.jsx";
+ import AddMaintenanceRecord from "./pages/Inventory/AddMaintenanceRecord.jsx";
+ import EquipmentRecords from "./pages/Inventory/EquipmentRecords.jsx";
+ import EditEquipmentRecord from "./pages/Inventory/EditEquipmentRecord.jsx";
+ import AddEquipmentRecord from "./pages/Inventory/AddEquipmentRecord.jsx";
+ import RequestPaymentRecords from "./pages/Inventory/RequestPaymentRecords.jsx";
+ import AddRequestPaymentRecord from "./pages/Inventory/AddRequestPaymentRecord.jsx";
+ import EditRequestPaymentRecord from "./pages/Inventory/EditRequestPaymentRecord.jsx";
 
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
@@ -39,6 +48,7 @@ import EattendenceList from "./pages/employee/EattendenceList.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
+import ScheduleOptionsPage from './pages/Harvest/ScheduleOptionsPage.jsx';
 import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
 import YieldRecords from "./pages/Harvest/YieldRecords";
 import ComplianceCheckList from "./pages/Harvest/ComplianceCheckList";
@@ -49,6 +59,7 @@ import EditYieldRecords from './pages/Harvest/EditYieldRecords.jsx'
 import AddComplianceCheck from './pages/Harvest/AddComplianceCheck.jsx';
 import EditComplianceCheck from './pages/Harvest/EditComplianceCheck.jsx';
 import YieldBarChart from './pages/Harvest/YieldBarChart.jsx';
+import YieldOptionsPage from './pages/Harvest/YieldOptionsPage.jsx';
 
 // crop care (diseases)
 import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
@@ -70,6 +81,29 @@ import Insights from "./pages/Diseases/Insights.jsx";
 import DetailedOverview from "./pages/Diseases/DetailedOverview.jsx";
 import AddMaintenance from "./pages/Diseases/AddMaintenance.jsx";
 import AddProfile from "./pages/Diseases/AddProfile.jsx";
+import CoconutMite from "./pages/Diseases/CoconutMite.jsx";
+import Termite from "./pages/Diseases/Termite.jsx";
+import RedWeevil from "./pages/Diseases/RedWeevil.jsx";
+import MammalianPests from "./pages/Diseases/MammalianPests.jsx";
+import BudRot from "./pages/Diseases/BudRot.jsx";
+import LeafSpot from "./pages/Diseases/LeafSpot.jsx";
+import StemBleeding from "./pages/Diseases/StemBleeding.jsx";
+import RootWilt from "./pages/Diseases/RootWilt.jsx";
+import LethalYellowing from "./pages/Diseases/LethalYellowing.jsx";
+import Ganoderma from "./pages/Diseases/Ganoderma.jsx";
+import FruitFlies from "./pages/Diseases/FruitFlies.jsx";
+import BananaWeevil from "./pages/Diseases/BananaWeevil.jsx";
+import PineappleMealybug from "./pages/Diseases/PineappleMealybug.jsx";
+import PapayaMealybug from "./pages/Diseases/PapayaMealybug.jsx";
+import Thrips from "./pages/Diseases/Thrips.jsx";
+import Aphids from "./pages/Diseases/Aphids.jsx";
+import Anthracnose from "./pages/Diseases/Anthracnose.jsx";
+import BacterialWilt from "./pages/Diseases/BacterialWilt.jsx";
+import BlackSigatoka from "./pages/Diseases/BlackSigatoka.jsx";
+import PapayaRingspot from "./pages/Diseases/PapayaRingspot.jsx";
+import FusariumWilt from "./pages/Diseases/FusariumWilt.jsx";
+import PowderyMildew from "./pages/Diseases/PowderyMildew.jsx";
+import UpdateCoconutDiseases from "./pages/Diseases/UpdateCoconutDiseases.jsx";
 
 // product
 import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
@@ -85,6 +119,7 @@ import Labeling from "./pages/Products/Labeling.jsx";
 import EditPrice from "./pages/Products/EditPrice.jsx";
 import AddLabeling from "./pages/Products/AddLabeling.jsx";
 import EditLabeling from "./pages/Products/EditLabeling.jsx";
+import Gallery  from "./pages/Products/Gallery.jsx";
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
@@ -97,16 +132,14 @@ import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
 import AddSeedlingForm from "./pages/CropVarieties/AddSeedlingForm.jsx";
 import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
 
-
 // buyers
-import BuyerRegistrationForm from "./pages/BuyerRegistrationForm.jsx";
+// import BuyerRegistrationForm from "./pages/BuyerRegistrationForm.jsx";
+import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
 import BuyerTable from "./pages/BuyerTable.jsx";
 import Profile from './components/Profile';
 
 
-// import Test from "./pages/Test.jsx";
 import PageError from "./pages/PageError.jsx";
-
 
 export default function App() {
   return (
@@ -123,14 +156,24 @@ export default function App() {
       <Route path="/salesAndFinance/sales/analytics" element={<SalesAnalyticsPage />} />
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
       <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} />
+      <Route path="/salesAndFinance/finance/transaction-update/:id" element={<UpdateTransactionPage />} />
       <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
       <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />
 
       {/* inventory */}
-    <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} />
+     <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} />
     <Route path="/Inventory/EditFertilizerRecords/:id" element={<EditFertilizerRecord/>} />
     <Route path="/Inventory/AddFertilizerRecord" element={<AddFertilizerRecord/>} />
     <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>} />
+    <Route path="/Inventory/MaintenanceRecords" element={<MaintenanceRecords/>} />
+    <Route path="/Inventory/EditMaintenanceRecord/:id" element={<EditMaintenanceRecord/>} />
+    <Route path="/Inventory/AddMaintenanceRecord" element={<AddMaintenanceRecord/>} />
+    <Route path="/Inventory/EquipmentRecords" element={<EquipmentRecords/>} />
+    <Route path="/Inventory/EditEquipmentRecords/:id" element={<EditEquipmentRecord/>} />
+    <Route path="/Inventory/AddEquipmentRecord" element={<AddEquipmentRecord/>} />
+    <Route path="/Inventory/RequestPaymentRecords" element={<RequestPaymentRecords/>} />
+    <Route path="/Inventory/AddRequestPaymentRecord" element={<AddRequestPaymentRecord/>} />
+    <Route path="/Inventory/EditRequestPaymentRecords/:id" element={<EditRequestPaymentRecord/>} />
 
       {/* employee */}        
       <Route path="/employee/dashboard" element={<Edashboard/>}/>
@@ -144,8 +187,10 @@ export default function App() {
       <Route path="/employee/attendanceList" element= {<EattendenceList/>}/>
 
       {/* harvest */}
-      <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
+     <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
+      <Route path="/harvest/schedule-options" element={<ScheduleOptionsPage />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
+      <Route path="/yield-options" element={<YieldOptionsPage />} />
       <Route path="/harvest/yield" element={<YieldRecords />} />
       <Route path="/harvest/compliancechecklist" element={<ComplianceCheckList />} />
       <Route path="/yield/addrecords" element={<AddYieldRecord />} />
@@ -168,7 +213,6 @@ export default function App() {
       <Route path="/coconutPests" element={<CoconutPests />} />
       <Route path="/maintenance" element={<RegularMaintenance />} />
       <Route path="/intercropPests" element={<IntercropPests />} />
-      <Route path="/maintenance" element={<RegularMaintenance />} />
       <Route path="/UserProfile" element={<UserProfile />} />
       <Route path="/coconutLeafMiner" element={<CoconutLeafMiner />} />
       <Route path="/blackBeetle" element={<BlackBeetle />} />
@@ -177,7 +221,32 @@ export default function App() {
       <Route path="/insights" element={<Insights />} />
       <Route path="/detailedOverview" element={<DetailedOverview />} />
       <Route path="/addMaintenance" element={<AddMaintenance />} />
+
       <Route path="/addProfile" element={<AddProfile />} />
+      <Route path="/coconutMite" element={<CoconutMite />} />
+      <Route path="/termite" element={<Termite />} />
+      <Route path="/redWeevil" element={<RedWeevil />} />
+      <Route path="/mammalianPests" element={<MammalianPests />} />
+      <Route path="/budRot" element={<BudRot />} />
+      <Route path="/leafSpot" element={<LeafSpot />} />
+      <Route path="/stemBleeding" element={<StemBleeding />} />
+      <Route path="/rootWilt" element={<RootWilt />} />
+      <Route path="/lethalYellowing" element={<LethalYellowing />} />
+      <Route path="/ganoderma" element={<Ganoderma />} />
+      <Route path="/fruitFlies" element={<FruitFlies />} />
+      <Route path="/bananaWeevil" element={<BananaWeevil />} />
+      <Route path="/pineappleMealybug" element={<PineappleMealybug />} />
+      <Route path="/papayaMealybug" element={<PapayaMealybug />} />
+      <Route path="/thrips" element={<Thrips />} />
+      <Route path="/aphids" element={<Aphids />} />
+      <Route path="/anthracnose" element={<Anthracnose />} />
+      <Route path="/bacterialWilt" element={<BacterialWilt />} />
+      <Route path="/blackSigatoka" element={<BlackSigatoka />} />
+      <Route path="/papayaRingspot" element={<PapayaRingspot />} />
+      <Route path="/fusariumWilt" element={<FusariumWilt />} />
+      <Route path="/powderyMildew" element={<PowderyMildew />} />
+      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />}
+
 
       {/* product */}
       <Route path="/products/productdashboard" element={<ProductsDashboard />} />
@@ -193,6 +262,7 @@ export default function App() {
       <Route path="/products/editPrice/:id" element={<EditPrice />} />
       <Route path="/products/addLabeling" element={<AddLabeling />} />
       <Route path="/products/editLabeling/:id" element={<EditLabeling />} />
+      <Route path="/products/gallery" element={<Gallery/>} />
 
       {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
@@ -204,16 +274,15 @@ export default function App() {
       <Route path="/landPreparation" element={<LandPreparation />} />
       <Route path="/seedlingForm" element={<AddSeedlingForm />} />
       <Route path="/pGrowth" element={<PlantGrowth />} />
-      
-
         
       {/* buyers */}
-      <Route path="/buyer-registration" element={<BuyerRegistrationForm />} />
+       {/* <Route path="/buyer-registration" element={<BuyerRegistrationForm />} /> */}
+      <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
       <Route path="/buyert" element={<BuyerTable />} />
       <Route path="/profile" element={<Profile />} />
 
       {/* page not found & error page */}
-      {/* <Route path="/test" element={<Test />} /> */}
+      <Route path="/test" element={<Test />} />
 
       <Route path="*" element={<PageError />} />
     </Routes>

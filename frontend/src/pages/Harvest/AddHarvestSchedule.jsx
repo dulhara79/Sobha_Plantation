@@ -6,78 +6,66 @@ import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 
-const postData = async (data) => {
-  try {
-    const response = await axios.post("http://localhost:5000/api/harvest", data);
-    console.log("Response:", response.data);
-  } catch (error) {
-    console.error("Error:", error.response ? error.response.data : error.message);
-    throw error; // Rethrow to handle in handleSubmit
-  }
-};
-
 const AddHarvestSchedule = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+
+  // Define loading state for managing form submission
+  const [loading, setLoading] = useState(false);
+
+  // Define disableFields state (or object)
   const [disableFields, setDisableFields] = useState({
-    cropType: true,
-    harvestDate: true,
-    startTime: true,
-    endTime: true,
-    fieldNumber: true,
-    numberOfWorkers: true,
+    harvestDate: false,
+    startTime: false,
+    endTime: false,
+    fieldNumber: false,
+    numberOfWorkers: false,
   });
 
-  // Prevent selecting past dates
+  // Function to disable past dates
   const disablePastDates = (current) => {
-    return current && current < moment().startOf("day");
+    return current && current < moment().startOf('day');
   };
 
-  const handleFieldChange = (changedValues, allValues) => {
-    setDisableFields({
-      cropType: !allValues.harvestId,
-      harvestDate: !allValues.cropType,
-      startTime: !allValues.harvestDate,
-      endTime: !allValues.startTime,
-      fieldNumber: !allValues.endTime,
-      numberOfWorkers: !allValues.fieldNumber,
-    });
-  };
-
+  // Function to handle form submission
   const handleSubmit = async (values) => {
-    console.log("Form Values:", values);
-
-    const formattedData = {
-      ...values,
-      harvestDate: values.harvestDate
-        ? moment(values.harvestDate).startOf("day").toISOString()
-        : "",
-      startTime: values.startTime ? values.startTime.format("HH:mm") : "",
-      endTime: values.endTime ? values.endTime.format("HH:mm") : "",
-    };
-
-    console.log("Formatted Data:", formattedData);
-
     try {
-      await postData(formattedData);
+      setLoading(true);
+
+      // Extract form values
+      const { cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers } = values;
+
+      // Log the values to ensure they are correct
+      console.log('Form Values:', values);
+      console.log('Start Time:', startTime ? startTime.format('HH:mm') : 'Not Provided');
+      console.log('End Time:', endTime ? endTime.format('HH:mm') : 'Not Provided');
+
+      // Post request with formatted time values
+      await axios.post('http://localhost:5000/api/harvest', {
+        cropType,
+        harvestDate,
+        startTime: startTime ? startTime.format('HH:mm') : null,
+        endTime: endTime ? endTime.format('HH:mm') : null,
+        fieldNumber,
+        numberOfWorkers
+      });
+
+      // Handle success
       notification.success({
-        message: "Success",
-        description: "Harvest schedule added successfully!",
+        message: 'Success',
+        description: 'Harvest Schedule added successfully!',
       });
-      form.resetFields();
-      setDisableFields({
-        cropType: true,
-        harvestDate: true,
-        startTime: true,
-        endTime: true,
-        fieldNumber: true,
-        numberOfWorkers: true,
-      });
-      navigate("/harvest/harvest-schedule");
+      setLoading(false);
+      form.resetFields();  // Optionally reset the form after successful submission
+
+      // Navigate to /harvest/harvest-schedule page after successful submission
+      navigate('/harvest/harvest-schedule');
     } catch (error) {
+      console.error('Error adding harvest schedule:', error);
+      setLoading(false);
       notification.error({
-        message: "Error",
-        description: error.response?.data?.message || "Failed to add harvest schedule. Please try again.",
+        message: 'Error',
+        description: 'There was an error adding the harvest schedule.',
       });
     }
   };
@@ -90,29 +78,14 @@ const AddHarvestSchedule = () => {
           form={form}
           onFinish={handleSubmit}
           layout="vertical"
-          onValuesChange={handleFieldChange}
-          scrollToFirstError
         >
-          {/* Harvest ID */}
-          <Form.Item
-            label="Harvest ID"
-            name="harvestId"
-            rules={[
-              { required: true, message: "Harvest ID is required" },
-              { min: 3, message: "Harvest ID must be at least 3 characters long" },
-              { pattern: /^[A-Za-z0-9]+$/, message: "Harvest ID can only include alphanumeric characters" },
-            ]}
-          >
-            <Input placeholder="Enter Harvest ID" />
-          </Form.Item>
-
           {/* Crop Type */}
           <Form.Item
             label="Crop Type"
             name="cropType"
             rules={[{ required: true, message: "Please select a crop type!" }]}
           >
-            <Select placeholder="Select a crop type" disabled={disableFields.cropType}>
+            <Select placeholder="Select a crop type">
               <Option value="Coconut">Coconut</Option>
               <Option value="Banana">Banana</Option>
               <Option value="Pepper">Pepper</Option>
@@ -161,13 +134,14 @@ const AddHarvestSchedule = () => {
           <Form.Item
             label="Field Number"
             name="fieldNumber"
-            rules={[
-              { required: true, message: "Field number is required" },
-              { pattern: /^\d+$/, message: "Field number must be numeric" },
-              { min: 3, message: "Field number must have at least 3 digits" },
-            ]}
+            rules={[{ required: true, message: "Please select a Field number" }]}
           >
-            <Input placeholder="Enter Field Number" disabled={disableFields.fieldNumber} />
+            <Select placeholder="Select a Field number" disabled={disableFields.fieldNumber}>
+              <Option value="AA1">AA1</Option>
+              <Option value="BB1">BB1</Option>
+              <Option value="CC1">CC1</Option>
+              <Option value="DD1">DD1</Option>
+            </Select>
           </Form.Item>
 
           {/* Number of Workers */}
@@ -192,7 +166,7 @@ const AddHarvestSchedule = () => {
 
           {/* Submit Button */}
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button type="primary" htmlType="submit" block loading={loading}>
               Add Schedule
             </Button>
           </Form.Item>

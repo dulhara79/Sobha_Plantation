@@ -92,13 +92,6 @@ const EditYieldRecord = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            label="Age of Yield Date"
-            name="ageofYieldDate"
-            rules={[{ required: true, message: 'Please enter the age of Yield Date!' }]}
-          >
-            <Input type="number" placeholder="Enter age of Yield Date" />
-          </Form.Item>
 
           <Form.Item
             label="Quantity"
@@ -106,14 +99,6 @@ const EditYieldRecord = () => {
             rules={[{ required: true, message: 'Please enter the quantity!' }]}
           >
             <Input type="number" placeholder="Enter quantity" />
-          </Form.Item>
-
-          <Form.Item
-            label="Way Picked"
-            name="wayPicked"
-            rules={[{ required: true, message: 'Please enter the way picked!' }]}
-          >
-            <Input type="text" placeholder="Enter way picked" />
           </Form.Item>
 
           <Form.Item
@@ -130,14 +115,6 @@ const EditYieldRecord = () => {
             rules={[{ required: true, message: 'Please enter the storage location!' }]}
           >
             <Input type="text" placeholder="Enter storage location" />
-          </Form.Item>
-
-          <Form.Item
-            label="Way Picked"
-            name="wayPicked"
-            rules={[{ required: true, message: 'Please enter the way picked!' }]}
-          >
-            <Input type="text" placeholder="Enter way picked" />
           </Form.Item>
 
           <Form.Item>

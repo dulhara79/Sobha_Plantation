@@ -1,15 +1,18 @@
 const express = require("express");
 const router = express.Router();
-
-const Disease = require("../../models/DiseaseModels/diseases");
-const diseasesController = require("../../controllers/DiseaseControllers/diseasesController");
+const {
+    getAllDiseases,
+    createDiseases,
+    getDiseasesById,
+    updateDiseases,
+    deleteDiseases,
+    } = require("../../controllers/DiseaseControllers/diseasesController");
 
 // Routes for Diseases Management
-
-router.get("/", diseasesController.getAllDiseases);
-router.post("/", diseasesController.createDiseases);
-router.get("/:id", diseasesController.getDiseasesById);
-router.put("/:id", diseasesController.updateDiseases);
-router.delete("/:id", diseasesController.deleteDiseases);
+router.get("/", getAllDiseases);
+router.post("/", createDiseases);
+router.get("/:diseaseId", getDiseasesById);
+router.put("/:diseaseId", updateDiseases);
+router.delete("/:diseaseId", deleteDiseases);
 
 module.exports = router;

@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
+import CollectionsSharpIcon from '@mui/icons-material/CollectionsSharp';
+import EventNoteSharpIcon from '@mui/icons-material/EventNoteSharp';
 import { Breadcrumb, Table, Button, Input, Select, Modal } from "antd";
 import axios from "axios";
 import html2canvas from "html2canvas";
@@ -288,6 +290,24 @@ const generatePDF = async () => {
             <Breadcrumb.Item>Production Overview</Breadcrumb.Item>
           </Breadcrumb>
 
+          {/* <div className="flex space-x-4">
+          <Button
+        className="flex items-center text-white bg-green-500 rounded-md shadow-md hover:bg-green-600"
+        onClick={() => navigate("/products/production-overview")}
+        >
+          <EventNoteSharpIcon className="mr-2" />
+          Schedule
+        </Button>
+        <Button
+          className="flex items-center text-white bg-blue-500 rounded-md shadow-md hover:bg-blue-600"
+          onClick={() => navigate("/products/gallery")}
+        >
+          <CollectionsSharpIcon className="mr-2" />
+          Gallery
+        </Button>
+      
+      </div> */}
+
           {/* Page Header */}
           <header className="flex items-center justify-between px-6 py-4 mb-6 bg-white shadow-md">
             <h1 className="text-2xl font-bold">Production Schedule Overview</h1>
@@ -310,12 +330,14 @@ const generatePDF = async () => {
               </Select>
               <Button 
                 type="primary" 
+                style={{ backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
                 onClick={generatePDF} 
               >
                 Generate PDF
               </Button>
               <Button 
                 type="primary" 
+                style={{ backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
                 onClick={() => navigate('/products/addschedule')} 
               >
                 Add Schedule

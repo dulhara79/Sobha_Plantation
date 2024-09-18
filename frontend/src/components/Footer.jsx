@@ -4,7 +4,7 @@ import { Twitter, Instagram , Facebook, AlternateEmail, Email, Call } from '@mui
 const Footer = () => {
   return (
     <div className='relative'>
-    <footer className="mt-3 mb-px text-black no-underline -6 bg-gradient-to-r from-green-400 to-blue-500">
+    <footer className="pl-8 pr-8 mt-3 mb-px text-black no-underline -6 bg-gradient-to-r from-green-400 to-blue-500">
       <div className="container flex justify-between mx-auto">
         <div>
           <h3 className="text-lg font-bold">SOBHA</h3>

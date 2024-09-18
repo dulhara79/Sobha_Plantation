@@ -45,8 +45,8 @@ const SalesDashboard = () => {
             },
           ]}
         />
+          <NavigationButtons />
         <div className="p-4 bg-gray-100">
-          <NavigationButtons activePage="finance" />
           {/* Rectangle Icons */}
           <div className="grid grid-cols-2 gap-4">
             <div
@@ -65,7 +65,7 @@ const SalesDashboard = () => {
             </div>
             <div
               className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
-              onClick={() => navigateTo("/valuation")}
+              onClick={() => navigateTo("/salesAndFinance/finance/add-valuation")}
             >
               <Assessment fontSize="large" className="mb-8 mr-2 size-24" />
               <span className="text-xl font-semibold">Valuation</span>

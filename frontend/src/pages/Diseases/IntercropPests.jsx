@@ -8,6 +8,25 @@ import { Link, useNavigate } from "react-router-dom";
 const IntercropPests = () => {
   const navigate = useNavigate(); // Hook to navigate between pages
 
+    // List of pests and diseases and their corresponding routes
+    const pests = [
+      { name: "Fruit Flies", route: "/fruitFlies" },
+      { name: "Banana Weevil", route: "/bananaWeevil" },
+      { name: "Pineapple Mealybug", route: "/pineappleMealybug" },
+      { name: "Papaya Mealybug", route: "/papayaMealybug" },
+      { name: "Thrips", route: "/thrips" },
+      { name: "Aphids", route: "/aphids" },
+    ];
+  
+    const diseases = [
+      { name: "Anthracnose", route: "/anthracnose" },
+      { name: "Bacterial Wilt", route: "/bacterialWilt" },
+      { name: "Black Sigatoka", route: "/blackSigatoka" },
+      { name: "Papaya Ringspot", route: "/papayaRingspot" },
+      { name: "Fusarium Wilt", route: "/fusariumWilt" },
+      { name: "Powdery Mildew", route: "/powderyMildew" },
+    ];
+
   return (
     <div>
       <Header />
@@ -102,23 +121,14 @@ const IntercropPests = () => {
 
         {/* Pest Section */}
         <div className="mt-8 mb-8">
-          <h1 className="text-2xl font-semibold mb-9">
-            Common Inter-Crop Pests
-          </h1>
+          <h1 className="text-2xl font-semibold mb-9">Common Inter-Crop Pests</h1>
 
           {/* Grid for Pest Buttons */}
           <div className="grid grid-cols-2 gap-4">
             {/* Buttons for Different Pests */}
-            {[
-              "Fruit Flies",
-              "Banana Weevil",
-              "Pineapple Mealybug",
-              "Papaya Mealybug",
-              "Thrips",
-              "Aphids",
-            ].map((pest) => (
+            {pests.map(({ name, route }) => (
               <Button
-                key={pest}
+                key={name}
                 type="primary"
                 block
                 className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
@@ -138,8 +148,9 @@ const IntercropPests = () => {
                   e.currentTarget.style.boxShadow =
                     "0 4px 10px rgba(0, 0, 0, 0.1)";
                 }}
+                onClick={() => navigate(route)}
               >
-                {pest} <RightOutlined />
+                {name} <RightOutlined />
               </Button>
             ))}
           </div>
@@ -153,16 +164,9 @@ const IntercropPests = () => {
             {/* Grid for Disease Buttons */}
             <div className="grid grid-cols-2 gap-4">
               {/* Buttons for Different Diseases */}
-              {[
-                "Anthracnose",
-                "Bacterial Wilt",
-                "Black Sigatoka",
-                "Papaya Ringspot",
-                "Fusarium Wilt",
-                "Powdery Mildew",
-              ].map((disease) => (
+              {diseases.map(({ name, route }) => (
                 <Button
-                  key={disease}
+                  key={name}
                   type="primary"
                   block
                   className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
@@ -182,8 +186,9 @@ const IntercropPests = () => {
                     e.currentTarget.style.boxShadow =
                       "0 4px 10px rgba(0, 0, 0, 0.1)";
                   }}
+                  onClick={() => navigate(route)}
                 >
-                  {disease} <RightOutlined />
+                  {name} <RightOutlined />
                 </Button>
               ))}
             </div>
