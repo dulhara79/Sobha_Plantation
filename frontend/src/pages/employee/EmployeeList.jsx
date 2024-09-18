@@ -14,6 +14,7 @@ import Sidebar from '../../components/Sidebar';
 import { HomeOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
 import EmployeeNavbar from '../../components/Employee/EmployeeNavbar';
+import Breadcrumbs from '../../components/Employee/Breadcrumbss';
 
 const EmployeeList = () => {
     const [employeeRecords, setEmployeeRecords] = useState([]);
@@ -210,21 +211,20 @@ const EmployeeList = () => {
     ];
 
     const dataSource = filteredEmployeeRecords.map(record => ({ ...record, key: record._id }));
+    const breadcrumbItems = [
+        { name: 'Employees', href: '/employees/home' },
+        { name: 'Registration', href: '/employees/registration' },
+    ];
+
 
     return (
         <div className="">
             <Header />
             <Sidebar />
             <div className="ml-[300px] ">
-                <Breadcrumb
-                    items={[
-                        {
-                            href: "",
-                            title: <HomeOutlined />,
-                        },
-                    ]}
-                />
+           
                 <EmployeeNavbar />
+                <Breadcrumbs items={breadcrumbItems} />
                 <div className="p-8 ">
                     <div className="flex justify-between items-center mb-4">
                         <h1 className="text-lg font-semibold">Employee Details</h1>
