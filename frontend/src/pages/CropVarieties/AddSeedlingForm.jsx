@@ -1,73 +1,159 @@
-import React from 'react';
-import { Form, Input, Button, notification } from 'antd';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const AddSeedlingForm = () => {
-  const [form] = Form.useForm();
+  const [seedlingType, setSeedlingType] = useState('');
+  const [currentQuantity, setCurrentQuantity] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  
   const navigate = useNavigate();
 
-  const handleFinish = async (values) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const newSeedling = {
+      seedlingType,
+      currentQuantity: parseInt(currentQuantity), // Ensure quantity is a number
+      minStock: 50, // Fixed value of 50 for minStock
+    };
+
     try {
-      await axios.post('http://localhost:5000/api/seedlings', values);
-      notification.success({ message: 'Seedling added successfully!' });
-      form.resetFields();
-      navigate('/seedlings'); // Redirect to the seedling list or any other page
+      await axios.post('http://localhost:5000/api/seedlings', newSeedling);
+      setSuccessMessage('Seedling added successfully!');
+      setSeedlingType('');
+      setCurrentQuantity('');
+      setErrorMessage('');
     } catch (error) {
-      notification.error({ message: 'Error adding seedling', description: error.response?.data?.message || error.message });
+      setErrorMessage('Error adding seedling: ' + error.response?.data.message);
+      setSuccessMessage('');
     }
   };
 
   const handleCancel = () => {
-    navigate(-1); // Go back to the previous page
+    navigate(-1); // Navigates back to the previous page
+  };
+
+  const handleSeedlingTypeChange = (e) => {
+    const value = e.target.value;
+    // Allow only letters and spaces
+    if (/^[a-zA-Z\s]*$/.test(value)) {
+      setSeedlingType(value);
+    }
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <div style={{ width: '100%', maxWidth: '500px' }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Add New Seedling</h2>
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleFinish}
-        >
-          <Form.Item
-            label="Seedling Type"
-            name="seedlingType"
-            rules={[{ required: true, message: 'Please enter the seedling type!' }]}
-          >
-            <Input />
-          </Form.Item>
+    <div>
+      <style>{`
+        .form-container {
+          width: 100%;
+          max-width: 500px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #f9f9f9;
+          border-radius: 8px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h2 {
+          text-align: center;
+          margin-bottom: 20px;
+          color: #333;
+        }
+        .form-group {
+          margin-bottom: 15px;
+        }
+        .form-group label {
+          display: block;
+          margin-bottom: 5px;
+          color: #555;
+        }
+        .form-group input {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+        }
+        .form-group input:focus {
+          border-color: #4caf50;
+          outline: none;
+        }
+        .button {
+          width: 100%;
+          padding: 10px;
+          background-color: #4caf50;
+          border: none;
+          border-radius: 4px;
+          color: white;
+          font-size: 16px;
+          cursor: pointer;
+          margin-bottom: 10px;
+        }
+        .button:hover {
+          background-color: #45a049;
+        }
+        .cancel-button {
+          width: 100%;
+          padding: 10px;
+          background-color: #f44336;
+          border: none;
+          border-radius: 4px;
+          color: white;
+          font-size: 16px;
+          cursor: pointer;
+        }
+        .cancel-button:hover {
+          background-color: #e53935;
+        }
+        .message {
+          text-align: center;
+          margin-top: 10px;
+        }
+        .message.error {
+          color: red;
+        }
+        .message.success {
+          color: green;
+        }
+        .minStock {
+          font-size: 16px;
+          color: #333;
+          padding: 10px 0;
+        }
+      `}</style>
 
-          <Form.Item
-            label="Current Quantity"
-            name="currentQuantity"
-            rules={[{ required: true, message: 'Please enter the current quantity!' }, { type: 'number', min: 1, message: 'Quantity must be greater than 0!' }]}
-          >
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item
-            label="Minimum Stock"
-            name="minStock"
-            rules={[{ required: true, message: 'Please enter the minimum stock!' }, { type: 'number', min: 1, message: 'Minimum stock must be greater than 0!' }]}
-          >
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-              Add Seedling
-            </Button>
-            <Button
-              type="default"
-              onClick={handleCancel}
-              style={{ width: '100%', marginTop: '10px' }}
-            >
-              Cancel
-            </Button>
-          </Form.Item>
-        </Form>
+      <div className="form-container">
+        <h2>Add New Seedling Type</h2>
+        {errorMessage && <p className="message error">{errorMessage}</p>}
+        {successMessage && <p className="message success">{successMessage}</p>}
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="seedlingType">Seedling Type</label>
+            <input
+              type="text"
+              id="seedlingType"
+              value={seedlingType}
+              onChange={handleSeedlingTypeChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="currentQuantity">Current Quantity</label>
+            <input
+              type="number"
+              id="currentQuantity"
+              value={currentQuantity}
+              onChange={(e) => setCurrentQuantity(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Minimum Stock</label>
+            <p className="minStock">50</p> {/* Display the fixed minimum stock value */}
+          </div>
+          <button type="submit" className="button">Add Seedling</button>
+          <button type="button" className="cancel-button" onClick={handleCancel}>Cancel</button>
+        </form>
       </div>
     </div>
   );

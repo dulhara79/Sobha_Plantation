@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
@@ -104,6 +103,7 @@ import BlackSigatoka from "./pages/Diseases/BlackSigatoka.jsx";
 import PapayaRingspot from "./pages/Diseases/PapayaRingspot.jsx";
 import FusariumWilt from "./pages/Diseases/FusariumWilt.jsx";
 import PowderyMildew from "./pages/Diseases/PowderyMildew.jsx";
+import UpdateCoconutDiseases from "./pages/Diseases/UpdateCoconutDiseases.jsx";
 
 // product
 import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
@@ -119,6 +119,7 @@ import Labeling from "./pages/Products/Labeling.jsx";
 import EditPrice from "./pages/Products/EditPrice.jsx";
 import AddLabeling from "./pages/Products/AddLabeling.jsx";
 import EditLabeling from "./pages/Products/EditLabeling.jsx";
+import Gallery  from "./pages/Products/Gallery.jsx";
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
@@ -129,6 +130,7 @@ import Schedules from "./pages/CropVarieties/Schedules.jsx";
 import ScheduleForm from "./pages/CropVarieties/ScheduleForm.jsx";
 import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
 import AddSeedlingForm from "./pages/CropVarieties/AddSeedlingForm.jsx";
+import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
 
 // buyers
 // import BuyerRegistrationForm from "./pages/BuyerRegistrationForm.jsx";
@@ -156,7 +158,7 @@ export default function App() {
       <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} />
       <Route path="/salesAndFinance/finance/transaction-update/:id" element={<UpdateTransactionPage />} />
       <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
-      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} /> */}
+      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />
 
       {/* inventory */}
      <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} />
@@ -182,7 +184,7 @@ export default function App() {
       <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
       <Route path="/employee/attendance" element= {<GetAttendance/>}/>
       <Route path="/employee/employeelist" element= {<EmployeeList/>}/>
-      <Route path="/employee/attendanceList" element= {<EattendenceList/>}/> */}
+      <Route path="/employee/attendanceList" element= {<EattendenceList/>}/>
 
       {/* harvest */}
      <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
@@ -219,6 +221,7 @@ export default function App() {
       <Route path="/insights" element={<Insights />} />
       <Route path="/detailedOverview" element={<DetailedOverview />} />
       <Route path="/addMaintenance" element={<AddMaintenance />} />
+
       <Route path="/addProfile" element={<AddProfile />} />
       <Route path="/coconutMite" element={<CoconutMite />} />
       <Route path="/termite" element={<Termite />} />
@@ -242,6 +245,7 @@ export default function App() {
       <Route path="/papayaRingspot" element={<PapayaRingspot />} />
       <Route path="/fusariumWilt" element={<FusariumWilt />} />
       <Route path="/powderyMildew" element={<PowderyMildew />} />
+      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />}
 
 
       {/* product */}
@@ -258,6 +262,7 @@ export default function App() {
       <Route path="/products/editPrice/:id" element={<EditPrice />} />
       <Route path="/products/addLabeling" element={<AddLabeling />} />
       <Route path="/products/editLabeling/:id" element={<EditLabeling />} />
+      <Route path="/products/gallery" element={<Gallery/>} />
 
       {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
@@ -268,6 +273,7 @@ export default function App() {
       <Route path="/scheduleForm" element={<ScheduleForm />} />
       <Route path="/landPreparation" element={<LandPreparation />} />
       <Route path="/seedlingForm" element={<AddSeedlingForm />} />
+      <Route path="/pGrowth" element={<PlantGrowth />} />
         
       {/* buyers */}
        {/* <Route path="/buyer-registration" element={<BuyerRegistrationForm />} /> */}
