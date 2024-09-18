@@ -8,10 +8,9 @@ const { Server } = require('socket.io');
 const employeeRoutes = require('./routes/Employee/employee.js');
 // const salesRoutes = require('./routes/sales');
 
-const yieldRoutes = require('./routes/Harvest/yield');
-const harvestRoutes = require('./routes/Harvest/harvest');
-
-//inventory
+/**
+ * inventory
+ */
 const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
 const maintenanceRoutes = require('./routes/Inventory/maintenance.js'); 
 const equipmentRoutes = require('./routes/Inventory/equipments.js'); 
@@ -41,6 +40,7 @@ const complianceCheckRoutes = require('./routes/Harvest/compliance.js')
  */
 const diseasesRoute = require('./routes/DiseaseRoutes/diseasesRoute.js');
 const cropDiseasesRoute = require('./routes/DiseaseRoutes/cropDiseasesRoute.js')
+const treatmentsRoute = require('./routes/DiseaseRoutes/treatmentsRoute.js');
 
 
 
@@ -53,12 +53,14 @@ const scheduleRoutes = require("./routes/scheduleRoutes");
 const soilTestingRoutes = require("./routes/soilTestingRoutes");
 const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
 
+
 /**
  * buyer
  */
 // const BuyerRoutes = require('./routes/buyerRoute');
 
 const BuyerRoutes = require('./routes/buyerRoute');
+
 
 /**
  * Sales and Finance Routes
@@ -92,12 +94,7 @@ app.use("/api/salary-employees", salaryEmployeeRoutes);
 app.use('/api/attendance', attendanceRoute);
 app.use('/api/taskRecords', ETaskRoutes);
 
-// app.use('/api/harvest', harvestRoutes);
-// app.use('/api/yield', yieldRoutes);
-
-app.use("/api/crop-varieties", cropVarietiesRoutes);
-
-// harvest
+//harvest
 app.use('/api/harvest', harvestRoutes);
 app.use('/api/yield', yieldRoutes);
 app.use('/api/compliance-checks', complianceCheckRoutes);// Ensure the route path is correct
@@ -114,38 +111,36 @@ app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/equipments', equipmentRoutes);
 app.use('/api/requests', requestRoutes);
 
-/**
-* crop
-*/
+//crop
 app.use('/api/crop-varieties', cropVarietiesRoutes);
 app.use("/api/seedlings", seedlingRoutes);
 app.use("/api/schedules", scheduleRoutes);
 app.use("/api/soil-tests", soilTestingRoutes);
 app.use("/api/plant-growth", plantGrowthRoutes);
 
-/**
- * crop care
- */
+//crop care
 app.use('/api/diseases', diseasesRoute);
+app.use('/api/cropDiseases', cropDiseasesRoute);
+app.use('/api/treatments', treatmentsRoute);
 
 
 
-
-/**
- * Sales and Finance Routes
- */
+//sales and finance
 app.use("/api/salesAndFinance/finance/transaction", FinancialTransactionRoutes);
 app.use("/api/salesAndFinance/finance/invoice", InvoiceRoutes);
 app.use("/api/salesAndFinance/sales/analytics", SalesAnalyticsRoutes);
 app.use("/api/salesAndFinance/sales/tracking", SalesTrackingRoutes);
 app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
+//app.use("/api/salesAndFinance/finance/analytics", financialAnalyticsRoutes);
 
-/**
- * buyer
- */
-// app.use('/api/buyer', BuyerRoutes);
 
-app.use('/api/buyer', BuyerRoutes);
+
+//buyer
+//app.use('/api/buyer', BuyerRoutes);
+
+//app.use('/api/sales', salesRoutes);
+
+
 
 
 // Socket.IO setup
