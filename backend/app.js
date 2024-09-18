@@ -44,6 +44,7 @@ const treatmentsRoute = require('./routes/DiseaseRoutes/treatmentsRoute.js');
 
 
 
+
 /**
  * crop
  */
@@ -94,7 +95,8 @@ app.use("/api/salary-employees", salaryEmployeeRoutes);
 app.use('/api/attendance', attendanceRoute);
 app.use('/api/taskRecords', ETaskRoutes);
 
-//harvest
+
+// harvest
 app.use('/api/harvest', harvestRoutes);
 app.use('/api/yield', yieldRoutes);
 app.use('/api/compliance-checks', complianceCheckRoutes);// Ensure the route path is correct
@@ -126,6 +128,7 @@ app.use('/api/treatments', treatmentsRoute);
 
 
 //sales and finance
+
 app.use("/api/salesAndFinance/finance/transaction", FinancialTransactionRoutes);
 app.use("/api/salesAndFinance/finance/invoice", InvoiceRoutes);
 app.use("/api/salesAndFinance/sales/analytics", SalesAnalyticsRoutes);
@@ -139,6 +142,7 @@ app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
 //app.use('/api/buyer', BuyerRoutes);
 
 //app.use('/api/sales', salesRoutes);
+
 
 
 
