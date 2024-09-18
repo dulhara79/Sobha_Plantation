@@ -15,13 +15,6 @@ const AddCoconutDiseases = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const validateProgress = (_, value) => {
-    if (value < 0 || value > 100) {
-      return Promise.reject(new Error("Progress must be between 0 and 100"));
-    }
-    return Promise.resolve();
-  };
-
   const [fieldValidity, setFieldValidity] = useState({
     dateOfInspection: false,
     sectionOfLand: false,
@@ -223,7 +216,6 @@ const AddCoconutDiseases = () => {
               <Form.Item
                 label="Section of Land"
                 name="sectionOfLand"
-                disabled={!fieldValidity.dateOfInspection}
                 rules={[
                   {
                     required: true,
@@ -231,7 +223,8 @@ const AddCoconutDiseases = () => {
                   }
                 ]}
               >
-                <Select placeholder="Select section of land">
+                <Select placeholder="Select section of land" disabled={!fieldValidity.dateOfInspection}
+                >
                   <option value="A">A</option>
                   <option value="B">B</option>
                   <option value="C">C</option>
