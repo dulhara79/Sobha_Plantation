@@ -105,6 +105,7 @@ import FusariumWilt from "./pages/Diseases/FusariumWilt.jsx";
 import PowderyMildew from "./pages/Diseases/PowderyMildew.jsx";
 import UpdateCoconutDiseases from "./pages/Diseases/UpdateCoconutDiseases.jsx";
 import UpdateCropsDiseases from "./pages/Diseases/UpdateCropsDiseases.jsx";
+import UpdateCoconutTreatments from "./pages/Diseases/UpdateCoconutTreatments.jsx";
 
 // product
 import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
@@ -247,6 +248,7 @@ export default function App() {
       <Route path="/powderyMildew" element={<PowderyMildew />} />
       <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />} />
       <Route path="/updateCropsDiseases/:id" element={<UpdateCropsDiseases />} />
+      <Route path="/updateCoconutTreatments/:id" element={<UpdateCoconutTreatments />} />
 
 
       {/* product */}
