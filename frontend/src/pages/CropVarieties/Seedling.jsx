@@ -1,59 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Breadcrumb, Button, Table, Tag, Input, Select, notification, Row, Col } from 'antd';
-import { HomeOutlined, LeftCircleOutlined } from '@ant-design/icons';
+import { Breadcrumb, Button, Table, Tag, Input, Select, notification, Row, Col, Modal, Form } from 'antd';
+import { HomeOutlined, LeftCircleOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import Header from '../../components/Header';
 import Sidebar from '../../components/Sidebar';
 
 const { Search } = Input;
 const { Option } = Select;
 
-// Column definitions for the table
-const columns = [
-  {
-    title: 'Seedling Type',
-    dataIndex: 'seedlingType',
-    key: 'seedlingType',
-  },
-  {
-    title: 'Current Qty',
-    dataIndex: 'currentQuantity',
-    key: 'currentQuantity',
-  },
-  {
-    title: 'Min Stock',
-    dataIndex: 'minStock',
-    key: 'minStock',
-  },
-  {
-    title: 'Status',
-    dataIndex: 'status',
-    key: 'status',
-    render: (text) => (
-      <Tag color={text === 'Low Stock' ? 'red' : 'green'}>
-        {text.toUpperCase()}
-      </Tag>
-    ),
-  },
-  {
-    title: 'Actions',
-    key: 'actions',
-    render: (_, record) => (
-      <span>
-        <Button type="link" onClick={() => handleEdit(record)}>Edit</Button>
-        <Button type="link" onClick={() => handleDelete(record._id)}>Delete</Button>
-        <Button type="link" onClick={() => handleNotify(record)}>Notify</Button>
-      </span>
-    ),
-  },
-];
-
 const Seedling = () => {
   const [dataSource, setDataSource] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [searchText, setSearchText] = useState('');
+  const [searchValue, setSearchValue] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [currentSeedling, setCurrentSeedling] = useState(null);
+  const [form] = Form.useForm();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,7 +26,7 @@ const Seedling = () => {
       try {
         const response = await axios.get('http://localhost:5000/api/seedlings');
         setDataSource(response.data);
-        setFilteredData(response.data); // Initialize filtered data
+        setFilteredData(response.data);
       } catch (error) {
         notification.error({ message: 'Error fetching seedlings', description: error.message });
       }
@@ -74,22 +39,28 @@ const Seedling = () => {
   useEffect(() => {
     let filtered = dataSource;
 
-    if (searchText) {
+    // Filter by search value (seedling type, current quantity, and min stock)
+    if (searchValue) {
       filtered = filtered.filter(item =>
-        item.seedlingType.toLowerCase().includes(searchText.toLowerCase())
+        item.seedlingType.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item.currentQuantity.toString().includes(searchValue) ||
+        item.minStock.toString().includes(searchValue)
       );
     }
 
+    // Filter by status
     if (statusFilter !== 'All') {
       filtered = filtered.filter(item => item.status === statusFilter);
     }
 
     setFilteredData(filtered);
-  }, [searchText, statusFilter, dataSource]);
+  }, [searchValue, statusFilter, dataSource]);
 
-  // Handle edit button click
+  // Handle edit button click (open modal)
   const handleEdit = (record) => {
-    console.log('Edit', record);
+    setCurrentSeedling(record);
+    form.setFieldsValue({ ...record, minStock: 50 }); // Set minStock to 50
+    setEditModalVisible(true);
   };
 
   // Handle delete button click
@@ -103,15 +74,107 @@ const Seedling = () => {
     }
   };
 
-  // Handle notify button click
-  const handleNotify = (record) => {
-    console.log('Notify', record);
+  // Handle modal form submission (edit seedling)
+  const handleUpdate = async () => {
+    try {
+      const updatedSeedling = await form.validateFields();
+      
+      // Set status based on the currentQuantity value
+      const status =
+        updatedSeedling.currentQuantity === 0
+          ? 'Out of Stock'
+          : updatedSeedling.currentQuantity < 50
+          ? 'Low Stock'
+          : 'In Stock';
+
+      const updatedData = { ...updatedSeedling, status, minStock: 50 }; // Ensure minStock is 50
+
+      await axios.put(`http://localhost:5000/api/seedlings/${currentSeedling._id}`, updatedData);
+      setDataSource(dataSource.map(item => (item._id === currentSeedling._id ? updatedData : item)));
+      setEditModalVisible(false);
+      notification.success({ message: 'Seedling updated successfully!' });
+    } catch (error) {
+      notification.error({ message: 'Error updating seedling', description: error.message });
+    }
   };
 
-  // Navigate to the Add Seedling form
-  const handleAddNew = () => {
-    navigate('/seedlingForm'); // Adjust the route as necessary
+  // Handle modal cancel
+  const handleCancel = () => {
+    setEditModalVisible(false);
+    form.resetFields(); // Reset form fields when modal is closed
   };
+
+  // Generate PDF Report
+  const generatePDF = () => {
+    const doc = new jsPDF();
+
+    // Add a title
+    doc.text('Seedling Report', 14, 10);
+
+    // Prepare the table data
+    const tableData = filteredData.map((item, index) => [
+      index + 1,
+      item.seedlingType,
+      item.currentQuantity,
+      item.minStock,
+      item.status,
+    ]);
+
+    // Add table using autoTable plugin
+    doc.autoTable({
+      head: [['#', 'Seedling Type', 'Current Qty', 'Min Stock', 'Status']],
+      body: tableData,
+      startY: 20,
+    });
+
+    // Save the PDF
+    doc.save('seedling-report.pdf');
+  };
+
+  // Column definitions for the table
+  const columns = [
+    {
+      title: 'Seedling Type',
+      dataIndex: 'seedlingType',
+      key: 'seedlingType',
+    },
+    {
+      title: 'Current Qty',
+      dataIndex: 'currentQuantity',
+      key: 'currentQuantity',
+    },
+    {
+      title: 'Min Stock',
+      dataIndex: 'minStock',
+      key: 'minStock',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (text) => (
+        <Tag color={text === 'Low Stock' ? 'red' : 'green'}>
+          {text.toUpperCase()}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <span>
+          <EditOutlined
+            style={{ fontSize: '18px', marginRight: '10px', cursor: 'pointer', color: '#1890ff' }}
+            onClick={() => handleEdit(record)}
+          />
+          <DeleteOutlined
+            style={{ fontSize: '18px', cursor: 'pointer', color: '#ff4d4f' }}
+            onClick={() => handleDelete(record._id)}
+          />
+        </span>
+      ),
+    },
+  ];
 
   return (
     <div>
@@ -146,10 +209,10 @@ const Seedling = () => {
               <Row gutter={16}>
                 <Col>
                   <Search
-                    placeholder="Search by seedling type"
+                    placeholder="Search by seedling type, quantity, or stock"
                     enterButton
-                    onSearch={(value) => setSearchText(value)}
-                    style={{ width: 300 }}
+                    onSearch={(value) => setSearchValue(value)}
+                    style={{ width: 400 }}
                   />
                 </Col>
                 <Col>
@@ -168,8 +231,8 @@ const Seedling = () => {
             </Col>
             <Col>
               <div style={{ textAlign: 'right' }}>
-                <Button type="primary" className="mr-2" onClick={handleAddNew}>Add New Seedling</Button>
-                <Button type="default" style={{ backgroundColor: 'green', color: 'white' }}>Generate Reports</Button>
+                <Button type="primary" className="mr-2" onClick={() => navigate('/seedlingForm')}>Add New Seedling Type</Button>
+                <Button type="default" style={{ backgroundColor: 'green', color: 'white' }} onClick={generatePDF}>Generate Reports</Button>
               </div>
             </Col>
           </Row>
@@ -177,6 +240,52 @@ const Seedling = () => {
 
         {/* Seedling Table */}
         <Table dataSource={filteredData} columns={columns} pagination={false} />
+
+        {/* Edit Modal */}
+        <Modal
+          title="Edit Seedling"
+          visible={editModalVisible}
+          onOk={handleUpdate}
+          onCancel={handleCancel}
+          okText="Update"
+          cancelText="Cancel"
+        >
+          <Form form={form} layout="vertical">
+            <Form.Item
+              name="seedlingType"
+              label="Seedling Type"
+              rules={[{ required: true, message: 'Please select the seedling type' }]}
+            >
+              <Select placeholder="Select a seedling type">
+                <Option value="coconut">Coconut</Option>
+                <Option value="papaya">Papaya</Option>
+                <Option value="banana">Banana</Option>
+                <Option value="pepper">Pepper</Option>
+                <Option value="pineapple">Pineapple</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              name="currentQuantity"
+              label="Current Quantity"
+              rules={[{ required: true, message: 'Please input the current quantity' }]}
+            >
+              <Input type="number" onChange={() => form.setFieldsValue({ status: '' })} />
+            </Form.Item>
+            <Form.Item
+              name="minStock"
+              label="Minimum Stock"
+            >
+              <Input type="number" disabled value={50} />
+            </Form.Item>
+            <Form.Item name="status" label="Status">
+              <Select disabled>
+                <Option value="In Stock">In Stock</Option>
+                <Option value="Low Stock">Low Stock</Option>
+                <Option value="Out of Stock">Out of Stock</Option>
+              </Select>
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
     </div>
   );

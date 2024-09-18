@@ -2,14 +2,25 @@ import React, { useState } from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { HomeOutlined, LeftOutlined } from "@ant-design/icons";
-import { Breadcrumb, Button, Input, DatePicker, Form } from "antd";
+import { Breadcrumb, Button, Input, DatePicker, Form, Select, notification } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
-// import { post } from "../../api/api";
+import axios from "axios";
+
+const { option } = Select;
 
 const AddCoconutDiseases = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+
+  const validateProgress = (_, value) => {
+    if (value < 0 || value > 100) {
+      return Promise.reject(new Error("Progress must be between 0 and 100"));
+    }
+    return Promise.resolve();
+  };
 
   const [fieldValidity, setFieldValidity] = useState({
     dateOfInspection: false,
@@ -20,6 +31,14 @@ const AddCoconutDiseases = () => {
     inspectionResult: false,
     suggestedReInspectionDate: false,
   });
+
+  const handleFieldChange = (changedFields) => {
+    const updatedFieldValidity = { ...fieldValidity };
+    Object.keys(changedFields).forEach((field) => {
+      updatedFieldValidity[field] = !!changedFields[field];
+    });
+    setFieldValidity(updatedFieldValidity);
+  }; 
 
   const disableFutureDates = (current) => {
     return current && current > moment().endOf("day");
@@ -51,32 +70,47 @@ const AddCoconutDiseases = () => {
     },
   ];
 
-  const handleFinish = async (values) => {
+  const handleSubmit = async (values) => {
     try {
-      await post("/harvest", values);
+      setLoading(true);
+      
+      //Extract values from form
+      const { dateOfInspection, sectionOfLand, identifiedPest, identifiedDisease, inspectedBy, inspectionResult, suggestedReInspectionDate } = values;
+
+      await axios.post("http://localhost:8090/api/diseases", {
+        dateOfInspection,
+        sectionOfLand,
+        identifiedPest,
+        identifiedDisease,
+        inspectedBy,
+        inspectionResult,
+        suggestedReInspectionDate
+      }); 
+
+      //Handle success, reset loading or form fields if necessary
+      notification.success({
+        message: "Record created successfully",
+        description: "Record has been added successfully"
+      });
+      setLoading(false);
+      form.resetFields();
+
+      //Navigate to the list of records
       navigate("/CoconutInspections");
     } catch (error) {
-      console.error("Error creating disease record:", error);
+      console.error("An error occurred: ", error);
+      setLoading(false);
+      notification.error({
+        message: "An error occurred",
+        description: "An error occurred while creating the record"
+      });
     }
-  };
-
+   };
+  
   const handleCancel = () => {
     navigate("/CoconutInspections");
   };
 
-  const handleFieldChange = (changedFields, allFields) => {
-    const newFieldValidity = { ...fieldValidity };
-
-    allFields.forEach((field) => {
-      if (field.errors.length === 0 && field.value) {
-        newFieldValidity[field.name[0]] = true;
-      } else {
-        newFieldValidity[field.name[0]] = false;
-      }
-    });
-
-    setFieldValidity(newFieldValidity);
-  };
 
   return (
     <div>
@@ -146,7 +180,7 @@ const AddCoconutDiseases = () => {
             />
           </div>
 
-          <div className="p-6 mt-4 bg-white rounded-md shadow-md">
+          <div className="mt-4 p-6 bg-white shadow-md rounded-md">
             <h1 className="text-2xl font-bold text-center">
               Pest / Disease Records - Coconuts
             </h1>
@@ -155,8 +189,8 @@ const AddCoconutDiseases = () => {
               form={form}
               layout="vertical"
               className="mt-6"
-              onFinish={handleFinish}
-              onFieldsChange={handleFieldChange}
+              onFinish={handleSubmit}
+              onValuesChange={(_, values) => handleFieldChange(values)}
             >
               <Form.Item
                 label="Date of Inspection"
@@ -189,12 +223,20 @@ const AddCoconutDiseases = () => {
               <Form.Item
                 label="Section of Land"
                 name="sectionOfLand"
-                rules={alphabeticRule}
+                disabled={!fieldValidity.dateOfInspection}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the section of land.",
+                  }
+                ]}
               >
-                <Input
-                  placeholder="Enter section of land"
-                  disabled={!fieldValidity.dateOfInspection}
-                />
+                <Select placeholder="Select section of land">
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                </Select>
               </Form.Item>
 
               <Form.Item
@@ -233,7 +275,7 @@ const AddCoconutDiseases = () => {
               <Form.Item
                 label="Inspection Result"
                 name="inspectionResult"
-                rules={alphabeticRule}
+                rules={alphabeticNumericRule}
               >
                 <Input
                   placeholder="Enter the inspection result"
@@ -258,14 +300,14 @@ const AddCoconutDiseases = () => {
                 />
               </Form.Item>
 
-              <div className="flex justify-center mt-4 space-x-4">
+              <div className="flex justify-center space-x-4 mt-4">
                 <Button
                   type="primary"
                   htmlType="submit"
+                  loading={loading}
                   style={{ backgroundColor: "#236A64", color: "#fff" }}
-                  disabled={!fieldValidity.suggestedReInspectionDate}
-                  onClick={handleFinish}
-                >
+                  disabled={!fieldValidity.suggestedReInspectionDate}                
+                  >
                   Submit
                 </Button>
                 <Button type="default" htmlType="button" onClick={handleCancel}>

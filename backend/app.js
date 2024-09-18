@@ -9,6 +9,9 @@ const { Server } = require('socket.io');
 const employeeRoutes = require('./routes/Employee/employee.js');
 // const salesRoutes = require('./routes/sales');
 
+const yieldRoutes = require('./routes/Harvest/yield');
+const harvestRoutes = require('./routes/Harvest/harvest');
+
 //inventory
 const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
 const maintenanceRoutes = require('./routes/Inventory/maintenance.js'); 
@@ -38,7 +41,7 @@ const complianceCheckRoutes = require('./routes/Harvest/compliance.js')
 /**
  * crop care
  */
-const diseasesRoute = require('./routes/DiseaseRoutes/diseasesRoute');
+const diseasesRoute = require('./routes/DiseaseRoutes/diseasesRoute.js');
 
 
 /**
@@ -53,6 +56,8 @@ const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
 /**
  * buyer
  */
+// const BuyerRoutes = require('./routes/buyerRoute');
+
 const BuyerRoutes = require('./routes/buyerRoute');
 
 /**
@@ -134,6 +139,8 @@ app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
 /**
  * buyer
  */
+// app.use('/api/buyer', BuyerRoutes);
+
 app.use('/api/buyer', BuyerRoutes);
 
 // Socket.IO setup
