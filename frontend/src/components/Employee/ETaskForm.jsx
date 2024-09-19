@@ -156,6 +156,7 @@ const ETaskForm = () => {
                     value={emp_id}
                     onChange={handleEmployeeChange}
                     className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+
                     required
                   >
                     <option value="">Select an employee</option>
@@ -178,6 +179,7 @@ const ETaskForm = () => {
                     value={task}
                     onChange={(e) => setTask(e.target.value)}
                     className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
+
                       errors.task ? "border-red-500" : ""
                     }`}
                     required
@@ -189,6 +191,7 @@ const ETaskForm = () => {
               </div>
               <div className="col-span-full">
                 <label className="block text-sm font-medium leading-6 text-black">
+
                   Assign Date
                 </label>
                 <div className="mt-2">
@@ -199,6 +202,7 @@ const ETaskForm = () => {
                     min={getTodayDate()} // Set minimum date to today
                     onChange={(e) => setAssign_date(e.target.value)}
                     className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
+
                       errors.assign_date ? "border-red-500" : ""
                     }`}
                     required
@@ -207,6 +211,7 @@ const ETaskForm = () => {
               </div>
               <div className="col-span-full">
                 <label className="block text-sm font-medium leading-6 text-black">
+
                   Due Date
                 </label>
                 <div className="mt-2">
@@ -217,6 +222,7 @@ const ETaskForm = () => {
                     min={assign_date || getTodayDate()} // Set minimum date to assign_date or today
                     onChange={(e) => setDue_date(e.target.value)}
                     className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
+
                       errors.due_date ? "border-red-500" : ""
                     }`}
                     required
