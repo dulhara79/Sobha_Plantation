@@ -41,7 +41,8 @@ const complianceCheckRoutes = require('./routes/Harvest/compliance.js')
 const diseasesRoute = require('./routes/DiseaseRoutes/diseasesRoute.js');
 const cropDiseasesRoute = require('./routes/DiseaseRoutes/cropDiseasesRoute.js')
 const treatmentsRoute = require('./routes/DiseaseRoutes/treatmentsRoute.js');
-
+const cropTreatmentsRoute = require('./routes/DiseaseRoutes/cropTreatmentsRoute.js');
+const maintenanceRoute = require('./routes/DiseaseRoutes/maintenanceRoute.js');
 
 
 
@@ -70,12 +71,16 @@ const FinancialTransactionRoutes = require('./routes/SalesAndFinance/FinancialTr
 const InvoiceRoutes = require('./routes/SalesAndFinance/InvoiceRoutes.js');
 const SalesAnalyticsRoutes = require('./routes/SalesAndFinance/SalesAnalyticsRoutes.js');
 const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoutes.js');
+//const valuationRoutes = require('./routes/SalesAndFinance/valuationRoutes.js');
 
 const attendanceRoute = require('./routes/Employee/AttendanceRoute.js');
 const salaryEmployeeRoutes = require("./routes/Employee/salaryEmployeeRoutes.js");
 const ETaskRoutes = require('./routes/Employee/ETaskRoutes.js');
 
+
+
 const app = express();
+
 
 // Create HTTP server and integrate Socket.IO
 const server = http.createServer(app);
@@ -88,13 +93,13 @@ app.use(cors());
 // Connect to MongoDB
 connectDB();
 
+
 // Define routes
 //employee
 app.use('/api/employee', employeeRoutes);
 app.use("/api/salary-employees", salaryEmployeeRoutes);
 app.use('/api/attendance', attendanceRoute);
 app.use('/api/taskRecords', ETaskRoutes);
-
 
 // harvest
 app.use('/api/harvest', harvestRoutes);
@@ -124,6 +129,8 @@ app.use("/api/plant-growth", plantGrowthRoutes);
 app.use('/api/diseases', diseasesRoute);
 app.use('/api/cropDiseases', cropDiseasesRoute);
 app.use('/api/treatments', treatmentsRoute);
+app.use('/api/cropTreatments', cropTreatmentsRoute);
+app.use('/api/regularMaintenance', maintenanceRoute);
 
 
 
