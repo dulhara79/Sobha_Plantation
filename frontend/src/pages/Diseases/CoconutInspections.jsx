@@ -10,6 +10,8 @@ import {
   LeftOutlined,
   SearchOutlined,
   FilePdfOutlined,
+  EditOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import html2canvas from "html2canvas";
@@ -224,7 +226,7 @@ const CoconutInspections = () => {
             <Breadcrumb
               items={[
                 {
-                  href: "",
+                  href: "/diseases",
                   title: <HomeOutlined />,
                 },
                 {
@@ -293,12 +295,9 @@ const CoconutInspections = () => {
                     key: "actions",
                     render: (text, record) => (
                       <span style={{ display: "flex", gap: "2px" }}>
-                        <Button type="link" onClick={() => handleUpdate(record._id)}>
-                          Edit
-                        </Button>
-                        <Button type="link" danger onClick={() => confirmDelete(record._id)}>
-                          Delete
-                        </Button>
+                         <Button type="link" icon={<EditOutlined />} onClick={() => handleUpdate(record._id)}/>
+                      <Button type="link" icon={<DeleteOutlined />} danger onClick={() => confirmDelete(record._id)}/>
+                      
                       </span>
                     ),
                   },
@@ -312,18 +311,8 @@ const CoconutInspections = () => {
             </div>
             
             {/* Learn More and Add Buttons */}
-            <div className="flex flex-col items-center mt-8 pb-8">
-              <Button
-                style={{
-                  backgroundColor: "rgba(196, 196, 196, 0.44)",
-                  width: "100%",
-                  maxWidth: "400px",
-                }}
-                onClick={() => navigate("/CoconutPests")}
-              >
-                Learn More
-              </Button>
-              <Button
+            <div className="flex flex-col items-center mt-1 pb-8">
+            <Button
                 style={{
                   backgroundColor: "#236A64",
                   color: "#fff",
@@ -332,6 +321,17 @@ const CoconutInspections = () => {
                 onClick={() => navigate("/AddCoconutDiseases")}
               >
                 + Add
+              </Button>
+              <Button
+                style={{
+                  backgroundColor: "rgba(196, 196, 196, 0.44)",
+                  width: "100%",
+                  maxWidth: "400px",
+                  marginTop: "16px",
+                }}
+                onClick={() => navigate("/CoconutPests")}
+              >
+                Learn More
               </Button>
             </div>
           </div>
