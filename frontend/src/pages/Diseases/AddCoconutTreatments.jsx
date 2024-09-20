@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { HomeOutlined, LeftOutlined } from "@ant-design/icons";
-import { Breadcrumb, Button, Input, DatePicker, Form, Select, notification  } from "antd";
+import { Breadcrumb, Button, Input, DatePicker, Form, notification } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import axios from "axios";
-
-const { Option } = Select;
 
 const AddCoconutTreatments = () => {
   const [form] = Form.useForm();
@@ -41,10 +39,6 @@ const AddCoconutTreatments = () => {
 
   const disableFutureDates = (current) => {
     return current && current > moment().endOf("day");
-  };
-
-  const disablePastDates = (current) => {
-    return current && current < moment().startOf("day");
   };
 
   const alphabeticNumericRule = [
@@ -121,8 +115,6 @@ const AddCoconutTreatments = () => {
     navigate("/CoconutTreatments");
   };
 
-
-
   return (
     <div>
       <Header />
@@ -180,7 +172,7 @@ const AddCoconutTreatments = () => {
             <Breadcrumb
               items={[
                 {
-                  href: "",
+                  href: "/diseases",
                   title: <HomeOutlined />,
                 },
                 {
