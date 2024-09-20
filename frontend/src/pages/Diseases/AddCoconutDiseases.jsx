@@ -162,7 +162,7 @@ const AddCoconutDiseases = () => {
             <Breadcrumb
               items={[
                 {
-                  href: "",
+                  href: "/diseases",
                   title: <HomeOutlined />,
                 },
                 {
