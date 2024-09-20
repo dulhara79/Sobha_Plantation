@@ -1,4 +1,3 @@
-const { not } = require("joi");
 const mongoose = require("mongoose");
 
 const TreatmentsSchema = new mongoose.Schema({
