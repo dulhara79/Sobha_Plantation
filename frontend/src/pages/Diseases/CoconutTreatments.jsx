@@ -223,7 +223,7 @@ const CoconutTreatments = () => {
             <Breadcrumb
               items={[
                 {
-                  href: "",
+                  href: "/diseases",
                   title: <HomeOutlined />,
                 },
                 {
@@ -243,7 +243,7 @@ const CoconutTreatments = () => {
               </h1>
               <div className="flex space-x-4">
               <Search
-                placeholder="Search for Pests and Diseases"
+                placeholder="Search for treatments"
                 prefix={<SearchOutlined />}
                 onChange={(e) => handleSearch(e.target.value)}
                 style={{ width: "100%" }}
@@ -310,7 +310,7 @@ const CoconutTreatments = () => {
                     <span style={{ display: "flex", gap: "2px" }}>
                       <Button type="link" icon={<EditOutlined />} onClick={() => handleUpdate(record._id)}/>
                       <Button type="link" icon={<DeleteOutlined />} danger onClick={() => confirmDelete(record._id)}/>
-                      <Button type="link" icon={<MoreOutlined />} onClick={() => navigate("/detailedOverview")}/>
+                      <Button type="link" icon={<MoreOutlined />} onClick={() => navigate("/detailedOverview")}>More</Button>
                     </span>
                   ),
                 },
