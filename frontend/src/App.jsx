@@ -19,6 +19,7 @@ import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.j
 import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
 import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDisplay.jsx";
 import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
+//import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
 
 // inventory
  import FertilizerRecords from "./pages/Inventory/FertilizerRecords.jsx";
@@ -106,6 +107,8 @@ import PowderyMildew from "./pages/Diseases/PowderyMildew.jsx";
 import UpdateCoconutDiseases from "./pages/Diseases/UpdateCoconutDiseases.jsx";
 import UpdateCropsDiseases from "./pages/Diseases/UpdateCropsDiseases.jsx";
 import UpdateCoconutTreatments from "./pages/Diseases/UpdateCoconutTreatments.jsx";
+import UpdateCropsTreatments from "./pages/Diseases/UpdateCropsTreatments.jsx";
+import UpdateMaintenance from "./pages/Diseases/UpdateMaintenance.jsx";
 
 // product
 import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
@@ -249,6 +252,8 @@ export default function App() {
       <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />} />
       <Route path="/updateCropsDiseases/:id" element={<UpdateCropsDiseases />} />
       <Route path="/updateCoconutTreatments/:id" element={<UpdateCoconutTreatments />} />
+      <Route path="/updateCropsTreatments/:id" element={<UpdateCropsTreatments />} />
+      <Route path="/updateMaintenance/:id" element={<UpdateMaintenance />} />
 
 
       {/* product */}
@@ -285,7 +290,7 @@ export default function App() {
       <Route path="/profile" element={<Profile />} />
 
       {/* page not found & error page */}
-      <Route path="/test" element={<Test />} />
+      {/* <Route path="/test" element={<Test />} /> */}
 
       <Route path="*" element={<PageError />} />
     </Routes>
