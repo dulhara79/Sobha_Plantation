@@ -10,6 +10,8 @@ import {
   LeftOutlined,
   SearchOutlined,
   FilePdfOutlined,
+  EditOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import html2canvas from "html2canvas";
@@ -228,7 +230,7 @@ return (
             <Breadcrumb
               items={[
                 {
-                  href: "",
+                  href: "/diseases",
                   title: <HomeOutlined />,
                 },
                 {
@@ -295,12 +297,9 @@ return (
                     key: "actions",
                     render: (text, record) => (
                       <span style={{ display: "flex", gap: "2px" }}>
-                        <Button type="link" onClick={() => handleUpdate(record._id)}>
-                          Edit
-                        </Button>
-                        <Button type="link" danger onClick={() => confirmDelete(record._id)}>
-                          Delete
-                        </Button>
+                         <Button type="link" icon={<EditOutlined />} onClick={() => handleUpdate(record._id)}/>
+                      <Button type="link" icon={<DeleteOutlined />} danger onClick={() => confirmDelete(record._id)}/>
+                      
                       </span>
                     ),
                   },
