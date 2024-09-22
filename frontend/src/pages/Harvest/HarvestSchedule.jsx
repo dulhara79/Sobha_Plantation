@@ -95,18 +95,30 @@ const HarvestSchedule = () => {
 
     setFilteredSchedules(filteredData);
   };
-  const generatePDF = () => {
+  const generatePDF = async () => {
     const doc = new jsPDF();
-    doc.text("Harvest Schedule Report", 20, 10);
-
-    const tableColumn = ["Crop Type", "Harvest Date",  "Start Time", "End Time", "Field Number","Number of Workers"];
+    
+    // Load the logo image
+    const logoUrl = '../src/assets/logo.png';
+    try {
+      const logoDataURL = await getImageDataURL(logoUrl);
+      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
+    } catch (error) {
+      console.error('Failed to load the logo image:', error);
+    }
+  
+    // Add title for the report
+    doc.setFontSize(22);
+    doc.text("Harvest Schedule Report", 70, 40);
+  
+    // Define the table columns and rows
+    const tableColumn = ["Crop Type", "Harvest Date", "Start Time", "End Time", "Field Number", "Number of Workers"];
     const tableRows = [];
-
+  
     filteredSchedules.forEach((schedule) => {
       const scheduleData = [
-        moment(schedule.harvestdate).format("YYYY-MM-DD"),
         schedule.cropType,
-        schedule.harvestDate,
+        moment(schedule.harvestdate).format("YYYY-MM-DD"),
         schedule.startTime,
         schedule.endTime,
         schedule.fieldNumber,
@@ -114,10 +126,52 @@ const HarvestSchedule = () => {
       ];
       tableRows.push(scheduleData);
     });
-
-    doc.autoTable(tableColumn, tableRows, { startY: 20 });
+  
+    // Add the table to the PDF
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 60, // Adjust to make room for the title and logo
+      margin: { horizontal: 10 },
+      styles: { fontSize: 10 },
+      headStyles: {
+        fillColor: [64, 133, 126],
+        textColor: [255, 255, 255],
+        fontSize: 12,
+      },
+      theme: 'striped',
+      didDrawPage: (data) => {
+        const pageNumber = doc.internal.getNumberOfPages();
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+  
+        doc.setFontSize(10);
+        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10);
+      },
+    });
+  
+    // Save the PDF
     doc.save("harvest_schedule_report.pdf");
   };
+
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+  
 
   const renderDate = (text) => {
     const date = moment(text, ['YYYY-MM-DD', moment.ISO_8601], true);

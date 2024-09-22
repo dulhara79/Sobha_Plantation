@@ -11,6 +11,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 
 
+
 const { Search } = Input;
 
 const YieldRecords = () => {
@@ -95,27 +96,80 @@ const YieldRecords = () => {
 
 
 
-  const generatePDF = () => {
+  const generatePDF = async () => {
     const doc = new jsPDF();
-    doc.text("Yield Records Report", 20, 10);
   
+    // Load the logo image
+    const logoUrl = '../src/assets/logo.png';
+    try {
+      const logoDataURL = await getImageDataURL(logoUrl);
+      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
+    } catch (error) {
+      console.error('Failed to load the logo image:', error);
+    }
+  
+    // Add title for the report
+    doc.setFontSize(22);
+    doc.text("Yield Records Report", 70, 40);
+  
+    // Define the table columns and rows
     const tableColumn = ["Harvest Date", "Crop Type", "Quantity", "Trees Picked", "Storage Location"];
-    const tableRows = [];
+    const tableRows = filteredSchedules.map((schedule) => [
+      moment(schedule.harvestdate).format("YYYY-MM-DD"),
+      schedule.cropType,
+      schedule.quantity,
+      schedule.treesPicked,
+      schedule.storageLocation,
+    ]);
   
-    filteredSchedules.forEach((schedule) => {
-      const scheduleData = [
-        moment(schedule.harvestdate).format("YYYY-MM-DD"),
-        schedule.cropType,
-        schedule.quantity,
-        schedule.treesPicked,
-        schedule.storageLocation,
-      ];
-      tableRows.push(scheduleData);
+    // Add the table to the PDF
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 60,
+      margin: { horizontal: 10 },
+      styles: { fontSize: 10 },
+      headStyles: {
+        fillColor: [64, 133, 126],
+        textColor: [255, 255, 255],
+        fontSize: 12,
+      },
+      theme: 'striped',
+      didDrawPage: (data) => {
+        const pageNumber = doc.internal.getNumberOfPages();
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+  
+        doc.setFontSize(10);
+        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10);
+      },
     });
   
-    doc.autoTable(tableColumn, tableRows, { startY: 20 });
+    // Save the PDF
     doc.save("yield_records_report.pdf");
   };
+
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+  
+  
+  
+  
 
   const handleSort = (field, order) => {
     setSorter({ field, order });

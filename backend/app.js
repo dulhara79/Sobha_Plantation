@@ -9,8 +9,7 @@ const { Server } = require('socket.io');
 const employeeRoutes = require('./routes/Employee/employee.js');
 // const salesRoutes = require('./routes/sales');
 
-const yieldRoutes = require('./routes/Harvest/yield');
-const harvestRoutes = require('./routes/Harvest/harvest');
+
 
 //inventory
 const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
@@ -58,7 +57,7 @@ const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
  */
 // const BuyerRoutes = require('./routes/buyerRoute');
 
-const BuyerRoutes = require('./routes/buyerRoute');
+// const BuyerRoutes = require('./routes/buyerRoute');
 
 /**
  * Sales and Finance Routes
@@ -134,14 +133,14 @@ app.use("/api/salesAndFinance/finance/transaction", FinancialTransactionRoutes);
 app.use("/api/salesAndFinance/finance/invoice", InvoiceRoutes);
 app.use("/api/salesAndFinance/sales/analytics", SalesAnalyticsRoutes);
 app.use("/api/salesAndFinance/sales/tracking", SalesTrackingRoutes);
-app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
+// app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
 
 /**
  * buyer
  */
 // app.use('/api/buyer', BuyerRoutes);
 
-app.use('/api/buyer', BuyerRoutes);
+// app.use('/api/buyer', BuyerRoutes);
 
 // Socket.IO setup
 io.on('connection', (socket) => {
