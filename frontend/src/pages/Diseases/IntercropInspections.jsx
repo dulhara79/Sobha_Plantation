@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Breadcrumb, Table, Button, Input, Modal, Dropdown, Menu } from "antd";
+import { Breadcrumb, Table, Button, Input, Modal, notification } from "antd";
 import axios from "axios";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
@@ -10,9 +10,11 @@ import {
   LeftOutlined,
   SearchOutlined,
   FilePdfOutlined,
-  DownOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import LogoImage from "../../assets/logo.png";
 import "../../index.css";
 
 const { Search } = Input;
@@ -21,36 +23,54 @@ const IntercropInspections = () => {
   const [inspections, setInspections] = useState([]);
   const [filteredInspections, setFilteredInspections] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [filterStatus, setFilterStatus] = useState("All");
   const navigate = useNavigate();
-
-  // Fetch inspections from API
-  const fetchInspections = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/api/harvest"); // Changed endpoint
-      if (response.data.success) {
-        setInspections(response.data.data);
-        setFilteredInspections(response.data.data);
-      } else {
-        console.error("Error fetching inspections: ", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error fetching inspections: ", error.message);
-    }
-  };
 
   useEffect(() => {
     fetchInspections();
   }, []);
 
-  // Search inspections
-  const handleSearch = (value) => {
-    setSearchText(value);
-    const filtered = inspections.filter(
-      (inspection) =>
-        inspection.intercropType.toLowerCase().includes(value.toLowerCase()) // Changed field
-    );
-    setFilteredInspections(filtered);
-  };
+    // Fetch inspections from API
+    const fetchInspections = async () => {
+      try {
+        const response = await axios.get("http://localhost:8090/api/diseases");
+        setInspections(response.data.data);
+        setFilteredInspections(response.data.data);
+      } catch (error) {
+        console.error("Error fetching inspections: ", error.response ? error.response.data : error.message);
+      }
+    };
+  
+    // Search inspections
+    const handleSearch = (value) => {
+      setSearchText(value);
+      filterInspections(value, filterStatus);
+    };
+  
+    // Filter inspections
+    const filterInspections = (searchText, filterStatus) => {
+      let filteredData = inspections;
+  
+      if (searchText) {
+        const lowercasedSearchText = searchText.toLowerCase();
+        filteredData = filteredData.filter((inspection) =>
+          Object.values(inspection).some((value) =>
+            String(value).toLowerCase().includes(lowercasedSearchText)
+          )
+        );
+      }
+  
+      if (filterStatus !== "All") {
+        filteredData = filteredData.filter((inspection) => inspection.status === filterStatus);
+      }
+  
+      setFilteredInspections(filteredData);
+    };
+
+    // Handle update inspection
+    const handleUpdate = (id) => {
+      navigate(`/updateCropsDiseases/${id}`);
+    };
 
   // Confirm before deleting an inspection
   const confirmDelete = (id) => {
@@ -66,65 +86,78 @@ const IntercropInspections = () => {
   // Delete inspection
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/api/harvest/${id}`
-      ); // Changed endpoint
-      if (response.data.success) {
-        fetchInspections();
+      const response = await axios.delete(`http://localhost:8090/api/diseases/${id}`);
+      if (response.status === 200) {
+        notification.success({
+          message: "Success",
+          description: "Inspection record deleted successfully",
+        });
+        setFilteredInspections(filteredInspections.filter(record => record._id !== id));
       } else {
-        console.error("Error deleting inspection: ", response.data.message);
+        notification.error({
+          message: "Error",
+          description: "An error occurred. Please try again.",
+        });
       }
     } catch (error) {
       console.error("Error deleting inspection: ", error.message);
+      notification.error({
+        message: "Error",
+        description: "An error occurred. Please try again.",
+      });
     }
   };
 
-  // Columns definition
-  const columns = [
-    {
-      title: "Date",
-      dataIndex: "inspectionDate",
-      key: "inspectionDate",
-      render: (date) => moment(date).format("YYYY-MM-DD"),
-      sorter: (a, b) => new Date(a.inspectionDate) - new Date(b.inspectionDate),
-    },
-    { title: "Field Section", dataIndex: "section", key: "section" },
-    { title: "Identified Pests", dataIndex: "pest", key: "pest" },
-    { title: "Identified Diseases", dataIndex: "disease", key: "disease" },
-    { title: "Inspected By", dataIndex: "inspector", key: "inspector" },
-    { title: "Inspection Result", dataIndex: "result", key: "result" },
-    { title: "Comments", dataIndex: "comments", key: "comments" },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (text, record) => (
-        <span style={{ display: "flex", gap: "10px" }}>
-          <Button
-            onClick={() =>
-              navigate(`/intercropInspections/edit/${record.inspectionId}`)
-            }
-          >
-            Edit
-          </Button>
-          <Button onClick={() => confirmDelete(record.inspectionId)} danger>
-            Delete
-          </Button>
-        </span>
-      ),
-    },
-  ];
+  const generatePDF = () => {
+    const input = document.getElementById("table-to-pdf");
+    html2canvas(input, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const pageHeight = pdf.internal.pageSize.height;
+      let heightLeft = imgHeight;
+  
+      // Add title
+      pdf.setFontSize(16);
+      pdf.setTextColor(40, 40, 40);
+      pdf.text("Inter-Crop Inspections and Disease Identification", 105, 20, { align: "center" });
+  
+      // Add the table image
+      let positionY = 30; // Start position for the image on the first page
+      pdf.addImage(imgData, "PNG", 0, positionY, imgWidth, imgHeight);
+      heightLeft -= pageHeight - positionY;
+  
+      // Add pages if the content spans multiple pages
+      while (heightLeft > 0) {
+        pdf.addPage();
+        positionY = 0; // Reset position to top of the new page
+        pdf.addImage(imgData, "PNG", 0, positionY - heightLeft, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+  
+      // Add footer with a horizontal line and logo
+      const footerY = pdf.internal.pageSize.height - 30;
+  
+      pdf.setDrawColor(0);
+      pdf.setLineWidth(0.5);
+      pdf.line(10, footerY, pdf.internal.pageSize.width - 10, footerY); // Horizontal line
+  
+      // Add logo to the footer
+      const logoData = LogoImage; // Replace with the path to your logo
+      const logoWidth = 40;
+      const logoHeight = 20;
+      const xPosition = (pdf.internal.pageSize.width - logoWidth) / 2;
+      const yPosition = footerY - logoHeight - (-10); // Adjust margin as needed
+  
+      pdf.addImage(logoData, "PNG", xPosition, yPosition, logoWidth, logoHeight);
+  
+      pdf.save("Inter-Crop_Diseases_Report.pdf");
+    });
+  };
+  
 
-  // Dropdown menu for sorting
-  const sortMenu = (
-    <Menu>
-      <Menu.Item key="1">Pest</Menu.Item>
-      <Menu.Item key="2">Disease</Menu.Item>
-      <Menu.Item key="3">Section</Menu.Item>
-      <Menu.Item key="4">Inspector</Menu.Item>
-    </Menu>
-  );
-
-  return (
+return (
     <div
       className="app"
       style={{ display: "flex", flexDirection: "column", height: "100vh" }}
@@ -212,16 +245,12 @@ const IntercropInspections = () => {
             </div>
             {/* Buttons Row */}
             <div className="flex space-x-4 mt-4">
-              <Input
+              <Search
                 placeholder="Search for Pests and Diseases"
                 prefix={<SearchOutlined />}
                 onChange={(e) => handleSearch(e.target.value)}
+                style={{ width: "100%" }}
               />
-              <Dropdown overlay={sortMenu} trigger={["click"]}>
-                <Button>
-                  Sort by <DownOutlined />
-                </Button>
-              </Dropdown>
               <Button icon={<FilePdfOutlined />}>Generate Reports</Button>
             </div>
             {/* Centered Buttons */}
@@ -239,16 +268,51 @@ const IntercropInspections = () => {
                 Inter Crops
               </Button>
             </div>
+
             {/* Table */}
-            <div className="mt-4">
+            <div id="table-to-pdf">
               <Table
+                columns={[
+                  {
+                    title: "Date",
+                    dataIndex: "dateOfInspection",
+                    key: "dateOfInspection",
+                    render: (text) => moment(text).format("YYYY-MM-DD"),
+                  },
+                  { title: "Field Section", dataIndex: "sectionOfLand", key: "sectionOfLand" },
+                  { title: "Identified Pests", dataIndex: "identifiedPest", key: "identifiedPest" },
+                  { title: "Identified Diseases", dataIndex: "identifiedDisease", key: "identifiedDisease" },
+                  { title: "Inspected By", dataIndex: "inspectedBy", key: "inspectedBy" },
+                  { title: "Inspection Result", dataIndex: "inspectionResult", key: "inspectionResult" },
+                  {
+                    title: "Re-Inspection Date",
+                    dataIndex: "suggestedReInspectionDate",
+                    key: "suggestedReInspectionDate",
+                    render: (text) => moment(text).format("YYYY-MM-DD"),
+                  },
+                  {
+                    title: "Actions",
+                    key: "actions",
+                    render: (text, record) => (
+                      <span style={{ display: "flex", gap: "2px" }}>
+                        <Button type="link" onClick={() => handleUpdate(record._id)}>
+                          Edit
+                        </Button>
+                        <Button type="link" danger onClick={() => confirmDelete(record._id)}>
+                          Delete
+                        </Button>
+                      </span>
+                    ),
+                  },
+                ]}
                 dataSource={filteredInspections}
-                columns={columns}
-                rowKey={(record) => record.inspectionId}
-                pagination={{ pageSize: 5 }}
-                style={{ width: "100%" }} //Ensure table width fits content
+                rowKey="_id"
+                pagination={{ pageSize: 10 }}
+                style={{ width: "100%" }} // Ensure table width fits content
+                bordered
               />
             </div>
+
             {/* Learn More and Add Buttons */}
             <div className="flex flex-col items-center mt-8 pb-8">
               <Button
