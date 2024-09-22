@@ -48,7 +48,6 @@ import EattendenceList from "./pages/employee/EattendenceList.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
-import ScheduleOptionsPage from './pages/Harvest/ScheduleOptionsPage.jsx';
 import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
 import YieldRecords from "./pages/Harvest/YieldRecords";
 import ComplianceCheckList from "./pages/Harvest/ComplianceCheckList";
@@ -59,7 +58,7 @@ import EditYieldRecords from './pages/Harvest/EditYieldRecords.jsx'
 import AddComplianceCheck from './pages/Harvest/AddComplianceCheck.jsx';
 import EditComplianceCheck from './pages/Harvest/EditComplianceCheck.jsx';
 import YieldBarChart from './pages/Harvest/YieldBarChart.jsx';
-import YieldOptionsPage from './pages/Harvest/YieldOptionsPage.jsx';
+
 
 // crop care (diseases)
 import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
@@ -104,6 +103,7 @@ import PapayaRingspot from "./pages/Diseases/PapayaRingspot.jsx";
 import FusariumWilt from "./pages/Diseases/FusariumWilt.jsx";
 import PowderyMildew from "./pages/Diseases/PowderyMildew.jsx";
 import UpdateCoconutDiseases from "./pages/Diseases/UpdateCoconutDiseases.jsx";
+import UpdateCropsDiseases from "./pages/Diseases/UpdateCropsDiseases.jsx";
 
 // product
 import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
@@ -156,7 +156,7 @@ export default function App() {
       <Route path="/salesAndFinance/sales/analytics" element={<SalesAnalyticsPage />} />
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
       <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} />
-      <Route path="/salesAndFinance/finance/transaction-update/:id" element={<UpdateTransactionPage />} />
+      {/* <Route path="/salesAndFinance/finance/transaction-update/:id" element={<UpdateTransactionPage />} /> */}
       <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
       <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />
 
@@ -188,9 +188,7 @@ export default function App() {
 
       {/* harvest */}
      <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
-      <Route path="/harvest/schedule-options" element={<ScheduleOptionsPage />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
-      <Route path="/yield-options" element={<YieldOptionsPage />} />
       <Route path="/harvest/yield" element={<YieldRecords />} />
       <Route path="/harvest/compliancechecklist" element={<ComplianceCheckList />} />
       <Route path="/yield/addrecords" element={<AddYieldRecord />} />
@@ -202,7 +200,7 @@ export default function App() {
       <Route path="/yield-bar-chart" element={<YieldBarChart />} />
 
 
-      {/* crop care */}
+       {/* crop care */}
       <Route path="/diseases" element={<DiseasesDashboard />} />
       <Route path="/coconutInspections" element={<CoconutInspections />} />
       <Route path="/intercropInspections" element={<IntercropInspections />} />
@@ -221,7 +219,6 @@ export default function App() {
       <Route path="/insights" element={<Insights />} />
       <Route path="/detailedOverview" element={<DetailedOverview />} />
       <Route path="/addMaintenance" element={<AddMaintenance />} />
-
       <Route path="/addProfile" element={<AddProfile />} />
       <Route path="/coconutMite" element={<CoconutMite />} />
       <Route path="/termite" element={<Termite />} />
@@ -245,7 +242,8 @@ export default function App() {
       <Route path="/papayaRingspot" element={<PapayaRingspot />} />
       <Route path="/fusariumWilt" element={<FusariumWilt />} />
       <Route path="/powderyMildew" element={<PowderyMildew />} />
-      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />}
+      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />} />
+      <Route path="/updateCropsDiseases/:id" element={<UpdateCropsDiseases />} />
 
 
       {/* product */}
@@ -282,7 +280,7 @@ export default function App() {
       <Route path="/profile" element={<Profile />} />
 
       {/* page not found & error page */}
-      <Route path="/test" element={<Test />} />
+      {/* <Route path="/test" element={<Test />} /> */}
 
       <Route path="*" element={<PageError />} />
     </Routes>

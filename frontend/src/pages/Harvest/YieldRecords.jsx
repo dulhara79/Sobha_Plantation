@@ -113,9 +113,10 @@ const YieldRecords = () => {
     doc.text("Yield Records Report", 70, 40);
   
     // Define the table columns and rows
-    const tableColumn = ["Harvest Date", "Crop Type", "Quantity", "Trees Picked", "Storage Location"];
+    const tableColumn = ["Harvest Date","Field Number" ,"Crop Type", "Quantity", "Trees Picked", "Storage Location"];
     const tableRows = filteredSchedules.map((schedule) => [
       moment(schedule.harvestdate).format("YYYY-MM-DD"),
+      schedule.fieldNumber,
       schedule.cropType,
       schedule.quantity,
       schedule.treesPicked,
@@ -290,6 +291,12 @@ const YieldRecords = () => {
                   style={{ width: 200 }}
                   value={searchText}  // Keep the input controlled
                 />
+                 <Button 
+                  style={{ backgroundColor: "#60DB19", color: "#fff" }} 
+                  onClick={() => navigate("/yield/addrecords")}
+                >
+                  Add Records
+                </Button>
                 <Button 
                   style={{ backgroundColor: "#60DB19", color: "#fff" }} 
                   onClick={generatePDF}
@@ -307,6 +314,13 @@ const YieldRecords = () => {
                   sorter: true,
                   sortOrder: sorter.field === 'harvestdate' ? sorter.order : null,
                   render: (text) => moment(text).format("YYYY-MM-DD"),
+                },
+                {
+                  title: "Field Number",
+                  dataIndex: "fieldNumber",
+                  key: "fieldNumber",
+                  sorter: true,
+                  sortOrder: sorter.field === 'fieldNumber' ? sorter.order : null,
                 },
                 {
                   title: "Crop Type",
