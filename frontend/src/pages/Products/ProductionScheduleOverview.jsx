@@ -357,14 +357,14 @@ const isActive = (page) => activePage === page;
               </Select>
               <Button 
                 type="primary" 
-                style={{ backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
+                style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }}
                 onClick={generatePDF} 
               >
                 Generate PDF
               </Button>
               <Button 
                 type="primary" 
-                style={{ backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
+                style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }}
                 onClick={() => navigate('/products/addschedule')} 
               >
                 Add Schedule
