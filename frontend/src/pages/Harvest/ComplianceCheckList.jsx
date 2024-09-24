@@ -6,19 +6,29 @@ import "../../index.css";
 import { ArrowBack } from "@mui/icons-material";
 import { Breadcrumb, Button, Input, Modal, notification, Table } from 'antd';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation,Link  } from 'react-router-dom';
 import moment from 'moment';
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { HomeOutlined } from '@ant-design/icons';
 
 const { Search } = Input;
-
+const menuItems = [
+  { name: "HOME", path: "/harvest/harvestdashboard" },
+  { name: "SCHEDULE", path: "/harvest/harvest-schedule" },
+  { name: "YIELD", path: "/harvest/yield" },
+  { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist" },
+];
 const ComplianceCheckList = () => {
   const [complianceChecks, setComplianceChecks] = useState([]);
   const [filteredChecks, setFilteredChecks] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [sorter, setSorter] = useState({ field: null, order: null });
   const navigate = useNavigate();
+  const location = useLocation();
+  const activePage = location.pathname;
+
 
   useEffect(() => {
     fetchComplianceChecks();
@@ -39,21 +49,7 @@ const ComplianceCheckList = () => {
     }
   };
 
-  const onGroupContainerClick = useCallback(() => {
-    navigate("/harvest/harvest-schedule");
-  }, [navigate]);
-
-  const onGroupContainerClick1 = useCallback(() => {
-    navigate("/harvest/yield");
-  }, [navigate]);
-
-  const onGroupContainerClick2 = useCallback(() => {
-    navigate("/harvest/compliancechecklist");
-  }, [navigate]);
-
-  const onHomeClick = useCallback(() => {
-    navigate("/harvest/harvestdashboard"); // Navigate to HarvestDashboard
-  }, [navigate]);
+ 
 
   const onBackClick = useCallback(() => {
     navigate(-1); // Navigate back to the previous page
@@ -66,28 +62,62 @@ const ComplianceCheckList = () => {
 
   const filterChecks = (searchText) => {
     let filteredData = complianceChecks;
-
+  
+    console.log("Initial complianceChecks data:", complianceChecks);
+    console.log("Search Text:", searchText);
+  
+    // Filter Logic
     if (searchText) {
       const lowercasedSearchText = searchText.toLowerCase();
-      filteredData = filteredData.filter((check) =>
-        Object.values(check).some((value) =>
-          String(value).toLowerCase().includes(lowercasedSearchText)
-        )
-      );
+  
+      filteredData = filteredData.filter((check) => {
+        const match = Object.values(check).some((value) => {
+          if (value !== null && value !== undefined) {
+            const stringValue = String(value).toLowerCase();
+            const isMatch = stringValue.includes(lowercasedSearchText);
+  
+            // Debugging logs
+            console.log(`Value: ${stringValue}, Match: ${isMatch}`);
+            
+            return isMatch;
+          }
+          return false;
+        });
+  
+        return match;
+      });
     }
-
+  
+    console.log("Filtered Data after search:", filteredData);
+  
+    // Sort Logic
     if (sorter.field) {
+      console.log("Sorting by field:", sorter.field, "Order:", sorter.order);
+  
       filteredData = [...filteredData].sort((a, b) => {
+        const aValue = a[sorter.field];
+        const bValue = b[sorter.field];
+  
+        // Debugging logs for sorting
+        console.log(`Comparing A: ${aValue}, B: ${bValue}`);
+  
+        // Handle potential undefined or null values during sorting
+        if (aValue === undefined || aValue === null) return 1;
+        if (bValue === undefined || bValue === null) return -1;
+  
         if (sorter.order === 'ascend') {
-          return a[sorter.field] > b[sorter.field] ? 1 : -1;
+          return aValue > bValue ? 1 : -1;
         } else {
-          return a[sorter.field] < b[sorter.field] ? 1 : -1;
+          return aValue < bValue ? 1 : -1;
         }
       });
     }
-
+  
+    console.log("Final filtered data:", filteredData);
+    
     setFilteredChecks(filteredData);
   };
+  
   const generatePDF = async () => {
     const doc = new jsPDF();
   
@@ -210,67 +240,34 @@ const ComplianceCheckList = () => {
       onOk: () => handleDelete(id),
     });
   };
+  const isActive = (page) => activePage === page;
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div>
       <Header />
-      <div className="flex flex-1">
-        <Sidebar />
-        <div className="ml-[300px] pt-3 flex-1">
-          <nav className="p-4 mb-5">
-            {/* Navigation Buttons */}
-            <div className="container flex items-center justify-between mx-auto space-x-4">
-              <div
-                className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform bg-gray-200 rounded-41xl hover:bg-gray-300"
-                onClick={onBackClick}
-              >
-                <ArrowBack className="text-gray-700" />
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onHomeClick}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Home
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Schedule
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick1}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Yield Records
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick2}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Compliance Check List
-                </a>
-              </div>
-            </div>
+      <Sidebar className="sidebar" />
+        <div className="ml-[300px] p-5">
+        <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
+                 <div className="flex items-center justify-center">
+                    <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
+                       <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
+                        {menuItems.map((item) => (
+                          <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
+                        <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
+                         </li>
+                        ))}
+                  </ul>
+             </div>
           </nav>
-
-          <Breadcrumb
-            items={[
-              { title: 'Home', href: '/' },
-              { title: 'Compliance Checks', href: '/compliance' }
-            ]}
-          />
-
-          <div className="flex flex-row items-center justify-between shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-[98%] mb-5">
-            <b className="text-3xl">Welcome Kaushalya</b>
-          </div>
-
+          <div className="flex items-center justify-between mb-5">
+                    <Breadcrumb
+                        items={[
+                            {href: '', title: <HomeOutlined />},
+                            {title: "Dashboard"},
+                            {title: "Compliance Checks"},
+                             ]}
+                       />
+                    </div>
+       
           <div className="p-6 bg-white rounded-lg shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-4">
@@ -349,7 +346,7 @@ const ComplianceCheckList = () => {
           </div>
         </div>
       </div>
-    </div>
+    
   );
 };
 

@@ -2,18 +2,24 @@ import React, { useCallback, useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import "../../index.css";
-import { ArrowBack } from "@mui/icons-material";
 import { Breadcrumb, Table, Button, Input, Modal, notification } from "antd";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation,Link } from "react-router-dom";
 import moment from "moment";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { HomeOutlined } from '@ant-design/icons';
 
 
 const { Search } = Input;
 
+const menuItems = [
+  { name: "HOME", path: "/harvest/harvestdashboard" },
+  { name: "SCHEDULE", path: "/harvest/harvest-schedule" },
+  { name: "YIELD", path: "/harvest/yield" },
+  { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist" },
+];
 const YieldRecords = () => {
   const [schedules, setSchedules] = useState([]);
   const [filteredSchedules, setFilteredSchedules] = useState([]);
@@ -21,6 +27,8 @@ const YieldRecords = () => {
   const [filterStatus, setFilterStatus] = useState("All");
   const [sorter, setSorter] = useState({ field: null, order: null });
   const navigate = useNavigate();
+  const location = useLocation();
+  const activePage = location.pathname;
 
   useEffect(() => {
     fetchSchedules();
@@ -36,21 +44,6 @@ const YieldRecords = () => {
     }
   };
 
-  const onGroupContainerClick = useCallback(() => {
-    navigate("/harvest/harvest-schedule");
-  }, [navigate]);
-
-  const onGroupContainerClick1 = useCallback(() => {
-    navigate("/harvest/yield");
-  }, [navigate]);
-
-  const onGroupContainerClick2 = useCallback(() => {
-    navigate("/harvest/compliancechecklist");
-  }, [navigate]);
-
-  const onHomeClick = useCallback(() => {
-    navigate("/harvest/harvestdashboard"); // Navigate to HarvestDashboard
-  }, [navigate]);
 
   const onBackClick = useCallback(() => {
     navigate(-1); // Navigate back to the previous page
@@ -61,39 +54,44 @@ const YieldRecords = () => {
     filterSchedules(value, filterStatus);
   };
 
- const filterSchedules = (searchText) => {
+  const filterSchedules = (searchText) => {
     let filteredData = schedules;
-
+  
     if (searchText) {
       const lowercasedSearchText = searchText.toLowerCase();
-
+  
       filteredData = filteredData.filter((schedule) => {
         return Object.keys(schedule).some((key) => {
           const value = schedule[key];
-
+  
           // Debugging
           console.log(`Key: ${key}, Value: ${value}`);
-
-          // Format and filter date fields
+  
+          // Check if the value is a date using moment
           if (moment(value, moment.ISO_8601, true).isValid()) {
-            return moment(value).format("YYYY-MM-DD").toLowerCase().includes(lowercasedSearchText);
+            // Format the date and filter it
+            const formattedDate = moment(value).format("YYYY-MM-DD");
+            return formattedDate.includes(lowercasedSearchText);
           }
-
-          // Filter string and number fields
+  
+          // Check if the value is a string
           if (typeof value === 'string') {
             return value.toLowerCase().includes(lowercasedSearchText);
-          } else if (typeof value === 'number') {
+          }
+  
+          // Check if the value is a number
+          if (typeof value === 'number') {
             return value.toString().includes(searchText);
           }
-
+  
           return false;
         });
       });
     }
-
+  
     setFilteredSchedules(filteredData);
   };
-
+  
 
 
   const generatePDF = async () => {
@@ -220,68 +218,34 @@ const YieldRecords = () => {
       });
     }
   };
-
+  const isActive = (page) => activePage === page;
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div>
       <Header />
-      <div className="flex flex-1">
-        <Sidebar />
-        <div className="ml-[300px] pt-3 flex-1">
-          <nav className="p-4 mb-5">
-            {/* Navigation Buttons */}
-            <div className="container flex items-center justify-between mx-auto space-x-4">
-              <div
-                className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform bg-gray-200 rounded-41xl hover:bg-gray-300"
-                onClick={onBackClick}
-              >
-                <ArrowBack className="text-gray-700" />
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onHomeClick}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Home
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Schedule
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick1}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Yield Records
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick2}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Compliance Check List
-                </a>
-              </div>
-            </div>
+        <Sidebar className="sidebar" />
+        <div className="ml-[300px] p-5">
+        <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
+                 <div className="flex items-center justify-center">
+                    <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
+                       <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
+                        {menuItems.map((item) => (
+                          <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
+                        <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
+                         </li>
+                        ))}
+                  </ul>
+             </div>
           </nav>
 
-          <Breadcrumb
-            items={[
-              { title: 'Home', href: '/' },
-              { title: 'Yield', href: '/harvest/yield' }
-            ]}
-          />
-          {/* Welcome Message Component */}
-          <div className="flex flex-row items-center justify-between shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-[98%] mb-5">
-            <b className="text-3xl">Welcome Kaushalya</b>
-          </div>
-
+          <div className="flex items-center justify-between mb-5">
+                    <Breadcrumb
+                        items={[
+                            {href: '', title: <HomeOutlined />},
+                            {title: "Dashboard"},
+                            {title: "Yield"},
+                             ]}
+                       />
+                    </div>
          <div className="p-6 bg-white rounded-lg shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-4">
@@ -380,7 +344,7 @@ const YieldRecords = () => {
           </div>
         </div>
       </div>
-    </div>
+    
   );
 };
 

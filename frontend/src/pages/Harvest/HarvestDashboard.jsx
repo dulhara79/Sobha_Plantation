@@ -4,15 +4,23 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, Title } from 'chart.js';
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import "../../index.css";
 import { Breadcrumb } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
-import ArrowBack from '@mui/icons-material/ArrowBack';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate,useLocation } from 'react-router-dom';
+import DateTimeDisplay from '../../components/Harvest/DateTimeDisplay';
 import Weather from "../../components/WeatherInf";
 
 // Register chart.js components
 ChartJS.register(LineElement, CategoryScale, LinearScale, Title);
+const menuItems = [
+    { name: "HOME", path: "/harvest/harvestdashboard" },
+    { name: "SCHEDULE", path: "/harvest/harvest-schedule" },
+    { name: "YIELD", path: "/harvest/yield" },
+    { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist" },
+  ];
 
 const HarvestDashboard = () => {
     const [chartData, setChartData] = useState(null);
@@ -21,6 +29,8 @@ const HarvestDashboard = () => {
     const [upcomingHarvests, setUpcomingHarvests] = useState([]);
     const [expiredHarvests, setExpiredHarvests] = useState([]);
     const navigate = useNavigate(); // Initialize navigate
+    const location = useLocation();
+    const activePage = location.pathname;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -106,60 +116,53 @@ const HarvestDashboard = () => {
             },
         },
     };
+    const isActive = (page) => activePage === page;
 
-    const getTodayDate = () => {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date().toLocaleDateString(undefined, options);
-    };
+    // const getTodayDate = () => {
+    //     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    //     return new Date().toLocaleDateString(undefined, options);
+    // };
 
     const onBackClick = useCallback(() => {
         navigate(-1); // Navigate back to the previous page
     }, [navigate]);
 
     return (
-        <div className="flex flex-col min-h-screen bg-gray-100">
+        <div>
             <Header />
-            <div className="flex flex-1">
-                <Sidebar />
-                <div className="ml-[300px] pt-3 flex-2">
-                    <nav className="flex items-left justify-between p-4 bg-transparent">
-                        <button onClick={onBackClick} className="text-gray-600 hover:text-gray-800">
-                            <ArrowBack className="text-xl" />
-                        </button>
-                        <div className="flex space-x-1.5">
-                            <Link to="/harvest/harvestdashboard" className="text-[#236A64] font-semibold">Home</Link>
-                            <Link to="/harvest/harvest-schedule" className="text-[#3CCD65] hover:text-[#2b8f57]">Schedule</Link>
-                            <Link to="/harvest/yield" className="text-[#3CCD65] hover:text-[#2b8f57]">YieldRecords</Link>
-                            <Link to="/harvest/compliancechecklist" className="text-[#3CCD65] hover:text-[#2b8f57]">ComplianceChecklist</Link>
-                        </div>
-                    </nav>
+           <Sidebar className="sidebar" />
+            <div className="ml-[300px] p-5">
+                <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
+                 <div className="flex items-center justify-center">
+                    <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
+                       <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
+                        {menuItems.map((item) => (
+                          <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
+                        <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
+                         </li>
+                        ))}
+                  </ul>
+             </div>
+          </nav>
 
+                  <div className="flex items-center justify-between mb-5">
                     <Breadcrumb
                         items={[
-                            {
-                                href: '',
-                                title: <HomeOutlined />,
-                            },
-                            {
-                                title: "Schedule",
-                            },
-                            {
-                                title: "Dashboard",
-                            },
-                        ]}
-                    />
+                            {href: '', title: <HomeOutlined />},
+                            {title: "Dashboard"},
+                             ]}
+                       />
+                    </div>
 
                     <div className="mt-5">
-                        <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
-                            <div className="flex flex-row items-center justify-between">
-                                <div className="flex flex-col">
-                                    <b className="mb-2 text-3xl">Welcome to the Harvest Dashboard</b>
-                                    <div className="text-xl text-gray-900">
-                                        <div className="font-medium">{`Today is ${getTodayDate()}`}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                         <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
+                         <div className="flex flex-row items-center justify-between">
+                          <DateTimeDisplay />
+                          <div className="flex items-center">
+                        <NotificationsIcon className="text-3xl" />
+                       </div>
+                       </div>
+                      </div>
 
                         <div className="mt-5">
                             <Weather />
@@ -208,7 +211,7 @@ const HarvestDashboard = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        
     );
 };
 

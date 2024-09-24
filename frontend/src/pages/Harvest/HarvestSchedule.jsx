@@ -1,16 +1,26 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState ,useCallback} from "react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import "../../index.css";
-import { ArrowBack } from "@mui/icons-material";
 import { Breadcrumb, Table, Button, Input, Modal, notification } from "antd";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate,useLocation } from "react-router-dom";
 import moment from "moment";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { HomeOutlined } from '@ant-design/icons';
+
+
 
 const { Search } = Input;
+
+const menuItems = [
+  { name: "HOME", path: "/harvest/harvestdashboard" },
+  { name: "SCHEDULE", path: "/harvest/harvest-schedule" },
+  { name: "YIELD", path: "/harvest/yield" },
+  { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist" },
+];
 
 const HarvestSchedule = () => {
   const [schedules, setSchedules] = useState([]);
@@ -18,6 +28,8 @@ const HarvestSchedule = () => {
   const [searchText, setSearchText] = useState("");
   const [sorter, setSorter] = useState({ field: null, order: null });
   const navigate = useNavigate();
+  const location = useLocation();
+  const activePage = location.pathname;
 
   useEffect(() => {
     fetchSchedules();
@@ -40,31 +52,38 @@ const HarvestSchedule = () => {
 
   const filterSchedules = (searchText) => {
     let filteredData = schedules;
-
+  
     if (searchText) {
       const lowercasedSearchText = searchText.toLowerCase();
-
+  
       filteredData = filteredData.filter((schedule) => {
         return Object.keys(schedule).some((key) => {
           const value = schedule[key];
-
-          if (moment(value, moment.ISO_8601, true).isValid()) {
+  
+          // Check if the value is a valid date using moment
+          if (typeof value === 'string' && moment(value, moment.ISO_8601, true).isValid()) {
             return moment(value).format("YYYY-MM-DD").toLowerCase().includes(lowercasedSearchText);
           }
-
+  
+          // If the value is a string
           if (typeof value === 'string') {
             return value.toLowerCase().includes(lowercasedSearchText);
-          } else if (typeof value === 'number') {
+          }
+          
+          // If the value is a number
+          if (typeof value === 'number') {
             return value.toString().includes(lowercasedSearchText);
           }
-
+  
+          // Other data types (objects, arrays) should not be included in the filter
           return false;
         });
       });
     }
-
+  
     setFilteredSchedules(filteredData);
   };
+  
 
   const generatePDF = async () => {
     const doc = new jsPDF();
@@ -194,28 +213,38 @@ const HarvestSchedule = () => {
       onOk: () => handleDelete(id),
     });
   };
+  const isActive = (page) => activePage === page;
+  const onBackClick = useCallback(() => {
+    navigate(-1); // Navigate back to the previous page
+}, [navigate]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div >
       <Header />
-      <div className="flex flex-1">
-        <Sidebar />
-        <div className="ml-[300px] pt-3 flex-1">
-          <nav className="flex items-left justify-between p-2 bg-transparent">
-            <button onClick={() => window.history.back()} className="text-gray-600 hover:text-gray-800">
-              <ArrowBack className="text-xl" />
-            </button>
-            <div className="flex space-x-1.5">
-              <Link to="/harvest/harvestdashboard" className="text-[#3CCD65] hover:text-[#2b8f57]">Home</Link>
-              <Link to="/harvest/harvest-schedule" className="text-[#236A64] front-semibold">Schedule</Link>
-              <Link to="/harvest/yield" className="text-[#3CCD65] hover:text-[#2b8f57]">YieldRecords</Link>
-              <Link to="/harvest/compliancechecklist" className="text-[#3CCD65] hover:text-[#2b8f57]">ComplianceChecklist</Link>
-            </div>
+      <Sidebar className="sidebar" />
+        <div className="ml-[300px] p-5">
+        <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
+                 <div className="flex items-center justify-center">
+                    <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
+                       <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
+                        {menuItems.map((item) => (
+                          <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
+                        <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
+                         </li>
+                        ))}
+                  </ul>
+             </div>
           </nav>
-          <Breadcrumb items={[{ title: 'Home', href: '/' }, { title: 'harvest', href: '/harvest' }]} />
-          <div className="flex flex-row items-center justify-between shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-[98%] mb-5">
-            <b className="text-3xl">Welcome Kaushalya</b>
-          </div>
+                   <div className="flex items-center justify-between mb-5">
+                    <Breadcrumb
+                        items={[
+                            {href: '', title: <HomeOutlined />},
+                            {title: "Dashboard"},
+                            {title: "Schedule"},
+                             ]}
+                       />
+                    </div>
+         
           <div className="p-6 bg-white rounded-lg shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-4">
@@ -306,7 +335,7 @@ const HarvestSchedule = () => {
           </div>
         </div>
       </div>
-    </div>
+    
   );
 };
 
