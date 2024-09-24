@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 
@@ -14,10 +14,23 @@ import {useNavigate} from "react-router-dom";
 import { useSnackbar } from 'notistack';
 import UpdateTransaction from '../../../components/Sales_and_Finance/Finance/UpdateTransaction';
 
+import NewLoadingScreen from '../../../components/LoadingDots'
+
 const UpdateTransactionPage = () => {
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
-    const [loading, setLoading] = useState(false);
+
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      // Simulate loading process (e.g., API calls, component mounting)
+      setTimeout(() => {
+        setLoading(false); // Once the components or data are loaded
+      }, 2000); // Adjust the delay as needed
+    }, []);
+  
+    if (loading) return <NewLoadingScreen />;
+
   return (
     <div>
     <Header />
