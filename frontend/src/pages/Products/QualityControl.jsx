@@ -358,7 +358,7 @@ const getImageDataURL = (url) => {
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button 
                 type="primary" 
-                style={{ marginBottom: '24px', backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }} 
+                style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }} 
                 onClick={generatePDF}
                 
               >
@@ -367,7 +367,7 @@ const getImageDataURL = (url) => {
               <Button 
                 type="primary" 
                 onClick={handleAddInspection} // Added button for adding inspections
-                style={{ marginBottom: '24px', backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
+                style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }}
               >
                 Add Inspection
               </Button>
