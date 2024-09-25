@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
 import Header from '../../../components/Header'
 import Sidebar from '../../../components/Sidebar'
 import NavigationButtons from '../../../components/Sales_and_Finance/NavigationButtons'
@@ -6,7 +6,19 @@ import AddSalesRecord from '../../../components/Sales_and_Finance/Sales/AddSales
 import { Breadcrumb } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 
+import NewLoadingScreen from '../../../components/LoadingDots'
+
 const AddSalesRecordDashboard = () => {
+  const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      // Simulate loading process (e.g., API calls, component mounting)
+      setTimeout(() => {
+        setLoading(false); // Once the components or data are loaded
+      }, 1000); // Adjust the delay as needed
+    }, []);
+  
+    if (loading) return <NewLoadingScreen />;
   return (
     <div>
       <Header />
