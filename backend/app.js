@@ -12,8 +12,6 @@ const ETaskRoutes = require('./routes/Employee/ETaskRoutes.js');
 
 // const salesRoutes = require('./routes/sales');
 
-
-
 //inventory
 const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
 const maintenanceRoutes = require('./routes/Inventory/maintenance.js'); 
@@ -43,7 +41,7 @@ const complianceCheckRoutes = require('./routes/Harvest/compliance.js')
 /**
  * crop care
  */
-const diseasesRoute = require('./routes/DiseaseRoutes/diseasesRoute');
+const diseasesRoute = require('./routes/DiseaseRoutes/diseasesRoute.js');
 
 
 /**
@@ -58,7 +56,11 @@ const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
 /**
  * buyer
  */
-const BuyerRoutes = require('./routes/buyerRoute');
+// const BuyerRoutes = require('./routes/buyerRoute');
+// const buyerRoutes = require('./routes/buyerRoutes');
+const buyerRoutes = require('./routes/buyerRoute');
+const buyerDeliveryRoute = require('./routes/buyerDeliveryRoute'); 
+// const buyerInfoRoute = require('./routes/buyerInfoRoute');
 
 /**
  * Sales and Finance Routes
@@ -126,15 +128,22 @@ app.use('/api/diseases', diseasesRoute);
 /**
  * Sales and Finance Routes
  */
+
 app.use("/api/salesAndFinance/finance/transaction", FinancialTransactionRoutes);
 app.use("/api/salesAndFinance/finance/invoice", InvoiceRoutes);
 app.use("/api/salesAndFinance/sales/analytics", SalesAnalyticsRoutes);
 app.use("/api/salesAndFinance/sales/tracking", SalesTrackingRoutes);
+app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
 
 /**
  * buyer
  */
-app.use('/api/buyer', BuyerRoutes);
+// app.use('/api/buyers', buyerRoutes);
+app.use("/api/broute", buyerRoutes);
+
+
+app.use("/api/deliveryRecords", buyerDeliveryRoute); 
+// app.use("/api/buyerInfo", buyerInfoRoute);
 
 // Socket.IO setup
 io.on('connection', (socket) => {
@@ -152,6 +161,7 @@ io.on('connection', (socket) => {
       console.log('User disconnected');
     });
   });
+
 
 const PORT = process.env.PORT || 8090;
 

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
 import { Breadcrumb, Table, Button, Input, Select, Modal, Card } from "antd";
 import axios from "axios";
@@ -9,9 +9,19 @@ import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import moment from "moment";
 import "../../index.css";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { HomeOutlined } from '@mui/icons-material';
 
 const { Search } = Input;
 const { Option } = Select;
+
+// Navigation menu items for the dashboard
+const menuItems = [
+  { name: 'HOME', path: '/products/productdashboard' },
+  { name: 'PRODUCTION', path: '/products/production-overview' },
+  { name: 'QUALITY', path: '/products/quality-control' },
+  { name: 'PACKAGING', path: '/products/packaging-labeling' }
+];
 
 const QualityControl = () => {
   const [qualityControls, setQualityControls] = useState([]);
@@ -26,6 +36,7 @@ const QualityControl = () => {
   });
   const [activeTab, setActiveTab] = useState("inspection"); 
   const navigate = useNavigate();
+  const activePage = location.pathname;
 
   // Fetch quality controls from API
   const fetchQualityControls = async () => {
@@ -249,6 +260,7 @@ const getImageDataURL = (url) => {
     navigate("/products/issues");
   };
 
+  const isActive = (page) => activePage === page;
   
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
@@ -257,55 +269,36 @@ const getImageDataURL = (url) => {
         <Sidebar />
         <div className="ml-[300px] pt-3 flex-1">
           {/* Navigation Bar */}
-          <nav className="p-4 mb-5">
-            <div className="container flex items-center justify-between mx-auto space-x-4">
-              <div
-                className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform bg-gray-200 rounded-41xl hover:bg-gray-300"
-                onClick={onBackClick}
-              >
-                <ArrowBack className="text-gray-700" />
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onHomeClick}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Home
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onProductionOverviewClick}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Production Overview
-                </a>
-              </div>
-              <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white text-white"
-              onClick={onHomeClick}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-              Quality Control
-              </a>
-            </div>
-
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onPackagingClick}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Packaging
-                </a>
-              </div>
+          <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
+            <div className="flex items-center justify-center">
+              <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
+                <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
+                {menuItems.map((item) => (
+                  <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
+                    <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
+                  </li>
+                ))}
+              </ul>
             </div>
           </nav>
 
-          {/* Breadcrumbs */}
-          <Breadcrumb style={{ marginBottom: 16, marginLeft: 16 }}>
-            <Breadcrumb.Item onClick={onHomeClick}>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>Quality Control</Breadcrumb.Item>
-          </Breadcrumb>
+          {/* Breadcrumb and Gallery Button */}
+      <div className="flex items-center justify-between mb-5">
+          <Breadcrumb
+            items={[
+              {
+                href: '',
+                title: <HomeOutlined />,
+              },
+              {
+                title: 'Products',
+              },
+              {
+                title: 'Production Overview',
+              },
+            ]}
+          />
+      </div>
 
 
           {/* Metrics */}
@@ -365,7 +358,7 @@ const getImageDataURL = (url) => {
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button 
                 type="primary" 
-                style={{ marginRight: 8 }} 
+                style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }} 
                 onClick={generatePDF}
                 
               >
@@ -374,7 +367,7 @@ const getImageDataURL = (url) => {
               <Button 
                 type="primary" 
                 onClick={handleAddInspection} // Added button for adding inspections
-                style={{ marginBottom: '24px', backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
+                style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }}
               >
                 Add Inspection
               </Button>

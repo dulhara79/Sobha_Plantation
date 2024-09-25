@@ -12,19 +12,19 @@ const CoconutPests = () => {
   const pests = [
     { name: "Coconut Leaf Miner", route: "/coconutLeafMiner" },
     { name: "The Black Beetle", route: "/blackBeetle" },
-    { name: "Coconut Mites", route: "/C" },
-    { name: "Termites", route: "/D" },
-    { name: "The Red Weevil", route: "/E" },
-    { name: "Mammalian Pests", route: "/F" },
+    { name: "Coconut Mites", route: "/coconutMite" },
+    { name: "Termites", route: "/termite" },
+    { name: "The Red Weevil", route: "/redWeevil" },
+    { name: "Mammalian Pests", route: "/mammalianPests" },
   ];
 
   const diseases = [
-    { name: "Bud Rot", route: "/G" },
-    { name: "Leaf Spot", route: "/H" },
-    { name: "Stem Bleeding", route: "/I" },
-    { name: "Root Wilt", route: "/J" },
-    { name: "Lethal Yellowing", route: "/K" },
-    { name: "Ganoderma", route: "/L" },
+    { name: "Bud Rot", route: "/budRot" },
+    { name: "Leaf Spot", route: "/leafSpot" },
+    { name: "Stem Bleeding", route: "/stemBleeding" },
+    { name: "Root Wilt", route: "/rootWilt" },
+    { name: "Lethal Yellowing", route: "/lethalYellowing" },
+    { name: "Ganoderma", route: "/ganoderma" },
   ];
 
   return (
@@ -80,7 +80,7 @@ const CoconutPests = () => {
         <Breadcrumb
           items={[
             {
-              href: "",
+              href: "/diseases",
               title: <HomeOutlined />,
             },
             {
@@ -134,7 +134,7 @@ const CoconutPests = () => {
                 className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
                 style={{
                   backgroundImage:
-                    "linear-gradient(135deg, #4CAF50 30%, #E3F2FD 100%)",
+                    "linear-gradient(135deg, #4CAF50 60%, #E3F2FD 100%)",
                   border: "none",
                   transition: "transform 0.2s ease, box-shadow 0.2s ease",
                 }}
@@ -172,7 +172,7 @@ const CoconutPests = () => {
                   className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
                   style={{
                     backgroundImage:
-                      "linear-gradient(135deg, #4CAF50 30%, #E3F2FD 100%)",
+                      "linear-gradient(135deg, #4CAF50 60%, #E3F2FD 100%)",
                     border: "none",
                     transition: "transform 0.2s ease, box-shadow 0.2s ease",
                   }}

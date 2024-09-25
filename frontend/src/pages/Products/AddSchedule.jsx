@@ -10,29 +10,37 @@ const AddSchedule = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  // Function to disable past dates
-  const disablePastDates = (current) => {
-    return current && current < moment().startOf('day');
+  const disableEndDates = (current) => {
+    const startDate = form.getFieldValue('startDate');
+    return current && (current < moment().startOf('day') || current < startDate);
   };
 
-  // Function to validate progress value
-  const validateProgress = (_, value) => {
-    if (value < 0 || value > 100) {
-      return Promise.reject(new Error('Progress must be between 0 and 100'));
+  const disableStartDates = (current) => current && current < moment().startOf('day');
+
+  const validateEndDate = (_, endDate) => {
+    const startDate = form.getFieldValue('startDate');
+    if (endDate && startDate && endDate.isBefore(startDate, 'day')) {
+      return Promise.reject(new Error('End date must be the same as or after the start date.'));
     }
     return Promise.resolve();
   };
 
+  const handleStatusChange = (status) => {
+    if (status === 'Completed') {
+      form.setFieldsValue({ progress: 100 }); // Auto-set progress to 100
+    } else {
+      form.setFieldsValue({ progress: undefined }); // Clear progress if status changes
+    }
+  };
+
   const handleSubmit = async (values) => {
     try {
-      // Prepare the payload with formatted dates
       const payload = {
         ...values,
         startDate: values.startDate ? values.startDate.toISOString() : null,
         endDate: values.endDate ? values.endDate.toISOString() : null,
       };
 
-      // Send POST request to the API
       await axios.post('http://localhost:5000/api/production', payload);
       notification.success({
         message: 'Success',
@@ -52,15 +60,13 @@ const AddSchedule = () => {
     navigate('/products/production-overview');
   };
 
+
+  
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
         <h2 className="mb-6 text-2xl font-bold text-center" style={{ color: '#1D6660' }}>Add Production Schedule</h2>
-        <Form
-          form={form}
-          onFinish={handleSubmit}
-          layout="vertical"
-        >
+        <Form form={form} onFinish={handleSubmit} layout="vertical">
           <Form.Item
             label="Product Type"
             name="productType"
@@ -81,7 +87,37 @@ const AddSchedule = () => {
             name="quantity"
             rules={[{ required: true, message: 'Please enter the quantity!' }]}
           >
-            <Input type="number" placeholder="Enter quantity" />
+            <Input
+              type="number"
+              placeholder="Enter quantity"
+              min="1"
+              max="100"
+              onChange={(e) => {
+                const value = e.target.value;
+
+                // Validate to prevent starting with 0 and out of range values (1-100)
+                if (value === '' || value < 1 || value > 100) {
+                  form.setFieldsValue({ quantity: undefined }); // Clear invalid input
+                }
+              }}
+              onKeyPress={(e) => {
+                const charCode = e.charCode || e.keyCode;
+                const value = e.target.value;
+
+                // Prevent entering non-numeric characters and '0' as the first digit
+                if (charCode < 48 || charCode > 57 || (value.length === 0 && charCode === 48)) {
+                  e.preventDefault();
+                }
+              }}
+              onBlur={(e) => {
+                const value = e.target.value;
+                // Clear input if invalid after focus loss
+                if (value && (value < 1 || value > 100)) {
+                  form.setFieldsValue({ quantity: undefined });
+                }
+              }}
+            />
+
           </Form.Item>
 
           <Form.Item
@@ -91,7 +127,7 @@ const AddSchedule = () => {
           >
             <DatePicker
               format="YYYY-MM-DD"
-              disabledDate={disablePastDates}
+              disabledDate={disableStartDates}
               style={{ width: '100%' }}
             />
           </Form.Item>
@@ -99,11 +135,12 @@ const AddSchedule = () => {
           <Form.Item
             label="End Date"
             name="endDate"
-            rules={[{ required: true, message: 'Please select the end date!' }]}
+            dependencies={['startDate']}
+            rules={[{ required: true, message: 'Please select the end date!' }, { validator: validateEndDate }]}
           >
             <DatePicker
               format="YYYY-MM-DD"
-              disabledDate={disablePastDates}
+              disabledDate={disableEndDates}
               style={{ width: '100%' }}
             />
           </Form.Item>
@@ -113,23 +150,35 @@ const AddSchedule = () => {
             name="status"
             rules={[{ required: true, message: 'Please select the status!' }]}
           >
-            <Select placeholder="Select status">
+            <Select placeholder="Select status" onChange={handleStatusChange}>
               <Option value="Scheduled">Scheduled</Option>
               <Option value="In Progress">In Progress</Option>
               <Option value="Completed">Completed</Option>
-              <Option value="Cancelled">Cancelled</Option>
             </Select>
           </Form.Item>
 
           <Form.Item
             label="Progress (%)"
             name="progress"
-            rules={[
-              { required: true, message: 'Please enter the progress!' },
-              { validator: validateProgress },
-            ]}
+            rules={[{ required: true, message: 'Progress is required!' }]}
           >
-            <Input type="number" placeholder="Enter progress percentage" />
+            <Input
+              type="number"
+              placeholder="Enter progress percentage"
+              onChange={(e) => {
+                const value = e.target.value;
+                // Validate to prevent out of range values (0-100)
+                if (!/^(100|[0-9]{1,2})$/.test(value)) {
+                  form.setFieldsValue({ progress: undefined }); // Clear invalid input
+                }
+              }}
+              onKeyPress={(e) => {
+                const charCode = e.charCode || e.keyCode;
+                if (charCode < 48 || charCode > 57) {
+                  e.preventDefault(); // Prevent entering non-numeric characters
+                }
+              }}
+            />
           </Form.Item>
 
           <Form.Item>

@@ -1,4 +1,5 @@
-const SalesAnalytics = require('../../models/SalesAndFinance/SalesAnalyticsModel');
+// const SalesAnalytics = require('../../models/SalesAndFinance/SalesAnalyticsModel');
+const SalesAnalytics = require('../../models/SalesAndFinance/SalesTrackingModel');
 
 // Create a new sales analytics record
 exports.createSalesAnalytics = async (req, res, next) => {
@@ -78,3 +79,4 @@ exports.deleteSalesAnalytics = async (req, res, next) => {
     next(error);
   }
 };
+

@@ -40,12 +40,12 @@ const Header = ({
 
   return (
     <header
-      className={`self-stretch shadow-[0px_2px_4px_rgba(0,_0,_0,_0.25)] bg-white flex flex-row items-center justify-between pt-[11px] px-5 pb-2.5 box-border z-[99] sticky top-0 max-w-full ${className}`}
+      className={`h-[70px] self-stretch shadow-[0px_2px_4px_rgba(0,_0,_0,_0.25)] bg-white flex flex-row items-center justify-between pt-[11px] px-5 pb-2.5 box-border z-[99] sticky top-0 max-w-full pl-36 pr-36 ${className}`}
       style={HeaderStyle}
     >
       {/* Logo Section */}
       <img
-        className="w-[153px] h-auto cursor-pointer"
+        className="w-[160px] h-auto cursor-pointer"
         loading="lazy"
         alt="Logo"
         src={logo}
