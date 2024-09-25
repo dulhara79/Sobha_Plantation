@@ -7,10 +7,13 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import moment from "moment";
 import "../../index.css";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { HomeOutlined } from '@mui/icons-material';
+import Swal from 'sweetalert2';
+
 
 const { Search } = Input;
 const { Option } = Select;
@@ -140,30 +143,69 @@ const QualityControl = () => {
   navigate(`/products/editInspectionReport/${id}`);
 };
 
-  // Handle delete
-  const handleDelete = async (qualityControlId) => {
-    try {
-      await axios.delete(`http://localhost:5000/api/quality-control/${qualityControlId}`);
-      fetchQualityControls(); // Refresh the quality control list
-    } catch (error) {
-      console.error("Error deleting quality control:", error);
-      Modal.error({
-        title: 'Error',
-        content: 'Failed to delete the quality control item. Please try again later.',
+  // Confirm delete
+const confirmDelete = (qualityControlId) => {
+  Swal.fire({
+    title: "Are you sure you want to delete this inspection?",
+    text: "This action cannot be undone!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Yes, delete it!",
+    cancelButtonText: "No, cancel!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      handleDelete(qualityControlId);
+      Swal.fire({
+        title: "Deleted!",
+        text: "Your inspection has been deleted.",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
       });
     }
-  };
+  });
+};
 
-  // Confirm delete
-  const confirmDelete = (qualityControlId) => {
-    Modal.confirm({
-      title: "Are you sure you want to delete this quality control item?",
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-      onOk: () => handleDelete(qualityControlId),
-    });
-  };
+    // Handle delete
+    const handleDelete = async (qualityControlId) => {
+      try {
+        await axios.delete(`http://localhost:5000/api/quality-control/${qualityControlId}`);
+        fetchQualityControls(); // Refresh the quality control list
+      } catch (error) {
+        Swal.fire({
+          title: "Error!",
+          text: `Failed to delete the inspection. ${error.response?.data?.message || 'Please try again.'}`,
+          icon: "error",
+        });
+      }
+    };
+
+  // // Handle delete
+  // const handleDelete = async (qualityControlId) => {
+  //   try {
+  //     await axios.delete(`http://localhost:5000/api/quality-control/${qualityControlId}`);
+  //     fetchQualityControls(); // Refresh the quality control list
+  //   } catch (error) {
+  //     console.error("Error deleting quality control:", error);
+  //     Modal.error({
+  //       title: 'Error',
+  //       content: 'Failed to delete the quality control item. Please try again later.',
+  //     });
+  //   }
+  // };
+
+  // // Confirm delete
+  // const confirmDelete = (qualityControlId) => {
+  //   Modal.confirm({
+  //     title: "Are you sure you want to delete this quality control item?",
+  //     okText: "Yes",
+  //     okType: "danger",
+  //     cancelText: "No",
+  //     onOk: () => handleDelete(qualityControlId),
+  //   });
+  // };
 
   // Function to get image data URL
 const getImageDataURL = (url) => {
@@ -182,72 +224,123 @@ const getImageDataURL = (url) => {
     img.src = url;
   });
 };
-  
-  // Generate PDF report
-  const generatePDF = async () => {
-    const doc = new jsPDF();
+const generatePDF = async () => {
+  const doc = new jsPDF();
 
-    // Load the logo image
-  const logoUrl = '../src/assets/logo.png'; 
+  // Load the logo image
+  const logoUrl = '../src/assets/logo.png';
+  let logoDataURL;
   try {
-    const logoDataURL = await getImageDataURL(logoUrl);
-
-    // Add the logo image to the PDF
-    doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
-
+    logoDataURL = await getImageDataURL(logoUrl);
   } catch (error) {
     console.error('Failed to load the logo image:', error);
   }
 
-    // Define the table columns
-    const columns = [
-      { title: "Product Type", dataKey: "productType" },
-      { title: "Inspection Date", dataKey: "inspectionDate" },
-      { title: "Status", dataKey: "status" },
-      { title: "Inspector Name", dataKey: "inspectorName" },
-    ];
+  // Function to draw header, footer, and horizontal line
+  const drawHeaderFooter = (data) => {
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
 
-    // Map the filteredQualityControls data to match the columns
-    const rows = filteredQualityControls.map(qc => ({
-      productType: qc.productType,
-      inspectionDate: moment(qc.inspectionDate).format('YYYY-MM-DD'),
-      status: qc.status,
-      inspectorName: qc.inspectorName,
-    }));
+    // Header with logo
+    if (logoDataURL) {
+      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 10); // Adjust position and size
+    }
+    doc.setFontSize(12);
+    doc.text("Sobha Plantation", 170, 15); // Adjust x, y position
+    doc.line(10, 25, pageWidth - 10, 25); // Line under header
 
-    // Add title and table
-    doc.setFontSize(22);
-    doc.text("Quality Control Report", 70, 40); // Adjust y-coordinate as needed
-
-    doc.autoTable({
-      columns: columns,
-      body: rows,
-      startY: 50, 
-      margin: { horizontal: 10 },
-      styles: {
-        fontSize: 10,
-      },
-      headStyles: {
-        fillColor: [64, 133, 126], 
-        textColor: [255, 255, 255], 
-        fontSize: 12,
-        
-      },
-      theme: 'striped',
-      didDrawPage: (data) => {
-        // Add page number to footer
-        const pageNumber = doc.internal.getNumberOfPages();
-        const pageWidth = doc.internal.pageSize.width;
-        const pageHeight = doc.internal.pageSize.height;
-
-        doc.setFontSize(10);
-        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10); // Adjust position as needed
-      },
-    });
-
-    // Save the PDF
-    doc.save("quality_control_report.pdf");
+    // Footer with page number
+    doc.setFontSize(10);
+    doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
   };
+
+  // Set the margins for header and footer space
+  const marginTop = 30; // space reserved for header
+  const marginBottom = 20; // space reserved for footer
+
+  // Title of the report
+  doc.setFontSize(22);
+  doc.text("Quality Control Report", 50, 35); // Adjust y-coordinate to start below header
+
+  // Calculate the status summary
+  const statusSummary = filteredQualityControls.reduce((summary, qc) => {
+    const status = qc.status; // Assuming status can be "Pass" or "Fail"
+    if (!summary[status]) {
+      summary[status] = 0;
+    }
+    summary[status]++;
+    return summary;
+  }, {});
+
+  const totalPass = statusSummary["Pass"] || 0;
+  const totalFail = statusSummary["Fail"] || 0;
+
+  // Define the overview details
+  const overviewHeaders = [['Detail', 'Value']];
+  const overviewRows = [
+    ['Total Inspections', `${metrics.totalInspections}`],
+    ['Pass Rate', `${metrics.passRate}%`],
+    ['Fail Rate', `${metrics.failRate}%`],
+  ];
+
+  // Add Overview Details Table
+  doc.autoTable({
+    startY: marginTop + 20, // Start the first table below the header space
+    head: overviewHeaders,
+    body: overviewRows,
+    margin: { top: marginTop, bottom: marginBottom, horizontal: 10 },
+    styles: {
+      fontSize: 10,
+    },
+    headStyles: {
+      fillColor: [64, 133, 126],
+      textColor: [255, 255, 255],
+      fontSize: 12,
+    },
+    theme: 'grid',
+    didDrawPage: drawHeaderFooter, // Add header and footer to each page
+  });
+
+  // Second Table: Quality Control Data
+  const columns = [
+    { title: "Product Type", dataKey: "productType" },
+    { title: "Inspection Date", dataKey: "inspectionDate" },
+    { title: "Status", dataKey: "status" },
+    { title: "Inspector Name", dataKey: "inspectorName" },
+  ];
+
+  // Map the filteredQualityControls data to match the columns
+  const rows = filteredQualityControls.map(qc => ({
+    productType: qc.productType,
+    inspectionDate: moment(qc.inspectionDate).format('YYYY-MM-DD'),
+    status: qc.status,
+    inspectorName: qc.inspectorName,
+  }));
+
+  let finalY = doc.lastAutoTable.finalY + 10; // Adjust space between tables
+
+  doc.autoTable({
+    startY: finalY, // Start this table below the first table
+    columns: columns,
+    body: rows,
+    margin: { top: marginTop, bottom: marginBottom, horizontal: 10 },
+    styles: {
+      fontSize: 10,
+    },
+    headStyles: {
+      fillColor: [64, 133, 126],
+      textColor: [255, 255, 255],
+      fontSize: 12,
+    },
+    theme: 'striped',
+    didDrawPage: drawHeaderFooter,
+  });
+
+  // Save the PDF
+  doc.save("quality_control_report.pdf");
+};
+
+
 
   // Handler for "Add Inspection" button
   const handleAddInspection = () => {
@@ -340,12 +433,14 @@ const getImageDataURL = (url) => {
           {/* Search and Filters */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <div style={{ display: "flex", alignItems: "center" }}>
-              <Search
+            <Search
                 placeholder="Search by product type"
-                onSearch={onSearch}
+                onChange={(e) => onSearch(e.target.value)} // Trigger search as user types
                 style={{ width: 200, marginRight: 16 }} // Added marginRight for spacing
                 allowClear
               />
+
+
               <Select defaultValue="All" style={{ width: 120 }} onChange={onFilterChange}>
                 <Option value="All">All</Option>
                 <Option value="Passed">Pass</Option>
@@ -366,6 +461,7 @@ const getImageDataURL = (url) => {
               </Button>
               <Button 
                 type="primary" 
+                 
                 onClick={handleAddInspection} // Added button for adding inspections
                 style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }}
               >
@@ -391,18 +487,19 @@ const getImageDataURL = (url) => {
               render={(text, record) => (
                 <div>
                       <Button 
+                      icon={<EditOutlined  />}
                       onClick={() => handleSubmit(record._id)} 
                       style={{ marginRight: 8, backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff' }} // Blue color
                     >
-                      Edit
                     </Button>
 
                       <Button 
+                      icon={<DeleteOutlined />}
                         onClick={() => confirmDelete(record._id)} 
                         type="danger"
                         style={{ backgroundColor: '#ff4d4f', borderColor: '#ff4d4f', color: '#fff' }} // Red color
                       >
-                        Delete
+                        
                       </Button>
                     </div>
               )}

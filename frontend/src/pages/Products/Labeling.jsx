@@ -66,8 +66,10 @@ const Labeling = () => {
     price: calculatePrice(item.productName, item.quantity),
   }));
 
-  const handleSearch = (value) => {
+  // Handler for search input
+  const onSearch = (value) => {
     setSearchText(value);
+    filterQualityControls(value, filterStatus);
   };
 
   const handleFilter = (value) => {
@@ -367,8 +369,9 @@ const Labeling = () => {
 
           <Search 
             placeholder="Search by product name"
-            onSearch={handleSearch}
-            enterButton
+            onChange={(e) => onSearch(e.target.value)} // Trigger search as user types
+            style={{ width: 200, marginRight: 16 }} // Added marginRight for spacing
+            allowClear
           />
           <Select
             placeholder="Filter by status"
