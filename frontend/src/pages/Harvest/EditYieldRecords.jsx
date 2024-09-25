@@ -3,6 +3,8 @@ import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
 import { useNavigate, useParams } from 'react-router-dom';
+import Sidebar from "../../components/Sidebar";
+import Header from "../../components/Header";
 
 const { Option } = Select;
 
@@ -13,10 +15,9 @@ const EditYieldRecord = () => {
   const { id } = useParams(); // Get the record ID from the route parameters
 
   // Function to disable past dates
-  const disablePastDates = (current) => {
-    return current && current < moment().startOf('day');
+  const disableFutureDates = (current) => {
+    return current && current >= moment().startOf('day');
   };
-
   // Fetch record data
   useEffect(() => {
     const fetchRecord = async () => {
@@ -33,6 +34,36 @@ const EditYieldRecord = () => {
     };
     fetchRecord();
   }, [id, form]);
+
+  const validateFieldNumber = (_, value) => {
+    const pattern = /^(AA|BB|CC|DD)\d+$/;
+    if (!value || pattern.test(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error('Field number must be AA1, BB1, CC1, or DD1 format!'));
+  };
+
+  const validateQuantity = (_, value) => {
+    if (value >= 1) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error('Quantity must be at least 1!'));
+  };
+
+  const validateTreesPicked = (_, value) => {
+    if (value >= 1) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error('Trees picked must be at least 1!'));
+  };
+
+  const validateStorageLocation = (_, value) => {
+    const pattern = /^LL[1-4]$/;
+    if (!value || pattern.test(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error('Storage location must be LL1, LL2, LL3, or LL4!'));
+  };
 
   const handleSubmit = async (values) => {
     try {
@@ -59,6 +90,10 @@ const EditYieldRecord = () => {
   };
 
   return (
+    <div className="flex h-screen">
+         <Sidebar />
+    <div className="flex flex-col flex-grow">
+          <Header />
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
         <h2 className="mb-6 text-2xl font-bold text-center">Edit Yield Record</h2>
@@ -67,7 +102,6 @@ const EditYieldRecord = () => {
           onFinish={handleSubmit}
           layout="vertical"
         >
-
           <Form.Item
             label="Harvest Date"
             name="harvestdate"
@@ -75,8 +109,19 @@ const EditYieldRecord = () => {
           >
             <DatePicker
               format="YYYY-MM-DD"
-              disabledDate={disablePastDates}
+              disabledDate={disableFutureDates}
             />
+          </Form.Item>
+
+          <Form.Item
+            label="Field Number"
+            name="fieldNumber"
+            rules={[
+              { required: true, message: 'Please enter the field number!' },
+              { validator: validateFieldNumber },
+            ]}
+          >
+            <Input placeholder="Enter field number" />
           </Form.Item>
 
           <Form.Item
@@ -92,11 +137,13 @@ const EditYieldRecord = () => {
             </Select>
           </Form.Item>
 
-
           <Form.Item
             label="Quantity"
             name="quantity"
-            rules={[{ required: true, message: 'Please enter the quantity!' }]}
+            rules={[
+              { required: true, message: 'Please enter the quantity!' },
+              { validator: validateQuantity },
+            ]}
           >
             <Input type="number" placeholder="Enter quantity" />
           </Form.Item>
@@ -104,7 +151,10 @@ const EditYieldRecord = () => {
           <Form.Item
             label="Trees Picked"
             name="treesPicked"
-            rules={[{ required: true, message: 'Please enter the number of trees picked!' }]}
+            rules={[
+              { required: true, message: 'Please enter the number of trees picked!' },
+              { validator: validateTreesPicked },
+            ]}
           >
             <Input type="number" placeholder="Enter number of trees picked" />
           </Form.Item>
@@ -112,7 +162,10 @@ const EditYieldRecord = () => {
           <Form.Item
             label="Storage Location"
             name="storageLocation"
-            rules={[{ required: true, message: 'Please enter the storage location!' }]}
+            rules={[
+              { required: true, message: 'Please enter the storage location!' },
+              { validator: validateStorageLocation },
+            ]}
           >
             <Input type="text" placeholder="Enter storage location" />
           </Form.Item>
@@ -125,6 +178,8 @@ const EditYieldRecord = () => {
         </Form>
       </div>
     </div>
+    </div>
+   </div>
   );
 };
 

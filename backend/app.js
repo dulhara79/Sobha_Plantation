@@ -7,10 +7,11 @@ const { Server } = require('socket.io');
 
 
 const employeeRoutes = require('./routes/Employee/employee.js');
+const attendanceRoute = require('./routes/Employee/AttendanceRoute.js');
+const ETaskRoutes = require('./routes/Employee/ETaskRoutes.js');
+
 // const salesRoutes = require('./routes/sales');
 
-// const yieldRoutes = require('./routes/Harvest/yield');
-// const harvestRoutes = require('./routes/Harvest/harvest');
 
 //inventory
 const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
@@ -57,8 +58,10 @@ const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
  * buyer
  */
 // const BuyerRoutes = require('./routes/buyerRoute');
-
-const BuyerRoutes = require('./routes/buyerRoute');
+// const buyerRoutes = require('./routes/buyerRoutes');
+const buyerRoutes = require('./routes/buyerRoute');
+const buyerDeliveryRoute = require('./routes/buyerDeliveryRoute'); 
+// const buyerInfoRoute = require('./routes/buyerInfoRoute');
 
 /**
  * Sales and Finance Routes
@@ -89,7 +92,6 @@ connectDB();
 // Define routes
 //employee
 app.use('/api/employee', employeeRoutes);
-app.use("/api/salary-employees", salaryEmployeeRoutes);
 app.use('/api/attendance', attendanceRoute);
 app.use('/api/taskRecords', ETaskRoutes);
 // app.use('/api/harvest', harvestRoutes);
@@ -132,6 +134,7 @@ app.use('/api/diseases', diseasesRoute);
 /**
  * Sales and Finance Routes
  */
+
 app.use("/api/salesAndFinance/finance/transaction", FinancialTransactionRoutes);
 app.use("/api/salesAndFinance/finance/salary", SalaryRoutes);
 app.use("/api/salesAndFinance/finance/invoice", InvoiceRoutes);
@@ -142,9 +145,10 @@ app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
 /**
  * buyer
  */
+// app.use('/api/buyers', buyerRoutes);
+app.use("/api/broute", buyerRoutes);
 // app.use('/api/buyer', BuyerRoutes);
 
-// app.use('/api/buyer', BuyerRoutes);
 
 // Socket.IO setup
 io.on('connection', (socket) => {
@@ -162,6 +166,7 @@ io.on('connection', (socket) => {
       console.log('User disconnected');
     });
   });
+
 
 const PORT = process.env.PORT || 8090;
 

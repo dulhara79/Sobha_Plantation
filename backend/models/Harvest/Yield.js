@@ -5,6 +5,10 @@ const yieldSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
+    fieldNumber: {
+        type: String, // Assuming fieldNumber is a number, you can adjust the type if needed
+        required: true, // If this field is required
+    },
     cropType: {
         type: String,
         required: true,
@@ -22,11 +26,11 @@ const yieldSchema = new mongoose.Schema({
         required: true,
     },
     // Optional: Remove if not needed
-     id: {
-       type: mongoose.Schema.Types.ObjectId,
-       default: () => new mongoose.Types.ObjectId(), // Generates a new ObjectId if 'id' is needed
-       unique: true, // Ensure unique index if needed
-       sparse: true  // Allows null values if unique index is still desired
+    id: {
+        type: mongoose.Schema.Types.ObjectId,
+        default: () => new mongoose.Types.ObjectId(), // Generates a new ObjectId if 'id' is needed
+        unique: true, // Ensure unique index if needed
+        sparse: true  // Allows null values if unique index is still desired
     }
 });
 

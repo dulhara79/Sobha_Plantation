@@ -4,15 +4,23 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, Title } from 'chart.js';
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import "../../index.css";
 import { Breadcrumb } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useNavigate } from 'react-router-dom';
-
+import { Link, useNavigate,useLocation } from 'react-router-dom';
+import DateTimeDisplay from '../../components/Harvest/DateTimeDisplay';
+import Weather from "../../components/WeatherInf";
 
 // Register chart.js components
 ChartJS.register(LineElement, CategoryScale, LinearScale, Title);
+const menuItems = [
+    { name: "HOME", path: "/harvest/harvestdashboard" },
+    { name: "SCHEDULE", path: "/harvest/harvest-schedule" },
+    { name: "YIELD", path: "/harvest/yield" },
+    { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist" },
+  ];
 
 const HarvestDashboard = () => {
     const [chartData, setChartData] = useState(null);
@@ -20,18 +28,17 @@ const HarvestDashboard = () => {
     const [totals, setTotals] = useState({ coconut: 0, pepper: 0, papaya: 0, banana: 0 });
     const [upcomingHarvests, setUpcomingHarvests] = useState([]);
     const [expiredHarvests, setExpiredHarvests] = useState([]);
-    const navigate = useNavigate();
-
+    const navigate = useNavigate(); // Initialize navigate
+    const location = useLocation();
+    const activePage = location.pathname;
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch yield records
                 const yieldResponse = await axios.get('http://localhost:5000/api/yield');
                 prepareChartData(yieldResponse.data.data);
                 calculateTotals(yieldResponse.data.data);
 
-                // Fetch harvest schedules
                 const harvestResponse = await axios.get('http://localhost:5000/api/harvest');
                 classifyHarvests(harvestResponse.data.data);
             } catch (error) {
@@ -72,7 +79,7 @@ const HarvestDashboard = () => {
             acc[record.cropType] = (acc[record.cropType] || 0) + record.quantity;
             return acc;
         }, {});
-    
+
         setTotals({
             coconut: totals.coconut || 0,
             pepper: totals.pepper || 0,
@@ -81,7 +88,6 @@ const HarvestDashboard = () => {
             pineapple: totals.pineapple || 0, // Added pineapple
         });
     };
-    
 
     const classifyHarvests = (schedules) => {
         const now = new Date();
@@ -110,185 +116,102 @@ const HarvestDashboard = () => {
             },
         },
     };
-    // Function to format today's date
-  const getTodayDate = () => {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date().toLocaleDateString(undefined, options);
-  };
+    const isActive = (page) => activePage === page;
 
+    // const getTodayDate = () => {
+    //     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    //     return new Date().toLocaleDateString(undefined, options);
+    // };
 
-    // Navigation Handlers
-    const onGroupContainerClick = useCallback(() => {
-        navigate("/harvest/harvest-schedule");
-      }, [navigate]);
-    
-      const onGroupContainerClick1 = useCallback(() => {
-        navigate("/harvest/yield");
-      }, [navigate]);
-    
-      const onGroupContainerClick2 = useCallback(() => {
-        navigate("/harvest/compliancechecklist");
-      }, [navigate]);
-    
-      const onHomeClick = useCallback(() => {
-        navigate("/harvest/harvestdashboard"); // Navigate to HarvestDashboard
-      }, [navigate]);
-    
-      const onBackClick = useCallback(() => {
+    const onBackClick = useCallback(() => {
         navigate(-1); // Navigate back to the previous page
-      }, [navigate]);
+    }, [navigate]);
 
     return (
         <div>
             <Header />
-            <Sidebar className="sidebar" />
+           <Sidebar className="sidebar" />
             <div className="ml-[300px] p-5">
-                {/* Navigation Bar */}
-                <nav className="p-4 mb-5">
-                    <div className="container flex items-center justify-between mx-auto space-x-4">
-                        <div
-                            className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer"
-                            onClick={onBackClick}
-                        >
-                            <ArrowBackIcon className="text-gray-700" />
-                        </div>
-                        <div
-                            className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#1D6660] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-                            onClick={onHomeClick}
-                        >
-                            <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                                Home
-                            </a>
-                        </div>
-                        <div
-                            className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-                            onClick={onGroupContainerClick}
-                        >
-                            <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                                Schedule
-                            </a>
-                        </div>
-                        <div
-                            className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-                            onClick={onGroupContainerClick1}
-                        >
-                            <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                                Yield Records
-                            </a>
-                        </div>
-                        <div
-                            className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-                            onClick={onGroupContainerClick2}
-                        >
-                            <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                                Compliance Check List
-                            </a>
-                        </div>
+                <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
+                 <div className="flex items-center justify-center">
+                    <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
+                       <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
+                        {menuItems.map((item) => (
+                          <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
+                        <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
+                         </li>
+                        ))}
+                  </ul>
+             </div>
+          </nav>
+
+                  <div className="flex items-center justify-between mb-5">
+                    <Breadcrumb
+                        items={[
+                            {href: '', title: <HomeOutlined />},
+                            {title: "Dashboard"},
+                             ]}
+                       />
                     </div>
-                </nav>
 
-                <Breadcrumb
-                    items={[
-                        {
-                            href: '',
-                            title: <HomeOutlined />,
-                        },
-                        {
-                            title: "Schedule",
-                        },
-                        {
-                            title: "Dashboard",
-                        },
-                    ]}
-                />
+                    <div className="mt-5">
+                         <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
+                         <div className="flex flex-row items-center justify-between">
+                          <DateTimeDisplay />
+                          <div className="flex items-center">
+                        <NotificationsIcon className="text-3xl" />
+                       </div>
+                       </div>
+                      </div>
 
-                <div className="mt-5">
-                    {/* Welcome message section */}
-                    <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
-                        <div className="flex flex-row items-center justify-between">
-                            <div className="flex flex-col">
-                                <b className="mb-2 text-3xl">Welcome Harvest Dashboard🙏🙏</b>
-                                <div className="text-xl text-gray-900">
-                                    <div className="font-medium">{`Today is ${getTodayDate()}`}</div>
-                                </div>
+                        <div className="mt-5">
+                            <Weather />
+                        </div>
+
+                        <div className="flex flex-row justify-between mt-5 gap-4">
+                            <div className="flex-1 flex flex-col items-center justify-center p-3 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-green-400 to-green-600 hover:scale-105">
+                                <h3 className="text-xl text-center">Upcoming Harvests</h3>
+                                <ul>
+                                    {upcomingHarvests.map((harvest, index) => (
+                                        <li key={index}>
+                                            {harvest.cropType} - {new Date(harvest.harvestDate).toLocaleDateString()}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <div className="flex-1 flex flex-col items-center justify-center p-3 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-red-400 to-red-600 hover:scale-105">
+                                <h3 className="text-xl text-center">Expired Harvests</h3>
+                                {expiredHarvests.length > 0 ? (
+                                    <ul className="w-full">
+                                        {expiredHarvests.map((harvest, index) => (
+                                            <li key={index} className="py-1">
+                                                {harvest.cropType} - {new Date(harvest.harvestDate).toLocaleDateString()}
+                                                <span className="block text-sm text-gray-100">
+                                                    Available since: {new Date(harvest.availabilityDate).toLocaleDateString()}
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p>No expired harvests.</p>
+                                )}
+                                <p className="mt-2 text-lg font-bold text-yellow-200">
+                                    Reminder: Review expired harvests and update records accordingly.
+                                </p>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Existing Dashboard Content */}
-                    <div className="grid grid-cols-2 gap-5 mt-5">
-    <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-green-400 to-green-600 hover:scale-105">
-        <h3 className="text-xl text-center">Total Coconut 🥥</h3>
-        <p className="mt-2 font-extrabold text-4xl">{totals.coconut}</p>
-    </div>
-    <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-yellow-400 to-yellow-600 hover:scale-105">
-        <h3 className="text-xl text-center">Total Pepper 🌶️</h3>
-        <p className="mt-2 font-extrabold text-4xl">{totals.pepper}</p>
-    </div>
-    <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-orange-400 to-red-600 hover:scale-105">
-        <h3 className="text-xl text-center">Total Papaya 🥭</h3>
-        <p className="mt-2 font-extrabold text-4xl">{totals.papaya}</p>
-    </div>
-    <div className="flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-blue-400 to-blue-600 hover:scale-105">
-        <h3 className="text-xl text-center">Total Banana 🍌</h3>
-        <p className="mt-2 font-extrabold text-4xl">{totals.banana}</p>
-    </div>
-    <div className="col-span-2 flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-blue-400 to-blue-600 hover:scale-105">
-        <h3 className="text-xl text-center">Total Pineapple 🍍</h3>
-        <p className="mt-2 font-extrabold text-4xl">{totals.pineapple}</p>
-    </div>
-</div>
-
-
-
-                    {/* Harvests Overview */}
-                    <div className="flex flex-row justify-between mt-5 gap-4">
-                        <div className="flex-1 flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-green-400 to-green-600 hover:scale-105">
-                            <h3 className="text-xl text-center">Upcoming Harvests</h3>
-                            <ul>
-                                {upcomingHarvests.map((harvest, index) => (
-                                    <li key={index}>
-                                        {harvest.cropType} - {new Date(harvest.harvestDate).toLocaleDateString()}
-                                    </li>
-                                ))}
-                            </ul>
+                        <div className="mt-10 shadow-lg rounded-lg p-5 bg-white w-full max-w-5xl mx-auto h-[600px]">
+                            {loading ? (
+                                <p>Loading chart...</p>
+                            ) : (
+                                <Line data={chartData} options={options} />
+                            )}
                         </div>
-                        <div className="flex-1 flex flex-col items-center justify-center p-5 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-red-400 to-red-600 hover:scale-105">
-                          <h3 className="text-xl text-center">Expired Harvests</h3>
-                          {expiredHarvests.length > 0 ? (
-                          <ul className="w-full">
-                            {expiredHarvests.map((harvest, index) => (
-                            <li key={index} className="py-2">
-                            {harvest.cropType} - {new Date(harvest.harvestDate).toLocaleDateString()} 
-                            <span className="block text-sm text-gray-300">
-                             Available since: {new Date(harvest.availabilityDate).toLocaleDateString()}
-                            </span>
-                           </li>
-                             ))}
-                         </ul>
-                       ) : (
-                          <p>No expired harvests.</p>
-                             )}
-                           <p className="mt-4 text-lg font-semibold text-yellow-200">
-                         Reminder: Review expired harvests and update records accordingly.
-                            </p>
-                     </div>
-
                     </div>
-
-                    {/* Line Chart Section */}
-                    <div className="mt-10 shadow-lg rounded-lg p-5 bg-white w-full max-w-5xl mx-auto h-[600px]">
-    {loading ? (
-        <p>Loading chart...</p>
-    ) : (
-        <Line data={chartData} options={options} />
-    )}
-</div>
-
-
                 </div>
             </div>
-        </div>
+        
     );
 };
 
