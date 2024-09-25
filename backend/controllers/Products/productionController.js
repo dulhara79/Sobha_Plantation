@@ -79,7 +79,7 @@ exports.updateProductionSchedule = async (req, res) => {
       !quantity ||
       !startDate ||
       !endDate ||
-      status: status || 'Scheduled',
+      !status ||
       progress === undefined
     ) {
       return res.status(400).send({
