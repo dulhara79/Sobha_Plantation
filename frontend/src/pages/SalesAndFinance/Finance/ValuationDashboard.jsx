@@ -1,26 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
-
-import AddTransaction from "../../../components/Sales_and_Finance/Finance/AddTransaction";
 import NavigationButtons from "../../../components/Sales_and_Finance/NavigationButtons";
 
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
 
-import NewLoadingScreen from '../../../components/LoadingDots'
-
-// import FinanceNavigation from "../../../components/finances/FinanceNavigation.js";
-
 import {useNavigate} from "react-router-dom";
 import { useSnackbar } from 'notistack';
 
-const AddTransactionPage = () => {
-    const navigate = useNavigate();
-    const { enqueueSnackbar } = useSnackbar();
+import Valuation from '../../../components/Sales_and_Finance/Finance/Valuation/Valuation';
 
-    const [loading, setLoading] = useState(true);
+import NewLoadingScreen from '../../../components/LoadingDots'
+
+const ValuationDashboard = () => {
+  const [loading, setLoading] = useState(true);
 
     useEffect(() => {
       // Simulate loading process (e.g., API calls, component mounting)
@@ -30,12 +25,11 @@ const AddTransactionPage = () => {
     }, []);
   
     if (loading) return <NewLoadingScreen />;
-
   return (
     <div>
     <Header />
     <Sidebar activePage="/salesAndFinance/"/>
-    <div className={`ml-[300px] pt-3 w-[600px]`}>
+      <div className={`ml-[300px] pt-3 w-full`}>
     <Breadcrumb
     style={{ margin: "10px 0" }}
         items={[
@@ -65,13 +59,12 @@ const AddTransactionPage = () => {
         ]}
       />
       <NavigationButtons />
-      <div className={`ml-[250px] pt-3 w-[600px]`}>
-      <AddTransaction />
       </div>
+      <div className={`ml-[300px] pt-3 w-[100px]`}>
+      <Valuation/>
       </div>
-  </div>
+    </div>
   )
 }
 
-
-export default AddTransactionPage;
+export default ValuationDashboard
