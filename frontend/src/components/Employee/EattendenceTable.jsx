@@ -168,6 +168,7 @@ const AttendanceList = () => {
           >
             <option>Select Employee</option>
             <option value="All Employees">All Employees</option>
+            <option value="Senuvi layathma">Senuvi layathma</option>
             <option value="Amal Subasinghe">Amal Subasinghe</option>
             <option value="Hemapala Kuruvita">Hemapala Kuruvita</option>
             <option value="Kamani Hewage">Kamani Hewage</option>
@@ -250,9 +251,10 @@ const AttendanceList = () => {
 
                 <td className=" py-4 text-right">
                   <Link
-                    to={`/employee/viewattendance/${record._id}`} // Corrected route
+                    to={`/employee/veiwattendence/${record._id}`} // Corrected route
                     className="font-medium text-blue-600  hover:underline"
                   >
+                    
                     <InformationCircleIcon
                       className="h-6 w-6 flex-none bg-gray-300 p-1 rounded-full text-gray-800 hover:bg-gray-500"
                       aria-hidden="true"
