@@ -17,6 +17,7 @@ const COLORS = ['#00C49F', '#FF8042', '#8884d8'];
 const ProductsDashboard = () => {
   const [scheduleData, setScheduleData] = useState([]);
   const [inspectionData, setInspectionData] = useState([]);
+  const [packagingData, setPackagingData] = useState([]); // New packaging data
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +26,7 @@ const ProductsDashboard = () => {
         // Fetch production schedule data
         const scheduleResponse = await axios.get('http://localhost:5000/api/production');
         if (scheduleResponse.data.success) {
+          console.log(scheduleResponse.data.data);
           setScheduleData(scheduleResponse.data.data);
         } else {
           console.error('Error fetching schedule data');
@@ -91,6 +93,31 @@ const ProductsDashboard = () => {
     ];
   };
 
+  // Format the pie chart data for packaging status
+  const formatPackagingData = () => {
+    const statusCounts = {
+      'Completed': 0,
+      'In Progress': 0,
+      'Scheduled': 0,
+    };
+
+    scheduleData.forEach(schedule => {
+      if (schedule.status === 'Completed') {
+        statusCounts['Completed'] += 1;
+      } else if (schedule.status === 'In Progress') {
+        statusCounts['In Progress'] += 1;
+      } else if (schedule.status === 'Scheduled') {
+        statusCounts['Scheduled'] += 1;
+      }
+    });
+
+    return [
+      { name: 'Completed Schedules', value: statusCounts['Completed'] },
+      { name: 'In Progress Schedules', value: statusCounts['In Progress'] },
+      { name: 'Pending Schedules', value: statusCounts['Scheduled'] },
+    ];
+  };
+
   const onGroupContainerClick = useCallback(() => {
     navigate('/products/production-overview');
   }, [navigate]);
@@ -116,6 +143,7 @@ const ProductsDashboard = () => {
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     return new Date().toLocaleDateString(undefined, options);
   };
+
 
   return (
     <div>
@@ -163,96 +191,84 @@ const ProductsDashboard = () => {
                 Packaging
               </a>
             </div>
+            <div className="flex items-center justify-center pt-px px-2 pb-0.5">
+              <NotificationsIcon className="text-4xl text-green-500" />
+            </div>
           </div>
         </nav>
+        {/* Breadcrumb */}
+        <Breadcrumb>
+          <Breadcrumb.Item href="">
+            <HomeOutlined />
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Products Dashboard</Breadcrumb.Item>
+        </Breadcrumb>
 
-        {/* Breadcrumb and Gallery Button */}
-        <div className="flex items-center justify-between mb-5">
-          <Breadcrumb
-            items={[{
-              href: '',
-              title: <HomeOutlined />,
-            }, {
-              title: 'Products',
-            }, {
-              title: 'Dashboard',
-            }]}
-          />
-          <Button
-            className="flex items-center text-white bg-blue-500 rounded-md shadow-md hover:bg-blue-600"
-            onClick={() => navigate('/products/gallery')}
+        {/* Date Display */}
+        <p>{getTodayDate()}</p>
+
+        {/* Pie Chart for Production Schedules */}
+        <h3>Production Status</h3>
+        <PieChart width={400} height={300}>
+          <Pie
+            data={formatPieChartData()}
+            cx="50%"
+            cy="50%"
+            labelLine={false}
+            outerRadius={80}
+            fill="#8884d8"
+            dataKey="value"
           >
-            <CollectionsSharpIcon className="mr-2" />
-            Gallery
-          </Button>
-        </div>
-        {/* Welcome message section */}
-        <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
-          <div className="flex flex-row items-center justify-between">
-            <div className="flex flex-col">
-              <b className="mb-2 text-3xl">Welcome,</b>
-              <div className="text-xl text-gray-900">
-                <div className="font-medium">{`Today is ${getTodayDate()}`}</div>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <NotificationsIcon className="text-3xl" />
-            </div>
-          </div>
-        </div>
+            {formatPieChartData().map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
 
-        {/* Pie Charts Section */}
-        <div className="flex gap-10 mt-5">
-          {/* Production Schedule Pie Chart */}
-          <div className="flex-1 p-5 bg-white rounded-lg shadow-md">
-            <h3 className="mb-4 text-xl font-semibold">Production Schedule Status</h3>
-            <PieChart width={400} height={300}>
-              <Pie
-                data={formatPieChartData()}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={120}
-                fill="#8884d8"
-                label
-              >
-                {formatPieChartData().map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </div>
+        {/* Pie Chart for Quality Control */}
+        <h3>Quality Control</h3>
+        <PieChart width={400} height={300}>
+          <Pie
+            data={formatInspectionData()}
+            cx="50%"
+            cy="50%"
+            labelLine={false}
+            outerRadius={80}
+            fill="#8884d8"
+            dataKey="value"
+          >
+            {formatInspectionData().map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
 
-          {/* Inspection Status Pie Chart */}
-          <div className="flex-1 p-5 bg-white rounded-lg shadow-md">
-            <h3 className="mb-4 text-xl font-semibold">Inspection Status</h3>
-            <PieChart width={400} height={300}>
-              <Pie
-                data={formatInspectionData()}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={120}
-                fill="#8884d8"
-                label
-              >
-                {formatInspectionData().map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </div>
-        </div>
+        {/* Pie Chart for Packaging */}
+        <h3>Packaging Status</h3>
+        <PieChart width={400} height={300}>
+          <Pie
+            data={formatPackagingData()}
+            cx="50%"
+            cy="50%"
+            labelLine={false}
+            outerRadius={80}
+            fill="#8884d8"
+            dataKey="value"
+          >
+            {formatPackagingData().map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip />
+          <Legend />
+        </PieChart>
       </div>
     </div>
   );
 };
 
 export default ProductsDashboard;
-
