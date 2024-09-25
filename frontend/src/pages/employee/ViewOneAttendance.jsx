@@ -27,6 +27,7 @@ export default function ViewOneAttendance() {
     axios
       .get(`http://localhost:5000/api/attendance/${id}`)
       .then((response) => {
+        console.log(response.data);
         setAttendanceRecord(response.data);
         setLoading(false);
       })
@@ -35,6 +36,15 @@ export default function ViewOneAttendance() {
         setLoading(false);
       });
   }, [id]);
+
+  const formatDate = (date) => {
+    if (!date) return '';
+    const newDate = new Date(date);
+    const year = newDate.getFullYear();
+    const month = String(newDate.getMonth() + 1).padStart(2, '0');
+    const day = String(newDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   const handlePrint = () => {
     const input = document.getElementById("print-area");
@@ -47,7 +57,7 @@ export default function ViewOneAttendance() {
       let heightLeft = imgHeight;
       let position = 10;
       pdf.setFontSize(20);
-      pdf.text("Employee Details", 10, position);
+      pdf.text("Employee Attendance Details", 10, position);
       heightLeft -= position + 10;
 
       pdf.addImage(imgData, "PNG", 10, position + 10, imgWidth, imgHeight);
@@ -59,75 +69,72 @@ export default function ViewOneAttendance() {
         heightLeft -= imgHeight;
       }
 
-      pdf.save("Emp_Details.pdf");
+      pdf.save("Attendance_Details.pdf");
     });
   };
 
   const navigate = useNavigate();
   const handleCancel = () => {
-    navigate(-1); // This will navigate back to the previous location in the history stack
+    navigate(-1);
   };
 
   return (
     <div className="">
       <Header />
       <Sidebar />
-
       <div className={`ml-[300px]`}>
         <EmployeeNavbar />
         <Breadcrumbs items={breadcrumbItems} />
         <div className="px-8 py-8">
           <div className="px-4 sm:px-0">
-            <h3 className="text-base font-semibold leading-7 text-gray-900">
+            <h3 className="text-base font-semibold leading-7 text-black-900">
               Attendance Details
             </h3>
-            <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
+            <p className="mt-1 max-w-2xl text-sm leading-6 text-black-500">
               Attendance details of the employee.
             </p>
           </div>
           <div id="print-area">
-            <div className="mt-6 border-t border-gray-100">
-              <dl className="divide-y divide-gray-200">
+            <div className="mt-6 border-t border-black-100">
+              <dl className="divide-y divide-black-200">
                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-gray-900">
+                  <dt className="text-sm font-medium leading-6 text-black-900">
                     Employee Name
                   </dt>
                   <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                    {AttendanceRecords.e_name}
+                    {AttendanceRecords.name}
                   </dd>
                 </div>
                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-gray-900">
+                  <dt className="text-sm font-medium leading-6 text-black-900">
                     Date
                   </dt>
                   <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                    {AttendanceRecords.e_date}
+                    {formatDate(AttendanceRecords.date)}
                   </dd>
                 </div>
                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-gray-900">
+                  <dt className="text-sm font-medium leading-6 text-black-900">
                     Attendance Status
                   </dt>
                   <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                    {AttendanceRecords.att_status}
+                    {AttendanceRecords.status}
                   </dd>
                 </div>
-
                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-gray-900">
+                  <dt className="text-sm font-medium leading-6 text-black-900">
                     Record created at
                   </dt>
                   <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                    {new Date(AttendanceRecords.createdAt).toString()}
+                    {formatDate(AttendanceRecords.createdAt)}
                   </dd>
                 </div>
-
                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-gray-900">
+                  <dt className="text-sm font-medium leading-6 text-black-900">
                     Record last updated at
                   </dt>
                   <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                    {new Date(AttendanceRecords.updatedAt).toString()}
+                    {formatDate(AttendanceRecords.updatedAt)}
                   </dd>
                 </div>
               </dl>
@@ -142,7 +149,7 @@ export default function ViewOneAttendance() {
             </button>
             <button
               type="button"
-              className="text-sm font-semibold leading-6 text-gray-900"
+              className="text-sm font-semibold leading-6 text-black-900"
               onClick={handleCancel}
             >
               Cancel
