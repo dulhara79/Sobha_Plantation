@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Form, Input, DatePicker, Select, Button, notification } from 'antd';
 import moment from 'moment';
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 const { Option } = Select;
 
@@ -37,6 +38,19 @@ const EditSchedule = () => {
     return Promise.resolve();
   };
 
+  const validateQuantity = (_, value) => {
+    if (value === undefined || value === null) {
+      return Promise.reject(new Error('Quantity is required.'));
+    }
+    if (value < 1) {
+      return Promise.reject(new Error('Quantity must be at least 1.'));
+    }
+    if (value > 100) {
+      return Promise.reject(new Error('Quantity must not exceed 100.'));
+    }
+    return Promise.resolve();
+  };
+
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
@@ -67,22 +81,36 @@ const EditSchedule = () => {
   };
 
   const handleSubmit = async (values) => {
-    try {
-      await axios.put(`http://localhost:5000/api/production/${id}`, {
-        ...values,
-        startDate: values.startDate ? values.startDate.toISOString() : null,
-        endDate: values.endDate ? values.endDate.toISOString() : null,
-      });
-      notification.success({
-        message: 'Success',
-        description: 'Schedule updated successfully!',
-      });
-      navigate('/products/production-overview');
-    } catch (error) {
-      notification.error({
-        message: 'Error',
-        description: 'Error updating schedule',
-      });
+    const isFormValid = form.getFieldsError().every(({ errors }) => errors.length === 0);
+    if (!isFormValid) return;
+
+    const result = await Swal.fire({
+      title: "<strong>Confirmation Required</strong>",
+      html: "Are you sure you want to submit this form?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, submit it!",
+      cancelButtonText: "No, cancel!",
+      customClass: {
+        popup: 'swal-custom-popup', // Add custom class for styling
+      },
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.put(`http://localhost:5000/api/production/${id}`, {
+          ...values,
+          startDate: values.startDate ? values.startDate.toISOString() : null,
+          endDate: values.endDate ? values.endDate.toISOString() : null,
+        });
+        Swal.fire('Success', 'Inspection report updated successfully!', 'success');
+        navigate('/products/production-overview');
+      } catch (error) {
+        notification.error({
+          message: 'Error',
+          description: 'Error updating schedule',
+        });
+      }
     }
   };
 
@@ -117,31 +145,16 @@ const EditSchedule = () => {
           <Form.Item
             label="Quantity"
             name="quantity"
-            rules={[{ required: true, message: 'Please enter the quantity!' }]}
+            rules={[
+              { required: true, message: 'Quantity is required!' },
+              { validator: validateQuantity }
+            ]}
           >
             <Input
               type="number"
               placeholder="Enter quantity"
               min="1"
               max="100"
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value === '' || value < 1 || value > 100) {
-                  form.setFieldsValue({ quantity: undefined }); // Clear invalid input
-                }
-              }}
-              onKeyPress={(e) => {
-                const charCode = e.charCode || e.keyCode;
-                if (charCode < 48 || charCode > 57 || (e.target.value.length === 0 && charCode === 48)) {
-                  e.preventDefault();
-                }
-              }}
-              onBlur={(e) => {
-                const value = e.target.value;
-                if (value && (value < 1 || value > 100)) {
-                  form.setFieldsValue({ quantity: undefined });
-                }
-              }}
             />
           </Form.Item>
 
@@ -154,6 +167,7 @@ const EditSchedule = () => {
               format="YYYY-MM-DD"
               disabledDate={disableStartDates}
               style={{ width: '100%' }}
+              inputReadOnly // Disable manual input
             />
           </Form.Item>
 
@@ -167,6 +181,8 @@ const EditSchedule = () => {
               format="YYYY-MM-DD"
               disabledDate={disableEndDates}
               style={{ width: '100%' }}
+              inputReadOnly // Disable manual input
+
             />
           </Form.Item>
 
@@ -176,7 +192,10 @@ const EditSchedule = () => {
             rules={[{ required: true, message: 'Please select the status!' }]}
             onChange={handleStatusChange}
           >
-            <Select placeholder="Select status">
+            <Select
+              placeholder="Select status"
+              onChange={handleStatusChange}
+            >
               <Option value="Scheduled">Scheduled</Option>
               <Option value="In Progress">In Progress</Option>
               <Option value="Completed">Completed</Option>
@@ -186,32 +205,22 @@ const EditSchedule = () => {
           <Form.Item
             label="Progress (%)"
             name="progress"
-            rules={[
-              { required: true, message: 'Progress is required!' },
-              { validator: validateProgress },
-            ]}
+            rules={[{ required: true, message: 'Progress is required!' }, { validator: validateProgress }]}
           >
             <Input
               type="number"
               placeholder="Enter progress percentage"
-              onChange={(e) => {
-                const value = e.target.value;
-                if (!/^(100|[0-9]{1,2})$/.test(value)) {
-                  form.setFieldsValue({ progress: undefined }); // Clear invalid input
-                }
-              }}
-              onKeyPress={(e) => {
-                const charCode = e.charCode || e.keyCode;
-                if (charCode < 48 || charCode > 57) {
-                  e.preventDefault(); // Prevent entering non-numeric characters
-                }
-              }}
             />
           </Form.Item>
 
           <Form.Item>
             <div className="flex justify-between">
-              <Button type="primary" htmlType="submit" style={{ width: '48%', backgroundColor: '#1D6660', borderColor: '#1D6660' }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                style={{ width: '48%', backgroundColor: '#1D6660', borderColor: '#1D6660' }}
+              >
+
                 Update Schedule
               </Button>
               <Button type="default" onClick={handleCancel} style={{ width: '48%' }}>
