@@ -85,7 +85,6 @@ connectDB();
 // Define routes
 //employee
 app.use('/api/employee', employeeRoutes);
-app.use("/api/salary-employees", salaryEmployeeRoutes);
 app.use('/api/attendance', attendanceRoute);
 app.use('/api/taskRecords', ETaskRoutes);
 // app.use('/api/harvest', harvestRoutes);
