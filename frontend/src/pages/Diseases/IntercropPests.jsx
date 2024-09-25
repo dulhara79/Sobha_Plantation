@@ -80,7 +80,7 @@ const IntercropPests = () => {
         <Breadcrumb
           items={[
             {
-              href: "",
+              href: "/diseases",
               title: <HomeOutlined />,
             },
             {
@@ -134,7 +134,7 @@ const IntercropPests = () => {
                 className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
                 style={{
                   backgroundImage:
-                    "linear-gradient(135deg, #FFB74D 30%, #E1F5FE 100%)",
+                    "linear-gradient(135deg, #FFB74D 60%, #E1F5FE 100%)",
                   border: "none",
                   transition: "transform 0.2s ease, box-shadow 0.2s ease",
                 }}
@@ -172,7 +172,7 @@ const IntercropPests = () => {
                   className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
                   style={{
                     backgroundImage:
-                      "linear-gradient(135deg, #FFB74D 30%, #E1F5FE 100%)",
+                      "linear-gradient(135deg, #FFB74D 60%, #E1F5FE 100%)",
                     border: "none",
                     transition: "transform 0.2s ease, box-shadow 0.2s ease",
                   }}
