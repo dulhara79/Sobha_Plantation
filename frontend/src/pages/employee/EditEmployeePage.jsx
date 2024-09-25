@@ -4,14 +4,15 @@ import { Breadcrumb } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import React from "react";
 import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
-import TaskList from "../../components/Employee/TaskList";
 import { SnackbarProvider } from "notistack";
 import Breadcrumbs from "../../components/Employee/Breadcrumbss";
+import EditEmployee from "../../components/Employee/EditEmployee";
 
 export default function ViewTaskList() {
   const breadcrumbItems = [
-    { name: "Employees", href: "/employees/home" },
-    { name: "Assign Tasks", href: "/employees/tasks" },
+    { name: 'Employee', href: '/employees/home' },
+    { name: 'Registration', href: '/employees/registration' },
+    { name: 'Edit Employee Details', href: '/employees/registration/editemployee' },
   ];
 
   return (
@@ -24,7 +25,7 @@ export default function ViewTaskList() {
          
           <EmployeeNavbar />
           <Breadcrumbs items={breadcrumbItems} />
-          <TaskList />
+          <EditEmployee />
         </div>
       </div>
     </SnackbarProvider>
