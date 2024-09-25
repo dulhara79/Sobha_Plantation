@@ -46,4 +46,59 @@ const buyerSchema = new Schema({
 }, { timestamps: true });
 
 const Buyer = mongoose.model('Buyer', buyerSchema);
-module.exports = Buyer;
+
+backend/models/buyer.js
+
+// const mongoose = require('mongoose');
+
+// const buyerSchema = new mongoose.Schema({
+//     firstName: {
+//         type: String,
+//         required: true,
+//         trim: true
+//     },
+//     lastName: {
+//         type: String,
+//         required: true,
+//         trim: true
+//     },
+//     username: {
+//         type: String,
+//         required: true,
+//         unique: true,
+//         trim: true
+//     },
+//     password: {
+//         type: String,
+//         required: true,
+//         minlength: 8
+//     },
+//     dateOfBirth: {
+//         type: Date,
+//         required: true
+//     },
+//     phoneNumber: {
+//         type: String,
+//         required: true,
+//         trim: true
+//     },
+//     email: {
+//         type: String,
+//         required: true,
+//         unique: true,
+//         trim: true
+//     },
+//     district: {
+//         type: String,
+//         required: true
+//     },
+//     gender: {
+//         type: String,
+//         required: true,
+//         enum: ['male', 'female', 'other']
+//     }
+// }, {
+//     timestamps: true
+// });
+
+// module.exports = mongoose.model('Buyer', buyerSchema);

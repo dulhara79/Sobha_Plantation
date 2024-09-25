@@ -1,46 +1,43 @@
-
 const mongoose = require("mongoose");
 
-const DiseasesSchema = new mongoose.Schema({
-    recordId: {
-        type: String,
-        required: true, //validate
+const DiseasesSchema = new mongoose.Schema(
+  {
+    dateOfInspection: {
+      type: Date,
+      required: true,
+    },
+    sectionOfLand: {
+      type: String,
+      required: true,
+    },
+    identifiedPest: {
+      type: String,
+      required: true,
+      default: "None",
+    },
+    identifiedDisease: {
+      type: String,
+      required: true,
+      default: "None",
+    },
+    inspectedBy: {
+      type: String,
+      required: true,
+    },
+    inspectionResult: {
+      type: String,
+      required: true,
+    },
+    suggestedReInspectionDate: {
+      type: Date,
+      required: true,
+    },
+    diseaseId: {
+        type: mongoose.Schema.Types.ObjectId,
+        default: () => new mongoose.Types.ObjectId(),
         unique: true,
-    },
-    inspectionDate: {
-        type: String,
-        required: true,
-    },
-    section: {
-        type: String,
-        required: true,
-    },
-    pest: {
-        type: String,
-        required: true,
-        default: "None",
-    },
-    disease: {
-        type: String,
-        required: true,
-        default: "None",
-    },
-    inspector: {
-        type: String,
-        required: true,
-    },
-    result: {
-        type: String,
-        required: true,
-    },
-    comments: {
-        type: String,
-        required: true,
-    },
-},
-    {
-        timestamps: true,
-    }
-);
+        sparse: true
+        }
+    });
 
-module.exports = mongoose.model("diseases", DiseasesSchema);
+module.exports = mongoose.model("DiseaseRecords", DiseasesSchema);

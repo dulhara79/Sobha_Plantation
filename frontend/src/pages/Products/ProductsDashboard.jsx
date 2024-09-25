@@ -39,8 +39,6 @@ const ProductsDashboard = () => {
         } else {
           console.error('Error fetching inspection data');
         }
-
-        
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -66,7 +64,6 @@ const ProductsDashboard = () => {
         statusCounts['Scheduled'] += 1;
       }
     });
-    
 
     return [
       { name: 'Completed Schedules', value: statusCounts['Completed'] },
@@ -199,7 +196,6 @@ const ProductsDashboard = () => {
             </div>
           </div>
         </nav>
-
         {/* Breadcrumb */}
         <Breadcrumb>
           <Breadcrumb.Item href="">

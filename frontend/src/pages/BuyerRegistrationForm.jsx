@@ -401,4 +401,202 @@ const BuyerRegistrationForm = () => {
   );
 };
 
+
 export default BuyerRegistrationForm;
+
+
+
+
+// import React, { useState } from 'react';
+
+// const BuyerRegistrationForm = () => {
+//     const [formData, setFormData] = useState({
+//         firstName: '',
+//         lastName: '',
+//         username: '',
+//         password: '',
+//         dob: '',
+//         phoneNumber: '',
+//         email: '',
+//         district: '',
+//         gender: 'male' // default value
+//     });
+
+//     const [errors, setErrors] = useState({});
+//     const [isFormValid, setIsFormValid] = useState(false);
+
+//     const validateField = (name, value) => {
+//         let error = '';
+
+//         switch (name) {
+//             case 'firstName':
+//             case 'lastName':
+//                 if (!/^[A-Za-z]+$/.test(value)) {
+//                     error = 'Only alphabetic characters are allowed';
+//                 }
+//                 break;
+//             case 'username':
+//                 if (value.length < 3) {
+//                     error = 'Username must be at least 3 characters long';
+//                 }
+//                 break;
+//             case 'password':
+//                 if (value.length < 8) {
+//                     error = 'Password must be at least 8 characters long';
+//                 }
+//                 break;
+//             case 'dob':
+//                 const selectedDate = new Date(value);
+//                 const today = new Date();
+//                 if (selectedDate >= today) {
+//                     error = 'Date of birth cannot be in the future';
+//                 }
+//                 break;
+//             case 'phoneNumber':
+//                 if (!/^\d{10}$/.test(value)) {
+//                     error = 'Phone number must be 10 digits';
+//                 }
+//                 break;
+//             case 'email':
+//                 if (!/\S+@\S+\.\S+/.test(value)) {
+//                     error = 'Invalid email address';
+//                 }
+//                 break;
+//             case 'district':
+//                 if (value.trim() === '') {
+//                     error = 'District is required';
+//                 }
+//                 break;
+//             default:
+//                 break;
+//         }
+
+//         setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
+//         return error === '';
+//     };
+
+//     const handleInputChange = (e) => {
+//         const { name, value } = e.target;
+//         setFormData((prevData) => ({ ...prevData, [name]: value }));
+
+//         const isValid = validateField(name, value);
+//         setIsFormValid(isValid);
+//     };
+
+//     const handleSubmit = (e) => {
+//         e.preventDefault();
+//         const isFormValid = Object.keys(formData).every((key) =>
+//             validateField(key, formData[key])
+//         );
+
+//         if (isFormValid) {
+//             console.log('Form Data:', formData);
+//             // Redirect to profile page
+//             window.location.href = '/Users/uvindusenevirathne/Documents/GitHub/Sobha_Plantation/frontend/src/components/Profile.jsx';
+//         } else {
+//             console.log('Form validation failed.');
+//         }
+//     };
+
+//     return (
+//         <form onSubmit={handleSubmit}>
+//             <div>
+//                 <label>First Name:</label>
+//                 <input
+//                     type="text"
+//                     name="firstName"
+//                     value={formData.firstName}
+//                     onChange={handleInputChange}
+//                 />
+//                 {errors.firstName && <span>{errors.firstName}</span>}
+//             </div>
+//             <div>
+//                 <label>Last Name:</label>
+//                 <input
+//                     type="text"
+//                     name="lastName"
+//                     value={formData.lastName}
+//                     onChange={handleInputChange}
+//                 />
+//                 {errors.lastName && <span>{errors.lastName}</span>}
+//             </div>
+//             <div>
+//                 <label>Username:</label>
+//                 <input
+//                     type="text"
+//                     name="username"
+//                     value={formData.username}
+//                     onChange={handleInputChange}
+//                 />
+//                 {errors.username && <span>{errors.username}</span>}
+//             </div>
+//             <div>
+//                 <label>Password:</label>
+//                 <input
+//                     type="password"
+//                     name="password"
+//                     value={formData.password}
+//                     onChange={handleInputChange}
+//                 />
+//                 {errors.password && <span>{errors.password}</span>}
+//             </div>
+//             <div>
+//                 <label>Date of Birth:</label>
+//                 <input
+//                     type="date"
+//                     name="dob"
+//                     value={formData.dob}
+//                     onChange={handleInputChange}
+//                 />
+//                 {errors.dob && <span>{errors.dob}</span>}
+//             </div>
+//             <div>
+//                 <label>Phone Number:</label>
+//                 <input
+//                     type="text"
+//                     name="phoneNumber"
+//                     value={formData.phoneNumber}
+//                     onChange={handleInputChange}
+//                 />
+//                 {errors.phoneNumber && <span>{errors.phoneNumber}</span>}
+//             </div>
+//             <div>
+//                 <label>Email:</label>
+//                 <input
+//                     type="email"
+//                     name="email"
+//                     value={formData.email}
+//                     onChange={handleInputChange}
+//                 />
+//                 {errors.email && <span>{errors.email}</span>}
+//             </div>
+//             <div>
+//                 <label>District:</label>
+//                 <input
+//                     type="text"
+//                     name="district"
+//                     value={formData.district}
+//                     onChange={handleInputChange}
+//                 />
+//                 {errors.district && <span>{errors.district}</span>}
+//             </div>
+//             <div>
+//                 <label>Gender:</label>
+//                 <select
+//                     name="gender"
+//                     value={formData.gender}
+//                     onChange={handleInputChange}
+//                 >
+//                     <option value="male">Male</option>
+//                     <option value="female">Female</option>
+//                     <option value="other">Other</option>
+//                 </select>
+//             </div>
+//             <button type="submit" disabled={!isFormValid}>
+//                 Submit
+//             </button>
+//         </form>
+//     );
+// };
+
+// export default BuyerRegistrationForm;

@@ -42,7 +42,8 @@ exports.createValuationRecord = async (request, response) => {
         };
 
         const ValuationRecord = await ValuationsRecord.create(NewValuationsRecord);
-        return response.status(201).send(ValuationRecord);
+        return response.status(201).json({status:true, ValuationRecord});
+        // return response.status(201).send(ValuationRecord);
 
     } catch (error) {
         console.error('Server Error:', error.message);
