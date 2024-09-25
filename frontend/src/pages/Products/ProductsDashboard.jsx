@@ -32,6 +32,7 @@ const ProductsDashboard = () => {
       try {
         const scheduleResponse = await axios.get('http://localhost:5000/api/production');
         if (scheduleResponse.data.success) {
+          console.log(scheduleResponse.data.data);
           setScheduleData(scheduleResponse.data.data);
         } else {
           console.error('Error fetching schedule data');
@@ -107,7 +108,16 @@ const ProductsDashboard = () => {
             </ul>
           </div>
         </nav>
+        {/* Breadcrumb */}
+        <Breadcrumb>
+          <Breadcrumb.Item href="">
+            <HomeOutlined />
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>Products Dashboard</Breadcrumb.Item>
+        </Breadcrumb>
 
+        {/* Date Display */}
+        <p>{getTodayDate()}</p>
         {/* Breadcrumb and Gallery Button */}
         <div className="flex items-center justify-between mb-5">
           <Breadcrumb
