@@ -2,14 +2,25 @@ import React, { useState } from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { HomeOutlined, LeftOutlined } from "@ant-design/icons";
-import { Breadcrumb, Button, Input, DatePicker, Form } from "antd";
+import { Breadcrumb, Button, Input, DatePicker, Form, notification, Select } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import axios from "axios";
 
+const { Option } = Select;
+
 const AddMaintenance = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+
+  const validateProgress = (_, value) => {
+    if (value < 0 || value > 100) {
+      return Promise.reject(new Error("Progress Rate must be between 0 and 100"));
+    }
+    return Promise.resolve();
+  };
 
   const [fieldValidity, setFieldValidity] = useState({
     dateOfMaintenance: false,
@@ -18,12 +29,16 @@ const AddMaintenance = () => {
     progress: false,
   });
 
+  const handleFieldChange = (changedFields) => {
+    const updatedFieldValidity = { ...fieldValidity };
+    Object.keys(changedFields).forEach((field) => {
+      updatedFieldValidity[field] = !!changedFields[field];
+    });
+    setFieldValidity(updatedFieldValidity);
+  }; 
+
   const disableFutureDates = (current) => {
     return current && current > moment().endOf("day");
-  };
-
-  const disablePastDates = (current) => {
-    return current && current < moment().startOf("day");
   };
 
   const alphabeticNumericRule = [
@@ -50,40 +65,52 @@ const AddMaintenance = () => {
 
   const numericRule = [
     {
-      pattern: /[0-9]%/,
+      pattern: /^[0-9]/,
       message: "Only numeric characters are allowed.",
     },
     {
       required: true,
       message: "This field is required.",
     },
+    {
+      validator: validateProgress,
+    }
+
   ];
 
-  const handleFinish = async (values) => {
+  const handleSubmit = async (values) => {
     try {
-      await post("/harvest", values);
-      navigate("/Maintenance");
+      setLoading(true);
+
+      const { dateOfMaintenance, task, managerInCharge, progress } = values;
+
+      await axios.post("http://localhost:8090/api/regularMaintenance", {
+        dateOfMaintenance,
+        task,
+        managerInCharge,
+        progress,
+      });
+
+      notification.success({
+        message: "Success",
+        description: "Maintenance record added successfully.",
+      });
+      setLoading(false);
+      form.resetFields();
+
+      navigate("/maintenance");
     } catch (error) {
-      console.error("Error creating maintenance record:", error);
+      console.error("An error occurred: ", error);
+      setLoading(false);
+      notification.error({
+        message: "An error occurred",
+        description: "An error occurred while adding the maintenance record.",
+      });
     }
   };
 
   const handleCancel = () => {
-    navigate("/Maintenance");
-  };
-
-  const handleFieldChange = (changedFields, allFields) => {
-    const newFieldValidity = { ...fieldValidity };
-
-    allFields.forEach((field) => {
-      if (field.errors.length === 0 && field.value) {
-        newFieldValidity[field.name[0]] = true;
-      } else {
-        newFieldValidity[field.name[0]] = false;
-      }
-    });
-
-    setFieldValidity(newFieldValidity);
+    navigate("/maintenance");
   };
 
   return (
@@ -143,7 +170,7 @@ const AddMaintenance = () => {
             <Breadcrumb
               items={[
                 {
-                  href: "",
+                  href: "/diseases",
                   title: <HomeOutlined />,
                 },
                 {
@@ -163,8 +190,8 @@ const AddMaintenance = () => {
               form={form}
               layout="vertical"
               className="mt-6"
-              onFinish={handleFinish}
-              onFieldsChange={handleFieldChange}
+              onFinish={handleSubmit}
+              onValuesChange={(_, values) => handleFieldChange(values)}
             >
               <Form.Item
                 label="Date of Maintenance"
@@ -183,7 +210,7 @@ const AddMaintenance = () => {
                     if (date && date > moment()) {
                       form.setFields([
                         {
-                          name: "dateOfTreatment",
+                          name: "dateOfMaintenance",
                           errors: [
                             "Please select a date that is not in the future.",
                           ],
@@ -219,21 +246,28 @@ const AddMaintenance = () => {
               <Form.Item
                 label="Progress"
                 name="progress"
-                rules={numericRule}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the progress status.",
+                  },
+                ]}
               >
-                <Input
-                  placeholder="Enter the percentage progress rate"
-                  disabled={!fieldValidity.managerInCharge}
-                />
+                <Select placeholder="Select progress status" disabled={!fieldValidity.managerInCharge}>
+                  <Option value="Pending">Pending</Option>
+                  <Option value="In Progress">In Progress</Option>
+                  <Option value="Completed">Completed</Option>
+                </Select>
               </Form.Item>
 
 
               <div className="flex justify-center mt-4 space-x-4">
-                <Button
+              <Button
                   type="primary"
                   htmlType="submit"
+                  loading={loading}
                   style={{ backgroundColor: "#236A64", color: "#fff" }}
-                  onClick={handleFinish}
+                  disabled={!fieldValidity.progress}
                 >
                   Submit
                 </Button>

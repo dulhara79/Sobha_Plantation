@@ -14,13 +14,6 @@ const AddCropsDiseases = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const validateProgress = (_, value) => {
-    if (value < 0 || value > 100) {
-      return Promise.reject(new Error("Progress must be between 0 and 100"));
-    }
-    return Promise.resolve();
-  };
-
   const [fieldValidity, setFieldValidity] = useState({
     dateOfInspection: false,
     sectionOfLand: false,
@@ -76,7 +69,7 @@ const AddCropsDiseases = () => {
       //Extract values from form
       const { dateOfInspection, sectionOfLand, identifiedPest, identifiedDisease, inspectedBy, inspectionResult, suggestedReInspectionDate } = values;
 
-      await axios.post("http://localhost:8090/api/diseases", {
+      await axios.post("http://localhost:8090/api/cropDiseases", {
         dateOfInspection,
         sectionOfLand,
         identifiedPest,
@@ -167,7 +160,7 @@ const AddCropsDiseases = () => {
             <Breadcrumb
               items={[
                 {
-                  href: "",
+                  href: "/diseases",
                   title: <HomeOutlined />,
                 },
                 {
@@ -221,7 +214,6 @@ const AddCropsDiseases = () => {
               <Form.Item
                 label="Section of Land"
                 name="sectionOfLand"
-                disabled={!fieldValidity.dateOfInspection}
                 rules={[
                   {
                     required: true,
@@ -229,7 +221,7 @@ const AddCropsDiseases = () => {
                   }
                 ]}
               >
-                <Select placeholder="Select section of land">
+                <Select placeholder="Select section of land" disabled={!fieldValidity.dateOfInspection}>
                   <option value="E">E</option>
                   <option value="F">F</option>
                   <option value="G">G</option>

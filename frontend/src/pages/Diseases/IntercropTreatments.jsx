@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Breadcrumb, Button, Table, Input, Modal, Dropdown, Menu } from "antd";
+import { Breadcrumb, Button, Table, Input, Modal, notification } from "antd";
 import axios from "axios";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
+import moment from "moment";
 import {
   HomeOutlined,
   LeftOutlined,
   FilePdfOutlined,
-  DownOutlined,
   SearchOutlined,
   EditOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import LogoImage from "../../assets/logo.png";
 import "../../index.css";
 
 const { Search } = Input;
@@ -22,35 +25,57 @@ const IntercropTreatments = () => {
   const [treatments, setTreatments] = useState([]);
   const [filteredTreatments, setFilteredTreatments] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [filterStatus, setFilterStatus] = useState("All");
   const navigate = useNavigate();
-
-  // Fetch treatments from API
-  const fetchTreatments = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/api/harvest"); // Adjust the API endpoint as needed
-      if (response.data.success) {
-        setTreatments(response.data.data);
-        setFilteredTreatments(response.data.data);
-      } else {
-        console.error("Error fetching treatments: ", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error fetching treatments: ", error.message);
-    }
-  };
 
   useEffect(() => {
     fetchTreatments();
   }, []);
 
+  // Fetch treatments from API
+  const fetchTreatments = async () => {
+    try {
+      const response = await axios.get("http://localhost:8090/api/cropTreatments");
+        setTreatments(response.data.data);
+        setFilteredTreatments(response.data.data);
+    } catch (error) {
+      console.error("Error fetching treatments: ", error.response ? error.response.data : error.message);
+    }
+  };
+
+
   // Search treatments
   const handleSearch = (value) => {
     setSearchText(value);
-    const filtered = treatments.filter((treatment) =>
-      treatment.pestOrDisease.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredTreatments(filtered);
+    filterTreatments(value, filterStatus);
   };
+
+  // Filter treatments
+  const filterTreatments = (searchText, filterStatus) => {
+    let filteredData = treatments;
+
+    if (searchText) {
+      const lowercasedSearchText = searchText.toLowerCase();
+      filteredData = filteredData.filter((treatment) =>
+        Object.values(treatment).some((value) =>
+          String(value).toLowerCase().includes(lowercasedSearchText)
+        )
+      );
+    }
+
+    if (filterStatus !== "All") {
+      filteredData = filteredData.filter(
+        (treatment) => treatment.status === filterStatus
+      );
+    }
+
+    setFilteredTreatments(filteredData);
+  };
+
+    // Handle update treatment
+    const handleUpdate = (id) => {
+      navigate(`/updateCropsTreatments/${id}`);
+    };
 
   // Confirm before deleting a treatment
   const confirmDelete = (id) => {
@@ -64,82 +89,79 @@ const IntercropTreatments = () => {
   };
 
   // Delete treatment
-  const handleDelete = async (id) => {
-    try {
-      const response = await axios.delete(
-        `http://localhost:5000/api/harvest/${id}`
-      );
-      if (response.data.success) {
-        fetchTreatments();
-      } else {
-        console.error("Error deleting treatment: ", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error deleting treatment: ", error.message);
+const handleDelete = async (id) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:8090/api/cropTreatments/${id}`
+    );
+    if (response.status === 200) {
+      notification.success({
+        message: "Treatment deleted successfully",
+        description: "The treatment record has been deleted successfully.",
+      });
+      setFilteredTreatments(filteredTreatments.filter((treatment) => treatment._id !== id));
+    } else {
+      notification.error({
+        message: "Error deleting treatment",
+        description: "An error occurred. Please try again.",
+      });
     }
-  };
+  } catch (error) {
+    console.error("Error deleting treatment: ", error.message);
+    notification.error({
+      message: "Error deleting treatment",
+      description: "An error occurred. Please try again.",
+    });
+  }
+};
 
-  // Columns definition
-  const columns = [
-    {
-      title: "Date of Treatment",
-      dataIndex: "date",
-      key: "date",
-    },
-    {
-      title: "Pest or Disease",
-      dataIndex: "pestOrDisease",
-      key: "pestOrDisease",
-    },
-    {
-      title: "Treatment Method",
-      dataIndex: "treatmentMethod",
-      key: "treatmentMethod",
-    },
-    {
-      title: "Current Health Rate",
-      dataIndex: "healthRate",
-      key: "healthRate",
-    },
-    {
-      title: "Treated By",
-      dataIndex: "treatedBy",
-      key: "treatedBy",
-    },
-    {
-      title: "Notes",
-      dataIndex: "notes",
-      key: "notes",
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (text, record) => (
-        <div className="flex space-x-2">
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={() => navigate(`/intercrop-treatments/edit/${record.key}`)}
-          />
-          <Button
-            type="link"
-            icon={<DeleteOutlined />}
-            onClick={() => confirmDelete(record.key)}
-          />
-        </div>
-      ),
-    },
-  ];
+const generatePDF = () => {
+  const input = document.getElementById("table-to-pdf");
+  html2canvas(input, { scale: 2 }).then((canvas) => {
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+    const imgWidth = 210; // A4 width in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    const pageHeight = pdf.internal.pageSize.height;
+    let heightLeft = imgHeight;
 
-  // Dropdown menu for sorting
-  const sortMenu = (
-    <Menu>
-      <Menu.Item key="1">Date</Menu.Item>
-      <Menu.Item key="2">Pest/Disease</Menu.Item>
-      <Menu.Item key="3">Health Rate</Menu.Item>
-      <Menu.Item key="4">Reapplying Date</Menu.Item>
-    </Menu>
-  );
+    // Add title
+    pdf.setFontSize(16);
+    pdf.setTextColor(40, 40, 40);
+    pdf.text("Inter-Crop Treatments Report", 105, 20, { align: "center" });
+
+    // Add the table image
+    let positionY = 30; // Start position for the image on the first page
+    pdf.addImage(imgData, "PNG", 0, positionY, imgWidth, imgHeight);
+    heightLeft -= pageHeight - positionY;
+
+    // Add pages if the content spans multiple pages
+    while (heightLeft > 0) {
+      pdf.addPage();
+      positionY = 0; // Reset position to top of the new page
+      pdf.addImage(imgData, "PNG", 0, positionY - heightLeft, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    // Add footer with a horizontal line and logo
+    const footerY = pdf.internal.pageSize.height - 30;
+
+    pdf.setDrawColor(0);
+    pdf.setLineWidth(0.5);
+    pdf.line(10, footerY, pdf.internal.pageSize.width - 10, footerY); // Horizontal line
+
+    // Add logo to the footer
+    const logoData = LogoImage; // Replace with the path to your logo
+    const logoWidth = 40;
+    const logoHeight = 20;
+    const xPosition = (pdf.internal.pageSize.width - logoWidth) / 2;
+    const yPosition = footerY - logoHeight - (-10); // Adjust margin as needed
+
+    pdf.addImage(logoData, "PNG", xPosition, yPosition, logoWidth, logoHeight);
+
+    pdf.save("Inter-Crop_Treatments_Report.pdf");
+  });
+};
 
   return (
     <div>
@@ -201,7 +223,7 @@ const IntercropTreatments = () => {
             <Breadcrumb
               items={[
                 {
-                  href: "",
+                  href: "/diseases",
                   title: <HomeOutlined />,
                 },
                 {
@@ -212,7 +234,7 @@ const IntercropTreatments = () => {
             />
           </div>
 
-          {/* Body Section */}
+          {/* Topic Section */}
           <div className="mt-4 px-6">
             {/* Title and Show More Icon */}
             <div className="flex items-center justify-between">
@@ -220,17 +242,13 @@ const IntercropTreatments = () => {
                 Pests and Diseases Treatments
               </h1>
               <div className="flex space-x-4">
-                <Input
-                  placeholder="Search for Pests and Diseases"
-                  prefix={<SearchOutlined />}
-                  onChange={(e) => handleSearch(e.target.value)}
-                />
-                <Dropdown overlay={sortMenu} trigger={["click"]}>
-                  <Button>
-                    Sort by <DownOutlined />
-                  </Button>
-                </Dropdown>
-                <Button icon={<FilePdfOutlined />}>Generate Reports</Button>
+              <Search
+                placeholder="Search for treatments"
+                prefix={<SearchOutlined />}
+                onChange={(e) => handleSearch(e.target.value)}
+                style={{ width: "100%" }}
+              />
+                <Button icon={<FilePdfOutlined />} onClick={generatePDF}>Generate Reports</Button>
               </div>
             </div>
 
@@ -251,11 +269,56 @@ const IntercropTreatments = () => {
             </div>
 
             {/* Table */}
-            <div className="mt-4">
+            <div id="table-to-pdf">
               <Table
-                dataSource={filteredTreatments}
-                columns={columns}
-                pagination={{ pageSize: 5 }}
+              columns={[
+                {
+                  title: "Date of Treatment",
+                  dataIndex: "dateOfTreatment",
+                  key: "dateOfTreatment",
+                  render: (text) => moment(text).format("YYYY-MM-DD"),
+                },
+                {
+                  title: "Pest or Disease",
+                  dataIndex: "pestOrDisease",
+                  key: "pestOrDisease",
+                },
+                {
+                  title: "Treatment Method",
+                  dataIndex: "treatmentMethod",
+                  key: "treatmentMethod",
+                },
+                {
+                  title: "Current Health Rate",
+                  dataIndex: "healthRate",
+                  key: "healthRate",
+                },
+                {
+                  title: "Treated By",
+                  dataIndex: "treatedBy",
+                  key: "treatedBy",
+                },
+                {
+                  title: "Notes",
+                  dataIndex: "notes",
+                  key: "notes",
+                },
+                {
+                  title: "Actions",
+                  key: "actions",
+                  render: (text, record) => (
+                    <span style={{ display: "flex", gap: "2px" }}>
+                      <Button type="link" icon={<EditOutlined />} onClick={() => handleUpdate(record._id)}/>
+                      <Button type="link" icon={<DeleteOutlined />} danger onClick={() => confirmDelete(record._id)}/>
+                    </span>
+                  ),
+                },
+              ]}
+              dataSource={filteredTreatments}
+              rowKey="_id"
+              pagination={{ pageSize: 10 }}
+              style={{ width: "100%" }} // Ensure table width fits content
+              bordered
               />
             </div>
 
@@ -271,31 +334,6 @@ const IntercropTreatments = () => {
                 onClick={() => navigate("/addIntercropTreatments")}
               >
                 + Add
-              </Button>
-
-              <Button
-                style={{
-                  background: "linear-gradient(135deg, orange, #4CAF50)", // Green-blue gradient background
-                  color: "#fff",
-                  marginTop: "16px",
-                  width: "100%",
-                  maxWidth: "400px",
-                  height: "48px", // Taller height for Insights button
-                  border: "none",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-                  fontWeight: "bold",
-                  transition: "all 0.3s ease", // Transition effect
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.transform = "scale(1.05)")
-                } // Scale on hover
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                } // Reset scale on leave
-                onClick={() => navigate("/insights")}
-              >
-                Insights
               </Button>
             </div>
           </div>
