@@ -1,4 +1,4 @@
-// // routes/buyerRoute.js
+// routes/buyerRoute.js
 // const express = require('express');
 // const router = express.Router();
 // const  registerBuyer  = require('../controllers/buyerController');
@@ -11,15 +11,15 @@
 
 
 
-const express = require('express');
-const { createBuyer, getAllBuyers, getBuyerById, updateBuyerById, deleteBuyerById } = require('../controllers/buyerController');
+// const express = require('express');
+// const { createBuyer, getAllBuyers, getBuyerById, updateBuyerById, deleteBuyerById } = require('../controllers/buyerController');
 
-const router = express.Router();
+// const router = express.Router();
 
-router.post('/', createBuyer);
-router.get('/', getAllBuyers);
-router.get('/:id', getBuyerById);
-router.put('/:id', updateBuyerById);
-router.delete('/:id', deleteBuyerById);
+// router.post('/', createBuyer);
+// router.get('/', getAllBuyers);
+// router.get('/:id', getBuyerById);
+// router.put('/:id', updateBuyerById);
+// router.delete('/:id', deleteBuyerById);
 
-module.exports = router;
+// module.exports = router;
