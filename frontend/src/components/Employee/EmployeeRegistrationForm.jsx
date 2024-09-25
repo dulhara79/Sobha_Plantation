@@ -31,23 +31,20 @@ const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
   width: 48%;
-
   label {
     margin-bottom: 5px;
     font-weight: bold;
     color: #333;
   }
-
   input,
   select,
   textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px; /* Reduced rounded corners */
+    border-radius: 5px;
     margin-bottom: 5px;
   }
-
   p {
     color: red;
     font-size: 12px;
@@ -67,23 +64,23 @@ const Button = styled.button`
   background-color: ${(props) => (props.primary ? "#4CAF50" : "#ccc")};
   color: white;
   cursor: pointer;
-
   &:hover {
     background-color: ${(props) => (props.primary ? "#45a049" : "#999")};
+  }
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
   }
 `;
 
 // Helper function for validations
 const validateField = (name, value, formData) => {
   const errors = {};
-
   switch (name) {
     case "firstName":
     case "lastName":
       if (!/^[a-zA-Z]+$/.test(value)) {
-        errors[name] = `${
-          name === "firstName" ? "First" : "Last"
-        } name can only contain letters.`;
+        errors[name] = `${name === "firstName" ? "First" : "Last"} name can only contain letters.`;
       }
       break;
     case "contactNumber":
@@ -98,16 +95,14 @@ const validateField = (name, value, formData) => {
       break;
     case "nic":
       if (!/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(value)) {
-        errors[name] =
-          "NIC must be in old (9 digits and V/X) or new format (12 digits).";
+        errors[name] = "NIC must be in old (9 digits and V/X) or new format (12 digits).";
       } else if (!validateNICWithDOB(value, formData.dateOfBirth)) {
         errors[name] = "NIC does not match the date of birth.";
       }
       break;
     case "address":
-      if (!/^[a-zA-Z0-9\s,.\-/]+$/.test(value)) {
-        errors[name] =
-          "Address can only contain letters, numbers, spaces, commas, dots, hyphens, and slashes.";
+      if (!/^[a-zA-Z0-9\s,\/]+$/.test(value)) {
+        errors[name] = "Address can only contain letters, numbers, spaces, commas, and slashes.";
       }
       break;
     case "hourlyRate":
@@ -118,7 +113,7 @@ const validateField = (name, value, formData) => {
     case "dateOfBirth":
       const dob = new Date(value);
       const minDate = new Date();
-      minDate.setFullYear(minDate.getFullYear() - 18);
+      minDate.setFullYear(minDate.getFullYear() - 18); // Ensure the employee is at least 18 years old
       if (dob > minDate) {
         errors[name] = "Employee must be at least 18 years old.";
       }
@@ -126,18 +121,14 @@ const validateField = (name, value, formData) => {
     default:
       break;
   }
-
   return errors;
 };
 
 // NIC validation against DOB according to Sri Lankan standards
 const validateNICWithDOB = (nic, dob) => {
   if (!dob) return true; // Skip validation if DOB is not provided
-
   const dobYear = new Date(dob).getFullYear();
-  const yearFromNIC =
-    nic.length === 10 ? `19${nic.substr(0, 2)}` : nic.substr(0, 4);
-
+  const yearFromNIC = nic.length === 10 ? `19${nic.substr(0, 2)}` : nic.substr(0, 4);
   return dobYear === parseInt(yearFromNIC, 10);
 };
 
@@ -152,34 +143,27 @@ const Eregistration = () => {
     nic: "",
     address: "",
     employeeType: "",
+    designation: "",
     hiredDate: new Date().toISOString().slice(0, 10), // Set to current date
     hourlyRate: "",
   });
-
   const [errors, setErrors] = useState({});
-  const [isFormValid, setIsFormValid] = useState(false);
+  const [allowedYear, setAllowedYear] = useState(null);
 
-  useEffect(() => {
-    validateForm();
-  }, [formData]);
-
-  const validateForm = () => {
-    let newErrors = {};
-
-    Object.keys(formData).forEach((key) => {
-      const fieldErrors = validateField(key, formData[key], formData);
-      newErrors = { ...newErrors, ...fieldErrors };
-    });
-
-    setErrors(newErrors);
-    setIsFormValid(Object.keys(newErrors).length === 0);
+  // Update allowed year based on NIC input
+  const handleNICChange = (value) => {
+    let yearFromNIC = null;
+    if (/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(value)) {
+      yearFromNIC = value.length === 10 ? `19${value.substr(0, 2)}` : value.substr(0, 4);
+      setAllowedYear(parseInt(yearFromNIC, 10));
+    } else {
+      setAllowedYear(null); // Reset if NIC is invalid
+    }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    // Block further fields if the previous field has errors or is empty
-    const fields = [
+  // Sequential validation logic
+  const isFormValidTillField = (fieldName) => {
+    const fieldOrder = [
       "firstName",
       "lastName",
       "nic",
@@ -189,32 +173,53 @@ const Eregistration = () => {
       "email",
       "address",
       "employeeType",
+      "designation",
+      "hiredDate",
       "hourlyRate",
     ];
-    const currentIndex = fields.indexOf(name);
-    if (currentIndex > 0) {
-      const previousField = fields[currentIndex - 1];
-      if (errors[previousField] || !formData[previousField]) {
-        return; // Block current field if previous has errors or is empty
-      }
+    const index = fieldOrder.indexOf(fieldName);
+    for (let i = 0; i < index; i++) {
+      const field = fieldOrder[i];
+      if (errors[field] || !formData[field]) return false;
     }
+    return true;
+  };
 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
+  const validateForm = () => {
+    let newErrors = {};
+    Object.keys(formData).forEach((key) => {
+      const fieldErrors = validateField(key, formData[key], formData);
+      newErrors = { ...newErrors, ...fieldErrors };
+    });
+    setErrors(newErrors);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (!isFormValidTillField(name)) return; // Block input if the previous fields are invalid
+
+    // Prevent typing invalid characters
+    if (validateField(name, value, formData)[name]) return;
+
+    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+
+    // Special handling for NIC field to dynamically set the year for DOB
+    if (name === "nic") {
+      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+      handleNICChange(value); // Adjust year when NIC is valid
+      return; // Skip further validation until full NIC is entered
+  }
 
     // Validate the field as the user types
     const fieldErrors = validateField(name, value, formData);
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: fieldErrors[name],
-    }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: fieldErrors[name] }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isFormValid) return;
+    validateForm();
+    if (Object.keys(errors).length > 0) return;
 
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -225,38 +230,12 @@ const Eregistration = () => {
       cancelButtonText: "No, cancel!",
     });
 
-    console.log("Form data:", formData);
-    console.log("result.isConfirmed:", result.isConfirmed);
-
     if (result.isConfirmed) {
       try {
-        // const response = await axios.post("http://localhost:5000/api/employee", formData);
-        // Swal.fire("Success", "Employee registered successfully!", "success");
-        await axios
-          .post("http://localhost:5000/api/employee", formData)
-          .then((response) => {
-            console.log(response.data);
-            Swal.fire(
-              "Success",
-              "Employee registered successfully!",
-              "success"
-            );
-          })
-          .catch((error) => {
-            console.error("Error during Axios request:", error.response.data);
-            Swal.fire(
-              "Error",
-              "Failed to register employee. Please try again.",
-              "error"
-            );
-          });
+        await axios.post("http://localhost:5000/api/employee", formData);
+        Swal.fire("Success", "Employee registered successfully!", "success");
       } catch (error) {
-        console.error("Error during Axios request:", error.response.data);
-        Swal.fire(
-          "Error",
-          "Failed to register employee. Please try again.",
-          "error"
-        );
+        Swal.fire("Error", "Failed to register employee. Please try again.", "error");
       }
     }
   };
@@ -291,6 +270,7 @@ const Eregistration = () => {
           </FormGroup>
         </FormRow>
 
+        {/* NIC and Date of Birth */}
         <FormRow>
           <FormGroup>
             <label htmlFor="nic">NIC</label>
@@ -312,24 +292,24 @@ const Eregistration = () => {
               placeholder="Date of Birth"
               value={formData.dateOfBirth}
               onChange={handleChange}
+              max={allowedYear ? `${allowedYear}-12-31` : undefined}
+              min={allowedYear ? `${allowedYear}-01-01` : undefined}
+              disabled={!allowedYear}
             />
             {errors.dateOfBirth && <p>{errors.dateOfBirth}</p>}
           </FormGroup>
         </FormRow>
 
+        {/* Gender and Contact Number */}
         <FormRow>
           <FormGroup>
             <label htmlFor="gender">Gender</label>
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-            >
+            <select name="gender" value={formData.gender} onChange={handleChange}>
               <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
             </select>
+            {errors.gender && <p>{errors.gender}</p>}
           </FormGroup>
 
           <FormGroup>
@@ -345,6 +325,7 @@ const Eregistration = () => {
           </FormGroup>
         </FormRow>
 
+        {/* Email and Address */}
         <FormRow>
           <FormGroup>
             <label htmlFor="email">Email</label>
@@ -363,7 +344,6 @@ const Eregistration = () => {
             <textarea
               name="address"
               placeholder="Address"
-              rows="3"
               value={formData.address}
               onChange={handleChange}
             />
@@ -371,33 +351,41 @@ const Eregistration = () => {
           </FormGroup>
         </FormRow>
 
+        {/* Employee Type and Designation */}
         <FormRow>
           <FormGroup>
             <label htmlFor="employeeType">Employee Type</label>
-            <select
-              name="employeeType"
-              value={formData.employeeType}
-              onChange={handleChange}
-            >
-              <option value="">Select Employee Type</option>
-              <option value="permanent">Permanent</option>
-              <option value="contract">Contract</option>
-              <option value="intern">Intern</option>
+            <select name="employeeType" value={formData.employeeType} onChange={handleChange}>
+              <option value="">Select Type</option>
+              <option value="Permanent">Permanent</option>
+              <option value="Contract">Contract</option>
             </select>
+            {errors.employeeType && <p>{errors.employeeType}</p>}
           </FormGroup>
 
+          <FormGroup>
+            <label htmlFor="designation">Designation</label>
+            <select name="designation" value={formData.designation} onChange={handleChange}>
+              <option value="">Select Designation</option>
+              <option value="Farmer">Farmer</option>
+              <option value="Supervisor">Supervisor</option>
+            </select>
+            {errors.designation && <p>{errors.designation}</p>}
+          </FormGroup>
+        </FormRow>
+
+        {/* Hired Date and Hourly Rate */}
+        <FormRow>
           <FormGroup>
             <label htmlFor="hiredDate">Hired Date</label>
             <input
               type="date"
               name="hiredDate"
               value={formData.hiredDate}
-              disabled
+              disabled={true}
             />
           </FormGroup>
-        </FormRow>
 
-        <FormRow>
           <FormGroup>
             <label htmlFor="hourlyRate">Hourly Rate</label>
             <input
@@ -411,29 +399,15 @@ const Eregistration = () => {
           </FormGroup>
         </FormRow>
 
+        {/* Form submission buttons */}
         <ButtonGroup>
-          <Button
-            type="button"
-            onClick={() =>
-              setFormData({
-                firstName: "",
-                lastName: "",
-                dateOfBirth: "",
-                gender: "",
-                contactNumber: "",
-                email: "",
-                nic: "",
-                address: "",
-                employeeType: "",
-                hiredDate: new Date().toISOString().slice(0, 10), // Reset to current date
-                hourlyRate: "",
-              })
-            }
-          >
-            Reset
+        <Button type="submit" primary>
+
+
+            Register
           </Button>
-          <Button type="submit" primary disabled={!isFormValid}>
-            Submit
+          <Button type="button" onClick={() => console.log("Form cleared!")}>
+            Clear Form
           </Button>
         </ButtonGroup>
       </form>
