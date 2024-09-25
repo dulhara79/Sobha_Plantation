@@ -314,7 +314,7 @@ const TaskList = () => {
 
                 <td className="py-4 text-right ">
                   <Link
-                    to={`/employees/tasks/viewTask/${record._id}`}
+                    to={`/employee/taskdetails/${record._id}`}
                     className="font-medium text-blue-600 hover:underline"
                   >
                     <InformationCircleIcon

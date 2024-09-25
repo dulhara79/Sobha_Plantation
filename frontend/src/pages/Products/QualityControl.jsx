@@ -14,6 +14,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { HomeOutlined } from '@mui/icons-material';
 import Swal from 'sweetalert2';
 
+
 const { Search } = Input;
 const { Option } = Select;
 
@@ -452,7 +453,6 @@ const generatePDF = async () => {
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button 
                 type="primary" 
-                
                 style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }} 
                 onClick={generatePDF}
                 

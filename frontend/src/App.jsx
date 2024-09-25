@@ -15,7 +15,7 @@ import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
 import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
 import ViewSalesRecordDashboard from "./pages/SalesAndFinance/Sales/ViewSalesRecordDashboard.jsx";
 import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage.jsx";
-finance
+// finance
 
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
@@ -58,18 +58,19 @@ import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransac
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
 import Eregistration from "./pages/employee/Eregistration.jsx";
-import Esalary from "./pages/employee/Esalary";
 import EaddTask from "./pages/employee/EaddTask.jsx";
 import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
+import ViewTaskDetails from "./pages/employee/ViewTaskDetails.jsx";
 import GetAttendance from "./pages/employee/GetAttendance.jsx";
 import EmployeeList from "./pages/employee/EmployeeList.jsx";
 import EattendenceList from "./pages/employee/EattendenceList.jsx";
+import ViewOneAttendance from "./pages/employee/ViewOneAttendance.jsx";
+import  EditEmployeePage from "./pages/employee/EditEmployeePage.jsx";
+import ViewOneEmployee from "./pages/employee/ViewOneEmployee.jsx";
  
 // harvest
-
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
-import ScheduleOptionsPage from './pages/Harvest/ScheduleOptionsPage.jsx';
 import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
 import YieldRecords from "./pages/Harvest/YieldRecords";
 import ComplianceCheckList from "./pages/Harvest/ComplianceCheckList";
@@ -80,7 +81,6 @@ import EditYieldRecords from './pages/Harvest/EditYieldRecords.jsx'
 import AddComplianceCheck from './pages/Harvest/AddComplianceCheck.jsx';
 import EditComplianceCheck from './pages/Harvest/EditComplianceCheck.jsx';
 import YieldBarChart from './pages/Harvest/YieldBarChart.jsx';
-import YieldOptionsPage from './pages/Harvest/YieldOptionsPage.jsx';
  
 // crop care (diseases)
 import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
@@ -214,21 +214,7 @@ import FusariumWilt from "./pages/Diseases/FusariumWilt.jsx";
 import PowderyMildew from "./pages/Diseases/PowderyMildew.jsx";
 import UpdateCoconutDiseases from "./pages/Diseases/UpdateCoconutDiseases.jsx";
 
-// product
-import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
-import ProductionScheduleOverview from "./pages/Products/ProductionScheduleOverview.jsx";
-import QualityControl from "./pages/Products/QualityControl.jsx";
-import AddSchedule from "./pages/Products/AddSchedule.jsx";
-import EditSchedule from "./pages/Products/EditSchedule.jsx";
-import AddInspectionReport from "./pages/Products/AddInspectionReport.jsx";
-import EditInspectionReport from "./pages/Products/EditInspectionReport.jsx";
-import PackagingLabeling from "./pages/Products/PackagingLabeling.jsx";
-import Packaging from "./pages/Products/Packaging.jsx";
-import Labeling from "./pages/Products/Labeling.jsx";
-import EditPrice from "./pages/Products/EditPrice.jsx";
-import AddLabeling from "./pages/Products/AddLabeling.jsx";
-import EditLabeling from "./pages/Products/EditLabeling.jsx";
-import Gallery  from "./pages/Products/Gallery.jsx";
+
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
@@ -261,9 +247,6 @@ import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
 
 import PageError from "./pages/PageError.jsx";
  
-
-
-////////////////////////////////////////
 export default function App() {
   return (
     <Routes>
@@ -317,28 +300,23 @@ export default function App() {
 
     <Route path="/Inventory/EditRequestPaymentRecords/:id" element={<EditRequestPaymentRecord/>} />
 
-      {/* employee */}        
-      <Route path="/employee/dashboard" element={<Edashboard/>}/>
+{/* employee */}        
+       <Route path="/employee/dashboard" element={<Edashboard/>}/>
       <Route path="/employee/registration" element= {<Eregistration/>}/>
-      <Route path="/employee/salary" element= {<Esalary/>}/>
       <Route path="/employee/task" element= {<EaddTask/>}/>
       <Route path="/employee/taskedit/:id" element= {<EditTaskPage/>}/>
       <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
       <Route path="/employee/attendance" element= {<GetAttendance/>}/>
       <Route path="/employee/employeelist" element= {<EmployeeList/>}/>
-      <Route path="/employee/attendanceList" element= {<EattendenceList/>}/> 
+      <Route path="/employee/attendanceList" element= {<EattendenceList/>}/>
+      <Route path="/employee/taskdetails/:id" element= {<ViewTaskDetails/>}/>
+      <Route path= "/employee/veiwattendence/:id" element= {<ViewOneAttendance/>}/>
+      <Route path= "/employee/editemployee/:id" element={<EditEmployeePage/>}/>
+      <Route path= "/employee/viewemployee/:id" element={<ViewOneEmployee/>}/>
  
       {/* harvest */}
-
-       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
-       <Route path="/harvest/schedule-options" element={<ScheduleOptionsPage />} /> 
-       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
-
-     <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
-      <Route path="/harvest/schedule-options" element={<ScheduleOptionsPage />} />
+      <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
-
-      <Route path="/yield-options" element={<YieldOptionsPage />} />
       <Route path="/harvest/yield" element={<YieldRecords />} />
       <Route path="/harvest/compliancechecklist" element={<ComplianceCheckList />} />
       <Route path="/yield/addrecords" element={<AddYieldRecord />} />
@@ -347,13 +325,6 @@ export default function App() {
       <Route path="/yield/editrecords/:id" element={<EditYieldRecords />} />
       <Route path="/compliance-checks/addrecords" element={<AddComplianceCheck />} />
       <Route path="/compliance-checks/editrecords/:id" element={<EditComplianceCheck />} />
-
-      <Route path="/yield-bar-chart" element={<YieldBarChart />} /> 
- 
- 
-    
-
-      <Route path="/yield-bar-chart" element={<YieldBarChart />} />
 
 
       {/* crop care */}
@@ -429,7 +400,7 @@ export default function App() {
       <Route path="/products/editPrice/:id" element={<EditPrice />} />
       <Route path="/products/addLabeling" element={<AddLabeling />} />
       <Route path="/products/editLabeling/:id" element={<EditLabeling />} />
-      <Route path="/products/gallery" element={<Gallery/>} /> 
+      <Route path="/products/gallery" element={<Gallery/>} />
 
 
       {/* field view  */}
@@ -481,4 +452,3 @@ export default function App() {
     </Routes>
   );
 }
- 

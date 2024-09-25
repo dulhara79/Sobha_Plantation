@@ -220,7 +220,6 @@
     
   const generatePDF = async () => {
     const doc = new jsPDF();
-
     // Load the logo image
     const logoUrl = '../src/assets/logo.png';
     let logoDataURL;
