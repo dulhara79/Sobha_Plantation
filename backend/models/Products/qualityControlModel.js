@@ -11,9 +11,10 @@ const qualityControlSchema = mongoose.Schema(
       required: true,
     },
     status: {
-      type: String,
-      enum: ['Pass', 'Fail'],
+      type: String, 
+      enum: ['Passed', 'Failed'],
       default: 'Pass',
+      required: true 
     },
     inspectorName: {
       type: String,

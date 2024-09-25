@@ -4,7 +4,7 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import axios from "axios"; // To make API requests
 
-import profileImage from "../assets/DSC07695.jpg"; // Update the path to match your folder structure
+// import profileImage from "../assets/DSC07695.jpg"; // Update the path to match your folder structure
 
 const Profile = () => {
   const [profile, setProfile] = useState({

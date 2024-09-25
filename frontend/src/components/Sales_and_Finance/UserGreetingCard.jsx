@@ -14,11 +14,25 @@ const UserGreetingCard = () => {
     return () => clearInterval(timer);
   }, []);
 
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const currentTime = new Date().toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true,
+  });
+
   return (
-    <div className="flex items-center justify-between p-4 mt-4 bg-white rounded-lg shadow">
-      <div>
-        <h2 className="text-xl font-semibold">Welcome, Dulhara</h2>
-        <p className="text-gray-500">{dateTime.toLocaleDateString()}, {dateTime.toLocaleTimeString()}</p>
+    <div className={`flex items-center justify-between p-4 mt-4 bg-white rounded-lg shadow-xl`}>
+      <div className=''>
+        <h2 className="font-bold text-5xlxl">Welcome, Dulhara</h2>
+        <p className="text-xl text-gray-500">{currentDate} <span> at </span> {currentTime}</p>
       </div>
       <div className="flex items-center space-x-4">
         <Tooltip title="Calendar">

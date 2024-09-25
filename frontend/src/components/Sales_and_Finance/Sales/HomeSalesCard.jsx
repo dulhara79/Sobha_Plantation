@@ -2,7 +2,7 @@ import React from "react";
 
 const HomeSalesCard = ({ salesData }) => {
   return (
-    <div className="p-4 bg-white rounded-lg shadow">
+    <div className="p-4 mt-8 mb-8 bg-white rounded-lg shadow-xl">
       <h3 className="text-lg font-semibold">Sales</h3>
       <div className="flex justify-between mt-4">
         <div>

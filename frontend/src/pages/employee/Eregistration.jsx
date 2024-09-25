@@ -1,10 +1,10 @@
 import React from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
-import EmployeeNavbar from "../../components/EmployeeNavbar";
+import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
-import EmployeeRegistrationForm from "../../components/EmployeeRegistrationForm";
+import EmployeeRegistrationForm from "../../components/Employee/EmployeeRegistrationForm";
 const Eregistration = () => {
   return (
     <div>
