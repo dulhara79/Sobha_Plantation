@@ -38,7 +38,6 @@ import Dashboard from "./pages/Dashboard.jsx";
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
 import Eregistration from "./pages/employee/Eregistration.jsx";
-import Esalary from "./pages/employee/Esalary";
 import EaddTask from "./pages/employee/EaddTask.jsx";
 import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
@@ -47,6 +46,8 @@ import GetAttendance from "./pages/employee/GetAttendance.jsx";
 import EmployeeList from "./pages/employee/EmployeeList.jsx";
 import EattendenceList from "./pages/employee/EattendenceList.jsx";
 import ViewOneAttendance from "./pages/employee/ViewOneAttendance.jsx";
+import  EditEmployeePage from "./pages/employee/EditEmployeePage.jsx";
+import ViewOneEmployee from "./pages/employee/ViewOneEmployee.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
@@ -154,9 +155,8 @@ export default function App() {
     <Route path="/Inventory/EditRequestPaymentRecords/:id" element={<EditRequestPaymentRecord/>} />
 
       {/* employee */}        
-      {/* <Route path="/employee/dashboard" element={<Edashboard/>}/>
+       <Route path="/employee/dashboard" element={<Edashboard/>}/>
       <Route path="/employee/registration" element= {<Eregistration/>}/>
-      <Route path="/employee/salary" element= {<Esalary/>}/>
       <Route path="/employee/task" element= {<EaddTask/>}/>
       <Route path="/employee/taskedit/:id" element= {<EditTaskPage/>}/>
       <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
@@ -165,6 +165,9 @@ export default function App() {
       <Route path="/employee/attendanceList" element= {<EattendenceList/>}/>
       <Route path="/employee/taskdetails/:id" element= {<ViewTaskDetails/>}/>
       <Route path= "/employee/veiwattendence/:id" element= {<ViewOneAttendance/>}/>
+      <Route path= "/employee/editemployee/:id" element={<EditEmployeePage/>}/>
+      <Route path= "/employee/viewemployee/:id" element={<ViewOneEmployee/>}/>
+      
 
       {/* harvest */}
      <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
