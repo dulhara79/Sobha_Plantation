@@ -429,11 +429,7 @@ export default function App() {
       <Route path="/products/editPrice/:id" element={<EditPrice />} />
       <Route path="/products/addLabeling" element={<AddLabeling />} />
       <Route path="/products/editLabeling/:id" element={<EditLabeling />} />
-
       <Route path="/products/gallery" element={<Gallery/>} /> 
- 
-
-      <Route path="/products/gallery" element={<Gallery/>} />
 
 
       {/* field view  */}
