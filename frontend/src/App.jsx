@@ -15,7 +15,7 @@ import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
 import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
 import ViewSalesRecordDashboard from "./pages/SalesAndFinance/Sales/ViewSalesRecordDashboard.jsx";
 import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage.jsx";
-finance
+// finance
 
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
@@ -67,9 +67,7 @@ import EmployeeList from "./pages/employee/EmployeeList.jsx";
 import EattendenceList from "./pages/employee/EattendenceList.jsx";
  
 // harvest
-
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
-import ScheduleOptionsPage from './pages/Harvest/ScheduleOptionsPage.jsx';
 import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
 import YieldRecords from "./pages/Harvest/YieldRecords";
 import ComplianceCheckList from "./pages/Harvest/ComplianceCheckList";
@@ -80,7 +78,6 @@ import EditYieldRecords from './pages/Harvest/EditYieldRecords.jsx'
 import AddComplianceCheck from './pages/Harvest/AddComplianceCheck.jsx';
 import EditComplianceCheck from './pages/Harvest/EditComplianceCheck.jsx';
 import YieldBarChart from './pages/Harvest/YieldBarChart.jsx';
-import YieldOptionsPage from './pages/Harvest/YieldOptionsPage.jsx';
  
 // crop care (diseases)
 import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
@@ -261,9 +258,6 @@ import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
 
 import PageError from "./pages/PageError.jsx";
  
-
-
-////////////////////////////////////////
 export default function App() {
   return (
     <Routes>
@@ -329,16 +323,8 @@ export default function App() {
       <Route path="/employee/attendanceList" element= {<EattendenceList/>}/> 
  
       {/* harvest */}
-
-       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
-       <Route path="/harvest/schedule-options" element={<ScheduleOptionsPage />} /> 
-       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
-
-     <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
-      <Route path="/harvest/schedule-options" element={<ScheduleOptionsPage />} />
+      <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
-
-      <Route path="/yield-options" element={<YieldOptionsPage />} />
       <Route path="/harvest/yield" element={<YieldRecords />} />
       <Route path="/harvest/compliancechecklist" element={<ComplianceCheckList />} />
       <Route path="/yield/addrecords" element={<AddYieldRecord />} />
@@ -347,13 +333,6 @@ export default function App() {
       <Route path="/yield/editrecords/:id" element={<EditYieldRecords />} />
       <Route path="/compliance-checks/addrecords" element={<AddComplianceCheck />} />
       <Route path="/compliance-checks/editrecords/:id" element={<EditComplianceCheck />} />
-
-      <Route path="/yield-bar-chart" element={<YieldBarChart />} /> 
- 
- 
-    
-
-      <Route path="/yield-bar-chart" element={<YieldBarChart />} />
 
 
       {/* crop care */}
