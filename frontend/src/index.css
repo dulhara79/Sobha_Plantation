@@ -226,4 +226,42 @@ button.text-gray-800 {
   }
 }
 
+.swal-custom-popup {
+  border-radius: 15px; /* Rounded corners */
+  background-color: #f8f9fa; /* Light background */
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.2); /* Soft shadow */
+}
+
+.swal-custom-title {
+  color: #1D6660; /* Title color */
+  font-size: 1.5rem; /* Title font size */
+  font-weight: bold; /* Title boldness */
+}
+
+.swal-custom-html {
+  color: #333; /* Text color */
+  font-size: 1rem; /* Text font size */
+}
+
+/* Custom styles for SweetAlert2 buttons */
+.swal-confirm-button {
+  background-color: #007bff; /* Bootstrap primary blue */
+  color: white; /* White text color */
+  border: none; /* No border */
+}
+
+.swal-cancel-button {
+  background-color: #6c757d; /* Bootstrap secondary gray */
+  color: white; /* White text color */
+  border: none; /* No border */
+}
+
+.swal-confirm-button:hover {
+  background-color: #007bff; /* Darker blue on hover */
+}
+
+.swal-cancel-button:hover {
+  background-color: #5a6268; /* Darker gray on hover */
+}
+
 /* products */
