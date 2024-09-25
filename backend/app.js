@@ -23,8 +23,10 @@ const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
  * buyer
  */
 // const BuyerRoutes = require('./routes/buyerRoute');
-
-const BuyerRoutes = require('./routes/buyerRoute');
+// const buyerRoutes = require('./routes/buyerRoutes');
+const buyerRoutes = require('./routes/buyerRoute');
+const buyerDeliveryRoute = require('./routes/buyerDeliveryRoute'); 
+// const buyerInfoRoute = require('./routes/buyerInfoRoute');
 
 
 const FinancialTransactionRoutes = require('./routes/SalesAndFinance/financialTransactionRoutes.js');
@@ -69,6 +71,7 @@ app.use("/api/plant-growth", plantGrowthRoutes);
 /**
  * Sales and Finance Routes
  */
+
 app.use("/api/salesAndFinance/finance/transaction", FinancialTransactionRoutes);
 app.use("/api/salesAndFinance/finance/invoice", InvoiceRoutes);
 app.use("/api/salesAndFinance/sales/analytics", SalesAnalyticsRoutes);
@@ -77,10 +80,11 @@ app.use("/api/salesAndFinance/sales/tracking", SalesTrackingRoutes);
 /**
  * buyer
  */
-// app.use('/api/buyer', BuyerRoutes);
+// app.use('/api/buyers', buyerRoutes);
+app.use("/api/broute", buyerRoutes);
 
-app.use('/api/buyer', BuyerRoutes);
-
+app.use("/api/deliveryRecords", buyerDeliveryRoute); 
+// app.use("/api/buyerInfo", buyerInfoRoute);
 
 const PORT = process.env.PORT || 8090;
 
