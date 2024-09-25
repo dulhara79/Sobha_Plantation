@@ -5,12 +5,19 @@ import Sidebar from "../../components/Sidebar";
 import {
   HomeOutlined,
   LeftOutlined,
-  SortAscendingOutlined,
+  SearchOutlined,
+  FilePdfOutlined,
+  EditOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Button, Table, Modal, Dropdown, Menu } from "antd";
+import { Breadcrumb, Button, Table, Input, Modal, notification } from "antd";
 import axios from "axios";
 import moment from "moment";
 import { Link } from "react-router-dom";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import LogoImage from "../../assets/Logo.png";
+import "../../index.css";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -21,7 +28,6 @@ import {
   CategoryScale,
   LinearScale,
 } from "chart.js";
-import { Input } from "antd";
 
 // Register Chart.js components
 ChartJS.register(
@@ -33,41 +39,63 @@ ChartJS.register(
   LinearScale
 );
 
+const { Search } = Input;
+
 const RegularMaintenance = () => {
-  const [maintenanceData, setMaintenanceData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const [maintenance, setMaintenance] = useState([]);
+  const [filteredMaintenance, setFilteredMaintenance] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [filterStatus, setFilterStatus] = useState("All");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    fetchMaintenance();
+  }, []);
+
   // Fetch maintenance data from API
-  const fetchMaintenanceData = async () => {
+  const fetchMaintenance = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/harvest"); // Adjust the API endpoint as needed
-      if (response.data.success) {
-        setMaintenanceData(response.data.data);
-        setFilteredData(response.data.data);
-      } else {
-        console.error(
-          "Error fetching maintenance data: ",
-          response.data.message
-        );
-      }
+      const response = await axios.get(
+        "http://localhost:8090/api/regularMaintenance"
+      );
+      setMaintenance(response.data.data);
+      setFilteredMaintenance(response.data.data);
     } catch (error) {
       console.error("Error fetching maintenance data: ", error.message);
     }
   };
 
-  useEffect(() => {
-    fetchMaintenanceData();
-  }, []);
-
   // Search maintenance data
   const handleSearch = (value) => {
     setSearchText(value);
-    const filtered = maintenanceData.filter((data) =>
-      data.task.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredData(filtered);
+    filterMaintenance(value, filterStatus);
+  };
+
+  // Filter maintenance data
+  const filterMaintenance = (searchText, filterStatus) => {
+    let filteredData = maintenance;
+
+    if (searchText) {
+      const lowercasedSearchText = searchText.toLowerCase();
+      filteredData = filteredData.filter((maintenance) =>
+        Object.values(maintenance).some((value) =>
+          String(value).toLowerCase().includes(lowercasedSearchText)
+        )
+      );
+    }
+
+    if (filterStatus !== "All") {
+      filteredData = filteredData.filter(
+        (maintenance) => maintenance.status === filterStatus
+      );
+    }
+
+    setFilteredMaintenance(filteredData);
+  };
+
+  //Handle update maintenance
+  const handleUpdate = (id) => {
+    navigate(`/updateMaintenance/${id}`);
   };
 
   // Confirm before deleting a maintenance entry
@@ -85,69 +113,103 @@ const RegularMaintenance = () => {
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost:5000/api/harvest/${id}`
+        `http://localhost:8090/api/regularMaintenance/${id}`
       );
-      if (response.data.success) {
-        fetchMaintenanceData();
-      } else {
-        console.error(
-          "Error deleting maintenance record: ",
-          response.data.message
+      if (response.status === 200) {
+        notification.success({
+          message: "Success",
+          description: "Maintenance record deleted successfully.",
+        });
+        setFilteredMaintenance(
+          filteredMaintenance.filter((record) => record.id !== id)
         );
+      } else {
+        notification.error({
+          message: "Error",
+          description: "An error occurred. Please try again.",
+        });
       }
     } catch (error) {
       console.error("Error deleting maintenance record: ", error.message);
+      notification.error({
+        message: "Error",
+        description: "An error occurred. Please try again.",
+      });
     }
   };
 
-  // Columns definition for the table
-  const columns = [
-    {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-      render: (date) => moment(date).format("YYYY-MM-DD"),
-      sorter: (a, b) => new Date(a.date) - new Date(b.date),
-    },
-    { title: "Task", dataIndex: "task", key: "task" },
-    { title: "Manager in Charge", dataIndex: "manager", key: "manager" },
-    { title: "Progress", dataIndex: "progress", key: "progress" },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (text, record) => (
-        <span style={{ display: "flex", gap: "10px" }}>
-          <Button onClick={() => navigate(`/maintenance/edit/${record.id}`)}>
-            Edit
-          </Button>
-          <Button onClick={() => confirmDelete(record.id)} danger>
-            Delete
-          </Button>
-        </span>
-      ),
-    },
-  ];
+  const generatePDF = () => {
+    const input = document.getElementById("table-to-pdf");
+    html2canvas(input, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const pageHeight = pdf.internal.pageSize.height;
+      let heightLeft = imgHeight;
 
-  // Dropdown menu for sorting (if needed)
-  const sortMenu = (
-    <Menu>
-      <Menu.Item key="1">Task</Menu.Item>
-      <Menu.Item key="2">Date</Menu.Item>
-      <Menu.Item key="3">Manager</Menu.Item>
-      <Menu.Item key="4">Progress</Menu.Item>
-    </Menu>
-  );
+      // Add title
+      pdf.setFontSize(16);
+      pdf.setTextColor(40, 40, 40);
+      pdf.text("Maintenance Report", 105, 20, { align: "center" });
+
+      // Add the table image
+      let positionY = 30; // Start position for the image on the first page
+      pdf.addImage(imgData, "PNG", 0, positionY, imgWidth, imgHeight);
+      heightLeft -= pageHeight - positionY;
+
+      // Add pages if the content spans multiple pages
+      while (heightLeft > 0) {
+        pdf.addPage();
+        positionY = 0; // Reset position to top of the new page
+        pdf.addImage(
+          imgData,
+          "PNG",
+          0,
+          positionY - heightLeft,
+          imgWidth,
+          imgHeight
+        );
+        heightLeft -= pageHeight;
+      }
+
+      // Add footer with a horizontal line and logo
+      const footerY = pdf.internal.pageSize.height - 30;
+
+      pdf.setDrawColor(0);
+      pdf.setLineWidth(0.5);
+      pdf.line(10, footerY, pdf.internal.pageSize.width - 10, footerY); // Horizontal line
+
+      // Add logo to the footer
+      const logoData = LogoImage; // Replace with the path to your logo
+      const logoWidth = 40;
+      const logoHeight = 20;
+      const xPosition = (pdf.internal.pageSize.width - logoWidth) / 2;
+      const yPosition = footerY - logoHeight - -10; // Adjust margin as needed
+
+      pdf.addImage(
+        logoData,
+        "PNG",
+        xPosition,
+        yPosition,
+        logoWidth,
+        logoHeight
+      );
+
+      pdf.save("Maintenance_Report.pdf");
+    });
+  };
 
   // Data for the bar chart
-  const data = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+  const [chartData, setChartData] = useState({
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
     datasets: [
       {
         label: "Maintenance Data",
-        data: [30, 40, 35, 50, 45, 55, 60, 40], // Example data values
+        data: [], // Initial empty data
         backgroundColor: (context) => {
           const chart = context.chart;
-          const { ctx, data } = chart;
+          const { ctx } = chart;
           const gradient = ctx.createLinearGradient(0, 0, 0, 400);
           gradient.addColorStop(0, "#d0f0c0"); // Light green
           gradient.addColorStop(1, "#006400"); // Dark green
@@ -157,9 +219,25 @@ const RegularMaintenance = () => {
         borderWidth: 1,
       },
     ],
-  };
+  });
 
-  // Options for the bar chart
+  useEffect(() => {
+    // Calculate the data based on filteredMaintenance
+    const monthlyData = Array(12).fill(0); // Assuming a 12-month year
+
+    filteredMaintenance.forEach((maintenance) => {
+      const month = moment(maintenance.dateOfMaintenance).month(); // Get month index (0-11)
+      monthlyData[month] += 1; // Increment the count for that month
+    });
+
+    // Update chart data
+    setChartData((prevData) => ({
+      ...prevData,
+      datasets: [{ ...prevData.datasets[0], data: monthlyData }],
+    }));
+  }, [filteredMaintenance]); // Runs whenever filteredMaintenance changes
+
+  // Options for the bar chart (unchanged)
   const options = {
     responsive: true,
     plugins: {
@@ -240,7 +318,7 @@ const RegularMaintenance = () => {
         <Breadcrumb
           items={[
             {
-              href: "",
+              href: "/diseases",
               title: <HomeOutlined />,
             },
             {
@@ -257,27 +335,82 @@ const RegularMaintenance = () => {
           Maintenance Schedule
         </h2>
 
-        {/* Search Button */}
+        {/* Search Button and report generation button*/}
         <div className="flex space-x-4 mt-7">
-          <Input
-            placeholder="Search for Tasks"
+          <Search
+            placeholder="Search for maintenance tasks"
+            prefix={<SearchOutlined />}
             onChange={(e) => handleSearch(e.target.value)}
+            style={{ width: "100%" }}
           />
+          <Button icon={<FilePdfOutlined />} onClick={generatePDF}>
+            Generate Reports
+          </Button>
+        </div>
+
+        {/* Analytics Section */}
+        <div className="flex justify-center items-center mt-8 mb-10">
+          {/* Analytics Chart */}
+          <div className="w-full max-w-lg">
+            <Bar data={chartData} options={options} />
+          </div>
         </div>
 
         {/* Maintenance Table */}
-        <div className="mt-6">
+        <div id="table-to-pdf">
           <Table
-            dataSource={filteredData}
-            columns={columns}
-            rowKey={(record) => record.id}
-            pagination={{ pageSize: 5 }}
+            columns={[
+              {
+                title: "Date of Maintenance",
+                dataIndex: "dateOfMaintenance",
+                key: "dateOfMaintenance",
+                render: (date) => moment(date).format("YYYY-MM-DD"),
+              },
+              {
+                title: "Task",
+                dataIndex: "task",
+                key: "task",
+              },
+              {
+                title: "Manager in Charge",
+                dataIndex: "managerInCharge",
+                key: "managerInCharge",
+              },
+              {
+                title: "Progress",
+                dataIndex: "progress",
+                key: "progress",
+              },
+              {
+                title: "Actions",
+                key: "actions",
+                render: (text, record) => (
+                  <span style={{ display: "flex", gap: "2px" }}>
+                    <Button
+                      type="link"
+                      icon={<EditOutlined />}
+                      onClick={() => handleUpdate(record._id)}
+                    />
+                    <Button
+                      type="link"
+                      icon={<DeleteOutlined />}
+                      danger
+                      onClick={() => confirmDelete(record._id)}
+                    />
+                  </span>
+                ),
+              },
+            ]}
+            dataSource={filteredMaintenance}
+            rowKey="_id"
+            pagination={{ pageSize: 10 }}
             style={{ width: "100%" }}
+            bordered
           />
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col items-center mt-10 mb-4">
+        <div className="flex flex-col items-center mt-2 mb-4">
           <Button
             type="default"
             className="bg-[#3CCD65] text-white hover:bg-[#2b8f57]"
@@ -285,29 +418,6 @@ const RegularMaintenance = () => {
           >
             Add Entry
           </Button>
-        </div>
-
-        {/* Analytics Section */}
-        <div className="flex justify-between items-start mt-8 mb-10 ml-30">
-          {/* Analytics Chart */}
-          <div className="w-1/2 ml-12 mt-5">
-            <Bar data={data} options={options} />
-          </div>
-
-          {/* Analytics Data */}
-          <div className="w-1/2 ml-32">
-            <div className="flex ml-13 mb-4">
-              <h3 className="text-xl font-bold">Analytics</h3>
-            </div>
-            <ul className="list-none space-y-2">
-              <li>Current Temperature: 30°C</li>
-              <li>Current Humidity: 70%</li>
-              <li>Current Soil Moisture: 30%</li>
-              <li>Current Light Intensity: 70000 lux</li>
-              <li>Current Rainfall: 6 mm</li>
-              <li>Current Wind Speed: 10 km/h</li>
-            </ul>
-          </div>
         </div>
       </div>
     </div>

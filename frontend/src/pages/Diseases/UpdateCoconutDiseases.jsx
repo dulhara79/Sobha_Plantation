@@ -105,7 +105,7 @@ const UpdateCoconutDiseases = () => {
           </nav>
 
           <div className="mt-4">
-            <Breadcrumb items={[{ href: "", title: <HomeOutlined /> }, { href: "", title: "Update current record for Coconut Diseases" }]} />
+            <Breadcrumb items={[{ href: "/diseases", title: <HomeOutlined /> }, { href: "", title: "Update current record for Coconut Diseases" }]} />
           </div>
 
           <div className="mt-4 p-6 bg-white shadow-md rounded-md">

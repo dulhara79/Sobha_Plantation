@@ -10,6 +10,8 @@ import {
   LeftOutlined,
   SearchOutlined,
   FilePdfOutlined,
+  EditOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import html2canvas from "html2canvas";
@@ -33,7 +35,7 @@ const IntercropInspections = () => {
     // Fetch inspections from API
     const fetchInspections = async () => {
       try {
-        const response = await axios.get("http://localhost:8090/api/diseases");
+        const response = await axios.get("http://localhost:8090/api/cropDiseases");
         setInspections(response.data.data);
         setFilteredInspections(response.data.data);
       } catch (error) {
@@ -86,7 +88,7 @@ const IntercropInspections = () => {
   // Delete inspection
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:8090/api/diseases/${id}`);
+      const response = await axios.delete(`http://localhost:8090/api/cropDiseases/${id}`);
       if (response.status === 200) {
         notification.success({
           message: "Success",
@@ -121,7 +123,7 @@ const IntercropInspections = () => {
       // Add title
       pdf.setFontSize(16);
       pdf.setTextColor(40, 40, 40);
-      pdf.text("Inter-Crop Inspections and Disease Identification", 105, 20, { align: "center" });
+      pdf.text("Inter-Crop Inspections and Disease Identification Report", 105, 20, { align: "center" });
   
       // Add the table image
       let positionY = 30; // Start position for the image on the first page
@@ -228,7 +230,7 @@ return (
             <Breadcrumb
               items={[
                 {
-                  href: "",
+                  href: "/diseases",
                   title: <HomeOutlined />,
                 },
                 {
@@ -251,7 +253,7 @@ return (
                 onChange={(e) => handleSearch(e.target.value)}
                 style={{ width: "100%" }}
               />
-              <Button icon={<FilePdfOutlined />}>Generate Reports</Button>
+              <Button icon={<FilePdfOutlined />} onClick={generatePDF}>Generate Reports</Button>
             </div>
             {/* Centered Buttons */}
             <div className="flex justify-center space-x-8 mt-8 mb-8">
@@ -295,12 +297,9 @@ return (
                     key: "actions",
                     render: (text, record) => (
                       <span style={{ display: "flex", gap: "2px" }}>
-                        <Button type="link" onClick={() => handleUpdate(record._id)}>
-                          Edit
-                        </Button>
-                        <Button type="link" danger onClick={() => confirmDelete(record._id)}>
-                          Delete
-                        </Button>
+                         <Button type="link" icon={<EditOutlined />} onClick={() => handleUpdate(record._id)}/>
+                      <Button type="link" icon={<DeleteOutlined />} danger onClick={() => confirmDelete(record._id)}/>
+                      
                       </span>
                     ),
                   },

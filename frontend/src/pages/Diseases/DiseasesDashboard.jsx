@@ -4,13 +4,6 @@ import Sidebar from "../../components/Sidebar";
 import { HomeOutlined, LeftOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
 import { Link } from "react-router-dom";
-import { Pie } from "react-chartjs-2";
-
-// Include the necessary chart.js elements
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-
-// Register the chart.js components
-ChartJS.register(ArcElement, Tooltip, Legend);
 
 // Import images
 import diseaseIdentificationImg from "../../assets/DiseasesImages/disease.jpg";
@@ -38,17 +31,6 @@ const DiseasesDashboard = () => {
     day: "numeric",
   };
   const formattedDate = currentDate.toLocaleDateString(undefined, options);
-
-  // Data for the pie chart
-  const pieData = {
-    labels: ["Healthy", "Maintenance Needed", "Concerned"],
-    datasets: [
-      {
-        data: [82, 10, 8], // Corresponding data for each section
-        backgroundColor: ["#28a745", "#ffc107", "#dc3545"], // Colors: green, yellow, red
-      },
-    ],
-  };
 
   return (
     <div>
@@ -117,93 +99,78 @@ const DiseasesDashboard = () => {
         />
         {/* Welcome Message */}
         <div className="bg-white shadow-md rounded-lg p-4 my-4">
-          <h2 className="text-xl font-semibold">Welcome Dewdu!</h2>
+          {/* <h2 className="text-2xl font-semibold">Welcome Dewdu Sendanayake!</h2> */}
           <p>Today is {formattedDate}</p>
         </div>
 
+        {/* Slogan Section */}
+        <div className="my-4 p-4 bg-gradient-to-r from-yellow-300 via-green-500 to-yellow-300 rounded-lg shadow-lg text-center">
+          <h2 className="text-16xl font-bold text-white animate-pulse">
+            🤍🌴 Nurture Your Crops, Nourish Your Future! 🌴🤍
+          </h2>
+          <p className="text-xl text-white mt-2">
+            Discover the best practices for healthy coconut cultivation! 
+          </p>
+          <div className="mt-4">
+            <span className="text-4xl animate-bounce">🕊️</span>
+            <span className="text-4xl animate-bounce">🥥</span>
+            <span className="text-4xl animate-bounce">🕊️</span>
+          </div>
+        </div>
+
         {/* Summary Section */}
-        <div className="bg-white shadow-md rounded-lg p-4 my-4 grid grid-cols-3 gap-6">
-          {/* Left Section: Health Overview */}
-          <div className="col-span-1">
-            <h3 className="text-lg font-semibold mb-4">Health Overview</h3>
-            <Pie data={pieData} />
+        <div className="bg-white shadow-md rounded-lg p-4 my-4 grid grid-cols-2 gap-6">
+          {/* First Row: Functions Overview */}
+          <Link
+            to="/CoconutInspections"
+            className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-yellow-300  via-white to-green-500 transition cursor-pointer"
+          >
+            <h1 className="text-3xl font-bold mb-2">Disease Identification</h1>
+            <img
+              src={diseaseIdentificationImg}
+              alt="Disease Identification"
+              className="w-full h-80 object-cover rounded-lg"
+            />
+          </Link>
 
-            <h3 className="text-lg font-semibold mt-6">Recent Alerts</h3>
-            <div className="mt-2">
-              <div className="bg-red-500 text-white p-2 rounded-lg mb-2">
-                <p>Critical Alert</p>
-                <p>12/07/2024 at 11:30 am</p>
-                <p>Ms. Rasanjalee Silva discovered that during the...</p>
-              </div>
-              <div className="bg-yellow-500 text-white p-2 rounded-lg mb-2">
-                <p>Maintenance Alert</p>
-                <p>15/07/2024 at 09:00 am</p>
-                <p>Fertilization needed for the section A and B of...</p>
-              </div>
-              <div className="bg-green-500 text-white p-2 rounded-lg">
-                <p>Health Reminder</p>
-                <p>10/08/2024 at 8:30 am</p>
-                <p>No current issues detected</p>
-              </div>
-            </div>
-          </div>
+          <Link
+            to="/CoconutTreatments"
+            className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-500  via-white to-yellow-300 transition cursor-pointer"
+          >
+            <h1 className="text-3xl font-bold mb-2">
+              Application of Treatments
+            </h1>
+            <img
+              src={applicationOfTreatmentsImg}
+              alt="Application of Treatments"
+              className="w-full h-80 object-cover rounded-lg"
+            />
+          </Link>
 
-          {/* Right Section: Functions Overview */}
-          <div className="col-span-2 grid grid-cols-2 gap-4">
-            <Link
-              to="/CoconutInspections"
-              className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-orange-400 to-green-500 transition cursor-pointer block flex-col h-100"
-            >
-              <h1 className="text-3xl font-bold mb-2">
-                Disease Identification
-              </h1>
-              <img
-                src={diseaseIdentificationImg}
-                alt="Disease Identification"
-                className="w-full h-80 object-cover rounded-lg"
-              />
-            </Link>
+          {/* Second Row: Functions Overview */}
+          <Link
+            to="/Maintenance"
+            className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-yellow-300  via-white to-green-500 transition cursor-pointer"
+          >
+            <h1 className="text-3xl font-bold mb-2">Maintenance Activities</h1>
+            <img
+              src={maintenanceActivitiesImg}
+              alt="Maintenance Activities"
+              className="w-full h-80 object-cover rounded-lg"
+            />
+          </Link>
 
-            <Link
-              to="/CoconutTreatments"
-              className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-orange-500 transition cursor-pointer block flex-col h-100"
-            >
-              <h1 className="text-3xl font-bold mb-2">
-                Application of Treatments
-              </h1>
-              <img
-                src={applicationOfTreatmentsImg}
-                alt="Application of Treatments"
-                className="w-full h-80 object-cover rounded-lg"
-              />
-            </Link>
-
-            <Link
-              to="/Maintenance"
-              className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-400 to-orange-500 transition cursor-pointer block flex-col h-100"
-            >
-              <h1 className="text-3xl font-bold mb-2">
-                Maintenance Activities
-              </h1>
-              <img
-                src={maintenanceActivitiesImg}
-                alt="Maintenance Activities"
-                className="w-full h-80 object-cover rounded-lg"
-              />
-            </Link>
-
-            <Link
-              to="/insights"
-              className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-orange-400 to-green-500 transition cursor-pointer block flex-col h-100"
-            >
-              <h1 className="text-3xl font-bold mb-2">Trend Analysis</h1>
-              <img
-                src={trendAnalysisImg}
-                alt="Trend Analysis"
-                className="w-full h-80 object-cover rounded-lg"
-              />
-            </Link>
-          </div>
+          <Link
+            to="/insights"
+            className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-green-500  via-white to-yellow-300 transition cursor-pointer"
+          >
+            <h1 className="text-3xl font-bold mb-2">Trend Analysis</h1>
+            <img
+              src={trendAnalysisImg}
+              alt="Trend Analysis"
+              className="w-full h-80 object-cover rounded-lg"
+            />
+          </Link>
         </div>
       </div>
     </div>
