@@ -16,6 +16,7 @@ const AddSchedule = () => {
   const fields = ["productType", "quantity", "startDate", "endDate", "status", "progress"];
 
   // Disable date pickers based on current date and previous selections
+
   const disableEndDates = (current) => {
     const startDate = form.getFieldValue('startDate');
     return current && (current < moment().startOf('day') || current < startDate);

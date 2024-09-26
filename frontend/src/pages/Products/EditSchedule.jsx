@@ -182,6 +182,7 @@ const EditSchedule = () => {
               disabledDate={disableEndDates}
               style={{ width: '100%' }}
               inputReadOnly // Disable manual input
+
             />
           </Form.Item>
 
@@ -189,6 +190,7 @@ const EditSchedule = () => {
             label="Status"
             name="status"
             rules={[{ required: true, message: 'Please select the status!' }]}
+            onChange={handleStatusChange}
           >
             <Select
               placeholder="Select status"
@@ -218,6 +220,7 @@ const EditSchedule = () => {
                 htmlType="submit"
                 style={{ width: '48%', backgroundColor: '#1D6660', borderColor: '#1D6660' }}
               >
+
                 Update Schedule
               </Button>
               <Button type="default" onClick={handleCancel} style={{ width: '48%' }}>

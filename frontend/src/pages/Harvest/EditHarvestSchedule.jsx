@@ -3,12 +3,13 @@ import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
 import { useNavigate, useParams } from 'react-router-dom';
+import Sidebar from "../../components/Sidebar";
+import Header from "../../components/Header";
 
 const { Option } = Select;
 
 const EditHarvestSchedule = () => {
   const [form] = Form.useForm();
-  const [record, setRecord] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams(); // Get the record ID from the route parameters
 
@@ -23,7 +24,6 @@ const EditHarvestSchedule = () => {
         const response = await axios.get(`http://localhost:5000/api/harvest/${id}`);
         const data = response.data;
 
-        setRecord(data);
         form.setFieldsValue({
           cropType: data.cropType,
           harvestdate: moment(data.harvestDate), // Ensure field name matches backend
@@ -42,7 +42,6 @@ const EditHarvestSchedule = () => {
   // Handle form submission
   const handleSubmit = async (values) => {
     try {
-      // Prepare payload with the correct date format
       const payload = {
         cropType: values.cropType,
         harvestDate: values.harvestdate.format('YYYY-MM-DD'), // Ensure this matches backend
@@ -51,12 +50,9 @@ const EditHarvestSchedule = () => {
         fieldNumber: values.fieldNumber,
         numberOfWorkers: values.numberOfWorkers,
       };
-  
-      console.log('Submitting payload:', payload);
-  
-      // Send PUT request to update the record
+
       const response = await axios.put(`http://localhost:5000/api/harvest/${id}`, payload);
-  
+
       notification.success({
         message: 'Success',
         description: 'Harvest updated successfully!',
@@ -70,8 +66,13 @@ const EditHarvestSchedule = () => {
       });
     }
   };
-  
+
   return (
+    <div className="flex h-screen">
+         <Sidebar />
+    <div className="flex flex-col flex-grow">
+          <Header />
+
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
         <h2 className="mb-6 text-2xl font-bold text-center">Edit Harvest Schedule</h2>
@@ -115,7 +116,17 @@ const EditHarvestSchedule = () => {
           <Form.Item
             label="End Time"
             name="endTime"
-            rules={[{ required: true, message: 'Please enter End Time!' }]}
+            rules={[
+              { required: true, message: 'Please enter End Time!' },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || moment(value, 'HH:mm').isAfter(moment(getFieldValue('startTime'), 'HH:mm'))) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('End time must be after Start Time!'));
+                },
+              }),
+            ]}
           >
             <Input type="time" placeholder="Enter End Time" />
           </Form.Item>
@@ -134,12 +145,23 @@ const EditHarvestSchedule = () => {
           </Form.Item>
 
           <Form.Item
-            label="Number of Workers"
-            name="numberOfWorkers"
-            rules={[{ required: true, message: 'Please enter the Number of Workers!' }]}
-          >
-            <Input type="number" placeholder="Enter Number of Workers" />
-          </Form.Item>
+  label="Number of Workers"
+  name="numberOfWorkers"
+  rules={[
+    { required: true, message: 'Please enter the Number of Workers!' },
+    {
+      validator(_, value) {
+        if (!value || value >= 1) {
+          return Promise.resolve();
+        }
+        return Promise.reject(new Error('Number of workers must be at least 1!'));
+      },
+    },
+  ]}
+>
+  <Input type="number" min={1} placeholder="Enter Number of Workers" />
+</Form.Item>
+
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
@@ -148,6 +170,8 @@ const EditHarvestSchedule = () => {
           </Form.Item>
         </Form>
       </div>
+    </div>
+    </div>
     </div>
   );
 };
