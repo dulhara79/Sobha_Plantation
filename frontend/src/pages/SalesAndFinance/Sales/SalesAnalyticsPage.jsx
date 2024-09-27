@@ -72,11 +72,11 @@ import Header from "../../../components/Header";
 import Sidebar from "../../../components/Sidebar";
 import NavigationButtons from "../../../components/Sales_and_Finance/NavigationButtons";
 
-import NewLoadingScreen from '../../../components/NewLoadingScreen';
-
 import { Breadcrumb } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { ShoppingCartOutlined } from '@ant-design/icons';
+
+import NewLoadingScreen from '../../../components/LoadingDots'
 
 const SriLankanRupeeIcon = () => (
   // <span style={{ fontSize: '24px' }}>₨</span>
@@ -88,6 +88,16 @@ const SalesAnalyticsPage = () => {
   const [monthlySales, setMonthlySales] = useState([]);
   const [mostSoldProducts, setMostSoldProducts] = useState([]);
   const [totalRevenue, setTotalRevenue] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+    // useEffect(() => {
+    //   // Simulate loading process (e.g., API calls, component mounting)
+    //   setTimeout(() => {
+    //     setLoading(false); // Once the components or data are loaded
+    //   }, 2000); // Adjust the delay as needed
+    // }, []);
+  
+    // if (loading) return <NewLoadingScreen />;
 
   // Function to fetch data
   const fetchData = async () => {

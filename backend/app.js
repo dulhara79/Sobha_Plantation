@@ -12,6 +12,7 @@ const ETaskRoutes = require('./routes/Employee/ETaskRoutes.js');
 
 // const salesRoutes = require('./routes/sales');
 
+
 //inventory
 const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
 const maintenanceRoutes = require('./routes/Inventory/maintenance.js'); 
@@ -65,10 +66,15 @@ const buyerDeliveryRoute = require('./routes/buyerDeliveryRoute');
 /**
  * Sales and Finance Routes
  */
-const FinancialTransactionRoutes = require('./routes/SalesAndFinance/FinancialTransactionRoutes.js');
+const FinancialTransactionRoutes = require('./routes/SalesAndFinance/financialTransactionRoutes.js');
 const InvoiceRoutes = require('./routes/SalesAndFinance/InvoiceRoutes.js');
 const SalesAnalyticsRoutes = require('./routes/SalesAndFinance/SalesAnalyticsRoutes.js');
 const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoutes.js');
+const valuationRoutes = require('./routes/SalesAndFinance/valuationRoutes.js');
+const attendanceRoute = require('./routes/Employee/AttendanceRoute.js');
+const SalaryRoutes = require('./routes/SalesAndFinance/SalaruRoute.js');
+const salaryEmployeeRoutes = require("./routes/Employee/salaryEmployeeRoutes.js");
+const ETaskRoutes = require('./routes/Employee/ETaskRoutes.js');
 
 const app = express();
 
@@ -130,6 +136,7 @@ app.use('/api/diseases', diseasesRoute);
  */
 
 app.use("/api/salesAndFinance/finance/transaction", FinancialTransactionRoutes);
+app.use("/api/salesAndFinance/finance/salary", SalaryRoutes);
 app.use("/api/salesAndFinance/finance/invoice", InvoiceRoutes);
 app.use("/api/salesAndFinance/sales/analytics", SalesAnalyticsRoutes);
 app.use("/api/salesAndFinance/sales/tracking", SalesTrackingRoutes);
@@ -140,10 +147,8 @@ app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
  */
 // app.use('/api/buyers', buyerRoutes);
 app.use("/api/broute", buyerRoutes);
+// app.use('/api/buyer', BuyerRoutes);
 
-
-app.use("/api/deliveryRecords", buyerDeliveryRoute); 
-// app.use("/api/buyerInfo", buyerInfoRoute);
 
 // Socket.IO setup
 io.on('connection', (socket) => {

@@ -8,20 +8,19 @@ import Dashboard from "./pages/Dashboard.jsx";
 /**
  * sales and finance
 */
-//sales
-
 import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
 import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
 import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
 import ViewSalesRecordDashboard from "./pages/SalesAndFinance/Sales/ViewSalesRecordDashboard.jsx";
 import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage.jsx";
 // finance
-
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
+import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
 import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDisplay.jsx";
 import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
-import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
+import ValuationDashboardPage from "./pages/SalesAndFinance/Finance/ValuationDashboard.jsx";
+import AddNewValuationPage from "./pages/SalesAndFinance/Finance/AddNewValuationPage.jsx";
  
 // inventory
 
@@ -253,18 +252,58 @@ export default function App() {
       {/* landing page and dashboard */}
       <Route path="/" element={<Home />} />
       <Route path="/dashboard" element={<Dashboard />} />
- 
-      {/* finance */}
+
+      {/* sales and finance */}
       <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
+
       <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
-      <Route path="/salesAndFinance/sales/addSalesRecord" element={<AddSalesRecordDashboard />} /> 
-       <Route path="/salesAndFinance/sales/viewSalesRecord" element={<ViewSalesRecordDashboard />} />
-      <Route path="/salesAndFinance/sales/analytics" element={<SalesAnalyticsPage />} />
+      <Route
+        path="/salesAndFinance/sales/addSalesRecord"
+        element={<AddSalesRecordDashboard />}
+      />
+      <Route
+        path="/salesAndFinance/sales/viewSalesRecord"
+        element={<ViewSalesRecordDashboard />}
+      />
+      <Route
+        path="/salesAndFinance/sales/analytics"
+        element={<SalesAnalyticsPage />}
+      />
+
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
-      <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} /> 
-      <Route path="/salesAndFinance/finance/transaction-update/:id" element={<UpdateTransactionPage />} /> 
-      <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
-      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} /> 
+      <Route
+        path="/salesAndFinance/finance/add-transaction"
+        element={<AddTransactionPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/transaction-update/:id"
+        element={<UpdateTransactionPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/transaction-display"
+        element={<TransactionDisplay />}
+      />
+      <Route
+        path="/salesAndFinance/finance/analytics"
+        element={<FinancialAnalyticsPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/employeeSalary"
+        element={<Esalary />}
+      />
+
+      <Route
+        path="/salesAndFinance/finance/valuation-dashboard"
+        element={<ValuationDashboardPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/add-new-valuation"
+        element={<AddNewValuationPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/add-new-valuation"
+        element={<EditValuationPage />}
+      />
  
       {/* inventory */}
       <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} /> 

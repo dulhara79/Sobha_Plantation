@@ -2,29 +2,30 @@ import React, { useState, useEffect } from "react";
 import Header from "../../../components/Header";
 import Sidebar from "../../../components/Sidebar";
 import NavigationButtons from "../../../components/Sales_and_Finance/NavigationButtons";
-import TransactionTable from "../../../components/Sales_and_Finance/Finance/TransactionTable";
-import TransactionSummaryCard from "../../../components/Sales_and_Finance/Finance/TransactionSummaryCard";
-import { Breadcrumb, Button } from "antd";
+
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
+import { Breadcrumb } from "antd";
+import EmployeeSalary from "../../../components/Sales_and_Finance/Finance/EmployeeSalary";
+
 import NewLoadingScreen from '../../../components/LoadingDots'
 
-const TransactionDisplay = () => {
+const Esalary = () => {
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Simulate loading process (e.g., API calls, component mounting)
-    setTimeout(() => {
-      setLoading(false); // Once the components or data are loaded
-    }, 2000); // Adjust the delay as needed
-  }, []);
-
-  if (loading) return <NewLoadingScreen />;
-
+    useEffect(() => {
+      // Simulate loading process (e.g., API calls, component mounting)
+      setTimeout(() => {
+        setLoading(false); // Once the components or data are loaded
+      }, 2000); // Adjust the delay as needed
+    }, []);
+  
+    if (loading) return <NewLoadingScreen />;
+  
   return (
     <div>
       <Header />
-      <Sidebar activePage="/salesAndFinance/" />
-      <div className={`ml-[300px] pt-3 `}>
+      <Sidebar />
+      <div className={`ml-[300px]`}>
         <Breadcrumb
           style={{ margin: "10px 0" }}
           items={[
@@ -50,20 +51,17 @@ const TransactionDisplay = () => {
               ),
             },
             {
-              title: "Sales Dashboard",
+              title: "Sales Dahsboard",
             },
           ]}
         />
+        <div className="grid sm:grid-cols-6">
         <NavigationButtons />
-        <div className={`ml-[50px] pt-3 w-[1000px]`}>
-          <h1 className="mb-6 text-3xl font-semibold">Finance Dashboard</h1>
-          <TransactionSummaryCard />
+        <EmployeeSalary />
         </div>
-        <div className="mt-8"></div>
-        <TransactionTable />
       </div>
     </div>
   );
 };
 
-export default TransactionDisplay;
+export default Esalary;

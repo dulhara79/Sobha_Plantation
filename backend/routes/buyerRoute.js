@@ -18,4 +18,4 @@ router.put("/buyers/:id", updateBuyer);
 // Delete a buyer by ID
 router.delete("/buyers/:id", deleteBuyer);
 
-module.exports = router;
+// module.exports = router;

@@ -463,6 +463,7 @@ const generatePDF = async () => {
               <Button 
                 type="primary" 
                 icon={<PlusOutlined />}
+
                 onClick={handleAddInspection} // Added button for adding inspections
                 style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
               >
