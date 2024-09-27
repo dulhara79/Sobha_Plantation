@@ -7,8 +7,7 @@ import Dashboard from "./pages/Dashboard.jsx";
  
 /**
  * sales and finance
- */
-//sales
+*/
 import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
 import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
 import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
@@ -253,7 +252,7 @@ export default function App() {
       {/* landing page and dashboard */}
       <Route path="/" element={<Home />} />
       <Route path="/dashboard" element={<Dashboard />} />
- 
+
       {/* sales and finance */}
       <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
 
@@ -304,7 +303,7 @@ export default function App() {
       <Route
         path="/salesAndFinance/finance/add-new-valuation"
         element={<EditValuationPage />}
-      /> 
+      />
  
       {/* inventory */}
       <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} /> 

@@ -1,56 +1,53 @@
-  import React, { useCallback, useEffect, useState } from "react";
-  import { useNavigate, Link, useLocation } from "react-router-dom";
-  import { ArrowBack } from "@mui/icons-material";
-  import CollectionsSharpIcon from '@mui/icons-material/CollectionsSharp';
-  import EventNoteSharpIcon from '@mui/icons-material/EventNoteSharp';
-  import { Breadcrumb, Table, Button, Input, Select, Modal } from "antd";
-  import axios from "axios";
-  import html2canvas from "html2canvas";
-  import { ArrowLeftOutlined, FilePdfOutlined, DeleteOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons';
-  import Sidebar from "../../components/Sidebar";
-  import Header from "../../components/Header";
-  import moment from "moment";
-  import "../../index.css";
-  import jsPDF from "jspdf";
-  import "jspdf-autotable";
-  import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-  import { HomeOutlined } from '@mui/icons-material';
-  import Swal from 'sweetalert2';
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
+import { ArrowBack } from "@mui/icons-material";
+import CollectionsSharpIcon from '@mui/icons-material/CollectionsSharp';
+import EventNoteSharpIcon from '@mui/icons-material/EventNoteSharp';
+import { Breadcrumb, Table, Button, Input, Select, Modal } from "antd";
+import axios from "axios";
+import html2canvas from "html2canvas";
+import { ArrowLeftOutlined, FilePdfOutlined, DeleteOutlined, EyeOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import Sidebar from "../../components/Sidebar";
+import Header from "../../components/Header";
+import moment from "moment";
+import "../../index.css";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { HomeOutlined } from '@mui/icons-material';
+import Swal from 'sweetalert2';
 
-  const { Search } = Input;
-  const { Option } = Select;
+const { Search } = Input;
+const { Option } = Select;
 
 
-  // Navigation menu items for the dashboard
-  const menuItems = [
-    { name: 'HOME', path: '/products/productdashboard' },
-    { name: 'PRODUCTION', path: '/products/production-overview' },
-    { name: 'QUALITY', path: '/products/quality-control' },
-    { name: 'PACKAGING', path: '/products/packaging-labeling' }
-  ];
+// Navigation menu items for the dashboard
+const menuItems = [
+  { name: 'HOME', path: '/products/productdashboard' },
+  { name: 'PRODUCTION', path: '/products/production-overview' },
+  { name: 'QUALITY', path: '/products/quality-control' },
+  { name: 'PACKAGING', path: '/products/packaging-labeling' }
+];
 
-  const ProductionScheduleOverview = () => {
-    const [schedules, setSchedules] = useState([]);
-    const [filteredSchedules, setFilteredSchedules] = useState([]);
-    const [searchText, setSearchText] = useState("");
-    const [filterStatus, setFilterStatus] = useState("All");
-    const [sorter, setSorter] = useState({ field: null, order: null });
-    const navigate = useNavigate();
-    const location = useLocation();
-    const activePage = location.pathname;
+const ProductionScheduleOverview = () => {
+  const [schedules, setSchedules] = useState([]);
+  const [filteredSchedules, setFilteredSchedules] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [sorter, setSorter] = useState({ field: null, order: null });
+  const navigate = useNavigate();
+  const location = useLocation();
+  const activePage = location.pathname;
 
-    // Fetch schedules from API
-    const fetchSchedules = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/production");
-        if (response.data.success) {
-          setSchedules(response.data.data);
-          setFilteredSchedules(response.data.data);
-        } else {
-          console.log("Error: Unable to fetch schedules, success flag not true");
-        }
-      } catch (error) {
-        console.error("Error fetching schedules:", error);
+  // Fetch schedules from API
+  const fetchSchedules = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/production");
+      if (response.data.success) {
+        setSchedules(response.data.data);
+        setFilteredSchedules(response.data.data);
+      } else {
+        console.log("Error: Unable to fetch schedules, success flag not true");
       }
     };
 
@@ -217,34 +214,83 @@
       img.src = url;
     });
   };
-    
-  const generatePDF = async () => {
-    const doc = new jsPDF();
-    // Load the logo image
-    const logoUrl = '../src/assets/logo.png';
-    let logoDataURL;
+
+  // Confirm delete
+  const confirmDelete = (scheduleId) => {
+    Swal.fire({
+      title: "Are you sure you want to delete this schedule?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDelete(scheduleId);
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your schedule has been deleted.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    });
+  };
+
+  // Handle delete
+  const handleDelete = async (scheduleId) => {
     try {
       logoDataURL = await getImageDataURL(logoUrl);
     } catch (error) {
-      console.error('Failed to load the logo image:', error);
+      Swal.fire({
+        title: "Error!",
+        text: `Failed to delete the schedule. ${error.response?.data?.message || 'Please try again.'}`,
+        icon: "error",
+      });
+
     }
 
-    // Function to draw header, footer, and horizontal line
-    const drawHeaderFooter = (data) => {
-      const pageWidth = doc.internal.pageSize.width;
-      const pageHeight = doc.internal.pageSize.height;
+  // // Handle delete
+  // const handleDelete = async (scheduleId) => {
+  //   try {
+  //     await axios.delete(`http://localhost:5000/api/production/${scheduleId}`);
+  //     fetchSchedules(); // Refresh the schedule list
+  //   } catch (error) {
+  //     console.error("Error deleting schedule:", error);
+  //     Modal.error({
+  //       title: 'Error',
+  //       content: 'Failed to delete the schedule. Please try again later.',
+  //     });
+  //   }
+  // };
 
-      // Header with logo
-      if (logoDataURL) {
-        doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 10); // Adjust position and size
-      }
-      doc.setFontSize(12);
-      doc.text("Sobha Plantation", 170, 15); // Adjust x, y position
-      doc.line(10, 25, pageWidth - 10, 25); // Line under header
+  // // Confirm delete
+  // const confirmDelete = (scheduleId) => {
+  //   Modal.confirm({
+  //     title: "Are you sure you want to delete this schedule?",
+  //     okText: "Yes",
+  //     okType: "danger",
+  //     cancelText: "No",
+  //     onOk: () => handleDelete(scheduleId),
+  //   });
+  // };
 
-      // Footer with page number
-      doc.setFontSize(10);
-      doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
+// Function to get image data URL
+const getImageDataURL = (url) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'Anonymous'; // Ensure cross-origin images are handled
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      context.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/png'));
+
     };
 
     // Set the margins for header and footer space
@@ -374,125 +420,128 @@
             />
         </div>
 
-
-            {/* Page Header */}
-            <header className="flex items-center justify-between px-6 py-4 mb-6 bg-white shadow-md">
-              <h1 className="text-2xl font-bold">Production Schedule Overview</h1>
-              <div className="flex items-center space-x-4">
-                <Search
-                  placeholder="Search by product type"
-                  onChange={(e) => onSearch(e.target.value)} // Trigger search as user types
-                  style={{ width: 200, marginRight: 16 }} // Added marginRight for spacing
-                  allowClear
-                />
-                <Select
-                  defaultValue="All"
-                  style={{ width: 120 }}
-                  onChange={onFilterChange}
-                >
-                  <Option value="All">All Statuses</Option>
-                  <Option value="Scheduled">Scheduled</Option>
-                  <Option value="In Progress">In Progress</Option>
-                  <Option value="Completed">Completed</Option>
-                  
-                </Select>
-                <Button 
-                  type="primary" 
-                  style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }}
-                  onClick={generatePDF} 
-                >
-                  Generate PDF
-                </Button>
-                <Button 
-                  type="primary" 
-                  style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }}
-                  onClick={() => navigate('/products/addschedule')} 
-                >
-                  Add Schedule
-                </Button>
-
-              </div>
-            </header>
-
-            {/* Content Area */}
-            <main className="p-6 bg-white rounded-lg shadow-md">
-              <div id="pdf-content">
-                <Table
-                  dataSource={filteredSchedules}
-                  columns={[
-                    {
-                      title: 'Product Type',
-                      dataIndex: 'productType',
-                      sorter: true,
-                      onHeaderCell: (column) => ({
-                        onClick: () => handleSort('productType', sorter.order === 'ascend' ? 'descend' : 'ascend'),
-                      }),
-                    },
-                    {
-                      title: 'Quantity',
-                      dataIndex: 'quantity',
-                      sorter: true,
-                      onHeaderCell: (column) => ({
-                        onClick: () => handleSort('quantity', sorter.order === 'ascend' ? 'descend' : 'ascend'),
-                      }),
-                    },
-                    {
-                      title: 'Start Date',
-                      dataIndex: 'startDate',
-                      render: (date) => moment(date).format('YYYY-MM-DD'),
-                      sorter: true,
-                      onHeaderCell: (column) => ({
-                        onClick: () => handleSort('startDate', sorter.order === 'ascend' ? 'descend' : 'ascend'),
-                      }),
-                    },
-                    {
-                      title: 'End Date',
-                      dataIndex: 'endDate',
-                      render: (date) => moment(date).format('YYYY-MM-DD'),
-                      sorter: true,
-                      onHeaderCell: (column) => ({
-                        onClick: () => handleSort('endDate', sorter.order === 'ascend' ? 'descend' : 'ascend'),
-                      }),
-                    },
-                    {
-                      title: 'Status',
-                      dataIndex: 'status',
-                    },
-                    {
-                      title: 'Progress',
-                      dataIndex: 'progress',
-                    },
-                    {
-                      title: 'Actions',
-                      render: (text, record) => (
-                        <div>
+          {/* Page Header */}
+          <header className="flex items-center justify-between px-6 py-4 mb-6 bg-white shadow-md">
+            <h1 className="text-2xl font-bold"
+            style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>
+              Production Schedule Overview</h1>
+            <div className="flex items-center space-x-4">
+              <Search
+                placeholder="Search by product type"
+                onChange={(e) => onSearch(e.target.value)} // Trigger search as user types
+                style={{ width: 200, marginRight: 16 }} // Added marginRight for spacing
+                allowClear
+              />
+              <Select
+                defaultValue="All"
+                style={{ width: 120 }}
+                onChange={onFilterChange}
+              >
+                <Option value="All">All Statuses</Option>
+                <Option value="Scheduled">Scheduled</Option>
+                <Option value="In Progress">In Progress</Option>
+                <Option value="Completed">Completed</Option>
                 
-                        <Button 
-                        icon={<EditOutlined  />}
-                          onClick={() => handleUpdate(record._id)} 
-                          style={{ marginRight: 8, backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff' }} // Blue color
-                        >
-                          
-                        </Button>
-                        <Button 
-                        icon={<DeleteOutlined />} 
-                          onClick={() => confirmDelete(record._id)} 
-                          type="danger"
-                          style={{ backgroundColor: '#ff4d4f', borderColor: '#ff4d4f', color: '#fff' }} // Red color
-                        >
-                          
-                        </Button>
-                      </div>
+              </Select>
+              <Button 
+                type="primary" 
+                style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
+                onClick={generatePDF} 
+                icon={<FilePdfOutlined />}
+              >
+                Generate PDF
+              </Button>
+              <Button 
+                type="primary" 
+                style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
+                onClick={() => navigate('/products/addschedule')} 
+                icon={<PlusOutlined />}
+              >
+                Add Schedule
+              </Button>
 
-                      ),
-                    },
-                  ]}
-                  rowKey="_id"
-                  pagination={false}
-                />
-              </div>
-            </main>
-          </div>
+            </div>
+          </header>
+
+          {/* Content Area */}
+          <main className="p-6 bg-white rounded-lg shadow-md">
+            <div id="pdf-content">
+              <Table
+                dataSource={filteredSchedules}
+                columns={[
+                  {
+                    title: 'Product Type',
+                    dataIndex: 'productType',
+                    sorter: true,
+                    onHeaderCell: (column) => ({
+                      onClick: () => handleSort('productType', sorter.order === 'ascend' ? 'descend' : 'ascend'),
+                    }),
+                  },
+                  {
+                    title: 'Quantity',
+                    dataIndex: 'quantity',
+                    sorter: true,
+                    onHeaderCell: (column) => ({
+                      onClick: () => handleSort('quantity', sorter.order === 'ascend' ? 'descend' : 'ascend'),
+                    }),
+                  },
+                  {
+                    title: 'Start Date',
+                    dataIndex: 'startDate',
+                    render: (date) => moment(date).format('YYYY-MM-DD'),
+                    sorter: true,
+                    onHeaderCell: (column) => ({
+                      onClick: () => handleSort('startDate', sorter.order === 'ascend' ? 'descend' : 'ascend'),
+                    }),
+                  },
+                  {
+                    title: 'End Date',
+                    dataIndex: 'endDate',
+                    render: (date) => moment(date).format('YYYY-MM-DD'),
+                    sorter: true,
+                    onHeaderCell: (column) => ({
+                      onClick: () => handleSort('endDate', sorter.order === 'ascend' ? 'descend' : 'ascend'),
+                    }),
+                  },
+                  {
+                    title: 'Status',
+                    dataIndex: 'status',
+                  },
+                  {
+                    title: 'Progress',
+                    dataIndex: 'progress',
+                  },
+                  {
+                    title: 'Actions',
+                    render: (text, record) => (
+                      <div>
+              
+                      <Button 
+                      icon={<EditOutlined  />}
+                        onClick={() => handleUpdate(record._id)} 
+                        style={{ marginRight: 8, backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff' }} // Blue color
+                      >
+                        
+                      </Button>
+                      <Button 
+                      icon={<DeleteOutlined />} 
+                        onClick={() => confirmDelete(record._id)} 
+                        type="danger"
+                        style={{ backgroundColor: '#ff4d4f', borderColor: '#ff4d4f', color: '#fff' }} // Red color
+                      >
+                        
+                      </Button>
+                    </div>
+
+                    ),
+                  },
+                ]}
+                pagination={{ pageSize: 10 }}
+                rowKey="_id"
+                // pagination={false}
+              />
+            </div>
+          </main>
         </div>
       </div>
       
