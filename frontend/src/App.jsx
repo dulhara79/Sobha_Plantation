@@ -74,6 +74,9 @@ import EditYieldRecords from "./pages/Harvest/EditYieldRecords.jsx";
 import AddComplianceCheck from "./pages/Harvest/AddComplianceCheck.jsx";
 import EditComplianceCheck from "./pages/Harvest/EditComplianceCheck.jsx";
 import YieldBarChart from "./pages/Harvest/YieldBarChart.jsx";
+import HarvestQuality from "./pages/Harvest/HarvestQuality";
+import AddInspection from "./pages/Harvest/AddInspection.jsx";
+import EditInspection from "./pages/Harvest/EditInspection.jsx"
 
 /**
  * crop care new paths
@@ -326,7 +329,9 @@ export default function App() {
         element={<EditComplianceCheck />}
       />
       <Route path="/yield-bar-chart" element={<YieldBarChart />} />
-
+      <Route path="/harvest/quality" element={<HarvestQuality />} />
+      <Route path="/quality/addinspection" element={<AddInspection/>} />
+      <Route path="/quality/editinspection/:id" element={<EditInspection/>} />
       {/* new crop care (diseases) */}
       <Route path="/diseases" element={<DiseasesDashboard />} />
       <Route path="/coconutInspections" element={<CoconutInspections />} />

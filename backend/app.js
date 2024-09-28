@@ -29,6 +29,7 @@ const labelingRoute = require('./routes/Products/labelingRoute.js');
  */
 const yieldRoutes = require('./routes/Harvest/yield.js');
 const harvestRoutes = require('./routes/Harvest/harvest.js');
+const quality= require('./routes/Harvest/quality.js');
 const complianceCheckRoutes = require('./routes/Harvest/compliance.js')
 
 
@@ -111,6 +112,7 @@ app.use('/api/labeling', labelingRoute);
  */
 app.use('/api/harvest', harvestRoutes);
 app.use('/api/yield', yieldRoutes);
+app.use('/api/quality',quality);
 app.use('/api/compliance-checks', complianceCheckRoutes);
 
 

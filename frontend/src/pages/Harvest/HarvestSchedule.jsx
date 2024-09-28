@@ -19,6 +19,7 @@ const menuItems = [
   { name: "HOME", path: "/harvest/harvestdashboard" },
   { name: "SCHEDULE", path: "/harvest/harvest-schedule" },
   { name: "YIELD", path: "/harvest/yield" },
+  { name: "QUALITYCHECKING", path: "/harvest/quality" },
   { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist" },
 ];
 
@@ -239,7 +240,7 @@ const HarvestSchedule = () => {
                     <Breadcrumb
                         items={[
                             {href: '', title: <HomeOutlined />},
-                            {title: "Dashboard"},
+                            {title: "Harvest"},
                             {title: "Schedule"},
                              ]}
                        />
