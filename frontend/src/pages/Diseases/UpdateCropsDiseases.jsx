@@ -9,7 +9,7 @@ import axios from "axios";
 
 const { Option } = Select;
 
-const UpdateCoconutDiseases = () => {
+const UpdateCropsDiseases = () => {
   const [form] = Form.useForm();
   const [dateOfInspection, setDateOfInspection] = useState(null);
   const [suggestedReInspectionDate, setSuggestedReInspectionDate] = useState(null);
@@ -26,7 +26,7 @@ const UpdateCoconutDiseases = () => {
   useEffect(() => {
     const fetchRecord = async () => {
       try {
-        const response = await axios.get(`http://localhost:8090/api/diseases/${id}`);
+        const response = await axios.get(`http://localhost:8090/api/cropDiseases/${id}`);
         const data = response.data.diseaseRecord;
 
         // Set form values including DatePicker values
@@ -63,14 +63,14 @@ const UpdateCoconutDiseases = () => {
         suggestedReInspectionDate: suggestedReInspectionDate ? suggestedReInspectionDate.toISOString() : null,
       };
 
-      await axios.put(`http://localhost:8090/api/diseases/${id}`, payload);
+      await axios.put(`http://localhost:8090/api/cropDiseases/${id}`, payload);
 
       notification.success({
         message: "Record updated successfully",
         description: "Record has been updated successfully",
       });
 
-      navigate("/CoconutInspections");
+      navigate("/IntercropInspections");
     } catch (error) {
       notification.error({
         message: "Update Error",
@@ -81,7 +81,7 @@ const UpdateCoconutDiseases = () => {
 
   // Cancel button handler
   const handleCancel = () => {
-    navigate("/CoconutInspections");
+    navigate("/IntercropInspections");
   };
 
   return (
@@ -131,10 +131,10 @@ const UpdateCoconutDiseases = () => {
                 rules={[{ required: true, message: "This field is required." }]}
               >
                 <Select placeholder="Select section of land">
-                  <Option value="A">A</Option>
-                  <Option value="B">B</Option>
-                  <Option value="C">C</Option>
-                  <Option value="D">D</Option>
+                  <Option value="E">E</Option>
+                  <Option value="F">F</Option>
+                  <Option value="G">G</Option>
+                  <Option value="H">H</Option>
                 </Select>
               </Form.Item>
 
@@ -207,4 +207,4 @@ const UpdateCoconutDiseases = () => {
   );
 };
 
-export default UpdateCoconutDiseases;
+export default UpdateCropsDiseases;

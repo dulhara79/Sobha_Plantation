@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const DiseasesSchema = new mongoose.Schema(
+const CropDiseasesSchema = new mongoose.Schema(
   {
     dateOfInspection: {
       type: Date,
@@ -40,4 +40,4 @@ const DiseasesSchema = new mongoose.Schema(
         }
     });
 
-module.exports = mongoose.model("DiseaseRecords", DiseasesSchema);
+module.exports = mongoose.model("CropDiseaseRecords", CropDiseasesSchema);
