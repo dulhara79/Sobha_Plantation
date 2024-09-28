@@ -6,7 +6,7 @@ import EventNoteSharpIcon from '@mui/icons-material/EventNoteSharp';
 import { Breadcrumb, Table, Button, Input, Select, Modal } from "antd";
 import axios from "axios";
 import html2canvas from "html2canvas";
-import { ArrowLeftOutlined, FilePdfOutlined, DeleteOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, FilePdfOutlined, DeleteOutlined, EyeOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import moment from "moment";
@@ -15,6 +15,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { HomeOutlined } from '@mui/icons-material';
+import Swal from 'sweetalert2';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -134,33 +135,73 @@ const ProductionScheduleOverview = () => {
     navigate(`/products/editschedule/${id}`);
   };
 
+
+  // Confirm delete
+  const confirmDelete = (scheduleId) => {
+    Swal.fire({
+      title: "Are you sure you want to delete this schedule?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDelete(scheduleId);
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your schedule has been deleted.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    });
+  };
+
   // Handle delete
   const handleDelete = async (scheduleId) => {
     try {
       await axios.delete(`http://localhost:5000/api/production/${scheduleId}`);
       fetchSchedules(); // Refresh the schedule list
     } catch (error) {
-      console.error("Error deleting schedule:", error);
-      Modal.error({
-        title: 'Error',
-        content: 'Failed to delete the schedule. Please try again later.',
+      Swal.fire({
+        title: "Error!",
+        text: `Failed to delete the schedule. ${error.response?.data?.message || 'Please try again.'}`,
+        icon: "error",
       });
     }
   };
 
-  // Confirm delete
-  const confirmDelete = (scheduleId) => {
-    Modal.confirm({
-      title: "Are you sure you want to delete this schedule?",
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-      onOk: () => handleDelete(scheduleId),
-    });
-  };
+  // // Handle delete
+  // const handleDelete = async (scheduleId) => {
+  //   try {
+  //     await axios.delete(`http://localhost:5000/api/production/${scheduleId}`);
+  //     fetchSchedules(); // Refresh the schedule list
+  //   } catch (error) {
+  //     console.error("Error deleting schedule:", error);
+  //     Modal.error({
+  //       title: 'Error',
+  //       content: 'Failed to delete the schedule. Please try again later.',
+  //     });
+  //   }
+  // };
 
- // Function to get image data URL
- const getImageDataURL = (url) => {
+  // // Confirm delete
+  // const confirmDelete = (scheduleId) => {
+  //   Modal.confirm({
+  //     title: "Are you sure you want to delete this schedule?",
+  //     okText: "Yes",
+  //     okType: "danger",
+  //     cancelText: "No",
+  //     onOk: () => handleDelete(scheduleId),
+  //   });
+  // };
+
+// Function to get image data URL
+const getImageDataURL = (url) => {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = 'Anonymous'; // Ensure cross-origin images are handled
@@ -337,12 +378,15 @@ const isActive = (page) => activePage === page;
 
           {/* Page Header */}
           <header className="flex items-center justify-between px-6 py-4 mb-6 bg-white shadow-md">
-            <h1 className="text-2xl font-bold">Production Schedule Overview</h1>
+            <h1 className="text-2xl font-bold"
+            style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>
+              Production Schedule Overview</h1>
             <div className="flex items-center space-x-4">
               <Search
                 placeholder="Search by product type"
-                onSearch={onSearch}
-                style={{ width: 200 }}
+                onChange={(e) => onSearch(e.target.value)} // Trigger search as user types
+                style={{ width: 200, marginRight: 16 }} // Added marginRight for spacing
+                allowClear
               />
               <Select
                 defaultValue="All"
@@ -357,15 +401,17 @@ const isActive = (page) => activePage === page;
               </Select>
               <Button 
                 type="primary" 
-                style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }}
+                style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
                 onClick={generatePDF} 
+                icon={<FilePdfOutlined />}
               >
                 Generate PDF
               </Button>
               <Button 
                 type="primary" 
-                style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }}
+                style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
                 onClick={() => navigate('/products/addschedule')} 
+                icon={<PlusOutlined />}
               >
                 Add Schedule
               </Button>
@@ -446,8 +492,9 @@ const isActive = (page) => activePage === page;
                     ),
                   },
                 ]}
+                pagination={{ pageSize: 10 }}
                 rowKey="_id"
-                pagination={false}
+                // pagination={false}
               />
             </div>
           </main>

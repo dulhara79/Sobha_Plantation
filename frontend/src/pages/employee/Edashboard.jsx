@@ -5,27 +5,21 @@ import EmployeeDash from "../../components/Employee/EmployeeDash";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
 import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
-const Edashboard = () => {
+import Breadcrumbs from "../../components/Employee/Breadcrumbss";
+//const Edashboard = () => {
+export default function Edashboard() {
+  const breadcrumbItems = [{ name: "Employees", href: "/employees/home" }];
   return (
     <div>
       <Header />
       <Sidebar />
       <div className={`ml-[300px]`}>
-        <Breadcrumb
-          items={[
-            {
-              href: "",
-              title: <HomeOutlined />,
-            },
-          ]}
-        />
+        
 
-
-<EmployeeNavbar/>
-        <EmployeeDash/>
+        <EmployeeNavbar />
+        <Breadcrumbs items={breadcrumbItems} />
+        <EmployeeDash />
       </div>
     </div>
   );
-};
-
-export default Edashboard;
+}

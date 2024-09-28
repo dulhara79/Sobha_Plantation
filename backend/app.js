@@ -6,16 +6,13 @@ const http = require('http');
 const { Server } = require('socket.io');
 
 
-const employeeRoutes = require('./routes/Employee/employee.js');
-// const salesRoutes = require('./routes/sales');
-
-//inventory
+/**
+ * inventory
+ */
 const fertilizerRoutes = require('./routes/Inventory/fertilizers.js'); 
 const maintenanceRoutes = require('./routes/Inventory/maintenance.js'); 
 const equipmentRoutes = require('./routes/Inventory/equipments.js'); 
 const requestRoutes = require('./routes/Inventory/requests.js'); 
- 
-
 
 
 /**
@@ -53,24 +50,31 @@ const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
 /**
  * buyer
  */
-// const BuyerRoutes = require('./routes/buyerRoute');
-// const buyerRoutes = require('./routes/buyerRoutes');
 const buyerRoutes = require('./routes/buyerRoute');
 const buyerDeliveryRoute = require('./routes/buyerDeliveryRoute'); 
-// const buyerInfoRoute = require('./routes/buyerInfoRoute');
+const buyerInfoRoute = require('./routes/buyerInfoRoute');
 
 /**
  * Sales and Finance Routes
  */
-const FinancialTransactionRoutes = require('./routes/SalesAndFinance/FinancialTransactionRoutes.js');
+const FinancialTransactionRoutes = require('./routes/SalesAndFinance/financialTransactionRoutes.js');
 const InvoiceRoutes = require('./routes/SalesAndFinance/InvoiceRoutes.js');
 const SalesAnalyticsRoutes = require('./routes/SalesAndFinance/SalesAnalyticsRoutes.js');
 const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoutes.js');
+const valuationRoutes = require('./routes/SalesAndFinance/valuationRoutes.js');
+const SalaryRoutes = require('./routes/SalesAndFinance/SalaruRoute.js');
+
+
+/**
+ * employee
+ */
+const employeeRoutes = require('./routes/Employee/employee.js');
 const attendanceRoute = require('./routes/Employee/AttendanceRoute.js');
-const salaryEmployeeRoutes = require("./routes/Employee/salaryEmployeeRoutes.js");
 const ETaskRoutes = require('./routes/Employee/ETaskRoutes.js');
 
+
 const app = express();
+
 
 // Create HTTP server and integrate Socket.IO
 const server = http.createServer(app);
@@ -84,31 +88,37 @@ app.use(cors());
 connectDB();
 
 // Define routes
-//employee
-app.use('/api/employee', employeeRoutes);
-app.use("/api/salary-employees", salaryEmployeeRoutes);
-app.use('/api/attendance', attendanceRoute);
-app.use('/api/taskRecords', ETaskRoutes);
-// app.use('/api/harvest', harvestRoutes);
-// app.use('/api/yield', yieldRoutes);
+/**
+ * inventory
+ */
+app.use('/api/fertilizers', fertilizerRoutes);
+app.use('/api/maintenance', maintenanceRoutes);
+app.use('/api/equipments', equipmentRoutes);
+app.use('/api/requests', requestRoutes);
 
-app.use("/api/crop-varieties", cropVarietiesRoutes);
-// harvest
-app.use('/api/harvest', harvestRoutes);
-app.use('/api/yield', yieldRoutes);
-app.use('/api/compliance-checks', complianceCheckRoutes);// Ensure the route path is correct
 
-//products
+/**
+ * production
+ */
 app.use('/api/production', productionRoutes);
 app.use('/api/quality-control', qualityControlRoute);
 app.use('/api/labeling-prices', labelingPricesRoute);
 app.use('/api/labeling', labelingRoute);
 
-//inventory
-app.use('/api/fertilizers', fertilizerRoutes);
-app.use('/api/maintenance', maintenanceRoutes);
-app.use('/api/equipments', equipmentRoutes);
-app.use('/api/requests', requestRoutes);
+
+/**
+ * harvest
+ */
+app.use('/api/harvest', harvestRoutes);
+app.use('/api/yield', yieldRoutes);
+app.use('/api/compliance-checks', complianceCheckRoutes);
+
+
+/**
+ * crop care
+ */
+app.use('/api/diseases', diseasesRoute);
+
 
 /**
 * crop
@@ -119,32 +129,34 @@ app.use("/api/schedules", scheduleRoutes);
 app.use("/api/soil-tests", soilTestingRoutes);
 app.use("/api/plant-growth", plantGrowthRoutes);
 
-/**
- * crop care
- */
-app.use('/api/diseases', diseasesRoute);
 
+/**
+ * buyer
+ */
+app.use("/api/broute", buyerRoutes); 
+app.use("/api/buyerDelivery", buyerDeliveryRoute);
+app.use("/api/buyerInfo", buyerInfoRoute);
 
 
 /**
  * Sales and Finance Routes
  */
-
 app.use("/api/salesAndFinance/finance/transaction", FinancialTransactionRoutes);
+app.use("/api/salesAndFinance/finance/salary", SalaryRoutes);
 app.use("/api/salesAndFinance/finance/invoice", InvoiceRoutes);
 app.use("/api/salesAndFinance/sales/analytics", SalesAnalyticsRoutes);
 app.use("/api/salesAndFinance/sales/tracking", SalesTrackingRoutes);
 app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
 
+
 /**
- * buyer
+ * employee
  */
-// app.use('/api/buyers', buyerRoutes);
-app.use("/api/broute", buyerRoutes);
+app.use('/api/employee', employeeRoutes);
+app.use('/api/attendance', attendanceRoute);
+app.use('/api/taskRecords', ETaskRoutes);
 
 
-app.use("/api/deliveryRecords", buyerDeliveryRoute); 
-// app.use("/api/buyerInfo", buyerInfoRoute);
 
 // Socket.IO setup
 io.on('connection', (socket) => {
