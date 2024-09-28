@@ -228,6 +228,11 @@ const BuyerDeliveryTable = () => {
                   href: "",
                   title: "Buyers Delivery Records",
                 },
+                // {
+                //   href: "",
+                //   title: "Buyer",
+                // },
+                
               ]}
             />
             {/* Topic Heading */}
