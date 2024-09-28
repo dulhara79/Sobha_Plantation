@@ -230,32 +230,71 @@ const Eregistration = () => {
     });
   };
 
-  // NIC Validation: Allows numbers and 'V', 'X', 'v', 'x' for old NICs
   const handleNicChange = (e) => {
-    const input = e.target.value;
-    let filteredValue = input.replace(/[^0-9xXvV]/g, ""); // Allow only numbers, 'V', 'X'
-    const oldNicRegex = /^[0-9]{9}[xXvV]?$/;
-    const newNicRegex = /^[0-9]{12}$/;
-
+    let input = e.target.value;
+  
+    // Allow only numbers and 'V', 'v', 'X', 'x'
+    let filteredValue = input.replace(/[^0-9xXvV]/g, "");
+  
+    // Regex patterns for old and new NIC numbers
+    const oldNicRegex = /^[0-9]{9}[vV]?$/;  // Old NIC: 9 digits followed by optional 'V' or 'v'
+    const newNicRegex = /^[0-9]{12}$/;      // New NIC: Exactly 12 digits
+  
+    // Restrict input to a maximum of 10 characters for old NIC
+    if (filteredValue.length > 10 && /^[0-9]{9}[vV]?$/.test(filteredValue)) {
+      filteredValue = filteredValue.substring(0, 10); // Restrict to 10 characters (9 digits + 'V'/'v')
+    }
+  
+    // Restrict input to a maximum of 12 characters for new NIC
     if (filteredValue.length > 12) {
-      filteredValue = filteredValue.substring(0, 12); // Restrict to 12 characters
+      filteredValue = filteredValue.substring(0, 12);
     }
-
-    if(oldNicRegex.test(filteredValue)){
-      filteredValue = filteredValue.filteredValue.substring(0, 10);
-    }
-
+  
+    // Current year for age restriction
+    const currentYear = new Date().getFullYear();
+    const minAllowedYear = currentYear - 18; // Minimum allowed birth year (18 years ago)
+  
+    // Validate old NIC (9 digits + 'V' or 'v') or new NIC (12 digits)
     if (oldNicRegex.test(filteredValue) || newNicRegex.test(filteredValue)) {
       setNic(filteredValue);
-      setAllowedYear(filteredValue.length === 12 ? filteredValue.substring(0, 4) : `19${filteredValue.substring(0, 2)}`);
+      
+      // For new NIC (12 digits), extract the year of birth
+      if (filteredValue.length === 12) {
+        const yearOfBirth = parseInt(filteredValue.substring(0, 4), 10);
+        if (yearOfBirth <= minAllowedYear) {
+          setAllowedYear(yearOfBirth);
+        } else {
+          // If under 18, reset NIC and show an error
+          setNic('');
+          alert('The NIC holder must be 18 years or older.');
+        }
+      } 
+      // For old NIC (9 digits + 'V' or 'v'), extract the year of birth
+      else if (filteredValue.length === 10) {
+        const yearOfBirth = parseInt(`19${filteredValue.substring(0, 2)}`, 10);
+        if (yearOfBirth <= minAllowedYear) {
+          setAllowedYear(yearOfBirth);
+        } else {
+          // If under 18, reset NIC and show an error
+          setNic('');
+          alert('The NIC holder must be 18 years or older.');
+        }
+      }
     } else {
+      // Set NIC if invalid but allow partial input
       setNic(filteredValue);
     }
+  
+    // Enable the date of birth field after NIC validation
     setDisabledFields({
       ...disabledFields,
       dateOfBirth: false,
     });
   };
+  
+  
+  
+  
 
   // Handle Date of Birth Change: Restrict DOB to match NIC
   const handleDateOfBirthChange = (e) => {
