@@ -24,8 +24,9 @@ import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDispl
 import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
 import ValuationDashboardPage from "./pages/SalesAndFinance/Finance/ValuationDashboard.jsx";
 import AddNewValuationPage from "./pages/SalesAndFinance/Finance/AddNewValuationPage.jsx";
-import Esalary from "./pages/SalesAndFinance/Finance/Esalary.jsx"; 
 import EditValuationPage from "./pages/SalesAndFinance/Finance/EditValuationPage.jsx";
+import Esalary from "./pages/SalesAndFinance/Finance/Esalary.jsx";
+
 
 /**
  * inventory new paths
