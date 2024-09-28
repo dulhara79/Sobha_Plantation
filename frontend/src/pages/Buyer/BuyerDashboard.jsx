@@ -2,6 +2,12 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Sidebar from '../../components/Sidebar';
+import { Breadcrumb, Table, Button, Input, Modal, notification } from "antd";
+import {
+  HomeOutlined,
+
+  
+} from "@ant-design/icons";
 
 const BuyerDashboard = () => {
   const navigate = useNavigate();
@@ -49,7 +55,22 @@ const BuyerDashboard = () => {
       <Sidebar />
       
       <div className={`ml-[300px] pt-3`}>
+      <Breadcrumb
+              items={[
+                {
+                  href: "",
+                  title: <HomeOutlined />,
+                },
+                {
+                  href: "",
+                  title: "Buyers Delivery Records",
+                },
+                
+              ]}
+            />
+        
         <div style={styles.dashboardContainer}>
+
           <div
             style={styles.card}
             onClick={() => navigateTo('/buyerinfotable')}
