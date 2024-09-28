@@ -34,7 +34,7 @@ const BuyerInfoTable = () => {
   // Fetch Info records from API
   const fetchInfoRecords = async () => {
     try {
-      const response = await axios.get("http://localhost:8090/api/InfoRecords");
+      const response = await axios.get("http://localhost:8090/api/buyerInfo");
       setInfoRecords(response.data.data);
       setFilteredInfoRecords(response.data.data);
     } catch (error) {
@@ -70,7 +70,7 @@ const BuyerInfoTable = () => {
 
   // Handle update Info record
   const handleUpdate = (id) => {
-    navigate(`/updateInfo/${id}`);
+    navigate(`/updateBuyer/${id}`);
   };
 
   // Confirm before deleting an Info record
@@ -87,7 +87,7 @@ const BuyerInfoTable = () => {
   // Delete Info record
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:8090/api/InfoRecords/${id}`);
+      const response = await axios.delete(`http://localhost:8090/api/buyerInfo/${id}`);
       if (response.status === 200) {
         notification.success({
           message: "Success",
@@ -267,13 +267,13 @@ const BuyerInfoTable = () => {
                 columns={[
                   { title: "First Name", dataIndex: "firstName", key: "firstName" },
                   { title: "Last Name", dataIndex: "lastName", key: "lastName" },
-                  { title: "Email", dataIndex: "email", key: "email" },
-                  { title: "Address", dataIndex: "address", key: "address" },
-                  { title: "City", dataIndex: "city", key: "city" },
-                  { title: "Country", dataIndex: "country", key: "country" },
-                  { title: "Postal Code", dataIndex: "postalCode", key: "postalCode" },
-                  { title: "Phone", dataIndex: "phone", key: "phone" },
+                  { title: "User Name", dataIndex: "userName", key: "userName" },
+                  { title: "Gender", dataIndex: "Gender", key: "Gender" },
+                  { title: "DOB", dataIndex: "DOB", key: "DOB" },
+                  { title: "Number", dataIndex: "Number", key: "Number" },
+                  { title: "email ", dataIndex: "email", key: "email" },
                   
+    
                   {
                     title: "Actions",
                     key: "actions",
