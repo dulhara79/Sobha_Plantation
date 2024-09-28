@@ -32,7 +32,6 @@ const ProductsDashboard = () => {
       try {
         const scheduleResponse = await axios.get('http://localhost:5000/api/production');
         if (scheduleResponse.data.success) {
-          console.log(scheduleResponse.data.data);
           setScheduleData(scheduleResponse.data.data);
         } else {
           console.error('Error fetching schedule data');
@@ -108,16 +107,7 @@ const ProductsDashboard = () => {
             </ul>
           </div>
         </nav>
-        {/* Breadcrumb */}
-        <Breadcrumb>
-          <Breadcrumb.Item href="">
-            <HomeOutlined />
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>Products Dashboard</Breadcrumb.Item>
-        </Breadcrumb>
 
-        {/* Date Display */}
-        <p>{getTodayDate()}</p>
         {/* Breadcrumb and Gallery Button */}
         <div className="flex items-center justify-between mb-5">
           <Breadcrumb
@@ -129,7 +119,7 @@ const ProductsDashboard = () => {
           />
           <Button
             className="flex items-center text-white bg-blue-500 rounded-md shadow-md hover:bg-blue-600"
-            style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }}
+            style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
             onClick={() => navigate('/products/gallery')}
           >
             <CollectionsSharpIcon className="mr-2" />
