@@ -26,6 +26,7 @@ const YieldRecords = () => {
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [sorter, setSorter] = useState({ field: null, order: null });
+  const [cropQuantities, setCropQuantities] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
   const activePage = location.pathname;
@@ -37,8 +38,10 @@ const YieldRecords = () => {
   const fetchSchedules = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/yield');
+      console.log('API Response:', response.data);
       setSchedules(response.data.data);
       setFilteredSchedules(response.data.data);
+      calculateCropQuantities(response.data.data);
     } catch (error) {
       console.error('Error fetching yield records:', error);
     }
@@ -90,6 +93,19 @@ const YieldRecords = () => {
     }
   
     setFilteredSchedules(filteredData);
+  };
+  
+  const calculateCropQuantities = (schedules) => {
+    const quantities = schedules.reduce((acc, schedule) => {
+      const { cropType, quantity } = schedule;
+      if (acc[cropType]) {
+        acc[cropType] += quantity;
+      } else {
+        acc[cropType] = quantity;
+      }
+      return acc;
+    }, {});
+    setCropQuantities(quantities);
   };
   
 
@@ -269,6 +285,18 @@ const YieldRecords = () => {
                 </Button>
               </div>
             </div>
+               {/* Display crop quantities */}
+                    <div className="grid grid-cols-3 gap-6 mb-6">
+                       {Object.keys(cropQuantities).map((crop) => (
+                        <div 
+                          key={crop} 
+                          className="bg-white p-4 rounded-lg shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
+                        >
+                        <h3 className="text-lg font-bold text-gray-700 text-center">{crop}</h3>
+                    <p className="text-xl font-semibold text-indigo-600 mt-2 text-center">{cropQuantities[crop]}</p>
+                  </div>
+                       ))}
+                 </div>
             <Table
               columns={[
                 {
