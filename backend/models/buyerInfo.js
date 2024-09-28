@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const BuyerInfoSchema = new mongoose.Schema(
+const BuyerInfoSchema = new mongoose.Schema( 
   {
     firstName: {
       type: String,
@@ -15,42 +15,44 @@ const BuyerInfoSchema = new mongoose.Schema(
       required: true,
       default: "None",
     },
-    password: {
-        type: String,
-        required: true,
-        default: "None",
-      },
-    confirmPassword: {
+    Password: {
       type: String,
       required: true,
       default: "None",
     },
-    dateOfBirth: {
+    ConfirmPassword: {
+      type: String,
+      required: true,
+      default: "None",
+    },
+    Gender: {
       type: String,
       required: true,
     },
-    gender: {
-      type: String,
+    DOB: {
+      type: Date, // Changed to Date type for better handling
       required: true,
+
     },
-    contactNumber: {
+    Number: {
       type: Number,
       required: true,
     },
     email: {
-        type: String,
-        required: true,
-      },
-      City: {
-        type: String,
-        required: true,
-      },
+      type: String,
+      required: true,
+    },
     InfoId: {
-        type: mongoose.Schema.Types.ObjectId,
-        default: () => new mongoose.Types.ObjectId(),
-        unique: true,
-        sparse: true
-        }
-    });
+      type: mongoose.Schema.Types.ObjectId,
+      default: () => new mongoose.Types.ObjectId(),
+      unique: true,
+      sparse: true,
+    },
+    
+  },
+  {
+    timestamps: false,
+  },
+);
 
 module.exports = mongoose.model("BuyerInfoRecords", BuyerInfoSchema);
