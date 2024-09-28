@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
@@ -14,15 +13,22 @@ const AddEquipmentRecord = () => {
   // Define loading state for managing form submission
   const [loading, setLoading] = useState(false);
 
+  // Completion states for each field
+  const [equipmentTypeComplete, setEquipmentTypeComplete] = useState(false);
+  const [addedDateComplete, setAddedDateComplete] = useState(false);
+  const [quantityComplete, setQuantityComplete] = useState(false);
+  const [storageLocationComplete, setStorageLocationComplete] = useState(false);
+  const [statusComplete, setStatusComplete] = useState(false);
+
   // Function to disable past dates
   const disablePastDates = (current) => {
     return current && current < moment().startOf('day');
   };
 
-  // Function to validate progress value
-  const validateProgress = (_, value) => {
-    if (value < 0 || value > 100) {
-      return Promise.reject(new Error('Progress must be between 0 and 100'));
+  // Function to validate quantity to be a positive integer
+  const validateQuantity = (_, value) => {
+    if (value <= 0) {
+      return Promise.reject(new Error('Quantity must be greater than 0!'));
     }
     return Promise.resolve();
   };
@@ -30,35 +36,33 @@ const AddEquipmentRecord = () => {
   // Function to handle form submission
   const handleSubmit = async (values) => {
     try {
-        setLoading(true);
-        // Extract form values
-        const { addeddate,equipmenttype,quantity,storagelocation,status } = values;
+      setLoading(true);
+      // Extract form values
+      const { addeddate, equipmenttype, quantity, storagelocation, status } = values;
 
-        await axios.post('http://localhost:5000/api/equipments', {
-          addeddate,
-          equipmenttype,
-          quantity,
-          storagelocation,
-          status
-        });
-        
-        // Handle success, reset loading or form fields if needed
-        notification.success({
-            message: 'Success',
-            description: 'record added successfully!',
-        });
-        setLoading(false);
-        form.resetFields();  // Optionally reset the form after successful submission
-
-       
-        navigate('/Inventory/EquipmentRecords');
+      await axios.post('http://localhost:5000/api/equipments', {
+        addeddate,
+        equipmenttype,
+        quantity,
+        storagelocation,
+        status
+      });
+      
+      // Handle success
+      notification.success({
+        message: 'Success',
+        description: 'Record added successfully!',
+      });
+      setLoading(false);
+      form.resetFields();  // Optionally reset the form after successful submission
+      navigate('/Inventory/EquipmentRecords');
     } catch (error) {
-        console.error('Error adding record:', error);
-        setLoading(false);
-        notification.error({
-            message: 'Error',
-            description: 'There was an error adding the record.',
-        });
+      console.error('Error adding record:', error);
+      setLoading(false);
+      notification.error({
+        message: 'Error',
+        description: 'There was an error adding the record.',
+      });
     }
   };
 
@@ -70,24 +74,35 @@ const AddEquipmentRecord = () => {
           form={form}
           onFinish={handleSubmit}
           layout="vertical"
+          onFieldsChange={(changedFields, allFields) => {
+            // Check completion status based on the form values
+            const values = form.getFieldsValue();
+
+            setEquipmentTypeComplete(!!values.equipmenttype);
+            setAddedDateComplete(!!values.addeddate);
+            setQuantityComplete(!!values.quantity);
+            setStorageLocationComplete(!!values.storagelocation);
+            setStatusComplete(!!values.status);
+          }}
         >
+          {/* Equipment/Machine Name */}
           <Form.Item
-            label="Equipment/Machine Name "
+            label="Equipment/Machine Name"
             name="equipmenttype"
-            rules={[{ required: true, message: 'Please select a equipment/machine type!' }]}
+            rules={[{ required: true, message: 'Please select an equipment/machine type!' }]}
           >
-               <Select placeholder="Select a equipment/machine type">
+            <Select placeholder="Select a equipment/machine type">
               <Option value="Bush cutter">Bush cutter</Option>
-              <Option value="4L disel cans">4L disel cans</Option>
+              <Option value="4L diesel cans">4L diesel cans</Option>
               <Option value="Metal chemical sprayer">Metal chemical sprayer</Option>
               <Option value="4hp diesel water pump">4hp diesel water pump</Option>
               <Option value="Boots pairs">Boots pairs</Option>
               <Option value="8hp petrol hand tractor">8hp petrol hand tractor</Option>
-              <Option value="1hp tube well pump">1hp tube well pump</Option> 
-             
+              <Option value="1hp tube well pump">1hp tube well pump</Option>
             </Select>
           </Form.Item>
 
+          {/* Added Date */}
           <Form.Item
             label="Added Date"
             name="addeddate"
@@ -96,45 +111,47 @@ const AddEquipmentRecord = () => {
             <DatePicker
               format="YYYY-MM-DD"
               disabledDate={disablePastDates}
+              disabled={!equipmentTypeComplete} // Enable only when equipment type is selected
             />
           </Form.Item>
 
+          {/* Quantity */}
           <Form.Item
             label="Quantity"
             name="quantity"
-            rules={[{ required: true, message: 'Please enter the quantity!' }]}
+            rules={[
+              { required: true, message: 'Please enter the quantity!' },
+              { validator: validateQuantity }, // Custom quantity validation
+            ]}
           >
-            <Input type="number" placeholder="Enter quantity" />
+            <Input type="number" placeholder="Enter quantity" disabled={!addedDateComplete} />
           </Form.Item>
 
-         
-        
+          {/* Storage Location */}
           <Form.Item
             label="Storage Location"
             name="storagelocation"
             rules={[{ required: true, message: 'Please enter the storage location!' }]}
           >
-            <Input placeholder="Enter Storage Location" />
+            <Input placeholder="Enter Storage Location" disabled={!quantityComplete} />
           </Form.Item>
 
-         
-
+          {/* Status */}
           <Form.Item
             label="Status"
             name="status"
-            rules={[{ required: true, message: 'Please select status!' }]}
+            rules={[{ required: true, message: 'Please select a status!' }]}
           >
-            <Select placeholder="Select status">
+            <Select placeholder="Select status" disabled={!storageLocationComplete}>
               <Option value="In Stock">In Stock</Option>
               <Option value="Out Of Stock">Out Of Stock</Option>
               <Option value="Maintenance">Maintenance</Option>
-   
             </Select>
           </Form.Item>
 
-
+          {/* Submit Button */}
           <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={loading}>
+            <Button type="primary" htmlType="submit" block loading={loading} disabled={!statusComplete}>
               Add Records
             </Button>
           </Form.Item>

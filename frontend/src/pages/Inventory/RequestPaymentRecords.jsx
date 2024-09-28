@@ -3,12 +3,15 @@ import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import "../../index.css";
 import { ArrowBack } from "@mui/icons-material";
-import { Breadcrumb, Table, Button, Input, Modal, notification } from "antd";
+import { Breadcrumb, Table, Button, Input, Modal, notification, Select } from "antd"; // Added Select component
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import jsPDF from "jspdf";
+import "jspdf-autotable"; // Import jsPDF AutoTable
 
 const { Search } = Input;
+const { Option } = Select; // Select Option for month dropdown
 
 const RequestPaymentRecords = () => {
   const [requests, setRequests] = useState([]);
@@ -16,12 +19,10 @@ const RequestPaymentRecords = () => {
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [sorter, setSorter] = useState({ field: null, order: null });
-  const navigate = useNavigate();
+  const [selectedMonth, setSelectedMonth] = useState(null); // State for selected month
+  const [totalAmount, setTotalAmount] = useState(0); // State for total amount
 
-  const generatePDF = () => {
-    // Your PDF generation logic here
-    console.log("PDF generated!");
-  };
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchRequests();
@@ -61,25 +62,27 @@ const RequestPaymentRecords = () => {
     navigate("/Inventory/RequestPaymentRecords");
   }, [navigate]);
 
+
+
   const onSearch = (value) => {
     setSearchText(value);
     filterRequests(value, filterStatus);
   };
 
   const filterRequests = (searchText, filterStatus) => {
-    let filteredData = orders;
+    let filteredData = requests;
   
     if (searchText) {
       const lowercasedSearchText = searchText.toLowerCase();
-      filteredData = filteredData.filter((order) => 
-        Object.values(order).some((value) => 
+      filteredData = filteredData.filter((request) => 
+        Object.values(request).some((value) => 
           String(value).toLowerCase().includes(lowercasedSearchText)
         )
       );
     }
   
     if (filterStatus !== "All") {
-      filteredData = filteredData.filter((order) => order.status === filterStatus);
+      filteredData = filteredData.filter((request) => request.status === filterStatus);
     }
   
     if (sorter.field) {
@@ -91,10 +94,133 @@ const RequestPaymentRecords = () => {
         }
       });
     }
-  
+
     setFilteredRequests(filteredData);
   };
+
   
+  // Handle month selection change
+  const handleMonthChange = (value) => {
+    setSelectedMonth(value);
+  };
+
+  // Calculate total amount for the selected month
+  const calculateTotalAmount = () => {
+    if (selectedMonth === null) {
+      notification.error({ message: "Please select a month!" });
+      return;
+    }
+
+    const monthRequests = requests.filter(request => 
+      moment(request.submitteddate).month() === selectedMonth
+    );
+
+
+  // Check if there are no records for the selected month
+  if (monthRequests.length === 0) {
+    setTotalAmount(0); // Reset total amount to 0
+    notification.info({
+      message: `No data available for ${moment()
+        .month(selectedMonth)
+        .format("MMMM")}.`,
+    });
+    return;
+  }
+
+    const total = monthRequests.reduce((sum, request) => sum + request.amount, 0);
+    setTotalAmount(total);
+
+   
+  notification.success({
+    message: `Total Amount for ${moment().month(selectedMonth).format("MMMM")}: Rs.${total}`,
+  });
+  };
+
+  const generatePDF = async () => {
+    const doc = new jsPDF();
+  
+    // Load the logo image
+    const logoUrl = '../src/assets/logo.png'; 
+    try {
+      const logoDataURL = await getImageDataURL(logoUrl);
+  
+      // Add the logo image to the PDF
+      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
+    } catch (error) {
+      console.error('Failed to load the logo image:', error);
+    }
+  
+    // Add title after the logo
+    doc.setFontSize(22);
+    doc.text("Requests Records Report", 50, 40); // Adjust y-coordinate to fit below the logo
+  
+    // Define the table columns
+    const columns = [
+      { title: "Section", dataKey: "section" },
+      { title: "Item", dataKey: "item" },
+      { title: "Amount", dataKey: "amount" },
+      { title: "Description", dataKey: "description" },
+      { title: "Submitted Date", dataKey: "submittedDate" },
+      { title: "Status", dataKey: "status" },
+    ];
+  
+    // Map the filteredRequests data to match the columns
+    const rows = filteredRequests.map(request => ({
+      section: request.section,
+      item: request.item,
+      amount: request.amount,
+      description: request.description,
+      submittedDate: moment(request.submitteddate).format('YYYY-MM-DD'),
+      status: request.status,
+    }));
+  
+    // Add table with column and row data
+    doc.autoTable({
+      columns: columns,
+      body: rows,
+      startY: 50, // Set the table to start below the title and logo
+      margin: { horizontal: 10 },
+      styles: {
+        fontSize: 10,
+      },
+      headStyles: {
+        fillColor: [64, 133, 126], // Table header background color
+        textColor: [255, 255, 255], // Table header text color
+        fontSize: 12,
+      },
+      theme: 'striped', // Table theme
+      didDrawPage: (data) => {
+        // Add page number to footer
+        const pageNumber = doc.internal.getNumberOfPages();
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+  
+        doc.setFontSize(10);
+        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10); // Adjust footer positioning
+      },
+    });
+  
+    // Save the PDF
+    doc.save("request_records_report.pdf");
+  };
+  
+  // Utility function to convert the image to a Data URL
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = url;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+    });
+  };
   
   const handleSort = (field, order) => {
     setSorter({ field, order });
@@ -126,9 +252,8 @@ const RequestPaymentRecords = () => {
       if(response.status === 200) {
         notification.success({
           message: 'Success',
-          description: ' record deleted successfully!',
+          description: 'Record deleted successfully!',
         });
-        // Update local state to remove the deleted record
         setFilteredRequests(filteredRequests.filter(record => record._id !== id));
       } else {
         notification.error({
@@ -140,7 +265,7 @@ const RequestPaymentRecords = () => {
       console.error('Error deleting record:', error.response?.data?.message || error.message);
       notification.error({
         message: 'Error',
-        description: error.response?.data?.message || 'There was an error deleting the  record.',
+        description: error.response?.data?.message || 'There was an error deleting the record.',
       });
     }
   };
@@ -203,114 +328,124 @@ const RequestPaymentRecords = () => {
             </div>
           </nav>
 
-          <Breadcrumb
-            items={[
-              { title: 'Home', href: '/' },
-              { title: 'requests', href: '/Inventory/RequestPaymentRecords' }
-            ]}
-          />
-          {/* Welcome Message Component 
-          <div className="flex flex-row items-center justify-between shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-[98%] mb-5">
-            <b className="text-3xl">Welcome Maheesha</b>
-          </div> */}
+          <Breadcrumb items={[{ title: 'Home', href: '/' }, 
+            { title: 'requests', href: '/Inventory/RequestPaymentRecords' }]} />
 
           <div className="p-6 bg-white rounded-lg shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-4">
                 <Search
                   placeholder="Search by any field"
-                  onChange={(e) => onSearch(e.target.value)}  // Trigger filter on input change
+                  onChange={(e) => onSearch(e.target.value)}
                   style={{ width: 200 }}
-                  value={searchText}  // Keep the input controlled
+                  value={searchText}
                 />
-                <Button 
-                  style={{ backgroundColor: "#60DB19", color: "#fff" }} 
-                  onClick={() => navigate("/Inventory/AddRequestPaymentRecord")}
-                >
+                <Button style={{ backgroundColor: "#60DB19", color: "#fff" }} onClick={() => navigate("/Inventory/AddRequestPaymentRecord")}>
                   Add Records
                 </Button>
-                <Button 
-                  style={{ backgroundColor: "#60DB19", color: "#fff" }} 
-                  onClick={generatePDF}
-                >
+                <Button style={{ backgroundColor: "#60DB19", color: "#fff" }} onClick={generatePDF}>
                   Generate PDF Report
                 </Button>
               </div>
             </div>
+
+           
+
             <Table
-              columns={[
+       columns={[
               
-                {
-                  title: "Section",
-                  dataIndex: "section",
-                  key: "section",
-                  sorter: true,
-                  sortOrder: sorter.field === 'section' ? sorter.order : null,
-                },
-                {
-                    title: "Item ",
-                    dataIndex: "item",
-                    key: "item",
-                    sorter: true,
-                    sortOrder: sorter.field === 'item' ? sorter.order : null,
-                },
-                {
-                  title: "Amount",
-                  dataIndex: "amount",
-                  key: "amount",
-                  sorter: true,
-                  sortOrder: sorter.field === 'amount' ? sorter.order : null,
-                },
-               
-                {
-                  title: "Description",
-                  dataIndex: "description",
-                  key: "description",
-                  sorter: true,
-                  sortOrder: sorter.field === 'description' ? sorter.order : null,
-                },
-                {
-                  title: "Submitted Date",
-                  dataIndex: "submitteddate",
-                  key: "submitteddate",
-                  sorter: true,
-                  sortOrder: sorter.field === 'submitteddate' ? sorter.order : null,
-                  render: (text) => moment(text).format("YYYY-MM-DD"),
-                },
-                {
-                  title: "Status",
-                  dataIndex: "status",
-                  key: "status",
-                  sorter: true,
-                  sortOrder: sorter.field === 'status' ? sorter.order : null,
-                },
-                {
-                  title: "Actions",
-                  key: "actions",
-                  render: (text, record) => (
-                    <span>
-                      <Button type="link" onClick={() => handleUpdate(record._id)}>
-                        Edit
-                      </Button>
-                      <Button type="link" danger onClick={() => confirmDelete(record._id)}>
-                        Delete
-                      </Button>
-                    </span>
-                  ),
-                },
-              ]}
+        {
+          title: "Section",
+          dataIndex: "section",
+          key: "section",
+          sorter: true,
+          sortOrder: sorter.field === 'section' ? sorter.order : null,
+        },
+        {
+          title: "Item",
+          dataIndex: "item",
+          key: "item",
+          sorter: true,
+          sortOrder: sorter.field === 'item' ? sorter.order : null,
+        },
+        {
+          title: "Amount",
+          dataIndex: "amount",
+          key: "amount",
+          sorter: true,
+          sortOrder: sorter.field === 'amount' ? sorter.order : null,
+        },
+        {
+          title: "Description",
+          dataIndex: "description",
+          key: "description",
+          sorter: true,
+          sortOrder: sorter.field === 'description' ? sorter.order : null,
+        },
+        {
+          title: "Submitted Date",
+          dataIndex: "submitteddate",
+          key: "submitteddate",
+          sorter: true,
+          sortOrder: sorter.field === 'submitteddate' ? sorter.order : null,
+          render: (text) => moment(text).format("YYYY-MM-DD"),
+        },
+        {
+          title: "Status",
+          dataIndex: "status",
+          key: "status",
+          sorter: true,
+          sortOrder: sorter.field === 'status' ? sorter.order : null,
+        },
+        {
+          title: "Actions",
+          key: "actions",
+          render: (text, record) => (
+            <span>
+              <Button type="link" onClick={() => handleUpdate(record._id)}>
+                Edit
+              </Button>
+              <Button type="link" danger onClick={() => confirmDelete(record._id)}>
+                Delete
+              </Button>
+            </span>
+          ),
+        },
+      ]}
+
               dataSource={filteredRequests}
+              onChange={(pagination, filters, sorter) => handleSort(sorter.field, sorter.order)}
               rowKey="_id"
-              pagination={false}  // Disable pagination
-              scroll={{ y: 400 }} // Optional: Add vertical scroll if there are many rows
-              onChange={(pagination, filters, sorter) => {
-                if (sorter && sorter.order) {
-                  handleSort(sorter.field, sorter.order);
-                } else {
-                  cancelSorting();
-                }
-              }}
             />
+
+            {/* Dropdown for selecting a month */}
+<div className="flex items-center mb-4">
+  <Select
+    placeholder="Select Month"
+    style={{ width: 200 }}
+    onChange={handleMonthChange}
+  >
+    {moment.months().map((month, index) => (
+      <Option key={index} value={index}>
+        {month}
+      </Option>
+    ))}
+  </Select>
+
+  <Button type="primary" onClick={calculateTotalAmount} style={{ marginLeft: 8 }}>
+    Calculate Total Amount
+  </Button>
+</div>
+
+{/* Display the total amount */}
+{totalAmount > 0 && (
+  <div className="mt-2">
+    <strong>Total Amount for Selected Month: Rs:{totalAmount} </strong>
+
+  </div>
+)}
+
+
           </div>
         </div>
       </div>

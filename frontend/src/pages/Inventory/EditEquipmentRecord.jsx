@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
@@ -9,32 +8,25 @@ const { Option } = Select;
 
 const EditEquipmentRecord = () => {
   const [form] = Form.useForm();
-  const [record, setRecord] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // Function to disable past dates
   const disablePastDates = (current) => {
     return current && current < moment().startOf('day');
   };
 
-  // Fetch record data
   useEffect(() => {
     const fetchRecord = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/equipments/${id}`);
         const data = response.data;
-        setRecord(data);
 
         // Convert dates to moment objects if they are valid
         const addedDate = moment(data.addeddate);
-       
-
         if (addedDate.isValid()) {
           form.setFieldsValue({
             ...data,
             addeddate: addedDate,
-          
           });
         } else {
           console.error('Invalid date format:', data.addeddate);
@@ -46,23 +38,34 @@ const EditEquipmentRecord = () => {
     fetchRecord();
   }, [id, form]);
 
+  const validateQuantity = (_, value) => {
+    if (!value || value < 1) {
+      return Promise.reject(new Error('Quantity must be greater than 0!'));
+    }
+    return Promise.resolve();
+  };
+
+  const validateStorageLocation = (_, value) => {
+    if (!value || value.length < 3) {
+      return Promise.reject(new Error('Storage location must be at least 3 characters!'));
+    }
+    return Promise.resolve();
+  };
+
   const handleSubmit = async (values) => {
     try {
-      // Prepare payload with the correct date format
       const payload = {
         ...values,
         addeddate: values.addeddate ? moment(values.addeddate).toISOString() : null,
-        
       };
 
-      // Send PUT request to update the record
       await axios.put(`http://localhost:5000/api/equipments/${id}`, payload);
 
       notification.success({
         message: 'Success',
-        description: ' Record updated successfully!',
+        description: 'Record updated successfully!',
       });
-      navigate('/Inventory/EquipmentRecords'); // Redirect to the list page after successful update
+      navigate('/Inventory/EquipmentRecords'); 
     } catch (error) {
       console.error('Failed to update record:', error);
       notification.error({
@@ -93,34 +96,39 @@ const EditEquipmentRecord = () => {
           </Form.Item>
 
           <Form.Item
-            label="Equipment/Machine Name "
+            label="Equipment/Machine Name"
             name="equipmenttype"
-            rules={[{ required: true, message: 'Please select a equipment/machine type!' }]}
+            rules={[{ required: true, message: 'Please select an equipment/machine type!' }]}
           >
-               <Select placeholder="Select a equipment/machine type">
+            <Select placeholder="Select an equipment/machine type">
               <Option value="Bush cutter">Bush cutter</Option>
-              <Option value="4L disel cans">4L disel cans</Option>
+              <Option value="4L diesel cans">4L diesel cans</Option>
               <Option value="Metal chemical sprayer">Metal chemical sprayer</Option>
               <Option value="4hp diesel water pump">4hp diesel water pump</Option>
               <Option value="Boots pairs">Boots pairs</Option>
               <Option value="8hp petrol hand tractor">8hp petrol hand tractor</Option>
-              <Option value="1hp tube well pump">1hp tube well pump</Option> 
-             
+              <Option value="1hp tube well pump">1hp tube well pump</Option>
             </Select>
           </Form.Item>
 
           <Form.Item
             label="Quantity"
             name="quantity"
-            rules={[{ required: true, message: 'Please enter the quantity!' }]}
+            rules={[
+              { required: true, message: 'Please enter the quantity!' },
+              { validator: validateQuantity },
+            ]}
           >
-            <Input type="number" placeholder="Enter quantity" />
+            <Input type="number" min={1} placeholder="Enter quantity" />
           </Form.Item>
 
           <Form.Item
             label="Storage Location"
             name="storagelocation"
-            rules={[{ required: true, message: 'Please enter the storage location!' }]}
+            rules={[
+              { required: true, message: 'Please enter the storage location!' },
+              { validator: validateStorageLocation },
+            ]}
           >
             <Input type="text" placeholder="Enter storage location" />
           </Form.Item>
@@ -128,13 +136,12 @@ const EditEquipmentRecord = () => {
           <Form.Item
             label="Status"
             name="status"
-            rules={[{ required: true, message: 'Please select status!' }]}
+            rules={[{ required: true, message: 'Please select a status!' }]}
           >
             <Select placeholder="Select status">
-            <Option value="In Stock">In Stock</Option>
+              <Option value="In Stock">In Stock</Option>
               <Option value="Out Of Stock">Out Of Stock</Option>
               <Option value="Maintenance">Maintenance</Option>
-   
             </Select>
           </Form.Item>
 

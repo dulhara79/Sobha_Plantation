@@ -7,6 +7,8 @@ import { Breadcrumb, Table, Button, Input, Modal, notification } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const { Search } = Input;
 
@@ -18,10 +20,7 @@ const MaintenanceRecords = () => {
   const [sorter, setSorter] = useState({ field: null, order: null });
   const navigate = useNavigate();
 
-  const generatePDF = () => {
-    // Your PDF generation logic here
-    console.log("PDF generated!");
-  };
+ 
 
   useEffect(() => {
     fetchMaintenance();
@@ -58,7 +57,7 @@ const MaintenanceRecords = () => {
   }, [navigate]);
 
   const onGroupContainerClick3 = useCallback(() => {
-    navigate("/Inventory/OrderRecords");
+    navigate("/Inventory/RequestPaymentRecords");
   }, [navigate]);
 
   const onSearch = (value) => {
@@ -95,7 +94,93 @@ const MaintenanceRecords = () => {
     setFilteredMaintenance(filteredData);
   };
 
+  const generatePDF = async () => {
+    const doc = new jsPDF();
+    const logoUrl = '../src/assets/logo.png'; // Path to your logo image
+    
+    try {
+      // Fetch and convert the image to a Data URL
+      const logoDataURL = await getImageDataURL(logoUrl);
+    
+      // Add the logo image to the PDF
+      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
+    } catch (error) {
+      console.error('Failed to load the logo image:', error);
+    }
+    
+    // Add the title after the logo
+    doc.setFontSize(22);
+    doc.text("Maintenance Records Report", 50, 40); // Adjust y-coordinate to fit below the logo
   
+    // Define the table columns
+    const columns = [
+      { title: "Date Referred To", dataKey: "referredDate" },
+      { title: "Equipment/Machine", dataKey: "equipment" },
+      { title: "Quantity", dataKey: "quantity" },
+      { title: "Referred Location", dataKey: "referredLocation" },
+      { title: "Received Date", dataKey: "receivedDate" },
+      { title: "Status", dataKey: "status" },
+    ];
+  
+    // Map the filteredMaintenance data to match the columns
+    const rows = filteredMaintenance.map(maintenance => ({
+      referredDate: moment(maintenance.reffereddate).format("YYYY-MM-DD"),
+      equipment: maintenance.eqname,
+      quantity: maintenance.quantity,
+      referredLocation: maintenance.referredlocation,
+      receivedDate: moment(maintenance.receiveddate).format("YYYY-MM-DD"),
+      status: maintenance.status,
+    }));
+  
+    // Add table with column and row data
+    doc.autoTable({
+      columns: columns,
+      body: rows,
+      startY: 50, // Set the table to start below the title and logo
+      margin: { horizontal: 10 },
+      styles: {
+        fontSize: 10,
+      },
+      headStyles: {
+        fillColor: [64, 133, 126], // Table header background color
+        textColor: [255, 255, 255], // Table header text color
+        fontSize: 12,
+      },
+      theme: 'striped', // Table theme
+      didDrawPage: (data) => {
+        // Add page number to footer
+        const pageNumber = doc.internal.getNumberOfPages();
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+  
+        doc.setFontSize(10);
+        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10); // Adjust footer positioning
+      },
+    });
+  
+    // Save the PDF
+    doc.save("maintenance_records_report.pdf");
+  };
+  
+  // Utility function to convert the image to a Data URL
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = url;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+    });
+  };
+  
+
   const handleSort = (field, order) => {
     setSorter({ field, order });
     filterMaintenance(searchText, filterStatus);
@@ -197,7 +282,7 @@ const MaintenanceRecords = () => {
               onClick={onGroupContainerClick3}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-              Order Details
+              Request Payment Details
               </a>
             </div>
             </div>
