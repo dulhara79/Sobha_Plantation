@@ -2,6 +2,7 @@ const QualityControl = require("../../models/Harvest/Quality.js");
 
 exports.createQualityControl = async (req, res) => {
   try {
+    console.log(req.body); // Log the incoming request body for debugging
 
     const { cropType, checkDate, qualityStatus, qualityController } = req.body;
 
