@@ -10,9 +10,9 @@ import { Autoplay, EffectFade } from 'swiper/modules'; // Updated import for Swi
 import productIMG1 from '../assets/ProductsImg/img12.jpg';
 import productIMG2 from '../assets/ProductsImg/img12.jpg';
 import productIMG3 from '../assets/ProductsImg/img12.jpg';
-import vission_IMG_01 from '../assets/vission_IMG_01.png';
-import vission_IMG_02 from '../assets/vission_IMG_02.png';
-import vission_IMG_03 from '../assets/vission_IMG_03.png';
+import vission_IMG_01 from '../assets/DiseasesImages/CoconutMite.jpg';
+import vission_IMG_02 from '../assets/DiseasesImages/maintenance.jpg';
+import vission_IMG_03 from '../assets/DiseasesImages/bat.jpg';
 
 const LandingPage = () => {
   const [headerExpanded, setHeaderExpanded] = useState(true);
