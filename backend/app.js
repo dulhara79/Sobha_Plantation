@@ -4,7 +4,7 @@ const cors = require("cors");
 const connectDB = require('./config/db'); // Import MongoDB connection function
 const http = require('http');
 const { Server } = require('socket.io');
-
+// import 'dotenv/config'
 
 const employeeRoutes = require('./routes/Employee/employee.js');
 // const salesRoutes = require('./routes/sales');
@@ -15,9 +15,6 @@ const maintenanceRoutes = require('./routes/Inventory/maintenance.js');
 const equipmentRoutes = require('./routes/Inventory/equipments.js'); 
 const requestRoutes = require('./routes/Inventory/requests.js'); 
  
-
-
-
 /**
  * production
  */
@@ -57,7 +54,13 @@ const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
 // const buyerRoutes = require('./routes/buyerRoutes');
 const buyerRoutes = require('./routes/buyerRoute');
 const buyerDeliveryRoute = require('./routes/buyerDeliveryRoute'); 
-// const buyerInfoRoute = require('./routes/buyerInfoRoute');
+const buyerInfoRoute = require('./routes/buyerInfoRoute');
+
+// const orderRouter = require('./routes/orderRoute');
+// import foodRouter from "./routes/foodRoute.js"
+// import userRouter from "./routes/userRoute.js"
+// import cartRouter from "./routes/cartRoute.js"
+
 
 /**
  * Sales and Finance Routes
@@ -134,17 +137,25 @@ app.use("/api/salesAndFinance/finance/transaction", FinancialTransactionRoutes);
 app.use("/api/salesAndFinance/finance/invoice", InvoiceRoutes);
 app.use("/api/salesAndFinance/sales/analytics", SalesAnalyticsRoutes);
 app.use("/api/salesAndFinance/sales/tracking", SalesTrackingRoutes);
-app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
+// app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
 
 /**
  * buyer
  */
 // app.use('/api/buyers', buyerRoutes);
 app.use("/api/broute", buyerRoutes);
-
-
 app.use("/api/deliveryRecords", buyerDeliveryRoute); 
-// app.use("/api/buyerInfo", buyerInfoRoute);
+app.use("/api/buyerInfo", buyerInfoRoute);
+
+
+
+// app.use("/api/order", orderRouter);
+// app.use("/api/food",foodRouter)
+
+// app.use("/api/user",userRouter)
+// app.use("/api/cart",cartRouter)
+
+
 
 // Socket.IO setup
 io.on('connection', (socket) => {
