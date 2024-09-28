@@ -9,8 +9,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 
 /**
  * sales and finance
- */
-//sales
+*/
 import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
 import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
 import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";

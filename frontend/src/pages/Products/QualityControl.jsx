@@ -7,13 +7,12 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined, FilePdfOutlined } from '@ant-design/icons';
 import moment from "moment";
 import "../../index.css";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { HomeOutlined } from '@mui/icons-material';
 import Swal from 'sweetalert2';
-
 
 const { Search } = Input;
 const { Option } = Select;
@@ -428,7 +427,8 @@ const generatePDF = async () => {
         </div>
         
         <div className="flex flex-col p-4 bg-white rounded shadow-md">
-        <h2 className="mb-4 text-xl font-semibold" style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>Inspection Table</h2>
+        <h2 className="mb-4 text-xl font-semibold" style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}
+        >Inspection Table</h2>
 
           {/* Search and Filters */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
@@ -453,7 +453,8 @@ const generatePDF = async () => {
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button 
                 type="primary" 
-                style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }} 
+                icon={<FilePdfOutlined />}
+                style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }} 
                 onClick={generatePDF}
                 
               >
@@ -461,9 +462,10 @@ const generatePDF = async () => {
               </Button>
               <Button 
                 type="primary" 
-                 
+                icon={<PlusOutlined />}
+
                 onClick={handleAddInspection} // Added button for adding inspections
-                style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#fff' }}
+                style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
               >
                 Add Inspection
               </Button>
@@ -475,36 +477,54 @@ const generatePDF = async () => {
           <Table
             dataSource={filteredQualityControls}
             rowKey="_id"
-            onChange={(pagination, filters, sorter) => handleSort(sorter.field, sorter.order)}
+            onChange={(pagination, filters, sorter) => handleSort(sorter.field, sorter.order)} // Handle sorting changes
           >
-            <Table.Column title="Product Type" dataIndex="productType" key="productType" />
-            <Table.Column title="Inspection Date" dataIndex="inspectionDate" key="inspectionDate" render={date => moment(date).format('YYYY-MM-DD')} />
-            <Table.Column title="Status" dataIndex="status" key="status" />
-            <Table.Column title="Inspector Name" dataIndex="inspectorName" key="inspectorName" />
+            <Table.Column 
+              title="Product Type" 
+              dataIndex="productType" 
+              key="productType" 
+              sorter={true} // Enable sorting
+            />
+            <Table.Column 
+              title="Inspection Date" 
+              dataIndex="inspectionDate" 
+              key="inspectionDate" 
+              render={date => moment(date).format('YYYY-MM-DD')}
+              sorter={(a, b) => new Date(a.inspectionDate) - new Date(b.inspectionDate)} // Custom sorting function
+            />
+            <Table.Column 
+              title="Status" 
+              dataIndex="status" 
+              key="status" 
+              sorter={true} // Enable sorting
+            />
+            <Table.Column 
+              title="Inspector Name" 
+              dataIndex="inspectorName" 
+              key="inspectorName" 
+              sorter={true} // Enable sorting
+            />
             <Table.Column
               title="Actions"
               key="actions"
               render={(text, record) => (
                 <div>
-                      <Button 
-                      icon={<EditOutlined  />}
-                      onClick={() => handleSubmit(record._id)} 
-                      style={{ marginRight: 8, backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff' }} // Blue color
-                    >
-                    </Button>
-
-                      <Button 
-                      icon={<DeleteOutlined />}
-                        onClick={() => confirmDelete(record._id)} 
-                        type="danger"
-                        style={{ backgroundColor: '#ff4d4f', borderColor: '#ff4d4f', color: '#fff' }} // Red color
-                      >
-                        
-                      </Button>
-                    </div>
+                  <Button 
+                    icon={<EditOutlined />}
+                    onClick={() => handleSubmit(record._id)} 
+                    style={{ marginRight: 8, backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff' }} // Blue color
+                  />
+                  <Button 
+                    icon={<DeleteOutlined />} 
+                    onClick={() => confirmDelete(record._id)} 
+                    type="danger"
+                    style={{ backgroundColor: '#ff4d4f', borderColor: '#ff4d4f', color: '#fff' }} // Red color
+                  />
+                </div>
               )}
             />
           </Table>
+
           </div>
         </div>
       </div>
