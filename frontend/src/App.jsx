@@ -8,14 +8,15 @@ import Dashboard from "./pages/Dashboard.jsx";
 /**
  * sales and finance
 */
-//sales
+
+// //sales
 
 import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
 import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
 import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
 import ViewSalesRecordDashboard from "./pages/SalesAndFinance/Sales/ViewSalesRecordDashboard.jsx";
 import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage.jsx";
-finance
+// finance
 
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
@@ -23,7 +24,7 @@ import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDispl
 import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
 import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
  
-// inventory
+// // inventory
 
  import FertilizerRecords from "./pages/Inventory/FertilizerRecords.jsx";
  import EditFertilizerRecord from "./pages/Inventory/EditFertilizerRecord.jsx";
@@ -82,51 +83,7 @@ import EditComplianceCheck from './pages/Harvest/EditComplianceCheck.jsx';
 import YieldBarChart from './pages/Harvest/YieldBarChart.jsx';
 import YieldOptionsPage from './pages/Harvest/YieldOptionsPage.jsx';
  
-// crop care (diseases)
-import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
-import CoconutInspections from "./pages/Diseases/CoconutInspections.jsx";
-import IntercropInspections from "./pages/Diseases/IntercropInspections.jsx";
-import AddCoconutDiseases from "./pages/Diseases/AddCoconutDiseases.jsx";
-import AddCropsDiseases from "./pages/Diseases/AddCropsDiseases.jsx";
-import CoconutTreatments from "./pages/Diseases/CoconutTreatments.jsx";
-import IntercropTreatments from "./pages/Diseases/IntercropTreatments.jsx";
-import CoconutPests from "./pages/Diseases/CoconutPests.jsx";
-import RegularMaintenance from "./pages/Diseases/RegularMaintenance.jsx";
-import IntercropPests from "./pages/Diseases/IntercropPests.jsx";
-import UserProfile from "./pages/Diseases/UserProfile.jsx";
-import CoconutLeafMiner from "./pages/Diseases/CoconutLeafMiner.jsx";
-import BlackBeetle from "./pages/Diseases/BlackBeetle.jsx";
-import AddCoconutTreatments from "./pages/Diseases/AddCoconutTreatments.jsx";
-import AddIntercropTreatments from "./pages/Diseases/AddIntercropTreatments.jsx";
-import Insights from "./pages/Diseases/Insights.jsx";
-import DetailedOverview from "./pages/Diseases/DetailedOverview.jsx";
-import AddMaintenance from "./pages/Diseases/AddMaintenance.jsx";
-import AddProfile from "./pages/Diseases/AddProfile.jsx";
-import CoconutMite from "./pages/Diseases/CoconutMite.jsx";
-import Termite from "./pages/Diseases/Termite.jsx";
-import RedWeevil from "./pages/Diseases/RedWeevil.jsx";
-import MammalianPests from "./pages/Diseases/MammalianPests.jsx";
-import BudRot from "./pages/Diseases/BudRot.jsx";
-import LeafSpot from "./pages/Diseases/LeafSpot.jsx";
-import StemBleeding from "./pages/Diseases/StemBleeding.jsx";
-import RootWilt from "./pages/Diseases/RootWilt.jsx";
-import LethalYellowing from "./pages/Diseases/LethalYellowing.jsx";
-import Ganoderma from "./pages/Diseases/Ganoderma.jsx";
-import FruitFlies from "./pages/Diseases/FruitFlies.jsx";
-import BananaWeevil from "./pages/Diseases/BananaWeevil.jsx";
-import PineappleMealybug from "./pages/Diseases/PineappleMealybug.jsx";
-import PapayaMealybug from "./pages/Diseases/PapayaMealybug.jsx";
-import Thrips from "./pages/Diseases/Thrips.jsx";
-import Aphids from "./pages/Diseases/Aphids.jsx";
-import Anthracnose from "./pages/Diseases/Anthracnose.jsx";
-import BacterialWilt from "./pages/Diseases/BacterialWilt.jsx";
-import BlackSigatoka from "./pages/Diseases/BlackSigatoka.jsx";
-import PapayaRingspot from "./pages/Diseases/PapayaRingspot.jsx";
-import FusariumWilt from "./pages/Diseases/FusariumWilt.jsx";
-import PowderyMildew from "./pages/Diseases/PowderyMildew.jsx";
-import UpdateCoconutDiseases from "./pages/Diseases/UpdateCoconutDiseases.jsx";
-import UpdateCropsDiseases from "./pages/Diseases/UpdateCropsDiseases.jsx";
-import UpdateCoconutTreatments from "./pages/Diseases/UpdateCoconutTreatments.jsx";
+
  
 // product
 import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
@@ -156,19 +113,7 @@ import AddSeedlingForm from "./pages/CropVarieties/AddSeedlingForm.jsx";
 import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
  
 
-import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
-import ScheduleOptionsPage from './pages/Harvest/ScheduleOptionsPage.jsx';
-import HarvestSchedule from"./pages/Harvest/HarvestSchedule";
-import YieldRecords from "./pages/Harvest/YieldRecords";
-import ComplianceCheckList from "./pages/Harvest/ComplianceCheckList";
-import AddYieldRecord from "./pages/Harvest/AddYeildRecord";
-import AddHarvestSchedule from  "./pages/Harvest/AddHarvestSchedule";
-import EditHarvestSchedule from './pages/Harvest/EditHarvestSchedule';
-import EditYieldRecords from './pages/Harvest/EditYieldRecords.jsx'
-import AddComplianceCheck from './pages/Harvest/AddComplianceCheck.jsx';
-import EditComplianceCheck from './pages/Harvest/EditComplianceCheck.jsx';
-import YieldBarChart from './pages/Harvest/YieldBarChart.jsx';
-import YieldOptionsPage from './pages/Harvest/YieldOptionsPage.jsx';
+
 
 // crop care (diseases)
 import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
@@ -214,38 +159,9 @@ import FusariumWilt from "./pages/Diseases/FusariumWilt.jsx";
 import PowderyMildew from "./pages/Diseases/PowderyMildew.jsx";
 import UpdateCoconutDiseases from "./pages/Diseases/UpdateCoconutDiseases.jsx";
 
-// product
-import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
-import ProductionScheduleOverview from "./pages/Products/ProductionScheduleOverview.jsx";
-import QualityControl from "./pages/Products/QualityControl.jsx";
-import AddSchedule from "./pages/Products/AddSchedule.jsx";
-import EditSchedule from "./pages/Products/EditSchedule.jsx";
-import AddInspectionReport from "./pages/Products/AddInspectionReport.jsx";
-import EditInspectionReport from "./pages/Products/EditInspectionReport.jsx";
-import PackagingLabeling from "./pages/Products/PackagingLabeling.jsx";
-import Packaging from "./pages/Products/Packaging.jsx";
-import Labeling from "./pages/Products/Labeling.jsx";
-import EditPrice from "./pages/Products/EditPrice.jsx";
-import AddLabeling from "./pages/Products/AddLabeling.jsx";
-import EditLabeling from "./pages/Products/EditLabeling.jsx";
-import Gallery  from "./pages/Products/Gallery.jsx";
-
-// field view
-import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
-import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
-import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
-import Seedling from "./pages/CropVarieties/Seedling.jsx";
-import Schedules from "./pages/CropVarieties/Schedules.jsx";
-import ScheduleForm from "./pages/CropVarieties/ScheduleForm.jsx";
-import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
-import AddSeedlingForm from "./pages/CropVarieties/AddSeedlingForm.jsx";
-
-
 // buyers
 
-// import BuyerRegistrationForm from "./pages/BuyerRegistrationForm.jsx";
-
-
+// import Cart from "./pages/Buyer/Cart.jsx";
 import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
 import BuyerTable from "./pages/BuyerTable.jsx";
 import Profile from './components/Profile';
@@ -259,7 +175,7 @@ import BuyerInfo from "./pages/Buyer/BuyerInfo.jsx";
 import BuyerInfoTable from "./pages/Buyer/BuyerInfoTable.jsx";
 import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
 
-import PageError from "./pages/PageError.jsx";
+// import PageError from "./pages/PageError.jsx";
  
 
 
@@ -281,22 +197,9 @@ export default function App() {
       <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} /> 
       <Route path="/salesAndFinance/finance/transaction-update/:id" element={<UpdateTransactionPage />} /> 
       <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
-      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} /> 
+      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />  
  
-      {/* inventory */}
-      <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} /> 
-     <Route path="/Inventory/EditFertilizerRecords/:id" element={<EditFertilizerRecord/>} /> 
-     <Route path="/Inventory/AddFertilizerRecord" element={<AddFertilizerRecord/>} /> 
- <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>} /> 
-   <Route path="/Inventory/MaintenanceRecords" element={<MaintenanceRecords/>} /> 
-     <Route path="/Inventory/EditMaintenanceRecord/:id" element={<EditMaintenanceRecord/>} /> 
-    <Route path="/Inventory/AddMaintenanceRecord" element={<AddMaintenanceRecord/>} />
-
-      <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} />
-      <Route path="/salesAndFinance/finance/transaction-update/:id" element={<UpdateTransactionPage />} />
-      <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
-      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />
-
+      
       {/* inventory */}
      <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} />
     <Route path="/Inventory/EditFertilizerRecords/:id" element={<EditFertilizerRecord/>} />
@@ -318,7 +221,7 @@ export default function App() {
     <Route path="/Inventory/EditRequestPaymentRecords/:id" element={<EditRequestPaymentRecord/>} />
 
       {/* employee */}        
-      <Route path="/employee/dashboard" element={<Edashboard/>}/>
+     <Route path="/employee/dashboard" element={<Edashboard/>}/>
       <Route path="/employee/registration" element= {<Eregistration/>}/>
       <Route path="/employee/salary" element= {<Esalary/>}/>
       <Route path="/employee/task" element= {<EaddTask/>}/>
@@ -326,7 +229,7 @@ export default function App() {
       <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
       <Route path="/employee/attendance" element= {<GetAttendance/>}/>
       <Route path="/employee/employeelist" element= {<EmployeeList/>}/>
-      <Route path="/employee/attendanceList" element= {<EattendenceList/>}/> 
+      <Route path="/employee/attendanceList" element= {<EattendenceList/>}/>   
  
       {/* harvest */}
 
@@ -353,7 +256,7 @@ export default function App() {
  
     
 
-      <Route path="/yield-bar-chart" element={<YieldBarChart />} />
+      <Route path="/yield-bar-chart" element={<YieldBarChart />} /> 
 
 
       {/* crop care */}
@@ -375,12 +278,12 @@ export default function App() {
       <Route path="/addIntercropTreatments" element={<AddIntercropTreatments />} />
       <Route path="/insights" element={<Insights />} />
       <Route path="/detailedOverview" element={<DetailedOverview />} />
-      <Route path="/addMaintenance" element={<AddMaintenance />} />
+      <Route path="/addMaintenance" element={<AddMaintenance />} /> 
 
 
 
 
-      <Route path="/addProfile" element={<AddProfile />} />
+    <Route path="/addProfile" element={<AddProfile />} />
       <Route path="/coconutMite" element={<CoconutMite />} />
       <Route path="/termite" element={<Termite />} />
       <Route path="/redWeevil" element={<RedWeevil />} />
@@ -410,13 +313,13 @@ export default function App() {
 
  
 
-      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />}/>
+      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />}/> 
 
 
 
-      // {/* product */}
+       {/* product */}
 
-      <Route path="/products/productdashboard" element={<ProductsDashboard />} />
+       <Route path="/products/productdashboard" element={<ProductsDashboard />} />
       <Route path="/products/production-overview" element={<ProductionScheduleOverview />} />
       <Route path="/products/quality-control" element={<QualityControl />} />
       <Route path="/products/addschedule" element={<AddSchedule />} />
@@ -446,40 +349,31 @@ export default function App() {
       <Route path="/landPreparation" element={<LandPreparation />} />
       <Route path="/seedlingForm" element={<AddSeedlingForm />} />
 
-      <Route path="/pGrowth" element={<PlantGrowth />} />
-     
-      {/* buyers */}
-       {/* <Route path="/buyer-registration" element={<BuyerRegistrationForm />} />  */}
-
-
+      <Route path="/pGrowth" element={<PlantGrowth />} /> 
+      
+      
         
       {/* buyers */}
-       {/* <Route path="/buyer-registration" element={<BuyerRegistrationForm />} /> */}
 
+      {/* <Route path='/cart' element={<Cart/>}/> */}
       <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
       <Route path="/buyert" element={<BuyerTable />} />
+
       <Route path="/profile" element={<Profile />} />
-
-
       <Route path="/Bdelivery" element={<BuyerDelivery />} />
       <Route path="/Bdeliverytable" element={<BuyerDeliveryTable />} />
       <Route path="/updateDelivery/:id" element={<UpdateDeliveryTable />} />
 
-      {/* page not found & error page */}
-      <Route path="/test" element={<Test />} />
-
-
-
-       <Route path="/buyerinfo" element={<BuyerInfo />} />
+      <Route path="/buyerinfo" element={<BuyerInfo />} />
       <Route path="/buyerinfotable" element={<BuyerInfoTable />} />
-      <Route path="/updateBuyerInfo/:id" element={<UpdateBuyerInfo />} /> 
+      <Route path="/updateBuyer/:id" element={<UpdateBuyerInfo />} /> 
 
       <Route path="/buyerdashboard" element={<BuyerDashboard />} />
  
       {/* page not found & error page */}
-        <Route path="/test" element={<Test />} />  
+        {/* <Route path="/test" element={<Test />} />  
  
-      <Route path="*" element={<PageError />} />
+      <Route path="*" element={<PageError />} /> */}
 
 
     </Routes>
