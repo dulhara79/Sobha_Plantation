@@ -4,6 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { DatePicker } from "antd";
 import moment from "moment";
+import { useNavigate } from 'react-router-dom';
 
 // Styled Components
 const Container = styled.div`
@@ -76,7 +77,7 @@ const Button = styled.button`
 `;
 
 // Helper function for validations
-const validateField = (name, value, formData) => {
+/*const validateField = (name, value, formData) => {
   const errors = {};
   switch (name) {
     case "firstName":
@@ -139,7 +140,7 @@ const validateNICWithDOB = (nic, dob) => {
   const yearFromNIC =
     nic.length === 10 ? `19${nic.substr(0, 2)}` : nic.substr(0, 4);
   return dobYear === parseInt(yearFromNIC, 10);
-};
+};*/
 
 const Eregistration = () => {
   const [formData, setFormData] = useState({
@@ -401,6 +402,8 @@ const handleAddressChange = (e) => {
     hourlyRate: hourlyRate,
   };
 
+    const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     // validateForm();
@@ -420,6 +423,7 @@ const handleAddressChange = (e) => {
         await axios.post("http://localhost:5000/api/employee", data);
         console.log(data);
         Swal.fire("Success", "Employee registered successfully!", "success");
+        navigate("/employee/employeelist");
       } catch (error) {
         Swal.fire(
           "Error",
