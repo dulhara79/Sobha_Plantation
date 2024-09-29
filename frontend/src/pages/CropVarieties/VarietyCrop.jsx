@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import { HomeOutlined, LeftCircleOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Breadcrumb, Button, Input, Select, Modal, Form, notification } from 'antd';
+import FieldViewNavbar from '../../components/FieldView/FieldViewNavbar';
+import moment from 'moment'; // Import moment for date formatting
 
 const { Search } = Input;
 const { Option } = Select;
@@ -45,34 +47,89 @@ const VarietyCrop = () => {
     }
   };
 
-  const handleGenerateReport = () => {
+  // Function to get image data URL
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous'; // Ensure cross-origin images are handled
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  };
+
+  // Generate PDF report
+  const handleGenerateReport = async () => {
     const doc = new jsPDF();
 
-    // Add a title
-    doc.setFontSize(18);
-    doc.text('Crop Varieties Report', 14, 22);
+    // Load the logo image
+    const logoUrl = '../src/assets/logo.png'; 
+    try {
+      const logoDataURL = await getImageDataURL(logoUrl);
 
-    // Define table columns
-    const columns = ['Assigned Person', 'Field Name', 'Varieties', 'Plantation Date', 'Status'];
+      // Add the logo image to the PDF
+      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
 
-    // Prepare data for the table
-    const rows = cropVarieties.map((item) => [
-      item.assignedPerson,
-      item.fieldName,
-      item.varieties,
-      new Date(item.plantationDate).toLocaleDateString(),
-      item.status,
-    ]);
+    } catch (error) {
+      console.error('Failed to load the logo image:', error);
+    }
 
-    // Add the table to the PDF
+    // Define the table columns
+    const columns = [
+      { title: "Assigned Person", dataKey: "assignedPerson" },
+      { title: "Field Name", dataKey: "fieldName" },
+      { title: "Varieties", dataKey: "varieties" },
+      { title: "Plantation Date", dataKey: "plantationDate" },
+      { title: "Status", dataKey: "status" },
+    ];
+
+    // Map the filtered cropVarieties data to match the columns
+    const rows = cropVarieties.map(variety => ({
+      assignedPerson: variety.assignedPerson,
+      fieldName: variety.fieldName,
+      varieties: variety.varieties,
+      plantationDate: moment(variety.plantationDate).format('YYYY-MM-DD'),
+      status: variety.status,
+    }));
+
+    // Add title and table
+    doc.setFontSize(22);
+    doc.text("Crop Varieties Report", 50, 40); // Adjust y-coordinate as needed
+
     doc.autoTable({
-      head: [columns],
+      columns: columns,
       body: rows,
-      startY: 30,
+      startY: 50, 
+      margin: { horizontal: 10 },
+      styles: {
+        fontSize: 10,
+      },
+      headStyles: {
+        fillColor: [64, 133, 126], 
+        textColor: [255, 255, 255], 
+        fontSize: 12,
+      },
+      theme: 'striped',
+      didDrawPage: (data) => {
+        // Add page number to footer
+        const pageNumber = doc.internal.getNumberOfPages();
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+
+        doc.setFontSize(10);
+        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10); // Adjust position as needed
+      },
     });
 
-    // Save the generated PDF
-    doc.save('CropVarietiesReport.pdf');
+    // Save the PDF
+    doc.save("crop_varieties_report.pdf");
   };
 
   const filteredData = cropVarieties.filter(item => (
@@ -112,6 +169,26 @@ const VarietyCrop = () => {
   const fieldOptions = ['Field A', 'Field B', 'Field C', 'Field D'];
   const varietyOptions = ['Coconut', 'Papaya', 'Banana', 'Pepper', 'Pineapple'];
 
+  // Function to restrict input to letters only
+  const restrictInputToLetters = (event) => {
+    const char = String.fromCharCode(event.which);
+    if (!/[a-zA-Z\s]/.test(char)) {
+      event.preventDefault();
+    }
+  };
+
+  // Function to prevent pasting non-alphabetic characters
+  const preventNonAlphabeticPaste = (event) => {
+    const pasteData = (event.clipboardData || window.clipboardData).getData('text');
+    if (!/^[a-zA-Z\s]+$/.test(pasteData)) {
+      event.preventDefault();
+      notification.error({
+        message: 'Invalid Paste',
+        description: 'Pasted content contains non-alphabetic characters.',
+      });
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -119,13 +196,9 @@ const VarietyCrop = () => {
 
       <div className="ml-[300px]">
         <Breadcrumb
-          items={[
-            { href: '', title: <HomeOutlined /> },
-            { href: '', title: 'Field View' },
-            { href: '', title: 'Dashboard' },
-            { href: '', title: 'Crop Varieties' },
-          ]}
+          items={[{ href: '', title: <HomeOutlined /> }, { href: '', title: 'Field View' }, { href: '', title: 'Dashboard' }, { href: '', title: 'Crop Varieties' }]}
         />
+        <FieldViewNavbar />
 
         {/* Back Button */}
         <div className="mb-4">
@@ -175,117 +248,109 @@ const VarietyCrop = () => {
           </div>
         </div>
 
-        {/* Table Section */}
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            <table className="min-w-full table-auto">
-              <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                <tr>
-                  <th className="py-3 px-6 text-left">Assigned Person</th>
-                  <th className="py-3 px-6 text-left">Field Name</th>
-                  <th className="py-3 px-6 text-left">Varieties</th>
-                  <th className="py-3 px-6 text-left">Plantation Date</th>
-                  <th className="py-3 px-6 text-left">Status</th>
-                  <th className="py-3 px-6 text-left">Actions</th>
+        {/* Crop Varieties Table */}
+        <div className="bg-white shadow-md rounded-lg p-4">
+          <h3 className="text-lg font-semibold mb-4">Crop Varieties List</h3>
+          <table className="min-w-full border border-gray-300">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="border border-gray-300 p-2">Assigned Person</th>
+                <th className="border border-gray-300 p-2">Field Name</th>
+                <th className="border border-gray-300 p-2">Varieties</th>
+                <th className="border border-gray-300 p-2">Plantation Date</th>
+                <th className="border border-gray-300 p-2">Status</th>
+                <th className="border border-gray-300 p-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredData.map((variety) => (
+                <tr key={variety._id}>
+                  <td className="border border-gray-300 p-2">{variety.assignedPerson}</td>
+                  <td className="border border-gray-300 p-2">{variety.fieldName}</td>
+                  <td className="border border-gray-300 p-2">{variety.varieties}</td>
+                  <td className="border border-gray-300 p-2">{moment(variety.plantationDate).format('YYYY-MM-DD')}</td>
+                  <td className={`border border-gray-300 p-2 font-semibold ${
+                      variety.status === 'In Progress' ? 'text-blue-500' :
+                      variety.status === 'Scheduled' ? 'text-yellow-500' :
+                      'text-green-500'
+                    }`}>
+                    {variety.status}
+                  </td>
+                  <td className="border border-gray-300 p-2">
+                    <div className="flex items-center gap-4">
+                      <EditOutlined 
+                        className="cursor-pointer" 
+                        onClick={() => handleEdit(variety)} 
+                      />
+                      <DeleteOutlined 
+                        className="cursor-pointer" 
+                        onClick={() => deleteCropVariety(variety._id)} 
+                      />
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {filteredData.map((item) => (
-                  <tr key={item._id} className="border-b border-gray-200 hover:bg-gray-100">
-                    <td className="py-3 px-6 text-left">{item.assignedPerson}</td>
-                    <td className="py-3 px-6 text-left">{item.fieldName}</td>
-                    <td className="py-3 px-6 text-left">{item.varieties}</td>
-                    <td className="py-3 px-6 text-left">{new Date(item.plantationDate).toLocaleDateString()}</td>
-                    <td className={`py-3 px-6 text-left font-semibold ${item.status === 'In Progress' ? 'text-blue-500' : item.status === 'Scheduled' ? 'text-yellow-500' : 'text-green-500'}`}>
-                      {item.status}
-                    </td>
-                    <td className="py-3 px-6 text-left">
-                      <Button
-                        type="link"
-                        icon={<EditOutlined />}
-                        onClick={() => handleEdit(item)}
-                      />
-                      <Button
-                        type="link"
-                        icon={<DeleteOutlined />}
-                        danger
-                        onClick={() => deleteCropVariety(item._id)}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+              ))}
+            </tbody>
+          </table>
         </div>
 
-        {/* Edit Modal */}
+        {/* Modal for Edit Form */}
         <Modal
-          title="Edit Crop Variety"
+          title={currentRecord ? 'Edit Crop Variety' : 'Add Crop Variety'}
           visible={isModalVisible}
-          onOk={handleUpdate}
           onCancel={() => setIsModalVisible(false)}
+          footer={[
+            <Button key="back" onClick={() => setIsModalVisible(false)}>
+              Cancel
+            </Button>,
+            <Button key="submit" type="primary" onClick={currentRecord ? handleUpdate : () => {}}>
+              Submit
+            </Button>,
+          ]}
         >
-          <Form form={form} layout="vertical">
+          <Form form={form} layout="vertical" onFinish={currentRecord ? handleUpdate : () => {}}>
             <Form.Item
-              name="assignedPerson"
               label="Assigned Person"
+              name="assignedPerson"
               rules={[{ required: true, message: 'Please input the assigned person!' }]}
             >
-              <Input
-                placeholder="Enter assigned person"
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (/[^a-zA-Z\s]/.test(value)) {
-                    notification.error({
-                      message: 'Invalid Input',
-                      description: 'Assigned person should not contain numbers or special characters.'
-                    });
-                  }
-                }}
-              />
+              <Input onKeyPress={restrictInputToLetters} onPaste={preventNonAlphabeticPaste} />
             </Form.Item>
-
             <Form.Item
-              name="fieldName"
               label="Field Name"
-              rules={[{ required: true, message: 'Please select the field name!' }]}
+              name="fieldName"
+              rules={[{ required: true, message: 'Please select a field!' }]}
             >
-              <Select placeholder="Select Field Name">
-                {fieldOptions.map(field => (
+              <Select>
+                {fieldOptions.map((field) => (
                   <Option key={field} value={field}>{field}</Option>
                 ))}
               </Select>
             </Form.Item>
-
             <Form.Item
-              name="varieties"
               label="Varieties"
-              rules={[{ required: true, message: 'Please select the variety!' }]}
+              name="varieties"
+              rules={[{ required: true, message: 'Please select a variety!' }]}
             >
-              <Select placeholder="Select Variety">
-                {varietyOptions.map(variety => (
+              <Select>
+                {varietyOptions.map((variety) => (
                   <Option key={variety} value={variety}>{variety}</Option>
                 ))}
               </Select>
             </Form.Item>
-
             <Form.Item
-              name="plantationDate"
               label="Plantation Date"
-              rules={[{ required: true, message: 'Please select the plantation date!' }]}
+              name="plantationDate"
+              rules={[{ required: true, message: 'Please select a date!' }]}
             >
               <Input type="date" />
             </Form.Item>
-
             <Form.Item
-              name="status"
               label="Status"
-              rules={[{ required: true, message: 'Please select the status!' }]}
+              name="status"
+              rules={[{ required: true, message: 'Please select a status!' }]}
             >
-              <Select placeholder="Select Status">
+              <Select>
                 <Option value="In Progress">In Progress</Option>
                 <Option value="Scheduled">Scheduled</Option>
                 <Option value="Completed">Completed</Option>
