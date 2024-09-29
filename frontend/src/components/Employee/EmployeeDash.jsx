@@ -88,7 +88,7 @@ const EmployeeDash = () => {
     <Container>
       <Header>
         <div>
-          <h2>Welcome Senuvi,</h2>
+          <h2>Welcome </h2>
           <p>Today is {currentDate}</p>
         </div>
       </Header>
