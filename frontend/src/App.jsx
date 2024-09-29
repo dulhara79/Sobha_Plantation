@@ -142,6 +142,8 @@ import EditPrice from "./pages/Products/EditPrice.jsx";
 import AddLabeling from "./pages/Products/AddLabeling.jsx";
 import EditLabeling from "./pages/Products/EditLabeling.jsx";
 import Gallery from "./pages/Products/Gallery.jsx";
+import AddPackage from "./pages/Products/AddPackage.jsx";
+import EditPackage from "./pages/Products/EditPackage.jsx";
 
 /**
  * field view
@@ -392,38 +394,23 @@ export default function App() {
       <Route path="/updateMaintenance/:id" element={<UpdateMaintenance />} />
 
       {/* product new */}
-      <Route
-        path="/products/productdashboard"
-        element={<ProductsDashboard />}
-      />
-      <Route
-        path="/products/production-overview"
-        element={<ProductionScheduleOverview />}
-      />
+      <Route path="/products/productdashboard" element={<ProductsDashboard />}/>
+      <Route path="/products/production-overview" element={<ProductionScheduleOverview />}/>
       <Route path="/products/quality-control" element={<QualityControl />} />
       <Route path="/products/addschedule" element={<AddSchedule />} />
       <Route path="/products/editschedule/:id" element={<EditSchedule />} />
-      <Route
-        path="/products/addInspectionReport"
-        element={<AddInspectionReport />}
-      />
-      <Route
-        path="/products/editInspectionReport/:id"
-        element={<EditInspectionReport />}
-      />
-      <Route
-        path="/products/packaging-labeling"
-        element={<PackagingLabeling />}
-      />
+      <Route path="/products/addInspectionReport" element={<AddInspectionReport />}/>
+      <Route path="/products/editInspectionReport/:id" element={<EditInspectionReport />}/>
+      <Route path="/products/packaging-labeling" element={<PackagingLabeling />}/>
       <Route path="/products/packaging" element={<Packaging />} />
-      <Route
-        path="/products/packaging-labeling/labeling"
-        element={<Labeling />}
-      />
+      <Route path="/products/packaging-labeling/labeling" element={<Labeling />}/>
       <Route path="/products/editPrice/:id" element={<EditPrice />} />
       <Route path="/products/addLabeling" element={<AddLabeling />} />
       <Route path="/products/editLabeling/:id" element={<EditLabeling />} />
       <Route path="/products/gallery" element={<Gallery />} />
+      <Route path="/products/addPackage" element={<AddPackage />} />
+      <Route path="/products/editPackage/:id" element={<EditPackage />} />
+
 
       {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
