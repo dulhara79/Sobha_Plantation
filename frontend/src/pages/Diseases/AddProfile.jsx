@@ -13,7 +13,7 @@ import {
 } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
-// import { post } from "../../api/api";
+import axios from "axios";
 
 const { Option } = Select;
 
@@ -181,7 +181,7 @@ const AddProfile = () => {
             <Breadcrumb
               items={[
                 {
-                  href: "",
+                  href: "/diseases",
                   title: <HomeOutlined />,
                 },
                 {

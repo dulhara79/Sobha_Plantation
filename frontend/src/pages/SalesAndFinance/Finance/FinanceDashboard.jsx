@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Breadcrumb } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
@@ -12,12 +12,25 @@ import Sidebar from "../../../components/Sidebar";
 import NavigationButtons from "../../../components/Sales_and_Finance/NavigationButtons";
 import {Add, List, Assessment, AttachMoney, Analytics} from "@mui/icons-material";
 
+import NewLoadingScreen from '../../../components/LoadingDots'
+
 const SalesDashboard = () => {
   const navigate = useNavigate();
 
   const navigateTo = (path) => {
     navigate(path);
   };
+
+  const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      // Simulate loading process (e.g., API calls, component mounting)
+      setTimeout(() => {
+        setLoading(false); // Once the components or data are loaded
+      }, 2000); // Adjust the delay as needed
+    }, []);
+  
+    if (loading) return <NewLoadingScreen />;
 
   return (
     <>
@@ -65,18 +78,25 @@ const SalesDashboard = () => {
             </div>
             <div
               className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
-              onClick={() => navigateTo("/salesAndFinance/finance/add-valuation")}
+              onClick={() => navigateTo("/salesAndFinance/finance/valuation-dashboard")}
             >
               <Assessment fontSize="large" className="mb-8 mr-2 size-24" />
               <span className="text-xl font-semibold">Valuation</span>
             </div>
             <div
               className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
+              onClick={() => navigateTo("/salesAndFinance/finance/employeeSalary")}
+            >
+              <AttachMoney fontSize="large" className="mb-8 mr-2 size-24" />
+              <span className="text-xl font-semibold">Salary</span>
+            </div>
+            {/* <div
+              className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
               onClick={() => navigateTo("/budget")}
             >
               <AttachMoney fontSize="large" className="mb-8 mr-2 size-24" />
               <span className="text-xl font-semibold">Budget</span>
-            </div>
+            </div> */}
             <div
               className="flex flex-col items-center justify-center col-span-2 h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
               onClick={() => navigateTo("/salesAndFinance/finance/analytics")}

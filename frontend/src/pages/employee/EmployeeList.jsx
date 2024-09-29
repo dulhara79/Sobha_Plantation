@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { InformationCircleIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
-import { Link } from "react-router-dom";
-import { jsPDF } from "jspdf";
+import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { useSnackbar } from "notistack";
+import { useSnackbar } from 'notistack';
 import { Button, Table } from 'antd';
-import { SearchOutlined, DownOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom'; // for navigation
+import html2canvas from 'html2canvas';
 import dayjs from 'dayjs';
+import { SearchOutlined } from '@ant-design/icons';
 import Header from '../../components/Header';
 import Sidebar from '../../components/Sidebar';
-import { HomeOutlined } from "@ant-design/icons";
-import { Breadcrumb } from "antd";
 import EmployeeNavbar from '../../components/Employee/EmployeeNavbar';
+import Breadcrumbs from '../../components/Employee/Breadcrumbss';
 
 const EmployeeList = () => {
     const [employeeRecords, setEmployeeRecords] = useState([]);
@@ -21,6 +21,7 @@ const EmployeeList = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
+    const navigate = useNavigate(); // for navigation
 
     useEffect(() => {
         setLoading(true);
@@ -63,40 +64,69 @@ const EmployeeList = () => {
         });
     };
 
-    const handleDownloadPDF = () => {
-        if (filteredEmployeeRecords.length === 0) {
-            enqueueSnackbar('No employee records to generate report', { variant: 'error' });
-            return;
-        }
-
-        const doc = new jsPDF();
-        doc.text(`Employee Report`, 10, 10);
-
-        const headers = ["First Name", "Last Name", "Date of Birth", "Gender", "Contact Number", "Email", "NIC", "Address", "Employee Type", "Hired Date", "Hourly Rate"];
-        const tableData = filteredEmployeeRecords.map(record => [
-            record.firstName,
-            record.lastName,
-            dayjs(record.dateOfBirth).format('YYYY-MM-DD'),
-            record.gender,
-            record.contactNumber,
-            record.email,
-            record.nic,
-            record.address,
-            record.employeeType,
-            dayjs(record.hiredDate).format('YYYY-MM-DD'),
-            record.hourlyRate
-        ]);
-
-        autoTable(doc, {
-            head: [headers],
-            body: tableData,
-            startY: 20,
-            styles: { overflow: 'linebreak', columnWidth: 'wrap' },
-            theme: 'striped'
-        });
-
-        doc.save('Employee_report.pdf');
+    // Handle navigation to the employee registration page
+    const handleViewEmployee  = (id) => {
+        navigate(`/employee/viewemployee/${id}`);
     };
+    const handleAddNewEmployee = () => {
+        navigate('/employee/registration');
+    };
+    const handleEditEmployee = (id) => {
+        navigate(`/employee/editemployee/${id}`);
+    };
+
+
+    // Generate PDF for all employee data
+    const generateReport = () => {
+        const currentDate = new Date().toLocaleString('en-GB');
+        const doc = new jsPDF('landscape'); // set landscape for a wider table
+    
+        const columns = [
+            { header: 'First Name', dataKey: 'firstName' },
+            { header: 'Last Name', dataKey: 'lastName' },
+            { header: 'Date of Birth', dataKey: 'dateOfBirth' },
+            { header: 'Gender', dataKey: 'gender' },
+            { header: 'Contact Number', dataKey: 'contactNumber' },
+            { header: 'Email', dataKey: 'email' },
+            { header: 'NIC', dataKey: 'nic' },
+            { header: 'Address', dataKey: 'address' },
+            { header: 'Employee Type', dataKey: 'employeeType' },
+            { header: 'Designation', dataKey: 'designation' },
+            { header: 'Hired Date', dataKey: 'hiredDate' },
+            { header: 'Hourly Rate', dataKey: 'hourlyRate' }
+        ];
+    
+        const rows = filteredEmployeeRecords.map(record => ({
+            firstName: record.firstName,
+            lastName: record.lastName,
+            dateOfBirth: dayjs(record.dateOfBirth).format('YYYY-MM-DD'),
+            gender: record.gender,
+            contactNumber: record.contactNumber,
+            email: record.email,
+            nic: record.nic,
+            address: record.address,
+            employeeType: record.employeeType,
+            designation: record.designation,
+            hiredDate: dayjs(record.hiredDate).format('YYYY-MM-DD'),
+            hourlyRate: record.hourlyRate
+        }));
+    
+        doc.setFontSize(16);
+        doc.text('Employee Details', 140, 10, null, null, 'center');
+        doc.setFontSize(12);
+        doc.text(`As At: ${currentDate}`, 140, 20, null, null, 'center');
+        doc.text(`Number of Employees: ${rows.length}`, 10, 40);
+    
+        autoTable(doc, {
+            columns,
+            body: rows,
+            startY: 50,
+            theme: 'grid'
+        });
+    
+        doc.save(`Employee-details_${currentDate}.pdf`);
+    };
+    
 
     const handleSearch = () => {
         getFilteredEmployeeRecords(searchQuery);
@@ -121,151 +151,78 @@ const EmployeeList = () => {
     };
 
     const columns = [
-        {
-            title: 'First Name',
-            dataIndex: 'firstName',
-            key: 'firstName',
-            sorter: (a, b) => a.firstName.localeCompare(b.firstName),
-        },
-        {
-            title: 'Last Name',
-            dataIndex: 'lastName',
-            key: 'lastName',
-            sorter: (a, b) => a.lastName.localeCompare(b.lastName),
-        },
-        {
-            title: 'Date of Birth',
-            dataIndex: 'dateOfBirth',
-            key: 'dateOfBirth',
-            render: (text) => dayjs(text).format('YYYY-MM-DD'),
-            sorter: (a, b) => new Date(a.dateOfBirth) - new Date(b.dateOfBirth),
-        },
-        {
-            title: 'Gender',
-            dataIndex: 'gender',
-            key: 'gender',
-        },
-        {
-            title: 'Contact Number',
-            dataIndex: 'contactNumber',
-            key: 'contactNumber',
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
-        },
-        {
-            title: 'NIC',
-            dataIndex: 'nic',
-            key: 'nic',
-        },
-        {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
-        },
-        {
-            title: 'Employee Type',
-            dataIndex: 'employeeType',
-            key: 'employeeType',
-        },
-        {
-            title: 'Hired Date',
-            dataIndex: 'hiredDate',
-            key: 'hiredDate',
-            render: (text) => dayjs(text).format('YYYY-MM-DD'),
-            sorter: (a, b) => new Date(a.hiredDate) - new Date(b.hiredDate),
-        },
-        {
-            title: 'Hourly Rate',
-            dataIndex: 'hourlyRate',
-            key: 'hourlyRate',
-            sorter: (a, b) => a.hourlyRate - b.hourlyRate,
-        },
-        {
-            title: 'Info',
-            key: 'info',
-            render: (text, record) => (
-                <InformationCircleIcon className="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-600" />
-            ),
-        },
-        {
-            title: 'Edit',
-            key: 'edit',
-            render: (text, record) => (
-                <PencilIcon className="w-5 h-5 text-blue-500 cursor-pointer hover:text-blue-700" />
-            ),
-        },
-        {
-            title: 'Delete',
-            key: 'delete',
-            render: (text, record) => (
-                <TrashIcon
-                    className="w-5 h-5 text-red-500 cursor-pointer hover:text-red-700"
-                    onClick={() => handleDelete(record._id)}
-                />
-            ),
-        }
+        { title: 'First Name', dataIndex: 'firstName', key: 'firstName', sorter: (a, b) => a.firstName.localeCompare(b.firstName) },
+        { title: 'Last Name', dataIndex: 'lastName', key: 'lastName', sorter: (a, b) => a.lastName.localeCompare(b.lastName) },
+        { title: 'Date of Birth', dataIndex: 'dateOfBirth', key: 'dateOfBirth', render: (date) => dayjs(date).format('YYYY-MM-DD'), sorter: (a, b) => dayjs(a.dateOfBirth).isBefore(b.dateOfBirth) },
+        { title: 'Gender', dataIndex: 'gender', key: 'gender' },
+        { title: 'Contact Number', dataIndex: 'contactNumber', key: 'contactNumber' },
+        { title: 'Email', dataIndex: 'email', key: 'email' },
+        { title: 'NIC', dataIndex: 'nic', key: 'nic' },
+        { title: 'Address', dataIndex: 'address', key: 'address' },
+        { title: 'Employee Type', dataIndex: 'employeeType', key: 'employeeType' },
+        { title: 'Designation', dataIndex: 'designation', key: 'designation' },
+        { title: 'Hired Date', dataIndex: 'hiredDate', key: 'hiredDate', render: (date) => dayjs(date).format('YYYY-MM-DD') },
+        { title: 'Hourly Rate', dataIndex: 'hourlyRate', key: 'hourlyRate' },
+        { title: 'Info', key: 'info', render: (text, record) => <InformationCircleIcon className="w-5 h-5 text-gray-400 cursor-pointer hover:text-gray-600" onClick={() => handleViewEmployee (record._id)}/> },
+        { title: 'Edit', key: 'edit', render: (text, record) => <PencilIcon className="w-5 h-5 text-blue-500 cursor-pointer hover:text-blue-700" onClick={() => handleEditEmployee(record._id)} /> },
+        { title: 'Delete', key: 'delete', render: (text, record) => <TrashIcon className="w-5 h-5 text-red-500 cursor-pointer hover:text-red-700" onClick={() => handleDelete(record._id)} /> }
     ];
 
-    const dataSource = filteredEmployeeRecords.map(record => ({ ...record, key: record._id }));
+    const breadcrumbItems = [
+        { name: 'Employees', href: '/employees/home' },
+        { name: 'Registration', href: '/employees/registration' },
+    ];
 
     return (
-        <div className="">
+        <>
             <Header />
             <Sidebar />
-            <div className="ml-[300px] ">
-                <Breadcrumb
-                    items={[
-                        {
-                            href: "",
-                            title: <HomeOutlined />,
-                        },
-                    ]}
-                />
+            <div className="ml-[300px]">
                 <EmployeeNavbar />
-                <div className="p-8 ">
-                    <div className="flex justify-between items-center mb-4">
-                        <h1 className="text-lg font-semibold">Employee Details</h1>
-                        <Link to="/employee/registration">
-                            <Button type="primary">Add New Employee</Button>
-                        </Link>
-                    </div>
-                    <p className="text-sm text-gray-500">Manage employee information and generate reports.</p>
+                <Breadcrumbs items={breadcrumbItems} />
+                <div className="ml-[40px]">
 
-                    <div className="flex items-center my-4 gap-2">
-                        <input
-                            type="text"
-                            placeholder="Search employees..."
-                            className="border rounded-md p-2"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                <div className="employee-list">
+                    <div className="content">
+                        <h1 className="text-lg font-semibold text-left">Employee Details</h1>
+                        <p className="mt-1 text-sm font-normal text-gray-500">Easily access stored employee details within the system for thorough insights.</p>
+                        
+                        <div className="flex justify-between mb-4">
+                            <div className="search-bar">
+                                <input
+                                    type="text"
+                                    placeholder="Search by name, email, NIC, or contact number"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                                <Button
+                                    type="primary"
+                                    icon={<SearchOutlined />}
+                                    onClick={handleSearch}
+                                >
+                                    Search
+                                </Button>
+                            </div>
+
+                            <div className="flex space-x-4">
+                                <Button type="primary" onClick={handleAddNewEmployee}>Add New Employee</Button>
+                                <Button type="primary" onClick={generateReport}>Generate Report</Button>
+                            </div>
+                        </div>
+
+                        <Table
+                            id="employee-table" // Added ID for generating PDF
+                            columns={columns}
+                            dataSource={filteredEmployeeRecords}
+                            loading={loading}
+                            rowKey={(record) => record._id}
+                            pagination={{ pageSize: 10 }}
                         />
-                        <Button
-                            type="primary"
-                            icon={<SearchOutlined />}
-                            onClick={handleSearch}
-                        >
-                            Search
-                        </Button>
-                        <Button
-                            onClick={handleDownloadPDF}
-                            icon={<DownOutlined />}
-                        >
-                            Export PDF
-                        </Button>
                     </div>
-
-                    <Table
-                        columns={columns}
-                        dataSource={dataSource}
-                        loading={loading}
-                        pagination={{ pageSize: 8 }}
-                    />
                 </div>
             </div>
-        </div>
+            </div>
+        </>
     );
 };
 

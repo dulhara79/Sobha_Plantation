@@ -2,17 +2,26 @@ import React, { useState } from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { HomeOutlined, LeftOutlined } from "@ant-design/icons";
-import { Breadcrumb, Button, Input, DatePicker, Form } from "antd";
+import { Breadcrumb, Button, Input, DatePicker, Form, notification } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
-// import { post } from "../../api/api";
+import axios from "axios";
 
 const AddIntercropTreatments = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
+
+  const validateProgress = (_, value) => {
+    if (value < 0 || value > 100) {
+      return Promise.reject(new Error("Health Rate must be between 0 and 100"));
+    }
+    return Promise.resolve();
+  };
+
   const [fieldValidity, setFieldValidity] = useState({
-    date: false,
+    dateOfTreatment: false,
     pestOrDisease: false,
     treatmentMethod: false,
     healthRate: false,
@@ -20,12 +29,16 @@ const AddIntercropTreatments = () => {
     notes: false,
   });
 
+  const handleFieldChange = (changedFields) => {
+    const updatedFieldValidity = { ...fieldValidity };
+    Object.keys(changedFields).forEach((field) => {
+      updatedFieldValidity[field] = !!changedFields[field];
+    });
+    setFieldValidity(updatedFieldValidity);
+  }; 
+
   const disableFutureDates = (current) => {
     return current && current > moment().endOf("day");
-  };
-
-  const disablePastDates = (current) => {
-    return current && current < moment().startOf("day");
   };
 
   const alphabeticNumericRule = [
@@ -52,21 +65,49 @@ const AddIntercropTreatments = () => {
 
   const numericRule = [
     {
-      pattern: /[0-9]%/,
+      pattern: /^[0-9]/,
       message: "Only numeric characters are allowed.",
     },
     {
       required: true,
       message: "This field is required.",
     },
+    {
+      validator: validateProgress, // Between 0 and 100
+    }
   ];
 
-  const handleFinish = async (values) => {
+  const handleSubmit = async (values) => {
     try {
-      await post("/harvest", values);
+      setLoading(true);
+
+      //Extract values from the form
+      const { dateOfTreatment, pestOrDisease, treatmentMethod, healthRate, treatedBy, notes } = values;
+
+      await axios.post("http://localhost:8090/api/cropTreatments", {
+        dateOfTreatment,
+        pestOrDisease,
+        treatmentMethod,
+        healthRate,
+        treatedBy,
+        notes,
+      });
+   
+      notification.success({
+        message: "Record added successfully",
+        description: "Record has been added successfully",
+      });
+      setLoading(false);
+      form.resetFields();
+
       navigate("/IntercropTreatments");
     } catch (error) {
-      console.error("Error creating treatments record:", error);
+      console.error("An error occurred: ", error);
+      setLoading(false);
+      notification.error({
+        message: "An error occurred",
+        description: "An error occurred while creating the record"
+      });
     }
   };
 
@@ -74,19 +115,6 @@ const AddIntercropTreatments = () => {
     navigate("/IntercropTreatments");
   };
 
-  const handleFieldChange = (changedFields, allFields) => {
-    const newFieldValidity = { ...fieldValidity };
-
-    allFields.forEach((field) => {
-      if (field.errors.length === 0 && field.value) {
-        newFieldValidity[field.name[0]] = true;
-      } else {
-        newFieldValidity[field.name[0]] = false;
-      }
-    });
-
-    setFieldValidity(newFieldValidity);
-  };
 
   return (
     <div>
@@ -145,7 +173,7 @@ const AddIntercropTreatments = () => {
             <Breadcrumb
               items={[
                 {
-                  href: "",
+                  href: "/diseases",
                   title: <HomeOutlined />,
                 },
                 {
@@ -165,10 +193,10 @@ const AddIntercropTreatments = () => {
               form={form}
               layout="vertical"
               className="mt-6"
-              onFinish={handleFinish}
-              onFieldsChange={handleFieldChange}
+              onFinish={handleSubmit}
+              onValuesChange={(_, values) => handleFieldChange(values)}
             >
-              <Form.Item
+               <Form.Item
                 label="Date of Treatment"
                 name="dateOfTreatment"
                 rules={[
@@ -220,7 +248,7 @@ const AddIntercropTreatments = () => {
 
               <Form.Item
                 label="Current Health Rate"
-                name="currentHealthRate"
+                name="healthRate"
                 rules={numericRule}
               >
                 <Input
@@ -236,7 +264,7 @@ const AddIntercropTreatments = () => {
               >
                 <Input
                   placeholder="Enter name of the person who treated"
-                  disabled={!fieldValidity.currentHealthRate}
+                  disabled={!fieldValidity.healthRate}
                 />
               </Form.Item>
 
@@ -246,7 +274,7 @@ const AddIntercropTreatments = () => {
                 rules={alphabeticNumericRule}
               >
                 <Input
-                  placeholder="Enter any notes about the treatment"
+                  placeholder="Add any notes"
                   disabled={!fieldValidity.treatedBy}
                 />
               </Form.Item>
@@ -255,9 +283,9 @@ const AddIntercropTreatments = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
+                  loading={loading}
                   style={{ backgroundColor: "#236A64", color: "#fff" }}
                   disabled={!fieldValidity.notes}
-                  onClick={handleFinish}
                 >
                   Submit
                 </Button>
@@ -272,5 +300,6 @@ const AddIntercropTreatments = () => {
     </div>
   );
 };
+
 
 export default AddIntercropTreatments;

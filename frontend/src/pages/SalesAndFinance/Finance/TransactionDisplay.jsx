@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../../components/Header";
 import Sidebar from "../../../components/Sidebar";
 import NavigationButtons from "../../../components/Sales_and_Finance/NavigationButtons";
@@ -6,8 +6,20 @@ import TransactionTable from "../../../components/Sales_and_Finance/Finance/Tran
 import TransactionSummaryCard from "../../../components/Sales_and_Finance/Finance/TransactionSummaryCard";
 import { Breadcrumb, Button } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
+import NewLoadingScreen from '../../../components/LoadingDots'
 
 const TransactionDisplay = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading process (e.g., API calls, component mounting)
+    setTimeout(() => {
+      setLoading(false); // Once the components or data are loaded
+    }, 2000); // Adjust the delay as needed
+  }, []);
+
+  if (loading) return <NewLoadingScreen />;
+
   return (
     <div>
       <Header />
@@ -38,25 +50,19 @@ const TransactionDisplay = () => {
               ),
             },
             {
-              title: "Sales Dahsboard",
+              title: "Sales Dashboard",
             },
           ]}
         />
-          <NavigationButtons />
+        <NavigationButtons />
         <div className={`ml-[50px] pt-3 w-[1000px]`}>
           <h1 className="mb-6 text-3xl font-semibold">Finance Dashboard</h1>
           <TransactionSummaryCard />
-          </div>
-          <div className="mt-8">
-          </div>
-            <TransactionTable />
-          {/* <div className="mt-8 text-right">
-            <Button type="primary" onClick={() => generateReport()}>
-              Generate Summary Report
-            </Button>
-          </div> */}
         </div>
+        <div className="mt-8"></div>
+        <TransactionTable />
       </div>
+    </div>
   );
 };
 

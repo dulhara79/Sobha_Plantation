@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const DiseasesSchema = new mongoose.Schema(
   {
     dateOfInspection: {
-      type: Date, // Changed from String to Date for better date handling
+      type: Date,
       required: true,
     },
     sectionOfLand: {

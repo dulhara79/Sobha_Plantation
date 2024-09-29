@@ -1,21 +1,33 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
 import CollectionsSharpIcon from '@mui/icons-material/CollectionsSharp';
 import EventNoteSharpIcon from '@mui/icons-material/EventNoteSharp';
 import { Breadcrumb, Table, Button, Input, Select, Modal } from "antd";
 import axios from "axios";
 import html2canvas from "html2canvas";
-//import jsPDF from "jspdf";
+import { ArrowLeftOutlined, FilePdfOutlined, DeleteOutlined, EyeOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import moment from "moment";
 import "../../index.css";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { HomeOutlined } from '@mui/icons-material';
+import Swal from 'sweetalert2';
 
 const { Search } = Input;
 const { Option } = Select;
+
+
+// Navigation menu items for the dashboard
+const menuItems = [
+  { name: 'HOME', path: '/products/productdashboard' },
+  { name: 'PRODUCTION', path: '/products/production-overview' },
+  { name: 'QUALITY', path: '/products/quality-control' },
+  { name: 'PACKAGING', path: '/products/packaging-labeling' }
+];
 
 const ProductionScheduleOverview = () => {
   const [schedules, setSchedules] = useState([]);
@@ -24,6 +36,8 @@ const ProductionScheduleOverview = () => {
   const [filterStatus, setFilterStatus] = useState("All");
   const [sorter, setSorter] = useState({ field: null, order: null });
   const navigate = useNavigate();
+  const location = useLocation();
+  const activePage = location.pathname;
 
   // Fetch schedules from API
   const fetchSchedules = async () => {
@@ -121,30 +135,70 @@ const ProductionScheduleOverview = () => {
     navigate(`/products/editschedule/${id}`);
   };
 
+
+  // Confirm delete
+  const confirmDelete = (scheduleId) => {
+    Swal.fire({
+      title: "Are you sure you want to delete this schedule?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDelete(scheduleId);
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your schedule has been deleted.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    });
+  };
+
   // Handle delete
   const handleDelete = async (scheduleId) => {
     try {
       await axios.delete(`http://localhost:5000/api/production/${scheduleId}`);
       fetchSchedules(); // Refresh the schedule list
     } catch (error) {
-      console.error("Error deleting schedule:", error);
-      Modal.error({
-        title: 'Error',
-        content: 'Failed to delete the schedule. Please try again later.',
+      Swal.fire({
+        title: "Error!",
+        text: `Failed to delete the schedule. ${error.response?.data?.message || 'Please try again.'}`,
+        icon: "error",
       });
     }
   };
 
-  // Confirm delete
-  const confirmDelete = (scheduleId) => {
-    Modal.confirm({
-      title: "Are you sure you want to delete this schedule?",
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-      onOk: () => handleDelete(scheduleId),
-    });
-  };
+  // // Handle delete
+  // const handleDelete = async (scheduleId) => {
+  //   try {
+  //     await axios.delete(`http://localhost:5000/api/production/${scheduleId}`);
+  //     fetchSchedules(); // Refresh the schedule list
+  //   } catch (error) {
+  //     console.error("Error deleting schedule:", error);
+  //     Modal.error({
+  //       title: 'Error',
+  //       content: 'Failed to delete the schedule. Please try again later.',
+  //     });
+  //   }
+  // };
+
+  // // Confirm delete
+  // const confirmDelete = (scheduleId) => {
+  //   Modal.confirm({
+  //     title: "Are you sure you want to delete this schedule?",
+  //     okText: "Yes",
+  //     okType: "danger",
+  //     cancelText: "No",
+  //     onOk: () => handleDelete(scheduleId),
+  //   });
+  // };
 
 // Function to get image data URL
 const getImageDataURL = (url) => {
@@ -163,75 +217,123 @@ const getImageDataURL = (url) => {
     img.src = url;
   });
 };
-
-// Generate PDF report
+  
 const generatePDF = async () => {
   const doc = new jsPDF();
 
   // Load the logo image
-  const logoUrl = '../src/assets/logo.png'; 
+  const logoUrl = '../src/assets/logo.png';
+  let logoDataURL;
   try {
-    const logoDataURL = await getImageDataURL(logoUrl);
-
-    // Add the logo image to the PDF
-    doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
-
+    logoDataURL = await getImageDataURL(logoUrl);
   } catch (error) {
     console.error('Failed to load the logo image:', error);
   }
 
-  // Define the table columns
-  const columns = [
-    { title: "Product Type", dataKey: "productType" },
-    { title: "Quantity", dataKey: "quantity" },
-    { title: "Start Date", dataKey: "startDate" },
-    { title: "End Date", dataKey: "endDate" },
-    { title: "Status", dataKey: "status" },
-    { title: "Progress", dataKey: "progress" },
+  // Function to draw header, footer, and horizontal line
+  const drawHeaderFooter = (data) => {
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+
+    // Header with logo
+    if (logoDataURL) {
+      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 10); // Adjust position and size
+    }
+    doc.setFontSize(12);
+    doc.text("Sobha Plantation", 170, 15); // Adjust x, y position
+    doc.line(10, 25, pageWidth - 10, 25); // Line under header
+
+    // Footer with page number
+    doc.setFontSize(10);
+    doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
+  };
+
+  // Set the margins for header and footer space
+  const marginTop = 30; // space reserved for header
+  const marginBottom = 20; // space reserved for footer
+
+  // Title of the report
+  doc.setFontSize(22);
+  doc.text("Production Schedule Report", 50 , 35); // Adjust y-coordinate to start below header
+
+  // Calculate status summary
+  const statusSummary = filteredSchedules.reduce((summary, schedule) => {
+    const status = schedule.status;
+    if (!summary[status]) {
+      summary[status] = 0;
+    }
+    summary[status]++;
+    return summary;
+  }, {});
+
+  // Convert status summary to an array for the table
+  const statusRows = Object.entries(statusSummary).map(([status, count]) => [status, count]);
+
+  // First Table: Overview Details
+  const overviewHeaders = [['Detail', 'Value']];
+  const overviewRows = [
+    ['Total Schedules', `${filteredSchedules.length}`],
+    ['Total Quantity', `${filteredSchedules.reduce((sum, item) => sum + item.quantity, 0)}`],
   ];
 
-  // Map the filteredSchedules data to match the columns
-  const rows = filteredSchedules.map(schedule => ({
-    productType: schedule.productType,
-    quantity: schedule.quantity,
-    startDate: moment(schedule.startDate).format('YYYY-MM-DD'),
-    endDate: moment(schedule.endDate).format('YYYY-MM-DD'),
-    status: schedule.status,
-    progress: schedule.progress,
-  }));
-
-  // Add title and table
-  doc.setFontSize(22);
-  doc.text("Production Schedule Report", 50, 40); // Adjust y-coordinate as needed
+  // Add status details to the overview
+  statusRows.forEach(([status, count]) => {
+    overviewRows.push([`Total ${status} Schedules`, `${count}`]);
+  });
 
   doc.autoTable({
-    columns: columns,
-    body: rows,
-    startY: 50, 
-    margin: { horizontal: 10 },
+    startY: marginTop + 20, // Start the first table below the header space
+    head: overviewHeaders,
+    body: overviewRows,
+    margin: { top: marginTop, bottom: marginBottom, horizontal: 10 },
     styles: {
       fontSize: 10,
     },
     headStyles: {
-      fillColor: [64, 133, 126], 
-      textColor: [255, 255, 255], 
+      fillColor: [64, 133, 126],
+      textColor: [255, 255, 255],
+      fontSize: 12,
+    },
+    theme: 'grid',
+    didDrawPage: drawHeaderFooter, // Add header and footer to each page
+  });
+
+  // Second Table: Production Schedule Data
+  const scheduleRows = filteredSchedules.map(schedule => [
+    schedule.productType,
+    schedule.quantity,
+    moment(schedule.startDate).format('YYYY-MM-DD'),
+    moment(schedule.endDate).format('YYYY-MM-DD'),
+    schedule.status,
+    `${schedule.progress}%`
+  ]);
+
+  const scheduleHeaders = [['Product Type', 'Quantity', 'Start Date', 'End Date', 'Status', 'Progress (%)']];
+
+  let finalY = doc.lastAutoTable.finalY + 10; // Adjust space between tables
+
+  doc.autoTable({
+    startY: finalY,  // Start this table below the first table
+    head: scheduleHeaders,
+    body: scheduleRows,
+    margin: { top: marginTop, bottom: marginBottom, horizontal: 10 },
+    styles: {
+      fontSize: 10,
+    },
+    headStyles: {
+      fillColor: [64, 133, 126],
+      textColor: [255, 255, 255],
       fontSize: 12,
     },
     theme: 'striped',
-    didDrawPage: (data) => {
-      // Add page number to footer
-      const pageNumber = doc.internal.getNumberOfPages();
-      const pageWidth = doc.internal.pageSize.width;
-      const pageHeight = doc.internal.pageSize.height;
-
-      doc.setFontSize(10);
-      doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10); // Adjust position as needed
-    },
+    didDrawPage: drawHeaderFooter,
   });
 
   // Save the PDF
-  doc.save("production_schedule_report.pdf");
+  doc.save('production_schedule_report.pdf');
 };
+
+const isActive = (page) => activePage === page;
 
 
   return (
@@ -241,81 +343,50 @@ const generatePDF = async () => {
         <Sidebar />
         <div className="ml-[300px] pt-3 flex-1">
           {/* Navigation Bar */}
-          <nav className="p-4 mb-5">
-            <div className="container flex items-center justify-between mx-auto space-x-4">
-              <div
-                className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform bg-gray-200 rounded-41xl hover:bg-gray-300"
-                onClick={onBackClick}
-              >
-                <ArrowBack className="text-gray-700" />
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onHomeClick}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Home
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white text-white"
-                onClick={onGroupContainerClick}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Production Overview
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400  flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick1}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Quality Control
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400  flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick2}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Packaging
-                </a>
-              </div>
+          <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
+            <div className="flex items-center justify-center">
+              <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
+                <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
+                {menuItems.map((item) => (
+                  <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
+                    <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
+                  </li>
+                ))}
+              </ul>
             </div>
           </nav>
 
-          {/* Breadcrumbs */}
-          <Breadcrumb style={{ marginBottom: 16, marginLeft: 16 }}>
-            <Breadcrumb.Item onClick={onHomeClick}>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>Production Overview</Breadcrumb.Item>
-          </Breadcrumb>
 
-          {/* <div className="flex space-x-4">
-          <Button
-        className="flex items-center text-white bg-green-500 rounded-md shadow-md hover:bg-green-600"
-        onClick={() => navigate("/products/production-overview")}
-        >
-          <EventNoteSharpIcon className="mr-2" />
-          Schedule
-        </Button>
-        <Button
-          className="flex items-center text-white bg-blue-500 rounded-md shadow-md hover:bg-blue-600"
-          onClick={() => navigate("/products/gallery")}
-        >
-          <CollectionsSharpIcon className="mr-2" />
-          Gallery
-        </Button>
-      
-      </div> */}
+  {/* Breadcrumb and Gallery Button */}
+  <div className="flex items-center justify-between mb-5">
+          <Breadcrumb
+            items={[
+              {
+                href: '',
+                title: <HomeOutlined />,
+              },
+              {
+                title: 'Products',
+              },
+              {
+                title: 'Production Overview',
+              },
+            ]}
+          />
+      </div>
+
 
           {/* Page Header */}
           <header className="flex items-center justify-between px-6 py-4 mb-6 bg-white shadow-md">
-            <h1 className="text-2xl font-bold">Production Schedule Overview</h1>
+            <h1 className="text-2xl font-bold"
+            style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>
+              Production Schedule Overview</h1>
             <div className="flex items-center space-x-4">
               <Search
                 placeholder="Search by product type"
-                onSearch={onSearch}
-                style={{ width: 200 }}
+                onChange={(e) => onSearch(e.target.value)} // Trigger search as user types
+                style={{ width: 200, marginRight: 16 }} // Added marginRight for spacing
+                allowClear
               />
               <Select
                 defaultValue="All"
@@ -330,15 +401,17 @@ const generatePDF = async () => {
               </Select>
               <Button 
                 type="primary" 
-                style={{ backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
+                style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
                 onClick={generatePDF} 
+                icon={<FilePdfOutlined />}
               >
                 Generate PDF
               </Button>
               <Button 
                 type="primary" 
-                style={{ backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
+                style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
                 onClick={() => navigate('/products/addschedule')} 
+                icon={<PlusOutlined />}
               >
                 Add Schedule
               </Button>
@@ -398,32 +471,37 @@ const generatePDF = async () => {
                     title: 'Actions',
                     render: (text, record) => (
                       <div>
+              
                       <Button 
+                      icon={<EditOutlined  />}
                         onClick={() => handleUpdate(record._id)} 
                         style={{ marginRight: 8, backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff' }} // Blue color
                       >
-                        Edit
+                        
                       </Button>
                       <Button 
+                      icon={<DeleteOutlined />} 
                         onClick={() => confirmDelete(record._id)} 
                         type="danger"
                         style={{ backgroundColor: '#ff4d4f', borderColor: '#ff4d4f', color: '#fff' }} // Red color
                       >
-                        Delete
+                        
                       </Button>
                     </div>
 
                     ),
                   },
                 ]}
+                pagination={{ pageSize: 10 }}
                 rowKey="_id"
-                pagination={false}
+                // pagination={false}
               />
             </div>
           </main>
         </div>
       </div>
     </div>
+    
   );
 };
 
