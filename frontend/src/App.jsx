@@ -123,7 +123,7 @@ import Gallery  from "./pages/Products/Gallery.jsx";
 
 // field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
-import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
+import VarietyCrop from "./pages/CropVarieties/VarietyCrop.jsx";
 import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
 import Seedling from "./pages/CropVarieties/Seedling.jsx";
 import Schedules from "./pages/CropVarieties/Schedules.jsx";
@@ -156,7 +156,7 @@ export default function App() {
       <Route path="/salesAndFinance/sales/analytics" element={<SalesAnalyticsPage />} />
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
       <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} />
-      <Route path="/salesAndFinance/finance/transaction-update/:id" element={<UpdateTransactionPage />} />
+      {/* <Route path="/salesAndFinance/finance/transaction-update/:id" element={<UpdateTransactionPage />} /> */}
       <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
       <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />
 
@@ -245,10 +245,10 @@ export default function App() {
       <Route path="/papayaRingspot" element={<PapayaRingspot />} />
       <Route path="/fusariumWilt" element={<FusariumWilt />} />
       <Route path="/powderyMildew" element={<PowderyMildew />} />
-      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />}
+      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />} />
 
 
-      {/* product */}
+      {/* product*/}
       <Route path="/products/productdashboard" element={<ProductsDashboard />} />
       <Route path="/products/production-overview" element={<ProductionScheduleOverview />} />
       <Route path="/products/quality-control" element={<QualityControl />} />
@@ -282,7 +282,7 @@ export default function App() {
       <Route path="/profile" element={<Profile />} />
 
       {/* page not found & error page */}
-      <Route path="/test" element={<Test />} />
+      {/* <Route path="/test" element={<Test />} /> */}
 
       <Route path="*" element={<PageError />} />
     </Routes>
