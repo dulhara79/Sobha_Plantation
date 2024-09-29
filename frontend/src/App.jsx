@@ -76,7 +76,7 @@ import EditComplianceCheck from "./pages/Harvest/EditComplianceCheck.jsx";
 import YieldBarChart from "./pages/Harvest/YieldBarChart.jsx";
 import HarvestQuality from "./pages/Harvest/HarvestQuality";
 import AddInspection from "./pages/Harvest/AddInspection.jsx";
-import EditInspection from "./pages/Harvest/EditInspection.jsx"
+import EditInspection from "./pages/Harvest/EditInspection.jsx";
 
 /**
  * crop care new paths
@@ -178,6 +178,7 @@ import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
  * page not found & error page
  */
 import PageError from "./pages/PageError.jsx";
+
 export default function App() {
   return (
     <Routes>
@@ -332,6 +333,7 @@ export default function App() {
       <Route path="/harvest/quality" element={<HarvestQuality />} />
       <Route path="/quality/addinspection" element={<AddInspection/>} />
       <Route path="/quality/editinspection/:id" element={<EditInspection/>} />
+
       {/* new crop care (diseases) */}
       <Route path="/diseases" element={<DiseasesDashboard />} />
       <Route path="/coconutInspections" element={<CoconutInspections />} />
