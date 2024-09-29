@@ -16,6 +16,7 @@ import "jspdf-autotable";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { HomeOutlined } from '@mui/icons-material';
 import Swal from 'sweetalert2';
+import LoadingDot from '../../components/LoadingDots'; 
 
 const { Search } = Input;
 const { Option } = Select;
@@ -38,17 +39,23 @@ const ProductionScheduleOverview = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const activePage = location.pathname;
+  const [loading, setLoading] = useState(true);
 
   // Fetch schedules from API
   const fetchSchedules = async () => {
+  
     try {
+      setTimeout(async () => {
       const response = await axios.get("http://localhost:5000/api/production");
       if (response.data.success) {
         setSchedules(response.data.data);
         setFilteredSchedules(response.data.data);
       } else {
         console.log("Error: Unable to fetch schedules, success flag not true");
-      }
+      } 
+      setLoading(false); // Stop loading after data fetch
+    }, 150); // Adjust the delay as needed
+      
     } catch (error) {
       console.error("Error fetching schedules:", error);
     }
@@ -335,6 +342,7 @@ const generatePDF = async () => {
 
 const isActive = (page) => activePage === page;
 
+if (loading) return <LoadingDot />;
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
