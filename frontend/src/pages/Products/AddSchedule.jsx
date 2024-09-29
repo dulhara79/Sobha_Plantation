@@ -57,14 +57,11 @@ const AddSchedule = () => {
         popup: 'swal-custom-popup',
         title: 'swal-custom-title',
         html: 'swal-custom-html',
-        confirmButton: 'swal-confirm-button', // Custom class for confirm button
-      cancelButton: 'swal-cancel-button',
+        confirmButton: 'swal-confirm-button',
+        cancelButton: 'swal-cancel-button',
       },
       focusCancel: false,
     });
-
-    console.log("Form data:", formData);
-    console.log("result.isConfirmed:", result.isConfirmed);
 
     if (result.isConfirmed) {
       try {
@@ -75,11 +72,7 @@ const AddSchedule = () => {
         };
 
         await axios.post('http://localhost:5000/api/production', payload);
-        Swal.fire(
-          "Success",
-          "Product Schedule successfully!",
-          "success"
-        );
+        Swal.fire("Success", "Product Schedule added successfully!", "success");
         form.resetFields();
         setFormData({});
         navigate('/products/production-overview');
@@ -120,6 +113,15 @@ const AddSchedule = () => {
     setErrors(newErrors);
   };
 
+  // Disable copy-pasting in input fields
+  const handlePreventPaste = (e) => {
+    e.preventDefault();
+    notification.warning({
+      message: 'Paste Disabled',
+      description: 'Copy-pasting is disabled for this field.',
+    });
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
@@ -138,6 +140,7 @@ const AddSchedule = () => {
             <Select
               placeholder="Select a product type"
               onChange={(value) => handleFieldChange('productType', value)}
+              onPaste={handlePreventPaste} // Prevent paste
             >
               <Option value="coconut-oil">Coconut Oil</Option>
               <Option value="coconut-water">Coconut Water</Option>
@@ -154,26 +157,39 @@ const AddSchedule = () => {
             rules={[{ required: true, message: 'Please enter the quantity!' }]}
           >
             <InputNumber
-              placeholder="Enter quantity"
-              min={1}
-              max={100}
-              disabled={!formData.productType} // Disable based on previous field
-              onChange={(value) => handleFieldChange('quantity', value)} // Update value on change
-              style={{ width: '100%' }} // Ensure it fits the layout
-              parser={(value) => value.replace(/\D/g, '')} // Allow only numbers
-              onKeyPress={(e) => {
-                if (!/[0-9]/.test(e.key)) {
-                  e.preventDefault(); // Prevent non-numeric input
-                }
-              }}
-              onBlur={(e) => {
-                const value = e.target.value;
-                // Clear input if invalid after focus loss
-                if (value && (value < 1 || value > 100)) {
-                  form.setFieldsValue({ quantity: undefined });
-                }
-              }}
-            />
+                placeholder="Enter quantity"
+                min={1}
+                max={100}
+                disabled={!formData.productType}
+                onChange={(value) => handleFieldChange('quantity', value)}
+                style={{ width: '100%' }}
+                parser={(value) => value.replace(/\D/g, '')} // Only allow digits
+                onKeyPress={(e) => {
+                  const key = e.key;
+                  const currentValue = e.target.value;
+
+                  // Only allow numbers between 0-9
+                  if (!/[0-9]/.test(key)) {
+                    e.preventDefault(); // Prevent non-numeric input
+                  }
+
+                  // Prevent typing a value greater than 100 or less than 1
+                  if ((currentValue === '' && key === '0') || parseInt(currentValue + key) > 100) {
+                    e.preventDefault();
+                  }
+                }}
+                onBlur={(e) => {
+                  const value = e.target.value;
+
+                  // If the value exceeds 100, reset it to 100 or if it's less than 1, reset it to 1
+                  if (value > 100) {
+                    form.setFieldsValue({ quantity: 100 });
+                  } else if (value < 1) {
+                    form.setFieldsValue({ quantity: 1 });
+                  }
+                }}
+                onPaste={handlePreventPaste} // Prevent paste
+              />
           </Form.Item>
 
           <Form.Item
@@ -186,8 +202,9 @@ const AddSchedule = () => {
               disabledDate={disableStartDates}
               style={{ width: '100%' }}
               disabled={!formData.productType || !formData.quantity}
-              inputReadOnly // Disable manual input
+              inputReadOnly
               onChange={(date) => handleFieldChange('startDate', date)}
+              onPaste={handlePreventPaste} // Prevent paste
             />
           </Form.Item>
 
@@ -201,9 +218,10 @@ const AddSchedule = () => {
               format="YYYY-MM-DD"
               disabledDate={disableEndDates}
               style={{ width: '100%' }}
-              disabled={!formData.productType || !formData.quantity || !formData.startDate} // Disable based on previous field
-              inputReadOnly // Disable manual input
+              disabled={!formData.productType || !formData.quantity || !formData.startDate}
+              inputReadOnly
               onChange={(date) => handleFieldChange('endDate', date)}
+              onPaste={handlePreventPaste} // Prevent paste
             />
           </Form.Item>
 
@@ -218,7 +236,8 @@ const AddSchedule = () => {
                 handleStatusChange(value);
                 handleFieldChange('status', value);
               }}
-              disabled={!formData.productType || !formData.quantity || !formData.startDate || !formData.endDate} // Disable based on previous field
+              disabled={!formData.productType || !formData.quantity || !formData.startDate || !formData.endDate}
+              onPaste={handlePreventPaste} // Prevent paste
             >
               <Option value="Scheduled">Scheduled</Option>
               <Option value="In Progress">In Progress</Option>
@@ -229,16 +248,43 @@ const AddSchedule = () => {
           <Form.Item
             label="Progress (%)"
             name="progress"
-            rules={[{ required: true, message: 'Progress is required!' },
-                     { type: 'number', min: 0, max: 100, message: 'Progress must be between 0 and 100!' }]}
+            rules={[
+              { required: true, message: 'Progress is required!' },
+              { type: 'number', min: 0, max: 100, message: 'Progress must be between 0 and 100!' },
+            ]}
           >
             <InputNumber
-              placeholder="Enter progress percentage"
-              onChange={(value) => handleFieldChange('progress', value)}
-              disabled={!formData.productType || !formData.quantity || !formData.startDate || !formData.endDate || !formData.status} // Disable based on previous field
-              min={0}
-              max={100}
-              style={{ width: '100%' }} // Ensure it fits the layout
+                placeholder="Enter progress percentage"
+                onChange={(value) => handleFieldChange('progress', value)}
+                disabled={!formData.productType || !formData.quantity || !formData.startDate || !formData.endDate || !formData.status}
+                min={0}
+                max={100}
+                style={{ width: '100%' }}
+                onKeyPress={(e) => {
+                  const key = e.key;
+                  const currentValue = e.target.value;
+
+                  // Only allow numbers between 0-9
+                  if (!/[0-9]/.test(key)) {
+                    e.preventDefault();
+                  }
+
+                  // Prevent typing a value greater than 100
+                  if (currentValue + key > 100 || currentValue + key < 0) {
+                    e.preventDefault();
+                  }
+                }}
+                onBlur={(e) => {
+                  const value = e.target.value;
+
+                  // If the value exceeds 100, reset it to 100 or if it's less than 0, reset it to 0
+                  if (value > 100) {
+                    form.setFieldsValue({ progress: 100 });
+                  } else if (value < 0) {
+                    form.setFieldsValue({ progress: 0 });
+                  }
+                }}
+                onPaste={handlePreventPaste} // Prevent paste
             />
           </Form.Item>
 
@@ -247,15 +293,12 @@ const AddSchedule = () => {
               <Button
                 type="primary"
                 htmlType="submit"
-                style={{ width: '48%', backgroundColor: '#1D6660', borderColor: '#1D6660' }} // Custom styles
+                style={{ width: '48%', backgroundColor: '#1D6660', borderColor: '#1D6660' }}
               >
+
                 Add Schedule
               </Button>
-              <Button
-                type="default"
-                onClick={handleCancel}
-                style={{ width: '48%' }} // Ensure it fits the layout
-              >
+              <Button type="default" onClick={handleCancel} style={{ width: '48%' }}>
                 Cancel
               </Button>
             </div>
