@@ -13,6 +13,8 @@ import "../../index.css";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { HomeOutlined } from '@mui/icons-material';
 import Swal from 'sweetalert2';
+import LoadingDot from '../../components/LoadingDots'; 
+
 
 const { Search } = Input;
 const { Option } = Select;
@@ -31,6 +33,7 @@ const QualityControl = () => {
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [sorter, setSorter] = useState({ field: null, order: null });
+  const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState({
     totalInspections: 0,
     passRate: 0,
@@ -43,6 +46,7 @@ const QualityControl = () => {
   // Fetch quality controls from API
   const fetchQualityControls = async () => {
     try {
+      setTimeout(async () => {
       const response = await axios.get("http://localhost:5000/api/quality-control");
       if (response.data.success) {
         const data = response.data.data;
@@ -52,6 +56,8 @@ const QualityControl = () => {
       } else {
         console.log("Error: Unable to fetch quality controls, success flag not true");
       }
+      setLoading(false); // Stop loading after data fetch
+    }, 150); // Adjust the delay as needed
     } catch (error) {
       console.error("Error fetching quality controls:", error);
     }
@@ -259,7 +265,7 @@ const generatePDF = async () => {
 
   // Title of the report
   doc.setFontSize(22);
-  doc.text("Quality Control Report", 50, 35); // Adjust y-coordinate to start below header
+  doc.text("Quality Control Report", 65, 35); // Adjust y-coordinate to start below header
 
   // Calculate the status summary
   const statusSummary = filteredQualityControls.reduce((summary, qc) => {
@@ -354,6 +360,8 @@ const generatePDF = async () => {
 
   const isActive = (page) => activePage === page;
   
+  if (loading) return <LoadingDot />;
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Header />
