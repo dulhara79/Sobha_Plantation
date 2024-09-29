@@ -10,6 +10,9 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { HomeOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import Swal from 'sweetalert2';
+
 
 
 const { Search } = Input;
@@ -116,19 +119,41 @@ const YieldRecords = () => {
   
     // Load the logo image
     const logoUrl = '../src/assets/logo.png';
+    let logoDataURL;
     try {
-      const logoDataURL = await getImageDataURL(logoUrl);
-      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
+      logoDataURL = await getImageDataURL(logoUrl);
     } catch (error) {
       console.error('Failed to load the logo image:', error);
     }
   
-    // Add title for the report
+    // Function to draw header, footer, and horizontal line
+    const drawHeaderFooter = (data) => {
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+  
+      // Header with logo
+      if (logoDataURL) {
+        doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 15); // Adjust position and size of the logo
+      }
+      doc.setFontSize(12);
+      doc.text("Sobha Plantation", 170, 20); // Adjust text position
+      doc.line(10, 25, pageWidth - 10, 25); // Line under header
+  
+      // Footer with page number
+      doc.setFontSize(10);
+      doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
+    };
+  
+    // Set the margins for header and footer space
+    const marginTop = 30; // space reserved for header
+    const marginBottom = 20; // space reserved for footer
+  
+    // Title for the report
     doc.setFontSize(22);
-    doc.text("Yield Records Report", 70, 40);
+    doc.text("Yield Records Report", 70, 35); // Adjust y-coordinate to fit under the header
   
     // Define the table columns and rows
-    const tableColumn = ["Harvest Date","Field Number" ,"Crop Type", "Quantity", "Trees Picked", "Storage Location"];
+    const tableColumn = ["Harvest Date", "Field Number", "Crop Type", "Quantity", "Trees Picked", "Storage Location"];
     const tableRows = filteredSchedules.map((schedule) => [
       moment(schedule.harvestdate).format("YYYY-MM-DD"),
       schedule.fieldNumber,
@@ -138,33 +163,28 @@ const YieldRecords = () => {
       schedule.storageLocation,
     ]);
   
-    // Add the table to the PDF
+    // Add table to the PDF
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
-      startY: 60,
-      margin: { horizontal: 10 },
-      styles: { fontSize: 10 },
+      startY: marginTop + 20, // Start table after the title
+      margin: { top: marginTop, bottom: marginBottom, horizontal: 10 },
+      styles: {
+        fontSize: 10,
+      },
       headStyles: {
         fillColor: [64, 133, 126],
         textColor: [255, 255, 255],
         fontSize: 12,
       },
       theme: 'striped',
-      didDrawPage: (data) => {
-        const pageNumber = doc.internal.getNumberOfPages();
-        const pageWidth = doc.internal.pageSize.width;
-        const pageHeight = doc.internal.pageSize.height;
-  
-        doc.setFontSize(10);
-        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10);
-      },
+      didDrawPage: drawHeaderFooter, // Add header and footer to each page
     });
   
     // Save the PDF
     doc.save("yield_records_report.pdf");
   };
-
+  
   const getImageDataURL = (url) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -185,8 +205,6 @@ const YieldRecords = () => {
   
   
   
-  
-
   const handleSort = (field, order) => {
     setSorter({ field, order });
     filterSchedules(searchText, filterStatus);
@@ -200,38 +218,39 @@ const YieldRecords = () => {
   const handleUpdate = (id) => {
     navigate(`/yield/editrecords/${id}`);
   };
-
-  const confirmDelete = (id) => {
-    Modal.confirm({
+  const confirmDelete = (scheduleId) => {
+    Swal.fire({
       title: "Are you sure you want to delete this schedule?",
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-      onOk: () => handleDelete(id),
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDelete(scheduleId);
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your schedule has been deleted.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
     });
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (scheduleId) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/yield/${id}`);
-      if (response.status === 200) {
-        notification.success({
-          message: 'Success',
-          description: 'Yield record deleted successfully!',
-        });
-        // Update local state to remove the deleted record
-        setFilteredSchedules(filteredSchedules.filter(record => record._id !== id));
-      } else {
-        notification.error({
-          message: 'Error',
-          description: 'There was an error deleting the yield record.',
-        });
-      }
+      const response = await axios.delete(`http://localhost:5000/api/yield/${scheduleId}`);
+      fetchSchedules()
     } catch (error) {
-      console.error('Error deleting schedule:', error.response?.data?.message || error.message);
-      notification.error({
-        message: 'Error',
-        description: error.response?.data?.message || 'There was an error deleting the yield record.',
+      Swal.fire({
+        title: "Error!",
+        text: `Failed to delete the inspection. ${error.response?.data?.message || 'Please try again.'}`,
+        icon: "error",
       });
     }
   };
@@ -348,10 +367,10 @@ const YieldRecords = () => {
                   key: "actions",
                   render: (text, record) => (
                     <span>
-                      <Button type="link" onClick={() => handleUpdate(record._id)}>
+                      <Button type="link" icon={<EditOutlined />} onClick={() => handleUpdate(record._id) } >
                         Edit
                       </Button>
-                      <Button type="link" danger onClick={() => confirmDelete(record._id)}>
+                      <Button type="link" danger   icon={<DeleteOutlined />} onClick={() => confirmDelete(record._id)}>
                         Delete
                       </Button>
                     </span>

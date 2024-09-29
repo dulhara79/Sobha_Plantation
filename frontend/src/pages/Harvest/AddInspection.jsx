@@ -141,11 +141,11 @@ const AddInspection = () => {
               onChange={(value) => handleFieldChange('cropType', value)}
               style={{ width: '100%' }}
             >
-              <Option value="coconut">Coconut</Option>
-              <Option value="banana">Banana</Option>
-              <Option value="papaya">Papaya</Option>
-              <Option value="pineapple">Pineapple</Option>
-              <Option value="pepper">Pepper</Option>
+              <Option value="Coconut">Coconut</Option>
+              <Option value="Banana">Banana</Option>
+              <Option value="Papaya">Papaya</Option>
+              <Option value="Pineapple">Pineapple</Option>
+              <Option value="Pepper">Pepper</Option>
             </Select>
           </Form.Item>
 

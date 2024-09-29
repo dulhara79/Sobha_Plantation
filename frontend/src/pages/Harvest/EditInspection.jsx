@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Form, Input, DatePicker, Select, Button, notification } from 'antd';
 import moment from 'moment';
 import Swal from 'sweetalert2';
+import Sidebar from "../../components/Sidebar";
+import Header from "../../components/Header";
 
 const { Option } = Select;
 
@@ -118,6 +120,10 @@ const EditInspection = () => {
   };
 
   return (
+    <div className="flex h-screen">
+    <Sidebar />
+    <div className="flex flex-col flex-grow">
+      <Header />
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
         <h2 className="mb-6 text-2xl font-bold text-center" style={{ color: '#1D6660' }}>Edit Inspection Report</h2>
@@ -202,6 +208,8 @@ const EditInspection = () => {
           </Form.Item>
         </Form>
       </div>
+    </div>
+    </div>
     </div>
   );
 };

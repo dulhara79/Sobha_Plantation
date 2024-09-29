@@ -233,25 +233,16 @@ const generatePDF = async () => {
   doc.setFontSize(22);
   doc.text("Quality Report", 50, 35); // Adjust y-coordinate to start below header
 
-  // // Calculate the status summary
-  // const statusSummary = filteredQualityControls.reduce((summary, qc) => {
-  //   const qualityStatus = qc.qualityStatus; // Assuming status can be "Pass" or "Fail"
-  //   if (!summary[qualityStatus]) {
-  //     summary[qualityStatus] = 0;
-  //   }
-  //   summary[qualityStatus]++;
-  //   return summary;
-  // }, {});
-
-  // const totalPass = statusSummary["Pass"] || 0;
-  // const totalFail = statusSummary["Fail"] || 0;
+  // Use metrics to get pass and fail counts
+  const totalPass = metrics.passCount;
+  const totalFail = metrics.failCount;
 
   // Define the overview details
   const overviewHeaders = [['Detail', 'Value']];
   const overviewRows = [
     ['Total Inspections', `${metrics.totalInspections}`],
-    ['Pass Rate', `${metrics.passRate}%`],
-    ['Fail Rate', `${metrics.failRate}%`],
+    ['Pass Count', `${totalPass}`], // Display correct pass count
+    ['Fail Count', `${totalFail}`], // Display correct fail count
   ];
 
   // Add Overview Details Table
@@ -357,19 +348,28 @@ const generatePDF = async () => {
             ]}
           />
       </div>
-
-{/* Metrics */}
 {/* Pass/Fail Rates Table */}
-<div className="flex flex-col p-4 bg-white rounded shadow-md" style={{ marginTop: "24px" }}>
-        <h2 className="mb-4 text-xl font-semibold" style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>
-          Pass/Fail Rates
-        </h2>
-        
-        <Table dataSource={passFailData} rowKey="name">
-          <Table.Column title="Status" dataIndex="name" key="name" />
-          <Table.Column title="Count" dataIndex="count" key="count" />
-        </Table>
-      </div>
+<div className="flex flex-col p-4 bg-white rounded shadow-md items-center" style={{ marginTop: "24px", maxWidth: "900px", margin: "0 auto" }}>
+  <h2 className="mb-4 text-xl font-semibold" style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>
+    Pass/Fail Count
+  </h2>
+
+  <Table
+    dataSource={[
+      ...passFailData,
+      { name: "Total Inspections", count: metrics.totalInspections },  // Adding total inspections row
+    ]}
+    rowKey="name"
+    pagination={false}
+    size="medium"
+    style={{ width: '75%' }}
+  >
+    <Table.Column title="Status" dataIndex="name" key="name" />
+    <Table.Column title="Count" dataIndex="count" key="count" />
+  </Table>
+</div>
+
+
 
 
 
