@@ -22,38 +22,47 @@ const AddInspectionReport = () => {
     if (!value) {
       return Promise.reject(new Error('Please enter the inspector name!'));
     }
-    if (!/^[A-Z][a-z\s]*$/.test(value)) {
-      return Promise.reject(new Error('Inspector name must start with an uppercase letter and only contain lowercase letters and spaces.'));
+    if (!/^[A-Z][a-z]*$/.test(value)) {
+      return Promise.reject(new Error('Inspector name must start with an uppercase letter and only contain lowercase letters.'));
     }
     return Promise.resolve();
   };
 
   const handleInspectorNameChange = (e) => {
     const inputValue = e.target.value;
-  
-    // Only allow the first letter to be uppercase, and prevent lowercase as the first character
-    let formattedValue = inputValue;
-  
-    // If the first character is lowercase, prevent it from being typed
-    if (formattedValue.length === 1 && /[a-z]/.test(formattedValue)) {
-      formattedValue = ''; // Disable lowercase first letter
+
+    // Check if the input starts with an uppercase letter
+    if (inputValue.length === 0 || /^[A-Z]/.test(inputValue)) {
+      // Prevent spaces and only allow letters
+      let formattedValue = inputValue
+        .replace(/\s+/g, '') // Remove all spaces
+        .replace(/[^a-zA-Z]/g, ''); // Remove non-letter characters
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        inspectorName: formattedValue,
+      }));
+
+      // Update the form field value
+      form.setFieldsValue({ inspectorName: formattedValue });
     } else {
-      // After the first letter, allow letters and spaces, but convert everything after the first letter to lowercase
-      formattedValue = formattedValue
-        .replace(/[^a-zA-Z\s]/g, '') // Remove non-letter characters and numbers
-        .replace(/^([a-zA-Z])/, (m) => m.toUpperCase()) // Ensure first letter is uppercase
-        .replace(/(?<=^[A-Z])([A-Z]+)/g, (m) => m.toLowerCase()); // Convert any remaining uppercase letters to lowercase
+      // If the first letter is not uppercase, reset the input to the previous valid value
+      notification.warning({
+        message: 'Invalid Input',
+        description: 'The first letter must be uppercase.',
+      });
+      form.setFieldsValue({ inspectorName: formData.inspectorName }); // Restore the previous value
     }
-  
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      inspectorName: formattedValue,
-    }));
-  
-    // Update the form field value
-    form.setFieldsValue({ inspectorName: formattedValue });
   };
-  
+
+  // Disable copy/paste/cut for inspector name input
+  const handleCopyPasteCut = (e) => {
+    e.preventDefault();
+    notification.warning({
+      message: 'Action Disabled',
+      description: 'Copy, Paste, and Cut actions are disabled for this field.',
+    });
+  };
 
   // Confirm submission
   const handleSubmit = async (values) => {
@@ -71,15 +80,12 @@ const AddInspectionReport = () => {
         popup: 'swal-custom-popup',
         title: 'swal-custom-title',
         html: 'swal-custom-html',
-        confirmButton: 'swal-confirm-button', // Custom class for confirm button
-      cancelButton: 'swal-cancel-button',
+        confirmButton: 'swal-confirm-button',
+        cancelButton: 'swal-cancel-button',
       },
       focusCancel: false,
     });
 
-    console.log("Form data:", formData);
-    console.log("result.isConfirmed:", result.isConfirmed);
-    
     if (result.isConfirmed) {
       try {
         const payload = {
@@ -194,32 +200,26 @@ const AddInspectionReport = () => {
           <Form.Item
             label="Inspector Name (Mr/Ms)"
             name="inspectorName"
-            rules={[
-              { validator: validateInspectorName },
-            ]}
+            rules={[{ validator: validateInspectorName }]}
           >
             <Input
               placeholder="Enter inspector name"
               style={{ width: '100%' }}
               disabled={!formData.productType || !formData.inspectionDate || !formData.status}
               onChange={handleInspectorNameChange} // Updated handler for validation
+              onCopy={handleCopyPasteCut}
+              onCut={handleCopyPasteCut}
+              onPaste={handleCopyPasteCut}
             />
           </Form.Item>
 
-          <Form.Item>
-            <div className="flex justify-between">
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{ width: '48%', backgroundColor: '#1D6660', borderColor: '#1D6660' }}
-              >
-                Add Report
+          <div className="flex justify-between mt-4">
+            <Button type="primary" htmlType="submit" 
+            style={{ width: '48%', backgroundColor: '#1D6660', borderColor: '#1D6660' }}>
+              Submit
               </Button>
-              <Button type="default" onClick={handleCancel} style={{ width: '48%' }}>
-                Cancel
-              </Button>
-            </div>
-          </Form.Item>
+            <Button onClick={handleCancel} style={{ width: '48%' }} >Cancel</Button>
+          </div>
         </Form>
       </div>
     </div>
