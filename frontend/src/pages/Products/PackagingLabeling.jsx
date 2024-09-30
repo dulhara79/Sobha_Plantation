@@ -80,7 +80,7 @@ const PackagingLabeling = () => {
               title: "Products",
             },
             {
-              title: "Packaging",
+              title: "Packaging&Labeling",
             },
           ]}
         />

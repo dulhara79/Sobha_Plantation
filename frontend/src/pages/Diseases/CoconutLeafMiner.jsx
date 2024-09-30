@@ -7,9 +7,9 @@ import { Link } from "react-router-dom";
 import CoconutLeafMinerImage from "../../assets/DiseasesImages/CoconutLeafMiner.jpg";
 import LogoImage from "../../assets/Logo.png";
 import jsPDF from "jspdf";
-import "jspdf-autotable"; //in case needed to create tables
 
 const CoconutLeafMiner = () => {
+  
   // Function to generate PDF
   const generatePDF = () => {
     const doc = new jsPDF();

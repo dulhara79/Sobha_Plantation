@@ -31,7 +31,7 @@ const UserGreetingCard = () => {
   return (
     <div className={`flex items-center justify-between p-4 mt-4 bg-white rounded-lg shadow-xl`}>
       <div className=''>
-        <h2 className="font-bold text-5xlxl">Welcome, Dulhara</h2>
+        <h2 className="font-bold text-5xlxl">Welcome, </h2>
         <p className="text-xl text-gray-500">{currentDate} <span> at </span> {currentTime}</p>
       </div>
       <div className="flex items-center space-x-4">

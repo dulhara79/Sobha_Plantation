@@ -157,13 +157,13 @@ const AddProfile = () => {
                 Treatments
               </Link>
               <Link
-                to="/pests-diseases"
+                to="/CoconutPests"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 Pests and Diseases
               </Link>
               <Link
-                to="/maintenance"
+                to="/RegularMaintenance"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 Maintenance

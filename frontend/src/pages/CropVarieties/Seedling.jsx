@@ -304,10 +304,16 @@ const Seedling = () => {
           okText="Update"
           cancelText="Cancel"
         >
+          
           <Form form={form} layout="vertical">
-            <Form.Item label="Seedling Type" name="seedlingType" rules={[{ required: true, message: 'Please enter the seedling type!' }]}>
-              <Input />
-            </Form.Item>
+    <Form.Item label="Seedling Type" name="seedlingType" rules={[{ required: true, message: 'Please select the seedling type!' }]}>
+      <Select placeholder="Select a seedling type">
+        <Option value="coconut">Coconut</Option>
+        <Option value="pepper">Pepper</Option>
+        <Option value="banana">Banana</Option>
+        <Option value="pineapple">Pineapple</Option>
+      </Select>
+    </Form.Item>
             <Form.Item label="Current Quantity" name="currentQuantity" rules={[{ required: true, message: 'Please enter the current quantity!' }]}>
               <Input />
             </Form.Item>

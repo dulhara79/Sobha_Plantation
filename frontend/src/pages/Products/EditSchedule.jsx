@@ -107,14 +107,17 @@ const EditSchedule = () => {
     setErrors(newErrors);
   };
 
-  // Disable copy-pasting in input fields
-  const handlePreventPaste = (e) => {
+// Allow pasting only valid values
+const handlePaste = (e, validationFn) => {
+  const pasteData = e.clipboardData.getData('text');
+  if (!validationFn(pasteData)) {
     e.preventDefault();
-    notification.warning({
-      message: 'Paste Disabled',
-      description: 'Copy-pasting is disabled for this field.',
+    notification.error({
+      message: 'Invalid Paste',
+      description: 'The pasted value is invalid for this field.',
     });
-  };
+  }
+};
 
   const handleSubmit = async (values) => {
     const isFormValid = form.getFieldsError().every(({ errors }) => errors.length === 0);
@@ -176,7 +179,10 @@ const EditSchedule = () => {
             name="productType"
             rules={[{ required: true, message: 'Please select a product type!' }]}
           >
-            <Select placeholder="Select a product type" onChange={(value) => handleFieldChange("productType", value)}>
+            <Select placeholder="Select a product type" 
+            onChange={(value) => handleFieldChange("productType", value)}
+            onPaste={(e) => handlePaste(e, value => ['coconut-oil', 'coconut-water', 'coconut-milk', 'coconut-cream', 'coir', 'shell-products'].includes(value))}
+            >
               <Option value="coconut-oil">Coconut Oil</Option>
               <Option value="coconut-water">Coconut Water</Option>
               <Option value="coconut-milk">Coconut Milk</Option>
@@ -222,7 +228,7 @@ const EditSchedule = () => {
                     form.setFieldsValue({ quantity: 1 });
                   }
                 }}
-                onPaste={handlePreventPaste} // Prevent paste
+                onPaste={(e) => handlePaste(e, value => !isNaN(value) && value >= 1 && value <= 100)}
               />
           </Form.Item>
 
@@ -270,7 +276,7 @@ const EditSchedule = () => {
                 handleStatusChange(value);
                 handleFieldChange('status', value);
               }}
-              onPaste={handlePreventPaste} // Prevent paste
+              
             >
               <Option value="Scheduled">Scheduled</Option>
               <Option value="In Progress">In Progress</Option>
@@ -317,7 +323,7 @@ const EditSchedule = () => {
                     form.setFieldsValue({ progress: 0 });
                   }
                 }}
-                onPaste={handlePreventPaste} // Prevent paste
+                onPaste={(e) => handlePaste(e, value => !isNaN(value) && value >= 0 && value <= 100)}
             />
           </Form.Item>
 

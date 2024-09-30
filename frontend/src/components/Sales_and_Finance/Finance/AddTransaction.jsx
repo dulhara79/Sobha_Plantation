@@ -4,6 +4,7 @@ import { SnackbarProvider, useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { DatePicker } from "antd";
+import Swal from 'sweetalert2';
 
 export default function AddTransaction() {
   const [date, setDate] = useState("");
@@ -28,25 +29,110 @@ export default function AddTransaction() {
   // New state to handle disabled status of each field
   const [fieldDisabled, setFieldDisabled] = useState({
     subtype: true,
+    date: true,
     amount: true,
     description: true,
     payerPayee: true,
     method: true,
   });
 
+  const [amountError, setAmountError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [payeeError, setPayeeError] = useState("");
+
+  const [disabledSave, setDisabledSave] = useState(true);
+  
+
+  // const handleSaveTransactionRecord = async (e) => {
+  //   e.preventDefault();
+
+  //   if (
+  //     !date ||
+  //     !type ||
+  //     !subtype ||
+  //     !amount ||
+  //     !description ||
+  //     !payerPayee ||
+  //     !method
+  //   ) {
+  //     enqueueSnackbar("Please fill in all fields.", { variant: "error" });
+  //     return;
+  //   }
+
+  //   if (!amount || amount <= 0 || amount > 10000000) {
+  //     enqueueSnackbar("Please enter a valid amount between 0 and 10 million.", {
+  //       variant: "error",
+  //     });
+  //     return;
+  //   }
+
+  //   if (!date || new Date(date) > new Date()) {
+  //     enqueueSnackbar("Please select a date on or before today.", {
+  //       variant: "error",
+  //     });
+  //     return;
+  //   }
+
+  //   if (!description || description.length > 300) {
+  //     enqueueSnackbar(
+  //       "Please enter a description with less than 300 characters.",
+  //       { variant: "error" }
+  //     );
+  //     return;
+  //   }
+
+  //   const data = {
+  //     date,
+  //     type,
+  //     subtype,
+  //     amount,
+  //     description,
+  //     payer_payee: payerPayee,
+  //     method,
+  //   };
+
+  //   setLoading(true);
+  //   try {
+  //     await axios.post(
+  //       "http://localhost:5000/api/salesAndFinance/finance/transaction/",
+  //       data
+  //     );
+  //     setLoading(false);
+  //     enqueueSnackbar("Transaction record has successfully saved.", {
+  //       variant: "success",
+  //     });
+  //     navigate("/salesAndFinance/finance/transaction-display");
+  //   } catch (error) {
+  //     setLoading(false);
+  //     enqueueSnackbar("Transaction record saving failed.", {
+  //       variant: "error",
+  //     });
+  //     console.error(error);
+  //     navigate("/salesAndFinance/finance/transaction-display");
+  //   }
+  // };
+
   const handleSaveTransactionRecord = async (e) => {
     e.preventDefault();
 
-    if (
-      !date ||
-      !type ||
-      !subtype ||
-      !amount ||
-      !description ||
-      !payerPayee ||
-      !method
-    ) {
+    // SweetAlert confirmation before saving
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "Do you want to save this transaction?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, save it!'
+    });
+
+    if (!result.isConfirmed) {
+      return;  // Exit if the user cancels the confirmation
+    }
+
+    if (!date || !type || !subtype || !amount || !description || !payerPayee || !method) {
       enqueueSnackbar("Please fill in all fields.", { variant: "error" });
+      setDisabledSave(true);
       return;
     }
 
@@ -54,6 +140,7 @@ export default function AddTransaction() {
       enqueueSnackbar("Please enter a valid amount between 0 and 10 million.", {
         variant: "error",
       });
+      setDisabledSave(true);
       return;
     }
 
@@ -61,6 +148,7 @@ export default function AddTransaction() {
       enqueueSnackbar("Please select a date on or before today.", {
         variant: "error",
       });
+      setDisabledSave(true);
       return;
     }
 
@@ -69,6 +157,7 @@ export default function AddTransaction() {
         "Please enter a description with less than 300 characters.",
         { variant: "error" }
       );
+      setDisabledSave(true);
       return;
     }
 
@@ -89,9 +178,15 @@ export default function AddTransaction() {
         data
       );
       setLoading(false);
-      enqueueSnackbar("Transaction record has successfully saved.", {
-        variant: "success",
+
+      // SweetAlert success notification
+      Swal.fire({
+        title: 'Success!',
+        text: 'Transaction record has been successfully saved.',
+        icon: 'success',
+        confirmButtonText: 'OK'
       });
+
       navigate("/salesAndFinance/finance/transaction-display");
     } catch (error) {
       setLoading(false);
@@ -102,6 +197,7 @@ export default function AddTransaction() {
       navigate("/salesAndFinance/finance/transaction-display");
     }
   };
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -146,7 +242,15 @@ export default function AddTransaction() {
     setSubType(e.target.value);
     setFieldDisabled({
       ...fieldDisabled,
-      amount: false, // Enable amount when subtype is selected
+      date: false, // Enable amount when subtype is selected
+    });
+  };
+
+  const handleDateChange = (date) => {
+    setDate(date ? date.toISOString() : "");
+    setFieldDisabled({
+      ...fieldDisabled,
+      amount: false, // Enable amount when date is selected
     });
   };
 
@@ -157,6 +261,15 @@ export default function AddTransaction() {
 
   const handleAmountChange = (event) => {
     const { value } = event.target;
+    const regex = /^[0-9 ]*$/;
+    if (!regex.test(value)) {
+      console.error("Invalid amount input:", value);
+      setAmountError("Invalid charactors in amount input");
+      setDisabledSave(true);
+    } else {
+      setAmountError("");
+      setDisabledSave(false);
+    }
     const filteredValue = value.replace(/[^0-9 ]/g, "");
     setAmount(filteredValue);
     setValidation({ ...validation, amount: validateAmount(filteredValue) });
@@ -166,13 +279,27 @@ export default function AddTransaction() {
         ...fieldDisabled,
         description: false, // Enable description when amount is valid
       });
+      setDisabledSave(false);
+    } else {
+      setDisabledSave(true);
     }
   };
 
   const handleDescriptionChange = (e) => {
     const value = e.target.value;
+
+    const regex = /^[a-zA-Z0-9 ]*$/;
+    if (!regex.test(value)) {
+      console.error("Invalid description input:", value);
+      setDescriptionError("Invalid charactors in description input. Only letters and numbers are allowed.");
+      setDisabledSave(true);
+    } else {
+      setDescriptionError("");
+      setDisabledSave(false);
+    }
+
     // Replace anything that is not a letter (a-z, A-Z) or a space with an empty string
-    const filteredValue = value.replace(/[^a-zA-Z ]/g, "");
+    const filteredValue = value.replace(/[^a-zA-Z0-9 ]/g, "");
   
     // Ensure the description is limited to 300 characters
     const isValid = filteredValue.length <= 300;
@@ -188,12 +315,27 @@ export default function AddTransaction() {
         ...fieldDisabled,
         payerPayee: false, // Enable payer/payee when description is filled
       });
+      setDisabledSave(false);
+    } else {
+      setDisabledSave(true);
     }
+    
   };
   
 
   const handlePayeeChange = (e) => {
     const { value } = e.target;
+    
+    const regex = /^[a-zA-Z ]*$/;
+    if (!regex.test(value)) {
+      console.error("Invalid payee input:", value);
+      setPayeeError("Invalid charactors in payee input. Only letters are allowed.");
+      setDisabledSave(true);
+    } else {
+      setPayeeError("");
+      setDisabledSave(false);
+    }
+    
     const filteredValue = value.replace(/[^a-zA-Z  ]/g, "");
     setPayerPayee(filteredValue);
     if (filteredValue.length > 0) {
@@ -201,8 +343,16 @@ export default function AddTransaction() {
         ...fieldDisabled,
         method: false, // Enable method when payer/payee is filled
       });
+      setDisabledSave(false);
+    } else {
+      setDisabledSave(true);
     }
   };
+
+  const handleMethodChange = (e) => {
+    setMethod(e.target.value);
+    setDisabledSave(false);
+  }
 
   return (
     <SnackbarProvider>
@@ -303,11 +453,13 @@ export default function AddTransaction() {
                 Date
               </label>
               <DatePicker
+              name="date"
                 value={date ? moment(date) : null}
-                onChange={(date) => setDate(date ? date.toISOString() : "")}
+                onChange={(date) => handleDateChange(date)}
                 format="YYYY-MM-DD"
                 disabledDate={(current) => current > moment()}
                 className="block w-full h-8 p-2 mt-2 text-black bg-white border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
+                disabled={fieldDisabled.date}
               />
             </div>
 
@@ -319,7 +471,7 @@ export default function AddTransaction() {
                 Amount
               </label>
               <input
-                type="number"
+                type="text"
                 value={amount}
                 onChange={handleAmountChange}
                 required
@@ -335,6 +487,7 @@ export default function AddTransaction() {
                   Invalid amount. Please enter a number.
                 </span>
               )}
+              {amountError && <span className="text-sm text-red-500">{amountError}</span>}
             </div>
 
             <div className="sm:col-span-6">
@@ -354,6 +507,7 @@ export default function AddTransaction() {
                 placeholder="Maximum 300 characters"
                 className="block w-full h-8 p-2 mt-2 text-black border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
               />
+              {descriptionError && <span className="text-sm text-red-500">{descriptionError}</span>}
             </div>
 
             <div className="sm:col-span-6">
@@ -373,6 +527,7 @@ export default function AddTransaction() {
                 placeholder="Alphabetical characters only"
                 className="block w-full h-8 p-2 mt-2 text-black border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
               />
+              {payeeError && <span className="text-sm text-red-500">{payeeError}</span>}
             </div>
 
             <div className="sm:col-span-6">
@@ -384,7 +539,8 @@ export default function AddTransaction() {
               </label>
               <select
                 name="method"
-                onChange={(e) => setMethod(e.target.value)}
+                // onChange={(e) => setMethod(e.target.value)}
+                onChange={handleMethodChange}
                 value={method}
                 required
                 id="method"
@@ -403,11 +559,14 @@ export default function AddTransaction() {
           <div className="flex justify-center gap-5 mt-10">
             <button
               onClick={handleSaveTransactionRecord}
-              type="submit"
-              disabled={loading}
+              type="button"
+              
               className="px-6 py-3 text-lg font-medium text-white border border-transparent rounded-lg shadow-sm bg-lime-700 hover:bg-lime-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-500"
+              disabled={disabledSave}
             >
-              {loading ? "Saving..." : "Save"}
+              {/* disabled={loading} */}
+              {/* {loading ? "Saving..." : "Save"} */}
+              Save
             </button>
             <button
               onClick={handleCancel}

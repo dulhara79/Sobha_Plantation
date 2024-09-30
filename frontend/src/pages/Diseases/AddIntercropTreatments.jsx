@@ -77,6 +77,39 @@ const AddIntercropTreatments = () => {
     }
   ];
 
+      // Alphabetic characters only (A-Z, a-z, space)
+const handleAlphabeticKeyPress = (e) => {
+  const regex = /^[A-Za-z\s]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-alphabetic characters
+    setErrorMessage("Only alphabetic characters are allowed."); // Set error message
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
+// Numeric characters only (0-9)
+const handleNumericKeyPress = (e) => {
+  const regex = /^[0-9%]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-numeric characters
+    setErrorMessage("Only numeric characters are allowed.");
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
+// Alphanumeric characters only (A-Z, a-z, 0-9)
+const handleAlphanumericKeyPress = (e) => {
+  const regex = /^[A-Za-z0-9\s]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-alphanumeric characters
+    setErrorMessage("Only alphanumeric characters are allowed.");
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
@@ -149,23 +182,23 @@ const AddIntercropTreatments = () => {
                 Treatments
               </Link>
               <Link
-                to="/pests-diseases"
+                to="/CoconutPests"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 Pests and Diseases
               </Link>
               <Link
-                to="/maintenance"
+                to="/RegularMaintenance"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 Maintenance
               </Link>
-              <Link
+              {/* <Link
                 to="/UserProfile"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 My Profile
-              </Link>
+              </Link> */}
             </div>
           </nav>
 
@@ -232,6 +265,7 @@ const AddIntercropTreatments = () => {
                 <Input
                   placeholder="Enter the pest or disease treated"
                   disabled={!fieldValidity.dateOfTreatment}
+                  onKeyPress={handleAlphabeticKeyPress}
                 />
               </Form.Item>
 
@@ -243,6 +277,7 @@ const AddIntercropTreatments = () => {
                 <Input
                   placeholder="Enter the treatment method"
                   disabled={!fieldValidity.pestOrDisease}
+                  onKeyPress={handleAlphanumericKeyPress}
                 />
               </Form.Item>
 
@@ -254,6 +289,7 @@ const AddIntercropTreatments = () => {
                 <Input
                   placeholder="Enter the current health rate"
                   disabled={!fieldValidity.treatmentMethod}
+                  onKeyPress={handleNumericKeyPress}
                 />
               </Form.Item>
 
@@ -265,6 +301,7 @@ const AddIntercropTreatments = () => {
                 <Input
                   placeholder="Enter name of the person who treated"
                   disabled={!fieldValidity.healthRate}
+                  onKeyPress={handleAlphabeticKeyPress}
                 />
               </Form.Item>
 
@@ -276,6 +313,7 @@ const AddIntercropTreatments = () => {
                 <Input
                   placeholder="Add any notes"
                   disabled={!fieldValidity.treatedBy}
+                  onKeyPress={handleAlphanumericKeyPress}
                 />
               </Form.Item>
 
