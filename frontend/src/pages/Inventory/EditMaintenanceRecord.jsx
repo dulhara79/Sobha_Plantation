@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'; 
+import React, { useEffect, useState } from 'react';
 import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 const { Option } = Select;
 
-const EditFertilizerRecord = () => {
+const EditMaintenanceRecord = () => {
   const [form] = Form.useForm();
   const [record, setRecord] = useState(null);
   const navigate = useNavigate();
@@ -21,22 +21,22 @@ const EditFertilizerRecord = () => {
   useEffect(() => {
     const fetchRecord = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/fertilizers/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/maintenance/${id}`);
         const data = response.data;
         setRecord(data);
 
         // Convert dates to moment objects if they are valid
-        const addedDate = moment(data.addeddate);
-        const expiredDate = moment(data.expireddate);
+        const refferedDate = moment(data.reffereddate);
+        const receivedDate = moment(data.receiveddate);
 
-        if (addedDate.isValid() && expiredDate.isValid()) {
+        if (refferedDate.isValid() && receivedDate.isValid()) {
           form.setFieldsValue({
             ...data,
-            addeddate: addedDate,
-            expireddate: expiredDate,
+            reffereddate: refferedDate,
+            receiveddate: receivedDate,
           });
         } else {
-          console.error('Invalid date format:', data.addeddate, data.expireddate);
+          console.error('Invalid date format:', data.reffereddate, data.receiveddate);
         }
       } catch (error) {
         console.error('Error fetching record:', error);
@@ -50,23 +50,23 @@ const EditFertilizerRecord = () => {
       // Prepare payload with the correct date format
       const payload = {
         ...values,
-        addeddate: values.addeddate ? moment(values.addeddate).toISOString() : null,
-        expireddate: values.expireddate ? moment(values.expireddate).toISOString() : null,
+        reffereddate: values.reffereddate ? moment(values.reffereddate).toISOString() : null,
+        receiveddate: values.receiveddate ? moment(values.receiveddate).toISOString() : null,
       };
 
       // Send PUT request to update the record
-      await axios.put(`http://localhost:5000/api/fertilizers/${id}`, payload);
+      await axios.put(`http://localhost:5000/api/maintenance/${id}`, payload);
 
       notification.success({
         message: 'Success',
-        description: 'Record updated successfully!',
+        description: 'Maintenance Record updated successfully!',
       });
-      navigate('/Inventory/FertilizerRecords'); // Redirect to the list page after successful update
+      navigate('/Inventory/MaintenanceRecords'); // Redirect to the list page after successful update
     } catch (error) {
-      console.error('Failed to update record:', error);
+      console.error('Failed to update maintenance record:', error);
       notification.error({
         message: 'Error',
-        description: `Failed to update record. ${error.response?.data?.message || 'Please try again.'}`,
+        description: `Failed to update maintenance record. ${error.response?.data?.message || 'Please try again.'}`,
       });
     }
   };
@@ -74,16 +74,16 @@ const EditFertilizerRecord = () => {
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="mb-6 text-2xl font-bold text-center">Edit Fertilizer/AgroChemical Record</h2>
+        <h2 className="mb-6 text-2xl font-bold text-center">Edit Maintenance Record</h2>
         <Form
           form={form}
           onFinish={handleSubmit}
           layout="vertical"
         >
           <Form.Item
-            label="Added Date"
-            name="addeddate"
-            rules={[{ required: true, message: 'Please select the added date!' }]}
+            label="Referred Date"
+            name="reffereddate"
+            rules={[{ required: true, message: 'Please select the referred date!' }]}
           >
             <DatePicker
               format="YYYY-MM-DD"
@@ -92,26 +92,18 @@ const EditFertilizerRecord = () => {
           </Form.Item>
 
           <Form.Item
-            label="Fertilizer/Agrochemical Name"
-            name="fertilizertype"
-            rules={[{ required: true, message: 'Please select a fertilizer/agrochemical type!' }]}
+            label="Equipment/Machine"
+            name="eqname"
+            rules={[{ required: true, message: 'Please select Equipment/Machine name!' }]}
           >
-            <Select placeholder="Select a fertilizer type">
-              <Option value="Coconut fertilizer">Coconut fertilizer</Option>
-              <Option value="Banana fertilizer">Banana fertilizer</Option>
-              <Option value="Pepper fertilizer">Pepper fertilizer</Option>
-              <Option value="Papaya fertilizer">Papaya fertilizer</Option>
-              <Option value="Urea">Urea</Option>
-              <Option value="Dolomite">Dolomite</Option>
-              <Option value="YPM">YPM</Option> 
-              <Option value="Booster K 45%">Booster K 45%</Option>
-              <Option value="Daconil Chlorothalonil">Daconil Chlorothalonil (fungicide)</Option>
-              <Option value="Marshal 20 SC">Marshal 20 SC (insecticide)</Option>
-              <Option value="Mitsu Abamectin">Mitsu Abamectin (insecticide)</Option>
-              <Option value="Alberts solution">Alberts solution</Option>
-              <Option value="Crop Master solution">Crop Master solution</Option>
-              <Option value="Glyphosate weedicide">Glyphosate weedicide</Option>
-              <Option value="Rootone">Rootone</Option>
+            <Select placeholder="Select a Equipment/Machine name">
+              <Option value="Bush cutter">Bush cutter</Option>
+              <Option value="4L diesel cans">4L diesel cans</Option>
+              <Option value="Metal chemical sprayer">Metal chemical sprayer</Option>
+              <Option value="4hp diesel water pump">4hp diesel water pump</Option>
+              <Option value="Boots pairs">Boots pairs</Option>
+              <Option value="8hp petrol hand tractor">8hp petrol hand tractor</Option>
+              <Option value="1hp tube well pump">1hp tube well pump</Option> 
             </Select>
           </Form.Item>
 
@@ -125,46 +117,33 @@ const EditFertilizerRecord = () => {
                   if (!value || value > 0) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('Quantity must be greater than zero!'));
+                  return Promise.reject(new Error('Quantity must be greater than 0!'));
                 },
               },
             ]}
           >
-            <Input type="number" placeholder="Enter quantity" />
+            <Input type="number" min={1} placeholder="Enter quantity" />
           </Form.Item>
 
           <Form.Item
-            label="Unit"
-            name="unit"
-            rules={[{ required: true, message: 'Please select a unit!' }]}
-          >
-            <Select placeholder="Select unit">
-              <Option value="l">l</Option>
-              <Option value="ml">ml</Option>
-              <Option value="kg">kg</Option>
-              <Option value="g">g</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-  label="Storage Location"
-  name="storagelocation"
+  label="Referred Location"
+  name="referredlocation"
   rules={[
-    { required: true, message: 'Please enter the storage location!' },
+    { required: true, message: 'Please enter the referred location!' },
     {
-      pattern: /^[A-Za-z\s]*(\d{0,1})[A-Za-z\s]*$/,  // Validation rule allowing at most 1 number
-      message: 'Storage location can only contain letters, spaces, and at most one number!',
+      pattern: /^[A-Za-z\s&]+$/,
+      message: 'Referred location can only contain letters, spaces, and the "&" symbol!',
     },
   ]}
 >
-  <Input type="text" placeholder="Enter storage location" />
+  <Input type="text" placeholder="Enter referred location" />
 </Form.Item>
 
 
           <Form.Item
-            label="Expired Date"
-            name="expireddate"
-            rules={[{ required: true, message: 'Please select the expired date!' }]}
+            label="Received Date"
+            name="receiveddate"
+            rules={[{ required: true, message: 'Please select the received date!' }]}
           >
             <DatePicker
               format="YYYY-MM-DD"
@@ -178,9 +157,8 @@ const EditFertilizerRecord = () => {
             rules={[{ required: true, message: 'Please select status!' }]}
           >
             <Select placeholder="Select status">
-              <Option value="In Stock">In Stock</Option>
-              <Option value="Out Of Stock">Out Of Stock</Option>
-              <Option value="Expired">Expired</Option>
+              <Option value="In Progress">In Progress</Option>
+              <Option value="Completed">Completed</Option>
             </Select>
           </Form.Item>
 
@@ -195,4 +173,4 @@ const EditFertilizerRecord = () => {
   );
 };
 
-export default EditFertilizerRecord;
+export default EditMaintenanceRecord;
