@@ -98,44 +98,50 @@ const QualityControl = () => {
   }, [navigate]);
 
   // Handler for search input
-  const onSearch = (value) => {
-    setSearchText(value);
-    filterQualityControls(value, filterStatus);
-  };
+const onSearch = (value) => {
+  setSearchText(value);
+  filterQualityControls(value, filterStatus);
+};
 
-  // Handler for filter change
-  const onFilterChange = (value) => {
-    setFilterStatus(value);
-    filterQualityControls(searchText, value);
-  };
+// Handler for filter change
+const onFilterChange = (value) => {
+  setFilterStatus(value);
+  filterQualityControls(searchText, value);
+};
 
-  // Function to filter quality controls based on search text and filter status
-  const filterQualityControls = (searchText, filterStatus) => {
-    let filteredData = qualityControls;
+// Function to filter quality controls based on search text and filter status
+const filterQualityControls = (searchText, filterStatus) => {
+  let filteredData = qualityControls;
 
-    if (searchText) {
-      filteredData = filteredData.filter((qc) =>
-        qc.productType.toLowerCase().includes(searchText.toLowerCase())
-      );
-    }
+  if (searchText) {
+    // Convert search text to lowercase for case-insensitive search
+    const lowerSearchText = searchText.toLowerCase();
+    filteredData = filteredData.filter((qc) =>
+      // Search across multiple fields
+      qc.productType.toLowerCase().includes(lowerSearchText) ||
+      qc.inspectionDate.toLowerCase().includes(lowerSearchText) || // Include inspectionDate in search
+      qc.status.toLowerCase().includes(lowerSearchText) ||
+      qc.inspectorName.toLowerCase().includes(lowerSearchText) // Include inspectorName in search
+    );
+  }
 
-    if (filterStatus !== "All") {
-      filteredData = filteredData.filter((qc) => qc.status === filterStatus);
-    }
+  if (filterStatus !== "All") {
+    filteredData = filteredData.filter((qc) => qc.status === filterStatus);
+  }
 
-    if (sorter.field) {
-      filteredData = [...filteredData].sort((a, b) => {
-        if (sorter.order === 'ascend') {
-          return a[sorter.field] > b[sorter.field] ? 1 : -1;
-        } else {
-          return a[sorter.field] < b[sorter.field] ? 1 : -1;
-        }
-      });
-    }
+  if (sorter.field) {
+    filteredData = [...filteredData].sort((a, b) => {
+      if (sorter.order === 'ascend') {
+        return a[sorter.field] > b[sorter.field] ? 1 : -1;
+      } else {
+        return a[sorter.field] < b[sorter.field] ? 1 : -1;
+      }
+    });
+  }
 
-    setFilteredQualityControls(filteredData);
-    calculateMetrics(filteredData); // Update metrics based on filtered data
-  };
+  setFilteredQualityControls(filteredData);
+  calculateMetrics(filteredData); // Update metrics based on filtered data
+};
 
   // Sorting handler
   const handleSort = (field, order) => {
@@ -394,7 +400,7 @@ const generatePDF = async () => {
                 title: 'Products',
               },
               {
-                title: 'Production Overview',
+                title: 'Quality Control',
               },
             ]}
           />
@@ -442,7 +448,7 @@ const generatePDF = async () => {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <div style={{ display: "flex", alignItems: "center" }}>
             <Search
-                placeholder="Search by product type"
+                placeholder="Search in quality control"
                 onChange={(e) => onSearch(e.target.value)} // Trigger search as user types
                 style={{ width: 200, marginRight: 16 }} // Added marginRight for spacing
                 allowClear
