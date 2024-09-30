@@ -10,6 +10,8 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { HomeOutlined } from '@ant-design/icons';
+import Swal from 'sweetalert2';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 
 
@@ -19,6 +21,7 @@ const menuItems = [
   { name: "HOME", path: "/harvest/harvestdashboard" },
   { name: "SCHEDULE", path: "/harvest/harvest-schedule" },
   { name: "YIELD", path: "/harvest/yield" },
+  { name: "QUALITYCHECKING", path: "/harvest/quality" },
   { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist" },
 ];
 
@@ -87,19 +90,40 @@ const HarvestSchedule = () => {
 
   const generatePDF = async () => {
     const doc = new jsPDF();
-    
+  
     // Load the logo image
     const logoUrl = '../src/assets/logo.png';
+    let logoDataURL;
     try {
-      const logoDataURL = await getImageDataURL(logoUrl);
-      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20);
+      logoDataURL = await getImageDataURL(logoUrl);
     } catch (error) {
       console.error('Failed to load the logo image:', error);
     }
-
+  
+    // Function to draw header and footer
+    const drawHeaderFooter = (data) => {
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+  
+      // Header
+      if (logoDataURL) {
+        doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 15); // Adjust position and size
+      }
+      doc.setFontSize(12);
+      doc.text("Sobha Plantation", 170, 19); // Adjust x, y position
+      doc.line(10, 25, pageWidth - 10, 25); // Line under header
+  
+      // Footer
+      doc.setFontSize(10);
+      const currentPage = `Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`;
+      doc.text(currentPage, pageWidth - 30, pageHeight - 10); // Page number in footer
+    };
+  
+    // Title for the report
     doc.setFontSize(22);
-    doc.text("Harvest Schedule Report", 70, 40);
-    
+    doc.text("Harvest Schedule Report", 70, 40); // Adjusted for placement below header
+  
+    // Define table columns and rows
     const tableColumn = ["Crop Type", "Harvest Date", "Start Time", "End Time", "Field Number", "Number of Workers"];
     const tableRows = filteredSchedules.map(schedule => [
       schedule.cropType,
@@ -109,30 +133,27 @@ const HarvestSchedule = () => {
       schedule.fieldNumber,
       schedule.numberOfWorkers,
     ]);
-
+  
+    // Add table to the PDF
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
-      startY: 60,
-      margin: { horizontal: 10 },
-      styles: { fontSize: 10 },
+      startY: 60, // Ensure the table starts below the title
+      margin: { horizontal: 10 }, // Adjust horizontal margin
+      styles: { fontSize: 10 }, // Table font size
       headStyles: {
-        fillColor: [64, 133, 126],
-        textColor: [255, 255, 255],
+        fillColor: [64, 133, 126], // Header background color
+        textColor: [255, 255, 255], // Header text color
         fontSize: 12,
       },
       theme: 'striped',
-      didDrawPage: (data) => {
-        const pageNumber = doc.internal.getNumberOfPages();
-        const pageWidth = doc.internal.pageSize.width;
-        const pageHeight = doc.internal.pageSize.height;
-        doc.setFontSize(10);
-        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10);
-      },
+      didDrawPage: drawHeaderFooter, // Draw header and footer on each page
     });
-
+  
+    // Save the PDF
     doc.save("harvest_schedule_report.pdf");
   };
+  
 
   const getImageDataURL = (url) => {
     return new Promise((resolve, reject) => {
@@ -184,35 +205,40 @@ const HarvestSchedule = () => {
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(`http://localhost:5000/api/harvest/${id}`);
-      if (response.status === 200) {
-        notification.success({
-          message: 'Success',
-          description: 'Harvest Schedule deleted successfully!',
-        });
-        setFilteredSchedules(filteredSchedules.filter(schedule => schedule._id !== id));
-      } else {
-        notification.error({
-          message: 'Error',
-          description: 'There was an error deleting the schedules.',
-        });
-      }
+      fetchSchedules()
     } catch (error) {
-      notification.error({
-        message: 'Error',
-        description: error.response?.data?.message || 'There was an error deleting the schedules.',
+      Swal.fire({
+        title: "Error!",
+        text: `Failed to delete the inspection. ${error.response?.data?.message || 'Please try again.'}`,
+        icon: "error",
       });
     }
   };
-
   const confirmDelete = (id) => {
-    Modal.confirm({
+    Swal.fire({
       title: "Are you sure you want to delete this schedule?",
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-      onOk: () => handleDelete(id),
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDelete(id);
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your schedule has been deleted.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
     });
   };
+  
+
   const isActive = (page) => activePage === page;
   const onBackClick = useCallback(() => {
     navigate(-1); // Navigate back to the previous page
@@ -239,7 +265,7 @@ const HarvestSchedule = () => {
                     <Breadcrumb
                         items={[
                             {href: '', title: <HomeOutlined />},
-                            {title: "Dashboard"},
+                            {title: "Harvest"},
                             {title: "Schedule"},
                              ]}
                        />
@@ -314,8 +340,8 @@ const HarvestSchedule = () => {
                   key: "actions",
                   render: (text, record) => (
                     <span>
-                      <Button type="link" onClick={() => handleUpdate(record._id)}>Edit</Button>
-                      <Button type="link" danger onClick={() => confirmDelete(record._id)}>Delete</Button>
+                      <Button type="link" icon={<EditOutlined />} onClick={() => handleUpdate(record._id)}>Edit</Button>
+                      <Button type="link" danger  icon={<DeleteOutlined />} onClick={() => confirmDelete(record._id)}>Delete</Button>
                     </span>
                   ),
                 },

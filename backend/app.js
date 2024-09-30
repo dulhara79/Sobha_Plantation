@@ -30,6 +30,7 @@ const packagingRoute = require('./routes/Products/packagingRoute.js')
  */
 const yieldRoutes = require('./routes/Harvest/yield.js');
 const harvestRoutes = require('./routes/Harvest/harvest.js');
+const quality= require('./routes/Harvest/quality.js');
 const complianceCheckRoutes = require('./routes/Harvest/compliance.js')
 
 
@@ -113,6 +114,7 @@ app.use('/api/packaging', packagingRoute);
  */
 app.use('/api/harvest', harvestRoutes);
 app.use('/api/yield', yieldRoutes);
+app.use('/api/quality',quality);
 app.use('/api/compliance-checks', complianceCheckRoutes);
 
 
