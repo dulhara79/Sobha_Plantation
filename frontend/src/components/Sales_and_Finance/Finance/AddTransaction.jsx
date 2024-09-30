@@ -7,12 +7,12 @@ import { DatePicker } from "antd";
 
 export default function AddTransaction() {
   const [date, setDate] = useState("");
-  const [type, setType] = useState("income");
+  const [type, setType] = useState("null");
   const [subtype, setSubType] = useState("");
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [payerPayee, setPayerPayee] = useState("");
-  const [method, setMethod] = useState("Cheque");
+  const [method, setMethod] = useState();
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [productTypes, setProductTypes] = useState([]);
@@ -23,6 +23,15 @@ export default function AddTransaction() {
 
   const [validation, setValidation] = useState({
     amount: true,
+  });
+
+  // New state to handle disabled status of each field
+  const [fieldDisabled, setFieldDisabled] = useState({
+    subtype: true,
+    amount: true,
+    description: true,
+    payerPayee: true,
+    method: true,
   });
 
   const handleSaveTransactionRecord = async (e) => {
@@ -99,61 +108,109 @@ export default function AddTransaction() {
       try {
         const response = await axios.get("http://localhost:5000/api/production");
         const productData = response.data.data;
-        
+
         console.log("Fetched productData:", productData);
-  
+
         if (Array.isArray(productData)) {
           setProducts(productData);
           const types = productData.map((product) => product.productType);
-          setProductTypes([...new Set(types)]); 
+          setProductTypes([...new Set(types)]);
         } else {
           console.error("Expected an array but received:", productData);
-          
+
           setProductTypes([]);
         }
       } catch (error) {
         console.error("Failed to fetch products:", error);
-        
-        setProductTypes([]); 
+
+        setProductTypes([]);
       }
     };
-  
+
     fetchProducts();
   }, []);
-  
-  
+
   const handleCancel = () => {
     navigate(-1);
   };
 
   const handleTypeChange = (e) => {
     setType(e.target.value);
-    setSubType("Electricity Bill");
+    setFieldDisabled({
+      ...fieldDisabled,
+      subtype: false, // Enable subtype when type is selected
+    });
+  };
+
+  const handleSubTypeChange = (e) => {
+    setSubType(e.target.value);
+    setFieldDisabled({
+      ...fieldDisabled,
+      amount: false, // Enable amount when subtype is selected
+    });
   };
 
   const validateAmount = (value) => {
-    const regex = /^(?=.+)(?:[1-9]\d*|0)?(?:\.\d+)?$/;
+    const regex = /^(?=.+)(?:[1-9]\d*|0)?(?: \d+)?$/;
     return regex.test(value) && value.trim() !== "";
   };
 
   const handleAmountChange = (event) => {
     const { value } = event.target;
-    const filteredValue = value.replace(/[^0-9]/g, "");
+    const filteredValue = value.replace(/[^0-9 ]/g, "");
     setAmount(filteredValue);
     setValidation({ ...validation, amount: validateAmount(filteredValue) });
+
+    if (validateAmount(filteredValue)) {
+      setFieldDisabled({
+        ...fieldDisabled,
+        description: false, // Enable description when amount is valid
+      });
+    }
   };
+
+  const handleDescriptionChange = (e) => {
+    const value = e.target.value;
+    // Replace anything that is not a letter (a-z, A-Z) or a space with an empty string
+    const filteredValue = value.replace(/[^a-zA-Z ]/g, "");
+  
+    // Ensure the description is limited to 300 characters
+    const isValid = filteredValue.length <= 300;
+  
+    // Set the filtered value to the state if it's valid (within the character limit)
+    if (isValid) {
+      setDescription(filteredValue);
+    }
+  
+    // Enable the 'payerPayee' field if there is any valid description input
+    if (filteredValue.length > 0) {
+      setFieldDisabled({
+        ...fieldDisabled,
+        payerPayee: false, // Enable payer/payee when description is filled
+      });
+    }
+  };
+  
 
   const handlePayeeChange = (e) => {
     const { value } = e.target;
     const filteredValue = value.replace(/[^a-zA-Z  ]/g, "");
     setPayerPayee(filteredValue);
+    if (filteredValue.length > 0) {
+      setFieldDisabled({
+        ...fieldDisabled,
+        method: false, // Enable method when payer/payee is filled
+      });
+    }
   };
 
   return (
     <SnackbarProvider>
       <form className="flex flex-col items-center justify-center p-8 bg-white border border-gray-300 rounded-lg shadow-lg">
         <div className="w-full space-y-6">
-          <h1 className="text-5xl font-bold text-center text-black mb-11">Add Transaction</h1>
+          <h1 className="text-5xl font-bold text-center text-black mb-11">
+            Add Transaction
+          </h1>
           <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-6">
             <fieldset className="sm:col-span-4">
               <legend className="text-base font-medium text-black">
@@ -206,11 +263,14 @@ export default function AddTransaction() {
               </label>
               <select
                 name="subtype"
-                onChange={(e) => setSubType(e.target.value)}
+                onChange={handleSubTypeChange}
+                value={subtype}
                 required
                 id="subtype"
+                disabled={fieldDisabled.subtype}
                 className="block w-full h-8 p-2 mt-2 text-base text-black border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
               >
+                <option>Select a sub type</option>
                 {type === "income" ? (
                   productTypes.length > 0 ? (
                     productTypes.map((productType) => (
@@ -245,114 +305,117 @@ export default function AddTransaction() {
               <DatePicker
                 value={date ? moment(date) : null}
                 onChange={(date) => setDate(date ? date.toISOString() : "")}
-                id="date"
-                disabledDate={(current) =>
-                  current && current > moment().endOf("day")
-                }
-                required
-                className="block w-full mt-2 text-base text-black border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
+                format="YYYY-MM-DD"
+                disabledDate={(current) => current > moment()}
+                className="block w-full h-8 p-2 mt-2 text-black bg-white border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
               />
             </div>
 
             <div className="sm:col-span-3">
               <label
                 htmlFor="amount"
-                className="block text-base font-medium text-black"
+                className="block text-base font-medium text-gray-700"
               >
                 Amount
               </label>
               <input
-                id="amount"
-                name="amount"
-                value={amount}
-                required
-                onChange={handleAmountChange}
                 type="number"
-                className={`block w-full mt-2 text-black border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600 text-base h-8 p-2 ${
-                  validation.amount ? "" : "border-red-500"
-                }`}
+                value={amount}
+                onChange={handleAmountChange}
+                required
+                id="amount"
+                placeholder="LKR"
+                disabled={fieldDisabled.amount}
+                className={`block w-full h-8 p-2 mt-2 text-black border ${
+                  validation.amount ? "border-gray-900" : "border-red-500"
+                } rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600`}
               />
               {!validation.amount && (
-                <p className="mt-2 text-sm text-red-600">
-                  Amount must be a positive number.
-                </p>
+                <span className="text-sm text-red-500">
+                  Invalid amount. Please enter a number.
+                </span>
               )}
             </div>
 
-            <div className="col-span-full">
+            <div className="sm:col-span-6">
               <label
                 htmlFor="description"
-                className="block text-base font-medium text-black"
+                className="block text-base font-medium text-gray-700"
               >
                 Description
               </label>
-              <textarea
-                id="description"
-                name="description"
-                rows={3}
-                required
+              <input
+                type="text"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="block w-full h-20 p-4 mt-2 text-base text-black border border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
-                placeholder="Enter a brief description (max 300 characters)"
+                onChange={handleDescriptionChange}
+                required
+                id="description"
+                disabled={fieldDisabled.description}
+                placeholder="Maximum 300 characters"
+                className="block w-full h-8 p-2 mt-2 text-black border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
               />
             </div>
 
-            <div className="sm:col-span-3">
+            <div className="sm:col-span-6">
               <label
                 htmlFor="payer_payee"
-                className="block text-base font-medium text-black"
+                className="block text-base font-medium text-gray-700"
               >
-                Payer / Payee
+                Payer/Payee
               </label>
               <input
-                id="payer_payee"
-                name="payer_payee"
+                type="text"
                 value={payerPayee}
-                required
                 onChange={handlePayeeChange}
-                className="block w-full h-8 p-2 mt-2 text-base text-black border border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-liborder"
+                required
+                id="payer_payee"
+                disabled={fieldDisabled.payerPayee}
+                placeholder="Alphabetical characters only"
+                className="block w-full h-8 p-2 mt-2 text-black border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
               />
             </div>
 
-            <div className="sm:col-span-3">
+            <div className="sm:col-span-6">
               <label
                 htmlFor="method"
-                className="block text-base font-medium text-black"
+                className="block text-base font-medium text-gray-700"
               >
-                Payment Method
+                Method
               </label>
               <select
-                id="method"
                 name="method"
-                value={method}
                 onChange={(e) => setMethod(e.target.value)}
-                className="block w-full p-2 mt-2 text-base text-black border border-gray-900 rounded-md shadow-sm h-11 focus:ring-lime-600 focus:border-lime-600"
+                value={method}
+                required
+                id="method"
+                disabled={fieldDisabled.method}
+                className="block w-full h-8 p-2 mt-2 text-black border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
               >
-                <option value="Cash">Cash</option>
-                <option value="Cheque">Cheque</option>
-                <option value="Card">Card</option>
+                <option>Select a method</option>
+                <option>Cheque</option>
+                <option>Cash</option>
+                <option>Bank Transfer</option>
+                <option>Other</option>
               </select>
             </div>
           </div>
-        </div>
 
-        <div className="items-center justify-between w-full mt-10 space-x-4 lex">
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="px-4 py-2 text-base font-medium text-white bg-red-600 rounded-md shadow hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            onClick={handleSaveTransactionRecord}
-            className="px-4 py-2 text-base font-medium text-white rounded-md shadow bg-lime-600 hover:bg-lime-700 focus:ring-2 focus:ring-lime-500 focus:ring-offset-2"
-            disabled={loading}
-          >
-            {loading ? "Saving..." : "Save Transaction"}
-          </button>
+          <div className="flex justify-center gap-5 mt-10">
+            <button
+              onClick={handleSaveTransactionRecord}
+              type="submit"
+              disabled={loading}
+              className="px-6 py-3 text-lg font-medium text-white border border-transparent rounded-lg shadow-sm bg-lime-700 hover:bg-lime-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-500"
+            >
+              {loading ? "Saving..." : "Save"}
+            </button>
+            <button
+              onClick={handleCancel}
+              className="px-6 py-3 text-lg font-medium text-black bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-500"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </form>
     </SnackbarProvider>

@@ -33,7 +33,7 @@ const Sidebar = ({ className = "" }) => {
     { name: "Crop Care", icon: <BugReportOutlined />, path: "/diseases" },
     { name: "Products", icon: <ViewInAr />, path: "/products/productdashboard" },
     { name: "Field View", icon: <FilterVintageOutlined />, path: "/cultivationDashboard" },
-    { name: "Buyers", icon: <Person />, path: "/register-buyer" },
+    { name: "Buyers", icon: <Person />, path: "/buyerdashboard" },
   ];
 
   // console.log("location.pathname: "+location.pathname);

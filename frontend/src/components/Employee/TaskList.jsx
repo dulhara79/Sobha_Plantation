@@ -202,8 +202,8 @@ const TaskList = () => {
               <dd className="text-xl font-semibold text-gray-900">Pending</dd>
             </div>
           </button>
-          <button
-            value="inprogress"
+          {/* <button
+            value="in progress"
             onClick={(e) => setSearchQuery(e.target.value)}
             className="flex-grow overflow-hidden bg-green-100 flex justify-center items-center hover:w-[20%] hover:h-[105%] transition-all duration-300 ease-in-out"
           >
@@ -215,7 +215,23 @@ const TaskList = () => {
                 In Progress
               </div>
             </div>
+          </button> */}
+
+          <button
+            value="in progress"
+            onClick={(e) => setSearchQuery(e.target.value)}
+            className="flex-grow overflow-hidden bg-green-100 flex justify-center items-center hover:w-[20%] hover:h-[105%] transition-all duration-300 ease-in-out"
+          >
+            <div className="flex flex-col items-center content-center justify-between h-full pt-4 pb-4 align-middle ">
+              <div className="w-8 h-8">
+                 <FaTools />
+              </div>
+              <div className="text-xl font-semibold text-gray-900">
+              In Progress
+              </div>
+            </div>
           </button>
+
           <button
             value="completed"
             onClick={(e) => setSearchQuery(e.target.value)}
@@ -314,7 +330,7 @@ const TaskList = () => {
 
                 <td className="py-4 text-right ">
                   <Link
-                    to={`/employees/tasks/viewTask/${record._id}`}
+                    to={`/employee/taskdetails/${record._id}`}
                     className="font-medium text-blue-600 hover:underline"
                   >
                     <InformationCircleIcon

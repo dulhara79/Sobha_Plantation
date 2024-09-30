@@ -8,6 +8,8 @@ router.get('/', EattendanceController.getAllAttendance);
 // Route to create a new attendance record
 router.post('/', EattendanceController.createAttendance);
 
+router.get('/:id', EattendanceController.getAttendanceById);
+
 // Route to update an attendance record
 router.put('/:id', EattendanceController.updateAttendance);
 

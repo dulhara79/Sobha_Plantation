@@ -6,6 +6,7 @@ import React from "react";
 import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
 import TaskList from "../../components/Employee/TaskList";
 import { SnackbarProvider } from "notistack";
+import Breadcrumbs from "../../components/Employee/Breadcrumbss";
 
 export default function ViewTaskList() {
   const breadcrumbItems = [
@@ -20,15 +21,9 @@ export default function ViewTaskList() {
         <Sidebar />
 
         <div className={`ml-[300px]`}>
-          <Breadcrumb
-            items={[
-              {
-                href: "",
-                title: <HomeOutlined />,
-              },
-            ]}
-          />
+         
           <EmployeeNavbar />
+          <Breadcrumbs items={breadcrumbItems} />
           <TaskList />
         </div>
       </div>

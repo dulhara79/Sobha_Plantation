@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Typography, message, Modal, Input, Space, Select } from 'antd';
-import { ArrowLeftOutlined, FilePdfOutlined, DeleteOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons'; // Import DeleteOutlined icon
+import { ArrowLeftOutlined, FilePdfOutlined, DeleteOutlined, EyeOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'; // Import DeleteOutlined icon
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import Swal from 'sweetalert2';
 
 const { Title } = Typography;
 const { Search } = Input;
@@ -66,8 +67,10 @@ const Labeling = () => {
     price: calculatePrice(item.productName, item.quantity),
   }));
 
-  const handleSearch = (value) => {
+  // Handler for search input
+  const onSearch = (value) => {
     setSearchText(value);
+    filterQualityControls(value, filterStatus);
   };
 
   const handleFilter = (value) => {
@@ -92,24 +95,63 @@ const Labeling = () => {
     navigate(`/products/editLabeling/${id}`);
   };
 
-  const handleDeleteLabeling = async (id) => {
-    setDeleteId(id);
-    setIsDeleteModalVisible(true);
-  };
-
-  const confirmDelete = async () => {
-    try {
-      await axios.delete(`http://localhost:5000/api/labeling/${deleteId}`);
-      setLabelingData(prevData => prevData.filter(item => item._id !== deleteId));
-      message.success('Labeling record deleted successfully');
-    } catch (error) {
-      console.error('Error deleting labeling record:', error);
-      message.error('Failed to delete labeling record');
-    } finally {
-      setIsDeleteModalVisible(false);
-      setDeleteId(null);
+// Confirm delete using SweetAlert2
+const confirmDelete = (labelingId) => {
+  Swal.fire({
+    title: "Are you sure you want to delete this label?",
+    text: "This action cannot be undone!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Yes, delete it!",
+    cancelButtonText: "No, cancel!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      handleDelete(labelingId);
+      Swal.fire({
+        title: "Deleted!",
+        text: "Your label has been deleted.",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     }
-  };
+  });
+};
+
+// Handle delete
+const handleDelete = async (labelingId) => {
+  try {
+    await axios.delete(`http://localhost:5000/api/labeling/${labelingId}`);
+    setLabelingData(prevData => prevData.filter(item => item._id !== labelingId)); // Refresh the labeling list
+  } catch (error) {
+    Swal.fire({
+      title: "Error!",
+      text: `Failed to delete the label. ${error.response?.data?.message || 'Please try again.'}`,
+      icon: "error",
+    });
+  }
+};
+
+  // const handleDeleteLabeling = async (id) => {
+  //   setDeleteId(id);
+  //   setIsDeleteModalVisible(true);
+  // };
+
+  // const confirmDelete = async () => {
+  //   try {
+  //     await axios.delete(`http://localhost:5000/api/labeling/${deleteId}`);
+  //     setLabelingData(prevData => prevData.filter(item => item._id !== deleteId));
+  //     message.success('Labeling record deleted successfully');
+  //   } catch (error) {
+  //     console.error('Error deleting labeling record:', error);
+  //     message.error('Failed to delete labeling record');
+  //   } finally {
+  //     setIsDeleteModalVisible(false);
+  //     setDeleteId(null);
+  //   }
+  // };
 
   const handleViewLabeling = (record) => {
     setSelectedLabeling(record);
@@ -312,8 +354,9 @@ const Labeling = () => {
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '24px' }}>
         <Button
           type="primary"
+          icon={<PlusOutlined />}
           onClick={() => navigate('/products/addLabeling')}
-          style={{ marginRight: '16px', backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
+          style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
         >
           Add Label
         </Button>
@@ -322,7 +365,7 @@ const Labeling = () => {
           type="default"
           icon={<FilePdfOutlined />}
           onClick={generatePDF}
-          style={{ backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
+          style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
         >
           Generate PDF
         </Button>
@@ -348,10 +391,11 @@ const Labeling = () => {
           render={(text, record) => (
             <div>
               <Button
+              icon={<EditOutlined  />}
                 onClick={() => handleEditLabelingPrices(record._id)}
                 style={{ marginRight: 8, backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff' }}
               >
-                Edit
+                
               </Button>
             </div>
           )}
@@ -367,8 +411,9 @@ const Labeling = () => {
 
           <Search 
             placeholder="Search by product name"
-            onSearch={handleSearch}
-            enterButton
+            onChange={(e) => onSearch(e.target.value)} // Trigger search as user types
+            style={{ width: 200, marginRight: 16 }} // Added marginRight for spacing
+            allowClear
           />
           <Select
             placeholder="Filter by status"
@@ -431,7 +476,7 @@ const Labeling = () => {
               </Button>
               <Button
                 icon={<DeleteOutlined />}  // Use DeleteOutlined icon for delete button
-                onClick={() => handleDeleteLabeling(record._id)}
+                onClick={() => confirmDelete(record._id)}
                 style={{ backgroundColor: '#f5222d', borderColor: '#f5222d', color: '#fff' }}
               />
             </div>
@@ -439,32 +484,37 @@ const Labeling = () => {
         />
       </Table>
 
-     {/* View Details Modal */}
-     <Modal
+    {/* View Details Modal */}
+    <Modal
+      title="Labeling Details"
+      visible={isViewModalVisible}
+      onCancel={handleViewModalClose}
+      footer={[
+        <Button
+          key="close"
+          onClick={handleViewModalClose}
+          style={{ backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
+        >
+          Close
+        </Button>,
+      ]}
+      bodyStyle={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }} // Center the content
+    >
+      {selectedLabeling && (
+        <>
+          <p><strong>Product Name:</strong> {selectedLabeling.productName}</p>
+          <p><strong>Labeling Date:</strong> {moment(selectedLabeling.labelingDate).format('YYYY-MM-DD')}</p>
+          <p><strong>Status:</strong> {selectedLabeling.status}</p>
+          <p><strong>Quantity:</strong> {selectedLabeling.quantity}</p>
+          <p><strong>Unit Price:</strong> Rs {viewModalDetails.unitPrice.toFixed(2)}</p>
+          <p><strong>Total Price:</strong> Rs {viewModalDetails.totalPrice.toFixed(2)}</p>
+        </>
+      )}
+    </Modal>
 
-        title="Labeling Details"
-        visible={isViewModalVisible}
-        onCancel={handleViewModalClose}
-        footer={[
-          <Button key="close" onClick={handleViewModalClose} style={{ backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}>
-            Close
-          </Button>,
-        ]}
-      >
-        {selectedLabeling && (
-          <>
-            <p><strong>Product Name:</strong> {selectedLabeling.productName}</p>
-            <p><strong>Labeling Date:</strong> {moment(selectedLabeling.labelingDate).format('YYYY-MM-DD')}</p>
-            <p><strong>Status:</strong> {selectedLabeling.status}</p>
-            <p><strong>Quantity:</strong> {selectedLabeling.quantity}</p>
-            <p><strong>Unit Price:</strong> Rs {viewModalDetails.unitPrice.toFixed(2)}</p>
-            <p><strong>Total Price:</strong> Rs {viewModalDetails.totalPrice.toFixed(2)}</p>
-          </>
-        )}
-      </Modal>
 
       {/* Delete Modal */}
-      <Modal
+      {/* <Modal
         title="Confirm Deletion"
         visible={isDeleteModalVisible}
         onOk={confirmDelete}
@@ -475,7 +525,7 @@ const Labeling = () => {
         cancelButtonProps={{ style: { backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' } }}
       >
         <p>Are you sure you want to delete this labeling record?</p>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };

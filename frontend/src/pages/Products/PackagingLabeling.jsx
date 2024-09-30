@@ -5,14 +5,23 @@ import "../../index.css";
 import { HomeOutlined } from "@mui/icons-material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Breadcrumb } from "antd";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Tabs, Tab } from "@mui/material";
 import Labeling from "./Labeling"; // Import the Labeling component
 import Packaging from "./Packaging";
 
+// Navigation menu items for the dashboard
+const menuItems = [
+  { name: 'HOME', path: '/products/productdashboard' },
+  { name: 'PRODUCTION', path: '/products/production-overview' },
+  { name: 'QUALITY', path: '/products/quality-control' },
+  { name: 'PACKAGING', path: '/products/packaging-labeling' }
+];
+
 const PackagingLabeling = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const activePage = location.pathname;
   const [activeTab, setActiveTab] = useState(0);
 
   const onGroupContainerClick = useCallback(() => {
@@ -40,56 +49,26 @@ const PackagingLabeling = () => {
     setActiveTab(newValue);
   };
 
+  const isActive = (page) => activePage === page;
+
   return (
     <div>
       <Header />
       <Sidebar className="sidebar" />
       <div className="ml-[300px] p-5">
         {/* Navigation Bar */}
-        <nav className="p-4 mb-5">
-          <div className="container flex items-center justify-between mx-auto space-x-4">
-            <div
-              className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform bg-gray-200 rounded-41xl hover:bg-gray-300"
-              onClick={onBackClick}
-            >
-              <ArrowBackIcon className="text-gray-700" />
+        <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
+            <div className="flex items-center justify-center">
+              <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
+                <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
+                {menuItems.map((item) => (
+                  <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
+                    <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-              onClick={onHomeClick}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Home
-              </a>
-            </div>
-
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-              onClick={onGroupContainerClick}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Production
-              </a>
-            </div>
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-              onClick={onGroupContainerClick1}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Quality
-              </a>
-            </div>
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white text-white"
-              onClick={onGroupContainerClick2}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Packaging
-              </a>
-            </div>
-          </div>
-        </nav>
-
+          </nav>
         <Breadcrumb
           items={[
             {

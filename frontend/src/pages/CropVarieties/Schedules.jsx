@@ -8,7 +8,7 @@ import Header from '../../components/Header';
 import moment from 'moment';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-
+import FieldViewNavbar from '../../components/FieldView/FieldViewNavbar';
 const { Content } = Layout;
 const { Option } = Select;
 
@@ -22,6 +22,25 @@ const VarietySchedule = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentRecord, setCurrentRecord] = useState(null); 
   const [form] = Form.useForm();
+
+  // Functions to restrict input to letters
+  const restrictInputToLetters = (e) => {
+    const charCode = e.which || e.keyCode;
+    const char = String.fromCharCode(charCode);
+
+    // Allow alphabetic characters and spaces
+    if (!/^[a-zA-Z ]+$/.test(char)) {
+      e.preventDefault();
+    }
+  };
+
+  const preventNonAlphabeticPaste = (e) => {
+    const paste = (e.clipboardData || window.clipboardData).getData('text');
+
+    if (!/^[a-zA-Z ]+$/.test(paste)) {
+      e.preventDefault();
+    }
+  };
 
   useEffect(() => {
     const fetchSchedules = async () => {
@@ -266,6 +285,7 @@ const VarietySchedule = () => {
             <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
             <Breadcrumb.Item>Schedule</Breadcrumb.Item>
           </Breadcrumb>
+          <FieldViewNavbar/>
 
           <div className="mb-4">
             <LeftCircleOutlined onClick={() => navigate(-1)} />
@@ -315,15 +335,34 @@ const VarietySchedule = () => {
             onCancel={() => setIsModalVisible(false)}
           >
             <Form form={form} layout="vertical">
-              <Form.Item name="team" label="Assigned Team" rules={[{ required: true, message: 'Please input the team!' }]}>
-                <Input />
-              </Form.Item>
-              <Form.Item name="fieldName" label="Field Name" rules={[{ required: true, message: 'Please input the field name!' }]}>
-                <Input />
-              </Form.Item>
-              <Form.Item name="varieties" label="Varieties" rules={[{ required: true, message: 'Please input the crop variety!' }]}>
-                <Input />
-              </Form.Item>
+            <Form.Item
+              name="team"
+              label="Assigned Team"
+              rules={[{ required: true, message: 'Please input the team!' }]}
+            >
+              <Input
+                onKeyPress={restrictInputToLetters} // Only allow letters
+                onPaste={preventNonAlphabeticPaste} // Prevent non-letter paste
+              />
+            </Form.Item>
+              <Form.Item name="fieldName" label="Field Name" rules={[{ required: true, message: 'Please select the field name!' }]}>
+              <Select placeholder="Select Field Name">
+                <Option value="Field A">Field A</Option>
+                <Option value="Field B">Field B</Option>
+                <Option value="Field C">Field C</Option>
+                <Option value="Field D">Field D</Option>
+                <Option value="Field E">Field E</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item name="varieties" label="Varieties" rules={[{ required: true, message: 'Please select the crop variety!' }]}>
+              <Select placeholder="Select Variety">
+                <Option value="Coconut">Coconut</Option>
+                <Option value="Papaya">Papaya</Option>
+                <Option value="Banana">Banana</Option>
+                <Option value="Pepper">Pepper</Option>
+                <Option value="Pineapple">Pineapple</Option>
+              </Select>
+            </Form.Item>
               <Form.Item name="date" label="Date" rules={[{ required: true, message: 'Please select the date!' }]}>
                 <DatePicker format="MM/DD/YYYY" />
               </Form.Item>
