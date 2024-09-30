@@ -48,12 +48,27 @@ const EditPrice = () => {
   };
 
   const handleUnitPriceChange = (value) => {
-    // If value is less than 0, set to 0
     if (value < 0) {
       form.setFieldsValue({ unitPrice: 0 });
     } else {
       form.setFieldsValue({ unitPrice: value });
     }
+  };
+
+  // Prevent non-numeric input and block copy-paste for unitPrice
+  const handleKeyPress = (e) => {
+    const charCode = e.which ? e.which : e.keyCode;
+    if (charCode < 48 || charCode > 57) {
+      e.preventDefault();
+    }
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    notification.warning({
+      message: 'Copy-Paste Disabled',
+      description: 'You cannot paste values into the Unit Price field.',
+    });
   };
 
   return (
@@ -74,47 +89,59 @@ const EditPrice = () => {
           </Form.Item>
           
           <Form.Item
-  label="Unit Price (Rs)"
-  name="unitPrice"
+            label="Unit Price (Rs)"
+            name="unitPrice"
+            rules={[
+              { required: true, message: 'Please input the unit price!' },
+              {
+                type: 'number',
+                min: 0,
+                message: 'Unit price cannot be negative!',
+              },
+            ]}
+          >
+            <InputNumber
+              placeholder="Enter unit price"
+              min={0}
+              style={{ width: '100%' }}
+              onChange={(value) => handleUnitPriceChange(value)}
+              onKeyPress={handleKeyPress}
+              onPaste={handlePaste}
+              onBlur={(e) => {
+                const value = e.target.value;
+                if (value && value < 0) {
+                  form.setFieldsValue({ unitPrice: undefined });
+                }
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item
+  label="Type Unit"
+  name="typeUnit"
   rules={[
-    { required: true, message: 'Please input the unit price!' },
+    { required: true, message: 'Please input the type unit!' },
     {
-      type: 'number',
-      min: 0,
-      message: 'Unit price cannot be negative!',
+      pattern: /^(1kg|1L|500ml|500g)$/,
+      message: 'Please input a valid type unit (1kg, 1L, 500ml, or 500g).',
     },
   ]}
 >
-  <InputNumber
-    placeholder="Enter unit price"
-    min={0} // Set minimum value to 0
-    style={{ width: '100%' }}
-    onChange={(value) => {
-      // If the value is not a valid number, set to undefined
-      if (isNaN(value)) {
-        form.setFieldsValue({ unitPrice: undefined });
+  <Input
+    placeholder="Enter type unit"
+    onChange={(e) => {
+      const { value } = e.target;
+      // Allow input only if it matches one of the allowed units or is empty
+      if (!/^(1kg|1L|500ml|500g)?$/.test(value)) {
+        e.preventDefault();
       } else {
-        // If the value is a valid number, set it to the form
-        form.setFieldsValue({ unitPrice: value < 0 ? 0 : value });
-      }
-    }} 
-    onBlur={(e) => {
-      const value = e.target.value;
-      // Clear input if invalid after focus loss
-      if (value && value < 0) {
-        form.setFieldsValue({ unitPrice: undefined });
+        e.target.value = value;
       }
     }}
   />
 </Form.Item>
 
-          <Form.Item
-            label="Type Unit"
-            name="typeUnit"
-            rules={[{ required: true, message: 'Please input the type unit!' }]}
-          >
-            <Input placeholder="Enter type unit" />
-          </Form.Item>
+
           <Form.Item>
             <div className="flex justify-between">
               <Button type="primary" htmlType="submit"

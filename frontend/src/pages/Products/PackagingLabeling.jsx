@@ -9,6 +9,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Tabs, Tab } from "@mui/material";
 import Labeling from "./Labeling"; // Import the Labeling component
 import Packaging from "./Packaging";
+import LoadingDot from '../../components/LoadingDots'; 
 
 // Navigation menu items for the dashboard
 const menuItems = [
@@ -23,7 +24,7 @@ const PackagingLabeling = () => {
   const location = useLocation();
   const activePage = location.pathname;
   const [activeTab, setActiveTab] = useState(0);
-
+  const [loading, setLoading] = useState(true);
   const onGroupContainerClick = useCallback(() => {
     navigate("/products/production-overview");
   }, [navigate]);
