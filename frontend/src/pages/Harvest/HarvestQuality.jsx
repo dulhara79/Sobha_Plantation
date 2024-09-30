@@ -13,6 +13,7 @@ import "../../index.css";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { HomeOutlined } from '@mui/icons-material';
 import Swal from 'sweetalert2';
+import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 
 
 const { Search } = Input;
@@ -41,8 +42,9 @@ const HarvestQuality = () => {
   });
   const [activeTab, setActiveTab] = useState("inspection"); 
   const navigate = useNavigate();
-  const activePage = location.pathname;
-  
+const location = useLocation();  // This should come before using 'location.pathname'
+const activePage = location.pathname;
+
   
   // Fetch quality controls from API
   const fetchQualityControls = async () => {
@@ -74,12 +76,19 @@ const HarvestQuality = () => {
     });
   }; 
 
-   // Calculate pass/fail data
-  const passFailData = [
-    { name: "Passed", count: metrics.passCount },
-    { name: "Failed", count: metrics.failCount },
-  ];
+  const COLORS = ['#60DB19', '#FF4D4F'];
 
+// Ensure totalInspections is greater than 0 to avoid division by zero
+const passRate = metrics.totalInspections > 0 ? (metrics.passCount / metrics.totalInspections) * 100 : 0;
+const failRate = metrics.totalInspections > 0 ? (metrics.failCount / metrics.totalInspections) * 100 : 0;
+
+const pieData = [
+  { name: "Pass Rate", value: passRate },
+  { name: "Fail Rate", value: failRate },
+];
+
+  
+  
   useEffect(() => {
     fetchQualityControls();
   }, []);
@@ -233,16 +242,15 @@ const generatePDF = async () => {
   doc.setFontSize(22);
   doc.text("Quality Report", 50, 35); // Adjust y-coordinate to start below header
 
-  // Use metrics to get pass and fail counts
-  const totalPass = metrics.passCount;
-  const totalFail = metrics.failCount;
+  const passRate = metrics.totalInspections > 0 ? (metrics.passCount / metrics.totalInspections) * 100 : 0;
+  const failRate = metrics.totalInspections > 0 ? (metrics.failCount / metrics.totalInspections) * 100 : 0;
 
   // Define the overview details
   const overviewHeaders = [['Detail', 'Value']];
   const overviewRows = [
     ['Total Inspections', `${metrics.totalInspections}`],
-    ['Pass Count', `${totalPass}`], // Display correct pass count
-    ['Fail Count', `${totalFail}`], // Display correct fail count
+    ['Pass Rate', `${passRate.toFixed(2)}%`],  // Show pass rate in percentage format
+    ['Fail Rate', `${failRate.toFixed(2)}%`],  // Show fail rate in percentage format
   ];
 
   // Add Overview Details Table
@@ -349,25 +357,30 @@ const generatePDF = async () => {
           />
       </div>
 {/* Pass/Fail Rates Table */}
-<div className="flex flex-col p-4 bg-white rounded shadow-md items-center" style={{ marginTop: "24px", maxWidth: "900px", margin: "0 auto" }}>
-  <h2 className="mb-4 text-xl font-semibold" style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>
+<div className="flex flex-col p-4 bg-white rounded shadow-md items-center" 
+     style={{ marginTop: "10px", maxWidth: "700px", margin: "0 auto", height: "400px" }}>
+  <h2 className="mb-4 text-xl font-semibold" style={{ marginBottom: '-60px', fontWeight: 'bold', color: '#1D6660' }}>
     Pass/Fail Count
   </h2>
-
-  <Table
-    dataSource={[
-      ...passFailData,
-      { name: "Total Inspections", count: metrics.totalInspections },  // Adding total inspections row
-    ]}
-    rowKey="name"
-    pagination={false}
-    size="medium"
-    style={{ width: '75%' }}
-  >
-    <Table.Column title="Status" dataIndex="name" key="name" />
-    <Table.Column title="Count" dataIndex="count" key="count" />
-  </Table>
+  <PieChart width={400} height={400}>
+    <Pie
+      data={pieData}
+      cx={200}
+      cy={200}
+      labelLine={false}
+      label={({ name, value }) => `${name}: ${value.toFixed(2)}`}
+      outerRadius={100}
+      fill="#8884d8"
+      dataKey="value"
+    >
+      {pieData.map((entry, index) => (
+        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+      ))}
+    </Pie>
+    <Tooltip />
+  </PieChart>
 </div>
+
 
 
 
