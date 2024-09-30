@@ -22,14 +22,14 @@ const WidgetRow = styled.div`
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
   position: relative;
 `;
 
 const Card = styled.div`
   background-color: #61b356;
   color: white;
-  width: 450px;
+  width: 490px;
   height: 300px;
   display: flex;
   flex-direction: column;
@@ -59,6 +59,7 @@ const ChartContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 20px;
+  
 `;
 
 const EmployeeDash = () => {
@@ -181,6 +182,7 @@ const EmployeeDash = () => {
         <Button onClick={handleViewAllEmployees}>View All Employees</Button>
       </WidgetRow>
 
+
       {/* Second Row of Widgets */}
       <WidgetRow>
         <Card>
@@ -197,9 +199,9 @@ const EmployeeDash = () => {
 
         <Button onClick={handleViewAllTasks}>View All Tasks</Button>
       </WidgetRow>
-
-      {/* Pie Chart */}
-      <ChartContainer>
+      
+       {/* Pie Chart */}
+       <ChartContainer>
         <PieChartComponent
           title="Employee Type Distribution"
           data={formatPieChartData()}
@@ -212,6 +214,8 @@ const EmployeeDash = () => {
           loading={loading}
         />
       </ChartContainer>
+
+     
 
       
     </Container>
