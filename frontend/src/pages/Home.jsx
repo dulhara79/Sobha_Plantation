@@ -7,6 +7,9 @@ import 'swiper/css/autoplay';
 import { Autoplay } from 'swiper/modules';
 import Footer from '../components/Footer';
 import { Security } from '@mui/icons-material';
+import LearnMore from '../components/LearnMore';
+import { Link } from 'react-router-dom';
+import NewsletterSubscription from '../components/NewsletterSubscription';
 
 import productIMG1 from '../assets/HomeImg/cream.jpg';
 import productIMG2 from '../assets/HomeImg/shell.jpg';
@@ -31,7 +34,7 @@ import productIMG4 from '../assets/HomeImg/img22p.jpg';
 import productIMG6 from '../assets/HomeImg/water.jpg';
 import newImage from '../assets/HomeImg/bckgrund1.jpg';
 
-const LandingPage = () => {
+const Home = () => {
   const [headerExpanded, setHeaderExpanded] = useState(true);
   const [searchBarVisible, setSearchBarVisible] = useState(false);
 
@@ -108,13 +111,31 @@ const LandingPage = () => {
     Kurunegala.
   </p>
 
-  <Button 
-    variant="contained" 
-    sx={{ backgroundColor: 'white', color: 'black', paddingLeft: '20px', marginLeft: '200px' }} 
-    className="mt-2 text-lg" 
-  >
-    Learn More
-  </Button>
+  <Button
+  component={Link}
+        to="/learn-more"
+  variant="outlined"
+  className="mt-4"
+  sx={{
+    borderColor: 'white',
+    color: 'white',
+    padding: '12px 24px',
+    marginLeft: '200px',
+    marginTop: '8px',
+    borderRadius: '8px',
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2), 0px 0px 10px rgba(255, 255, 255, 0.5)', // Added white glow
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+    '&:hover': {
+      backgroundColor: 'white',
+      color: 'white',
+      boxShadow: '0px 6px 16px rgba(0, 0, 0, 0.3), 0px 0px 12px rgba(255, 255, 255, 0.7)', // Stronger shadow and white glow on hover
+      transform: 'translateY(-2px)',
+    },
+  }}
+  onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+>
+  Learn More
+</Button>
 
   {/* Add Keyframes for Animation */}
   <style jsx>{`
@@ -134,7 +155,6 @@ const LandingPage = () => {
     }
   `}</style>
 </section>
-
 
 
       {/* Inter-crops Section */}
@@ -184,9 +204,12 @@ const LandingPage = () => {
                       sx={{
                         borderColor: '#1D6660',
                         color: '#1D6660',
-                        transition: 'background-color 0.4s ease',
+                        transition:'transform 0.3s ease, box-shadow 0.3s ease',
+                       '&:hover': {
+                        color: '#1D6660',
+                        transform: 'translateY(-4px)',
+                      },
                       }}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#1D6660'}
                       onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                     >
                       Learn More
@@ -201,53 +224,8 @@ const LandingPage = () => {
 
 
       {/* Newsletter Section */}
-      <section
-        className="py-10 mx-4 text-center bg-green-100 md:mx-20" // Added horizontal margins
-        style={{
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)', // Drop shadow
-          borderRadius: '12px', // Optional: for rounded corners
-          maxWidth: '95%', // Ensure max width is consistent
-          padding: '20px',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-        }}
-      >
-        <h2 className="mb-4 text-4xl font-bold text-gray-800">Subscribe to Our Newsletter</h2> {/* Increased font size */}
-        <p className="mb-6 text-gray-700 text-md">Stay updated with the latest news and exclusive offers!</p> {/* Enhanced message */}
-        
-        <div className="flex flex-col items-center justify-center md:flex-row">
-          <TextField
-            variant="outlined"
-            placeholder="Enter your email"
-            className="w-full mt-2 md:w-1/3"
-            label="Email Address"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '8px', // Rounded corners for input
-              },
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            className="mt-2 md:mt-0 md:ml-4"
-            sx={{
-              bgcolor: '#1D6660', // Custom primary color
-              color: 'white', // White text color for better contrast
-              '&:hover': {
-                bgcolor: '#155d54', // Darker shade on hover
-              },
-              borderRadius: '8px', // Rounded corners for button
-            }}
-          >
-            Subscribe
-          </Button>
-        </div>
-      </section>
-
+      
+<NewsletterSubscription/>
 
     {/* Services Section */}
     <section className="py-20 bg-light-gray">
@@ -360,7 +338,7 @@ const LandingPage = () => {
   <div className="container px-4 mx-auto lg:px-0">
   
   <h2 className="mb-1 text-4xl font-semibold text-center" >
-    Our Coconut Collection </h2>
+    Our Coconut Products Collection </h2>
 <div className="max-w-2xl mx-auto mb-12 text-center">
   {/* <p className="text-lg font-medium leading-relaxed text-gray-700 md:text-xl">
     Discover our curated selection of premium coconut-based products, where natural purity meets refined craftsmanship. Each product, from rich coconut oil to refreshing coconut water, is a testament to our dedication to quality, offering you the finest in tropical wellness and indulgence.
@@ -512,4 +490,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage;
+export default Home;
