@@ -22,6 +22,7 @@ const productionRoutes = require('./routes/Products/productionRoute.js');
 const qualityControlRoute = require('./routes/Products/qualityControlRoute.js');
 const labelingPricesRoute = require('./routes/Products/labelingPricesRoute.js');
 const labelingRoute = require('./routes/Products/labelingRoute.js');
+const packagingRoute = require('./routes/Products/packagingRoute.js')
 
 
 /**
@@ -105,6 +106,7 @@ app.use('/api/production', productionRoutes);
 app.use('/api/quality-control', qualityControlRoute);
 app.use('/api/labeling-prices', labelingPricesRoute);
 app.use('/api/labeling', labelingRoute);
+app.use('/api/packaging', packagingRoute);
 
 
 /**
