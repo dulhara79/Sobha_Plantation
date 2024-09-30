@@ -8,8 +8,7 @@ import LearnMore from './components/LearnMore';
 
 /**
  * sales and finance
- */
-//sales
+*/
 import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
 import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
 import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
@@ -18,9 +17,13 @@ import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage
 // finance
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
+import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
 import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDisplay.jsx";
 import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
-import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
+import ValuationDashboardPage from "./pages/SalesAndFinance/Finance/ValuationDashboard.jsx";
+import AddNewValuationPage from "./pages/SalesAndFinance/Finance/AddNewValuationPage.jsx";
+import EditValuationPage from "./pages/SalesAndFinance/Finance/EditValuationPage.jsx";
+import Esalary from "./pages/SalesAndFinance/Finance/Esalary.jsx";
 
 // inventory
 import FertilizerRecords from "./pages/Inventory/FertilizerRecords.jsx";
@@ -158,8 +161,9 @@ export default function App() {
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/learn-more" element={<LearnMore />} />
 
-      {/* finance */}
+       {/* sales and finance */}
       <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
+
       <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
       <Route
         path="/salesAndFinance/sales/addSalesRecord"
@@ -173,6 +177,7 @@ export default function App() {
         path="/salesAndFinance/sales/analytics"
         element={<SalesAnalyticsPage />}
       />
+
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
       <Route
         path="/salesAndFinance/finance/add-transaction"
@@ -189,6 +194,23 @@ export default function App() {
       <Route
         path="/salesAndFinance/finance/analytics"
         element={<FinancialAnalyticsPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/employeeSalary"
+        element={<Esalary />}
+      />
+
+      <Route
+        path="/salesAndFinance/finance/valuation-dashboard"
+        element={<ValuationDashboardPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/add-new-valuation"
+        element={<AddNewValuationPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/add-new-valuation"
+        element={<EditValuationPage />}
       />
 
       {/* inventory */}
