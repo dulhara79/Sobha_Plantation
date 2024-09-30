@@ -42,7 +42,7 @@ const diseasesRoute = require('./routes/DiseaseRoutes/diseasesRoute.js');
 const cropDiseasesRoute = require('./routes/DiseaseRoutes/cropDiseasesRoute.js')
 const treatmentsRoute = require('./routes/DiseaseRoutes/treatmentsRoute.js');
 const cropTreatmentsRoute = require('./routes/DiseaseRoutes/cropTreatmentsRoute.js');
-const maintenanceRoute = require('./routes/DiseaseRoutes/maintenanceRoute.js');
+const regularMaintenanceRoute = require('./routes/DiseaseRoutes/regularMaintenanceRoute.js');
 
 
 
@@ -71,7 +71,7 @@ const FinancialTransactionRoutes = require('./routes/SalesAndFinance/FinancialTr
 const InvoiceRoutes = require('./routes/SalesAndFinance/InvoiceRoutes.js');
 const SalesAnalyticsRoutes = require('./routes/SalesAndFinance/SalesAnalyticsRoutes.js');
 const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoutes.js');
-//const valuationRoutes = require('./routes/SalesAndFinance/valuationRoutes.js');
+const valuationRoutes = require('./routes/SalesAndFinance/valuationRoutes.js');
 
 const attendanceRoute = require('./routes/Employee/AttendanceRoute.js');
 const salaryEmployeeRoutes = require("./routes/Employee/salaryEmployeeRoutes.js");
@@ -130,7 +130,7 @@ app.use('/api/diseases', diseasesRoute);
 app.use('/api/cropDiseases', cropDiseasesRoute);
 app.use('/api/treatments', treatmentsRoute);
 app.use('/api/cropTreatments', cropTreatmentsRoute);
-app.use('/api/regularMaintenance', maintenanceRoute);
+app.use('/api/regularMaintenance', regularMaintenanceRoute);
 
 
 
