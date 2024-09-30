@@ -116,30 +116,40 @@ const AddEquipmentRecord = () => {
           </Form.Item>
 
           {/* Quantity */}
-          <Form.Item
+       {/* Quantity */}
+       <Form.Item
             label="Quantity"
             name="quantity"
             rules={[
               { required: true, message: 'Please enter the quantity!' },
-              { validator: validateQuantity }, // Custom quantity validation
+              { pattern: /^\d+$/, message: 'Quantity must be numeric' },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || (parseInt(value) >= 1 && parseInt(value) <= 100)) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Quantity must be between 1 and 100!'));
+                },
+              }),
             ]}
           >
-            <Input type="number" placeholder="Enter quantity" disabled={!addedDateComplete} />
+            <Input placeholder="Enter quantity" type="number" disabled={!addedDateComplete} />
           </Form.Item>
+
 
           {/* Storage Location */}
           <Form.Item
             label="Storage Location"
             name="storagelocation"
-            rules={[{ required: true, message: 'Please enter the storage location!' },
-              {
-                pattern: /^[A-Za-z\s]*(\d{0,1})[A-Za-z\s]*$/, 
-                message: 'Storage location can only contain letters, spaces, and at most one number!',
-              }
-              
-            ]}
+            rules={[{ required: true, message: 'Please enter the storage location!'}]}
+           
           >
-            <Input placeholder="Enter Storage Location" disabled={!quantityComplete} />
+          <Select placeholder="Select Storage Location" disabled={!quantityComplete}>
+              <Option value="warehouse1">warehouse1</Option>
+              <Option value="warehouse2">warehouse2</Option>
+              <Option value="warehouse3">warehouse3</Option>
+            </Select>
+            
           </Form.Item>
 
           {/* Status */}
