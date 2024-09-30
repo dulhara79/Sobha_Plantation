@@ -120,13 +120,24 @@ const AddFertilizerRecord = () => {
             />
           </Form.Item>
 
-          {/* Quantity */}
-          <Form.Item
+           {/* Quantity */}
+           <Form.Item
             label="Quantity"
             name="quantity"
-            rules={[{ required: true, message: 'Please enter the quantity!' }]}
+            rules={[
+              { required: true, message: 'Please enter the quantity!' },
+              { pattern: /^\d+$/, message: 'Quantity must be numeric' },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || (parseInt(value) >= 1 && parseInt(value) <= 100)) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Quantity must be between 1 and 100!'));
+                },
+              }),
+            ]}
           >
-            <Input type="number" placeholder="Enter quantity" min={0} disabled={!addedDateComplete} />
+            <Input placeholder="Enter quantity" type="number" disabled={!addedDateComplete} />
           </Form.Item>
 
           {/* Unit */}
@@ -143,20 +154,20 @@ const AddFertilizerRecord = () => {
             </Select>
           </Form.Item>
         
-          {/* Storage Location */}
-          <Form.Item
-  label="Storage Location"
-  name="storagelocation"
-  rules={[
-    { required: true, message: 'Please enter the storage location!' },
-    {
-      pattern: /^[A-Za-z\s]*(\d{0,1})[A-Za-z\s]*$/, // Modified regex
-      message: 'Storage location can only contain letters, spaces, and at most one number!',
-    },
-  ]}
->
-  <Input placeholder="Enter Storage Location" disabled={!unitComplete} />
-</Form.Item>
+  {/* Storage Location */}
+  <Form.Item
+            label="Storage Location"
+            name="storagelocation"
+            rules={[{ required: true, message: 'Please enter the storage location!'}]}
+           
+          >
+          <Select placeholder="Select Storage Location" disabled={!unitComplete}>
+              <Option value="warehouse1">warehouse1</Option>
+              <Option value="warehouse2">warehouse2</Option>
+              <Option value="warehouse3">warehouse3</Option>
+            </Select>
+            
+          </Form.Item>
 
 
           {/* Expired Date */}
