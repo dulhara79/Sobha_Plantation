@@ -288,7 +288,6 @@ export default function App() {
       {/* employee */}
       <Route path="/employee/dashboard" element={<Edashboard />} />
       <Route path="/employee/registration" element={<Eregistration />} />
-      {/* <Route path="/employee/salary" element={<Esalary />} /> */}
       <Route path="/employee/task" element={<EaddTask />} />
       <Route path="/employee/taskedit/:id" element={<EditTaskPage />} />
       <Route path="/employee/TaskListview" element={<ViewTaskList />} />
