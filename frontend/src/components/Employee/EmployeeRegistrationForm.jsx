@@ -4,7 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { DatePicker } from "antd";
 import moment from "moment";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 // Styled Components
 const Container = styled.div`
@@ -233,32 +233,32 @@ const Eregistration = () => {
 
   const handleNicChange = (e) => {
     let input = e.target.value;
-  
+
     // Allow only numbers and 'V', 'v', 'X', 'x'
     let filteredValue = input.replace(/[^0-9xXvV]/g, "");
-  
+
     // Regex patterns for old and new NIC numbers
-    const oldNicRegex = /^[0-9]{9}[vV]?$/;  // Old NIC: 9 digits followed by optional 'V' or 'v'
-    const newNicRegex = /^[0-9]{12}$/;      // New NIC: Exactly 12 digits
-  
+    const oldNicRegex = /^[0-9]{9}[vV]?$/; // Old NIC: 9 digits followed by optional 'V' or 'v'
+    const newNicRegex = /^[0-9]{12}$/; // New NIC: Exactly 12 digits
+
     // Restrict input to a maximum of 10 characters for old NIC
     if (filteredValue.length > 10 && /^[0-9]{9}[vV]?$/.test(filteredValue)) {
       filteredValue = filteredValue.substring(0, 10); // Restrict to 10 characters (9 digits + 'V'/'v')
     }
-  
+
     // Restrict input to a maximum of 12 characters for new NIC
     if (filteredValue.length > 12) {
       filteredValue = filteredValue.substring(0, 12);
     }
-  
+
     // Current year for age restriction
     const currentYear = new Date().getFullYear();
     const minAllowedYear = currentYear - 18; // Minimum allowed birth year (18 years ago)
-  
+
     // Validate old NIC (9 digits + 'V' or 'v') or new NIC (12 digits)
     if (oldNicRegex.test(filteredValue) || newNicRegex.test(filteredValue)) {
       setNic(filteredValue);
-      
+
       // For new NIC (12 digits), extract the year of birth
       if (filteredValue.length === 12) {
         const yearOfBirth = parseInt(filteredValue.substring(0, 4), 10);
@@ -266,10 +266,10 @@ const Eregistration = () => {
           setAllowedYear(yearOfBirth);
         } else {
           // If under 18, reset NIC and show an error
-          setNic('');
-          alert('The NIC holder must be 18 years or older.');
+          setNic("");
+          alert("The NIC holder must be 18 years or older.");
         }
-      } 
+      }
       // For old NIC (9 digits + 'V' or 'v'), extract the year of birth
       else if (filteredValue.length === 10) {
         const yearOfBirth = parseInt(`19${filteredValue.substring(0, 2)}`, 10);
@@ -277,25 +277,21 @@ const Eregistration = () => {
           setAllowedYear(yearOfBirth);
         } else {
           // If under 18, reset NIC and show an error
-          setNic('');
-          alert('The NIC holder must be 18 years or older.');
+          setNic("");
+          alert("The NIC holder must be 18 years or older.");
         }
       }
     } else {
       // Set NIC if invalid but allow partial input
       setNic(filteredValue);
     }
-  
+
     // Enable the date of birth field after NIC validation
     setDisabledFields({
       ...disabledFields,
       dateOfBirth: false,
     });
   };
-  
-  
-  
-  
 
   // Handle Date of Birth Change: Restrict DOB to match NIC
   const handleDateOfBirthChange = (e) => {
@@ -349,7 +345,7 @@ const Eregistration = () => {
     });
   };
 
-const handleAddressChange = (e) => {
+  const handleAddressChange = (e) => {
     const value = e.target.value;
     const filteredValue = value.replace(/[^0-9a-zA-Z\s,./]/g, ""); // Remove spaces
     setAddress(filteredValue);
@@ -366,8 +362,7 @@ const handleAddressChange = (e) => {
       ...disabledFields,
       designation: false,
     });
-
-  };  
+  };
 
   const handleDesignationChange = (e) => {
     setDesignation(e.target.value);
@@ -402,7 +397,7 @@ const handleAddressChange = (e) => {
     hourlyRate: hourlyRate,
   };
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -433,8 +428,6 @@ const handleAddressChange = (e) => {
       }
     }
   };
-
-
 
   // Sequential validation logic
   const isFormValidTillField = (fieldName) => {
@@ -491,17 +484,19 @@ const handleAddressChange = (e) => {
     setErrors((prevErrors) => ({ ...prevErrors, [name]: fieldErrors[name] }));
   };
 
-
   return (
     <Container>
       <Title>Employee Registration Form</Title>
       {/* onSubmit={handleSubmit} */}
-      <form >
+      <form>
         <FormRow>
           <FormGroup>
             <label htmlFor="firstName">First Name</label>
             <input
               type="text"
+              // onCopy={(e) => e.preventDefault()} // Prevent copying
+              // onCut={(e) => e.preventDefault()} // Prevent cutting
+              // onPaste={(e) => e.preventDefault()} // Prevent pasting
               name="firstName"
               placeholder="First Name"
               value={firstName}
@@ -642,7 +637,8 @@ const handleAddressChange = (e) => {
             >
               <option value="">Select Designation</option>
               <option value="Farmer">Farmer</option>
-              <option value="Supervisor">Supervisor</option>
+              <option value="Supervisor"> pest and disease expert </option>
+              <option value="Supervisor">Security</option>
             </select>
             {errors.designation && <p>{errors.designation}</p>}
           </FormGroup>
@@ -685,7 +681,12 @@ const handleAddressChange = (e) => {
 
         {/* Form submission buttons */}
         <ButtonGroup>
-          <Button type="button" onClick={handleSubmit} disabled={disabledFields.submitted} primary>
+          <Button
+            type="button"
+            onClick={handleSubmit}
+            disabled={disabledFields.submitted}
+            primary
+          >
             Register
           </Button>
           <Button type="button" onClick={() => console.log("Form cleared!")}>
