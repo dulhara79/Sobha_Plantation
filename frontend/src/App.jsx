@@ -150,7 +150,7 @@ import Gallery from "./pages/Products/Gallery.jsx";
  * field view
  */
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
-import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
+import VarietyCrop from "./pages/CropVarieties/VarietyCrop.jsx";
 import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
 import Seedling from "./pages/CropVarieties/Seedling.jsx";
 import Schedules from "./pages/CropVarieties/Schedules.jsx";
@@ -440,6 +440,7 @@ export default function App() {
       <Route path="/scheduleForm" element={<ScheduleForm />} />
       <Route path="/landPreparation" element={<LandPreparation />} />
       <Route path="/seedlingForm" element={<AddSeedlingForm />} />
+      <Route path="/pGrowth" element={<PlantGrowth />} />
 
       {/* new buyers */}
       {/* <Route path='/cart' element={<Cart/>}/> */}
