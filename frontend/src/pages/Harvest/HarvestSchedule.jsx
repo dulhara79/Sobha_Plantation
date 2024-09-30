@@ -1,122 +1,176 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState ,useCallback} from "react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import "../../index.css";
-import { ArrowBack } from "@mui/icons-material";
 import { Breadcrumb, Table, Button, Input, Modal, notification } from "antd";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate,useLocation } from "react-router-dom";
 import moment from "moment";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { HomeOutlined } from '@ant-design/icons';
+import Swal from 'sweetalert2';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+
+
 
 const { Search } = Input;
+
+const menuItems = [
+  { name: "HOME", path: "/harvest/harvestdashboard" },
+  { name: "SCHEDULE", path: "/harvest/harvest-schedule" },
+  { name: "YIELD", path: "/harvest/yield" },
+  { name: "QUALITYCHECKING", path: "/harvest/quality" },
+  { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist" },
+];
 
 const HarvestSchedule = () => {
   const [schedules, setSchedules] = useState([]);
   const [filteredSchedules, setFilteredSchedules] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [filterStatus, setFilterStatus] = useState("All");
   const [sorter, setSorter] = useState({ field: null, order: null });
   const navigate = useNavigate();
+  const location = useLocation();
+  const activePage = location.pathname;
 
   useEffect(() => {
     fetchSchedules();
   }, []);
 
-  // Fetch schedules from API
-  
   const fetchSchedules = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/harvest');
-      console.log(response.data.data); // Log the fetched data
       setSchedules(response.data.data);
       setFilteredSchedules(response.data.data);
     } catch (error) {
       console.error('Error fetching yield records:', error);
     }
   };
-  
-
-  const onGroupContainerClick = useCallback(() => {
-    navigate("/harvest/harvest-schedule");
-  }, [navigate]);
-
-  const onGroupContainerClick1 = useCallback(() => {
-    navigate("/harvest/yield");
-  }, [navigate]);
-
-  const onGroupContainerClick2 = useCallback(() => {
-    navigate("/harvest/compliancechecklist");
-  }, [navigate]);
-
-  const onHomeClick = useCallback(() => {
-    navigate("/harvest/harvestdashboard"); // Navigate to HarvestDashboard
-  }, [navigate]);
-
-  const onBackClick = useCallback(() => {
-    navigate(-1); // Navigate back to the previous page
-  }, [navigate]);
 
   const onSearch = (value) => {
     setSearchText(value);
-    filterSchedules(value, filterStatus);
+    filterSchedules(value);
   };
 
   const filterSchedules = (searchText) => {
     let filteredData = schedules;
-
+  
     if (searchText) {
       const lowercasedSearchText = searchText.toLowerCase();
-
+  
       filteredData = filteredData.filter((schedule) => {
         return Object.keys(schedule).some((key) => {
           const value = schedule[key];
-
-          // Debugging
-          console.log(`Key: ${key}, Value: ${value}`);
-
-          // Format and filter date fields
-          if (moment(value, moment.ISO_8601, true).isValid()) {
+  
+          // Check if the value is a valid date using moment
+          if (typeof value === 'string' && moment(value, moment.ISO_8601, true).isValid()) {
             return moment(value).format("YYYY-MM-DD").toLowerCase().includes(lowercasedSearchText);
           }
-
-          // Filter string and number fields
+  
+          // If the value is a string
           if (typeof value === 'string') {
             return value.toLowerCase().includes(lowercasedSearchText);
-          } else if (typeof value === 'number') {
-            return value.toString().includes(searchText);
           }
-
+          
+          // If the value is a number
+          if (typeof value === 'number') {
+            return value.toString().includes(lowercasedSearchText);
+          }
+  
+          // Other data types (objects, arrays) should not be included in the filter
           return false;
         });
       });
     }
-
+  
     setFilteredSchedules(filteredData);
   };
-  const generatePDF = () => {
+  
+
+  const generatePDF = async () => {
     const doc = new jsPDF();
-    doc.text("Harvest Schedule Report", 20, 10);
-
-    const tableColumn = ["Crop Type", "Harvest Date",  "Start Time", "End Time", "Field Number","Number of Workers"];
-    const tableRows = [];
-
-    filteredSchedules.forEach((schedule) => {
-      const scheduleData = [
-        moment(schedule.harvestdate).format("YYYY-MM-DD"),
-        schedule.cropType,
-        schedule.harvestDate,
-        schedule.startTime,
-        schedule.endTime,
-        schedule.fieldNumber,
-        schedule.numberOfWorkers,
-      ];
-      tableRows.push(scheduleData);
+  
+    // Load the logo image
+    const logoUrl = '../src/assets/logo.png';
+    let logoDataURL;
+    try {
+      logoDataURL = await getImageDataURL(logoUrl);
+    } catch (error) {
+      console.error('Failed to load the logo image:', error);
+    }
+  
+    // Function to draw header and footer
+    const drawHeaderFooter = (data) => {
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+  
+      // Header
+      if (logoDataURL) {
+        doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 15); // Adjust position and size
+      }
+      doc.setFontSize(12);
+      doc.text("Sobha Plantation", 170, 19); // Adjust x, y position
+      doc.line(10, 25, pageWidth - 10, 25); // Line under header
+  
+      // Footer
+      doc.setFontSize(10);
+      const currentPage = `Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`;
+      doc.text(currentPage, pageWidth - 30, pageHeight - 10); // Page number in footer
+    };
+  
+    // Title for the report
+    doc.setFontSize(22);
+    doc.text("Harvest Schedule Report", 70, 40); // Adjusted for placement below header
+  
+    // Define table columns and rows
+    const tableColumn = ["Crop Type", "Harvest Date", "Start Time", "End Time", "Field Number", "Number of Workers"];
+    const tableRows = filteredSchedules.map(schedule => [
+      schedule.cropType,
+      moment(schedule.harvestDate).format("YYYY-MM-DD"),
+      schedule.startTime,
+      schedule.endTime,
+      schedule.fieldNumber,
+      schedule.numberOfWorkers,
+    ]);
+  
+    // Add table to the PDF
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 60, // Ensure the table starts below the title
+      margin: { horizontal: 10 }, // Adjust horizontal margin
+      styles: { fontSize: 10 }, // Table font size
+      headStyles: {
+        fillColor: [64, 133, 126], // Header background color
+        textColor: [255, 255, 255], // Header text color
+        fontSize: 12,
+      },
+      theme: 'striped',
+      didDrawPage: drawHeaderFooter, // Draw header and footer on each page
     });
-
-    doc.autoTable(tableColumn, tableRows, { startY: 20 });
+  
+    // Save the PDF
     doc.save("harvest_schedule_report.pdf");
+  };
+  
+
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = (error) => {
+        reject(error);
+      };
+    });
   };
 
   const renderDate = (text) => {
@@ -125,22 +179,23 @@ const HarvestSchedule = () => {
   };
 
   const renderTime = (text) => {
-    console.log('Rendering time:', text); // Log to check the format
     const formats = ['HH:mm:ss', 'HH:mm', 'h:mm A', 'hh:mm A'];
     const time = moment(text, formats, true);
     return time.isValid() ? time.format('HH:mm') : 'Invalid time';
   };
-  
-  
 
   const handleSort = (field, order) => {
     setSorter({ field, order });
-    filterSchedules(searchText, filterStatus);
+    const sortedSchedules = [...filteredSchedules].sort((a, b) => {
+      if (order === 'ascend') return a[field] > b[field] ? 1 : -1;
+      return a[field] < b[field] ? 1 : -1;
+    });
+    setFilteredSchedules(sortedSchedules);
   };
 
   const cancelSorting = () => {
     setSorter({ field: null, order: null });
-    filterSchedules(searchText, filterStatus);
+    setFilteredSchedules(schedules);
   };
 
   const handleUpdate = (id) => {
@@ -150,116 +205,89 @@ const HarvestSchedule = () => {
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(`http://localhost:5000/api/harvest/${id}`);
-      if (response.status === 200) {
-        notification.success({
-          message: 'Success',
-          description: 'Harvest Schedule deleted successfully!',
-        });
-        setFilteredSchedules(filteredSchedules.filter(schedule => schedule._id !== id));
-      } else {
-        notification.error({
-          message: 'Error',
-          description: 'There was an error deleting the schedules.',
-        });
-      }
+      fetchSchedules()
     } catch (error) {
-      console.error('Error deleting schedule:', error.response?.data?.message || error.message);
-      notification.error({
-        message: 'Error',
-        description: error.response?.data?.message || 'There was an error deleting the schedules.',
+      Swal.fire({
+        title: "Error!",
+        text: `Failed to delete the inspection. ${error.response?.data?.message || 'Please try again.'}`,
+        icon: "error",
       });
     }
   };
-
   const confirmDelete = (id) => {
-    Modal.confirm({
+    Swal.fire({
       title: "Are you sure you want to delete this schedule?",
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-      onOk: () => handleDelete(id),
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDelete(id);
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your schedule has been deleted.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
     });
   };
+  
+
+  const isActive = (page) => activePage === page;
+  const onBackClick = useCallback(() => {
+    navigate(-1); // Navigate back to the previous page
+}, [navigate]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div >
       <Header />
-      <div className="flex flex-1">
-        <Sidebar />
-        <div className="ml-[300px] pt-3 flex-1">
-          <nav className="p-4 mb-5">
-            {/* Navigation Buttons */}
-            <div className="container flex items-center justify-between mx-auto space-x-4">
-              <div
-                className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform bg-gray-200 rounded-41xl hover:bg-gray-300"
-                onClick={onBackClick}
-              >
-                <ArrowBack className="text-gray-700" />
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onHomeClick}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Home
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Schedule
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick1}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Yield Records
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick2}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Compliance Checklist
-                </a>
-              </div>
-            </div>
+      <Sidebar className="sidebar" />
+        <div className="ml-[300px] p-5">
+        <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
+                 <div className="flex items-center justify-center">
+                    <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
+                       <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
+                        {menuItems.map((item) => (
+                          <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
+                        <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
+                         </li>
+                        ))}
+                  </ul>
+             </div>
           </nav>
-
-          <Breadcrumb
-            items={[
-              { title: 'Home', href: '/' },
-              { title: 'Yield', href: '/harvest/yield' }
-            ]}
-          />
-          {/* Welcome Message Component */}
-          <div className="flex flex-row items-center justify-between shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-[98%] mb-5">
-            <b className="text-3xl">Welcome Kaushalya</b>
-          </div>
-
-         <div className="p-6 bg-white rounded-lg shadow-lg">
+                   <div className="flex items-center justify-between mb-5">
+                    <Breadcrumb
+                        items={[
+                            {href: '', title: <HomeOutlined />},
+                            {title: "Harvest"},
+                            {title: "Schedule"},
+                             ]}
+                       />
+                    </div>
+         
+          <div className="p-6 bg-white rounded-lg shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-4">
                 <Search
                   placeholder="Search by any field"
-                  onChange={(e) => onSearch(e.target.value)}  // Trigger filter on input change
+                  onChange={(e) => onSearch(e.target.value)}
                   style={{ width: 200 }}
-                  value={searchText}  // Keep the input controlled
+                  value={searchText}
                 />
-                <Button 
-                  style={{ backgroundColor: "#60DB19", color: "#fff" }} 
-                  onClick={generatePDF}
-                >
+                <Button style={{ backgroundColor: "#60DB19", color: "#fff" }} onClick={() => navigate("/harvest/addschedule")}>
+                  Add Schedule
+                </Button>
+                <Button style={{ backgroundColor: "#60DB19", color: "#fff" }} onClick={generatePDF}>
                   Generate PDF Report
                 </Button>
               </div>
             </div>
-
             <Table
               columns={[
                 {
@@ -312,12 +340,8 @@ const HarvestSchedule = () => {
                   key: "actions",
                   render: (text, record) => (
                     <span>
-                      <Button type="link" onClick={() => handleUpdate(record._id)}>
-                        Edit
-                      </Button>
-                      <Button type="link" danger onClick={() => confirmDelete(record._id)}>
-                        Delete
-                      </Button>
+                      <Button type="link" icon={<EditOutlined />} onClick={() => handleUpdate(record._id)}>Edit</Button>
+                      <Button type="link" danger  icon={<DeleteOutlined />} onClick={() => confirmDelete(record._id)}>Delete</Button>
                     </span>
                   ),
                 },
@@ -337,7 +361,7 @@ const HarvestSchedule = () => {
           </div>
         </div>
       </div>
-    </div>
+    
   );
 };
 

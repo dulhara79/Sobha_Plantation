@@ -2,24 +2,38 @@ import React, { useCallback, useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import "../../index.css";
-import { ArrowBack } from "@mui/icons-material";
 import { Breadcrumb, Table, Button, Input, Modal, notification } from "antd";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation,Link } from "react-router-dom";
 import moment from "moment";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { HomeOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import Swal from 'sweetalert2';
+
 
 
 const { Search } = Input;
 
+const menuItems = [
+  { name: "HOME", path: "/harvest/harvestdashboard" },
+  { name: "SCHEDULE", path: "/harvest/harvest-schedule" },
+  { name: "YIELD", path: "/harvest/yield" },
+  { name: "QUALITYCHECKING", path: "/harvest/quality" },
+  { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist" },
+];
 const YieldRecords = () => {
   const [schedules, setSchedules] = useState([]);
   const [filteredSchedules, setFilteredSchedules] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [sorter, setSorter] = useState({ field: null, order: null });
+  const [cropQuantities, setCropQuantities] = useState({});
   const navigate = useNavigate();
+  const location = useLocation();
+  const activePage = location.pathname;
 
   useEffect(() => {
     fetchSchedules();
@@ -28,28 +42,15 @@ const YieldRecords = () => {
   const fetchSchedules = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/yield');
+      console.log('API Response:', response.data);
       setSchedules(response.data.data);
       setFilteredSchedules(response.data.data);
+      calculateCropQuantities(response.data.data);
     } catch (error) {
       console.error('Error fetching yield records:', error);
     }
   };
 
-  const onGroupContainerClick = useCallback(() => {
-    navigate("/harvest/harvest-schedule");
-  }, [navigate]);
-
-  const onGroupContainerClick1 = useCallback(() => {
-    navigate("/harvest/yield");
-  }, [navigate]);
-
-  const onGroupContainerClick2 = useCallback(() => {
-    navigate("/harvest/compliancechecklist");
-  }, [navigate]);
-
-  const onHomeClick = useCallback(() => {
-    navigate("/harvest/harvestdashboard"); // Navigate to HarvestDashboard
-  }, [navigate]);
 
   const onBackClick = useCallback(() => {
     navigate(-1); // Navigate back to the previous page
@@ -60,63 +61,150 @@ const YieldRecords = () => {
     filterSchedules(value, filterStatus);
   };
 
- const filterSchedules = (searchText) => {
+  const filterSchedules = (searchText) => {
     let filteredData = schedules;
-
+  
     if (searchText) {
       const lowercasedSearchText = searchText.toLowerCase();
-
+  
       filteredData = filteredData.filter((schedule) => {
         return Object.keys(schedule).some((key) => {
           const value = schedule[key];
-
+  
           // Debugging
           console.log(`Key: ${key}, Value: ${value}`);
-
-          // Format and filter date fields
+  
+          // Check if the value is a date using moment
           if (moment(value, moment.ISO_8601, true).isValid()) {
-            return moment(value).format("YYYY-MM-DD").toLowerCase().includes(lowercasedSearchText);
+            // Format the date and filter it
+            const formattedDate = moment(value).format("YYYY-MM-DD");
+            return formattedDate.includes(lowercasedSearchText);
           }
-
-          // Filter string and number fields
+  
+          // Check if the value is a string
           if (typeof value === 'string') {
             return value.toLowerCase().includes(lowercasedSearchText);
-          } else if (typeof value === 'number') {
+          }
+  
+          // Check if the value is a number
+          if (typeof value === 'number') {
             return value.toString().includes(searchText);
           }
-
+  
           return false;
         });
       });
     }
-
+  
     setFilteredSchedules(filteredData);
   };
+  
+  const calculateCropQuantities = (schedules) => {
+    const quantities = schedules.reduce((acc, schedule) => {
+      const { cropType, quantity } = schedule;
+      if (acc[cropType]) {
+        acc[cropType] += quantity;
+      } else {
+        acc[cropType] = quantity;
+      }
+      return acc;
+    }, {});
+    setCropQuantities(quantities);
+  };
+  
 
 
-
-  const generatePDF = () => {
+  const generatePDF = async () => {
     const doc = new jsPDF();
-    doc.text("Yield Records Report", 20, 10);
   
-    const tableColumn = ["Harvest Date", "Crop Type", "Quantity", "Trees Picked", "Storage Location"];
-    const tableRows = [];
+    // Load the logo image
+    const logoUrl = '../src/assets/logo.png';
+    let logoDataURL;
+    try {
+      logoDataURL = await getImageDataURL(logoUrl);
+    } catch (error) {
+      console.error('Failed to load the logo image:', error);
+    }
   
-    filteredSchedules.forEach((schedule) => {
-      const scheduleData = [
-        moment(schedule.harvestdate).format("YYYY-MM-DD"),
-        schedule.cropType,
-        schedule.quantity,
-        schedule.treesPicked,
-        schedule.storageLocation,
-      ];
-      tableRows.push(scheduleData);
+    // Function to draw header, footer, and horizontal line
+    const drawHeaderFooter = (data) => {
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+  
+      // Header with logo
+      if (logoDataURL) {
+        doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 15); // Adjust position and size of the logo
+      }
+      doc.setFontSize(12);
+      doc.text("Sobha Plantation", 170, 20); // Adjust text position
+      doc.line(10, 25, pageWidth - 10, 25); // Line under header
+  
+      // Footer with page number
+      doc.setFontSize(10);
+      doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
+    };
+  
+    // Set the margins for header and footer space
+    const marginTop = 30; // space reserved for header
+    const marginBottom = 20; // space reserved for footer
+  
+    // Title for the report
+    doc.setFontSize(22);
+    doc.text("Yield Records Report", 70, 35); // Adjust y-coordinate to fit under the header
+  
+    // Define the table columns and rows
+    const tableColumn = ["Harvest Date", "Field Number", "Crop Type", "Quantity", "Trees Picked", "Storage Location"];
+    const tableRows = filteredSchedules.map((schedule) => [
+      moment(schedule.harvestdate).format("YYYY-MM-DD"),
+      schedule.fieldNumber,
+      schedule.cropType,
+      schedule.quantity,
+      schedule.treesPicked,
+      schedule.storageLocation,
+    ]);
+  
+    // Add table to the PDF
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: marginTop + 20, // Start table after the title
+      margin: { top: marginTop, bottom: marginBottom, horizontal: 10 },
+      styles: {
+        fontSize: 10,
+      },
+      headStyles: {
+        fillColor: [64, 133, 126],
+        textColor: [255, 255, 255],
+        fontSize: 12,
+      },
+      theme: 'striped',
+      didDrawPage: drawHeaderFooter, // Add header and footer to each page
     });
   
-    doc.autoTable(tableColumn, tableRows, { startY: 20 });
+    // Save the PDF
     doc.save("yield_records_report.pdf");
   };
-
+  
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+  
+  
+  
   const handleSort = (field, order) => {
     setSorter({ field, order });
     filterSchedules(searchText, filterStatus);
@@ -130,103 +218,70 @@ const YieldRecords = () => {
   const handleUpdate = (id) => {
     navigate(`/yield/editrecords/${id}`);
   };
-
-  const confirmDelete = (id) => {
-    Modal.confirm({
+  const confirmDelete = (scheduleId) => {
+    Swal.fire({
       title: "Are you sure you want to delete this schedule?",
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-      onOk: () => handleDelete(id),
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDelete(scheduleId);
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your schedule has been deleted.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
     });
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (scheduleId) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/yield/${id}`);
-      if (response.status === 200) {
-        notification.success({
-          message: 'Success',
-          description: 'Yield record deleted successfully!',
-        });
-        // Update local state to remove the deleted record
-        setFilteredSchedules(filteredSchedules.filter(record => record._id !== id));
-      } else {
-        notification.error({
-          message: 'Error',
-          description: 'There was an error deleting the yield record.',
-        });
-      }
+      const response = await axios.delete(`http://localhost:5000/api/yield/${scheduleId}`);
+      fetchSchedules()
     } catch (error) {
-      console.error('Error deleting schedule:', error.response?.data?.message || error.message);
-      notification.error({
-        message: 'Error',
-        description: error.response?.data?.message || 'There was an error deleting the yield record.',
+      Swal.fire({
+        title: "Error!",
+        text: `Failed to delete the inspection. ${error.response?.data?.message || 'Please try again.'}`,
+        icon: "error",
       });
     }
   };
-
+  const isActive = (page) => activePage === page;
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div>
       <Header />
-      <div className="flex flex-1">
-        <Sidebar />
-        <div className="ml-[300px] pt-3 flex-1">
-          <nav className="p-4 mb-5">
-            {/* Navigation Buttons */}
-            <div className="container flex items-center justify-between mx-auto space-x-4">
-              <div
-                className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform bg-gray-200 rounded-41xl hover:bg-gray-300"
-                onClick={onBackClick}
-              >
-                <ArrowBack className="text-gray-700" />
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onHomeClick}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Home
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Schedule
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick1}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Yield Records
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick2}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Compliance Check List
-                </a>
-              </div>
-            </div>
+        <Sidebar className="sidebar" />
+        <div className="ml-[300px] p-5">
+        <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
+                 <div className="flex items-center justify-center">
+                    <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
+                       <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
+                        {menuItems.map((item) => (
+                          <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
+                        <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
+                         </li>
+                        ))}
+                  </ul>
+             </div>
           </nav>
 
-          <Breadcrumb
-            items={[
-              { title: 'Home', href: '/' },
-              { title: 'Yield', href: '/harvest/yield' }
-            ]}
-          />
-          {/* Welcome Message Component */}
-          <div className="flex flex-row items-center justify-between shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-[98%] mb-5">
-            <b className="text-3xl">Welcome Kaushalya</b>
-          </div>
-
+          <div className="flex items-center justify-between mb-5">
+                    <Breadcrumb
+                        items={[
+                            {href: '', title: <HomeOutlined />},
+                            {title: "Harvest"},
+                            {title: "Yield"},
+                             ]}
+                       />
+                    </div>
          <div className="p-6 bg-white rounded-lg shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-4">
@@ -236,6 +291,12 @@ const YieldRecords = () => {
                   style={{ width: 200 }}
                   value={searchText}  // Keep the input controlled
                 />
+                 <Button 
+                  style={{ backgroundColor: "#60DB19", color: "#fff" }} 
+                  onClick={() => navigate("/yield/addrecords")}
+                >
+                  Add Records
+                </Button>
                 <Button 
                   style={{ backgroundColor: "#60DB19", color: "#fff" }} 
                   onClick={generatePDF}
@@ -244,6 +305,18 @@ const YieldRecords = () => {
                 </Button>
               </div>
             </div>
+               {/* Display crop quantities */}
+                    <div className="grid grid-cols-3 gap-6 mb-6">
+                       {Object.keys(cropQuantities).map((crop) => (
+                        <div 
+                          key={crop} 
+                          className="bg-white p-4 rounded-lg shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
+                        >
+                        <h3 className="text-lg font-bold text-gray-700 text-center">{crop}</h3>
+                    <p className="text-xl font-semibold text-indigo-600 mt-2 text-center">{cropQuantities[crop]}</p>
+                  </div>
+                       ))}
+                 </div>
             <Table
               columns={[
                 {
@@ -253,6 +326,13 @@ const YieldRecords = () => {
                   sorter: true,
                   sortOrder: sorter.field === 'harvestdate' ? sorter.order : null,
                   render: (text) => moment(text).format("YYYY-MM-DD"),
+                },
+                {
+                  title: "Field Number",
+                  dataIndex: "fieldNumber",
+                  key: "fieldNumber",
+                  sorter: true,
+                  sortOrder: sorter.field === 'fieldNumber' ? sorter.order : null,
                 },
                 {
                   title: "Crop Type",
@@ -287,10 +367,10 @@ const YieldRecords = () => {
                   key: "actions",
                   render: (text, record) => (
                     <span>
-                      <Button type="link" onClick={() => handleUpdate(record._id)}>
+                      <Button type="link" icon={<EditOutlined />} onClick={() => handleUpdate(record._id) } >
                         Edit
                       </Button>
-                      <Button type="link" danger onClick={() => confirmDelete(record._id)}>
+                      <Button type="link" danger   icon={<DeleteOutlined />} onClick={() => confirmDelete(record._id)}>
                         Delete
                       </Button>
                     </span>
@@ -312,7 +392,7 @@ const YieldRecords = () => {
           </div>
         </div>
       </div>
-    </div>
+    
   );
 };
 

@@ -3,6 +3,10 @@ import { Button, Form, Input, DatePicker, Select, TimePicker, notification } fro
 import axios from "axios";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import Sidebar from "../../components/Sidebar";
+import Header from "../../components/Header";
+import Swal from 'sweetalert2';
+
 
 const { Option } = Select;
 
@@ -12,167 +16,239 @@ const AddHarvestSchedule = () => {
 
   // Define loading state for managing form submission
   const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [errors, setErrors] = useState({});
+  const fields = ["cropType", "harvestDate", "startTime", "endTime", "fieldNumber", "numberOfWorkers"];
 
-  // Define disableFields state (or object)
-  const [disableFields, setDisableFields] = useState({
-    harvestDate: false,
-    startTime: false,
-    endTime: false,
-    fieldNumber: false,
-    numberOfWorkers: false,
-  });
+  // Completion states for each field
+  const [cropTypeComplete, setCropTypeComplete] = useState(false);
+  const [harvestDateComplete, setHarvestDateComplete] = useState(false);
+  const [startTimeComplete, setStartTimeComplete] = useState(false);
+  const [endTimeComplete, setEndTimeComplete] = useState(false);
+  const [fieldNumberComplete, setFieldNumberComplete] = useState(false);
+  const [numberOfWorkers, setnumberOfWorkers] = useState(false);
 
   // Function to disable past dates
   const disablePastDates = (current) => {
-    return current && current < moment().startOf('day');
-  };
-
-  // Function to handle form submission
+    // Disable past dates
+    return current && current < moment().startOf('nextweek');
+};
+  // Confirm submission
   const handleSubmit = async (values) => {
-    try {
-      setLoading(true);
+    const isFormValid = form.getFieldsError().every(({ errors }) => errors.length === 0);
+    if (!isFormValid) return;
 
-      // Extract form values
-      const { cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers } = values;
+    const result = await Swal.fire({
+      title: "Confirmation Required",
+      text: "Are you sure you want to submit this harvest schedule?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, submit it!",
+      cancelButtonText: "No, cancel!",
+      customClass: {
+        popup: 'swal-custom-popup',
+        title: 'swal-custom-title',
+        html: 'swal-custom-html',
+        confirmButton: 'swal-confirm-button',
+        cancelButton: 'swal-cancel-button',
+      },
+      focusCancel: false,
+    });
 
-      // Log the values to ensure they are correct
-      console.log('Form Values:', values);
-      console.log('Start Time:', startTime ? startTime.format('HH:mm') : 'Not Provided');
-      console.log('End Time:', endTime ? endTime.format('HH:mm') : 'Not Provided');
+    if (result.isConfirmed) {
+      try {
+        setLoading(true);
 
-      // Post request with formatted time values
-      await axios.post('http://localhost:5000/api/harvest', {
-        cropType,
-        harvestDate,
-        startTime: startTime ? startTime.format('HH:mm') : null,
-        endTime: endTime ? endTime.format('HH:mm') : null,
-        fieldNumber,
-        numberOfWorkers
-      });
+        // Extract form values and format time
+        const { cropType, harvestDate, startTime, endTime, fieldNumber, numberOfWorkers } = values;
 
-      // Handle success
-      notification.success({
-        message: 'Success',
-        description: 'Harvest Schedule added successfully!',
-      });
-      setLoading(false);
-      form.resetFields();  // Optionally reset the form after successful submission
+        const payload = {
+          cropType,
+          harvestDate: harvestDate ? harvestDate.toISOString() : null,
+          startTime: startTime ? startTime.format('HH:mm') : null,
+          endTime: endTime ? endTime.format('HH:mm') : null,
+          fieldNumber,
+          numberOfWorkers,
+        };
 
-      // Navigate to /harvest/harvest-schedule page after successful submission
-      navigate('/harvest/harvest-schedule');
-    } catch (error) {
-      console.error('Error adding harvest schedule:', error);
-      setLoading(false);
-      notification.error({
-        message: 'Error',
-        description: 'There was an error adding the harvest schedule.',
-      });
+        await axios.post('http://localhost:5000/api/harvest', payload);
+
+        Swal.fire('Success', 'Harvest Schedule added successfully!', 'success');
+        form.resetFields();
+        setLoading(false);
+        navigate('/harvest/harvest-schedule');
+      } catch (error) {
+        setLoading(false);
+        notification.error({
+          message: 'Error',
+          description: 'There was an error adding the harvest schedule.',
+        });
+      }
     }
   };
 
+  const handleFieldChange = (name, value) => {
+    const currentIndex = fields.indexOf(name);
+    if (currentIndex > 0) {
+      const previousField = fields[currentIndex - 1];
+      if (errors[previousField] || !formData[previousField]) {
+        return; // Block current field if previous has errors or is empty
+      }
+    }
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  const handleFieldsError = (errorInfo) => {
+    const newErrors = errorInfo.reduce((acc, { name, errors }) => {
+      acc[name[0]] = errors.length > 0;
+      return acc;
+    }, {});
+    setErrors(newErrors);
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
-      <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="mb-6 text-2xl font-bold text-center">Add Harvest Schedule</h2>
-        <Form
-          form={form}
-          onFinish={handleSubmit}
-          layout="vertical"
-        >
-          {/* Crop Type */}
-          <Form.Item
-            label="Crop Type"
-            name="cropType"
-            rules={[{ required: true, message: "Please select a crop type!" }]}
-          >
-            <Select placeholder="Select a crop type">
-              <Option value="Coconut">Coconut</Option>
-              <Option value="Banana">Banana</Option>
-              <Option value="Pepper">Pepper</Option>
-              <Option value="Papaya">Papaya</Option>
-            </Select>
-          </Form.Item>
+    <div className="flex h-screen">
+    <Sidebar />
+    <div className="flex flex-col flex-grow">
+      <Header />
+        <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
+          <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
+            <h2 className="mb-6 text-2xl font-bold text-center">Add Harvest Schedule</h2>
+            <Form
+              form={form}
+              onFinish={handleSubmit}
+              layout="vertical"
+              onFieldsChange={(_, allFields) => handleFieldsError(allFields)}
+               
+            >
+              {/* Crop Type */}
+              <Form.Item
+                label="Crop Type"
+                name="cropType"
+                rules={[{ required: true, message: "Please select a crop type!" }]}
+              >
+                <Select placeholder="Select a crop type"
+                        onChange={(value) => handleFieldChange('cropType', value)}
+                        style={{ width: '100%' }}>
+                  <Option value="Coconut">Coconut</Option>
+                  <Option value="Banana">Banana</Option>
+                  <Option value="Pepper">Pepper</Option>
+                  <Option value="Papaya">Papaya</Option>
+                  <Option value="Pineapple">Pineapple</Option>
+                </Select>
+              </Form.Item>
 
-          {/* Harvest Date */}
-          <Form.Item
-            label="Harvest Date"
-            name="harvestDate"
-            rules={[{ required: true, message: "Please select the harvest date!" }]}
-          >
-            <DatePicker format="YYYY-MM-DD" disabledDate={disablePastDates} disabled={disableFields.harvestDate} />
-          </Form.Item>
+              {/* Harvest Date */}
+              <Form.Item
+                label="Harvest Date"
+                name="harvestDate"
+                rules={[{ required: true, message: "Please select the harvest date!" }]}
+              >
+                <DatePicker
+                  format="YYYY-MM-DD"
+                  disabledDate={disablePastDates}
+                  disabled={!formData.cropType} // Enable only when crop type is selected
+                  onChange={(date) => handleFieldChange('harvestDate', date)}
+                  style={{ width: '100%' }}
+                  inputReadOnly
+                />
+              </Form.Item>
 
-          {/* Start Time */}
-          <Form.Item
-            label="Start Time"
-            name="startTime"
-            rules={[{ required: true, message: "Please select the start time!" }]}
-          >
-            <TimePicker format="HH:mm" disabled={disableFields.startTime} />
-          </Form.Item>
+              {/* Start Time */}
+              <Form.Item
+                label="Start Time"
+                name="startTime"
+                rules={[{ required: true, message: "Please select the start time!" }]}
+              >
+                <TimePicker
+                  format="HH:mm"
+                  disabled={!formData.cropType || !formData.harvestDate} // Enable only when crop type is selected
+                  onChange={(time) => handleFieldChange('startTime', time)}
+                  style={{ width: '100%' }} // Enable only when harvest date is selected
+                />
+              </Form.Item>
 
-          {/* End Time */}
-          <Form.Item
-            label="End Time"
-            name="endTime"
-            rules={[
-              { required: true, message: "Please select the end time!" },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || value.isAfter(getFieldValue("startTime"))) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error("End time must be after the start time!"));
-                },
-              }),
-            ]}
-          >
-            <TimePicker format="HH:mm" disabled={disableFields.endTime} />
-          </Form.Item>
+              {/* End Time */}
+              <Form.Item
+                label="End Time"
+                name="endTime"
+                rules={[
+                  { required: true, message: "Please select the end time!" },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || value.isAfter(getFieldValue("startTime"))) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error("End time must be after the start time!"));
+                    },
+                  }),
+                ]}
+              >
+                <TimePicker
+                  format="HH:mm"
+                  disabled={!formData.cropType || !formData.harvestDate || ! formData.startTime} // Enable only when crop type is selected
+                  onChange={(time) => handleFieldChange('endTime', time)}
+                  style={{ width: '100%' }} // Enable only when harvest date is selected
+                
+                />
+              </Form.Item>
 
-          {/* Field Number */}
-          <Form.Item
-            label="Field Number"
-            name="fieldNumber"
-            rules={[{ required: true, message: "Please select a Field number" }]}
-          >
-            <Select placeholder="Select a Field number" disabled={disableFields.fieldNumber}>
-              <Option value="AA1">AA1</Option>
-              <Option value="BB1">BB1</Option>
-              <Option value="CC1">CC1</Option>
-              <Option value="DD1">DD1</Option>
-            </Select>
-          </Form.Item>
+              {/* Field Number */}
+              <Form.Item
+                label="Field Number"
+                name="fieldNumber"
+                rules={[{ required: true, message: "Please select a field number!" }]}
+              >
+                <Select placeholder="Select a field number" 
+                disabled={!formData.cropType || !formData.harvestDate || ! formData.startTime|| !formData.endTime} // Enable only when crop type is selected
+                onChange={(value) => handleFieldChange('fieldNumber', value)}
+                style={{ width: '100%' }} // Enable only when harvest date is selected
+              >
+                  <Option value="AA1">AA1</Option>
+                  <Option value="BB1">BB1</Option>
+                  <Option value="CC1">CC1</Option>
+                  <Option value="DD1">DD1</Option>
+                </Select>
+              </Form.Item>
 
-          {/* Number of Workers */}
-          <Form.Item
-            label="Number of Workers"
-            name="numberOfWorkers"
-            rules={[
-              { required: true, message: "Number of workers is required" },
-              { pattern: /^\d+$/, message: "Number of workers must be numeric" },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || (parseInt(value) >= 1 && parseInt(value) <= 99)) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error("Number of workers must be between 1 and 99!"));
-                },
-              }),
-            ]}
-          >
-            <Input placeholder="Enter Number of Workers" type="number" disabled={disableFields.numberOfWorkers} />
-          </Form.Item>
+              {/* Number of Workers */}
+              <Form.Item
+                label="Number of Workers"
+                name="numberOfWorkers"
+                rules={[
+                  { required: true, message: "Number of workers is required!" },
+                  { pattern: /^\d+$/, message: "Number of workers must be numeric" },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || (parseInt(value) >= 1 && parseInt(value) <= 40)) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error("Number of workers must be between 1 and 40!"));
+                    },
+                  }),
+                ]}
+              >
+                <Input placeholder="Enter Number of Workers" type="number" 
+                 disabled={!formData.cropType || !formData.harvestDate || ! formData.startTime|| !formData.endTime || !formData.fieldNumber} // Enable only when crop type is selected
+                 onChange={(value) => handleFieldChange('numberOfWorkers', value)}
+                 style={{ width: '100%' }} />
+              </Form.Item>
 
-          {/* Submit Button */}
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={loading}>
-              Add Schedule
-            </Button>
-          </Form.Item>
-        </Form>
-      </div>
-    </div>
+              {/* Submit Button */}
+              <Form.Item>
+                <Button type="primary" htmlType="submit" block loading={loading} 
+                disabled={!formData.cropType || !formData.harvestDate || ! formData.startTime|| !formData.endTime || !formData.fieldNumber || !formData.numberOfWorkers}>
+                  Add Schedule
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
+        </div>
+        </div>
+      </div>      
   );
 };
 

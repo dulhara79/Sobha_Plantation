@@ -83,7 +83,7 @@ exports.updateBuyerInfoRecords = async (req, res) => {
         // Update the Info record
         const updatedBuyerInfoRecord = await BuyerInfoRecords.findByIdAndUpdate(
             InfoId,
-            { firstName, lastName, Gender, DOB: new Date(DOB), Number, email },
+            { firstName, lastName,  Gender, DOB: new Date(DOB), Number, email },
             { new: true }
         );
 

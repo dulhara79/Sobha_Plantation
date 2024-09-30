@@ -111,13 +111,47 @@ const AddInfoRecords = () => {
         break;
     }
   };
+  
+  const restrictInputToNumbers = (e) => {
+    const key = e.key;
+    if (!/[0-9]/.test(key)) {
+      e.preventDefault();
+    }
+};
 
-  // Preventing non-numeric input for phone and postal code fields
-  const handleNumberInput = (e) => {
-    if (!/[0-9]/.test(e.key)) {
+const restrictInputToLetters = (e) => {
+    const key = e.key;
+   
+    if (!/[a-zA-Z]/.test(key)) {
+      e.preventDefault();
+    }
+};
+
+const restrictInputToAlphanumeric = (e) => {
+    const key = e.key;
+     
+    if (!/^[a-zA-Z0-9]*$/.test(key)) {
+      e.preventDefault();
+    }
+};
+
+  
+  // To prevent non-numeric values from being pasted into numeric fields
+  const preventNonNumericPaste = (e) => {
+    const clipboardData = e.clipboardData.getData("Text");
+    if (!/^[0-9]*$/.test(clipboardData)) {
       e.preventDefault();
     }
   };
+
+  // To prevent non-letter values from being pasted into letter-only fields
+  const preventNonAlphabeticPaste = (e) => {
+    const clipboardData = e.clipboardData.getData("Text");
+    if (!/^[a-zA-Z\s]*$/.test(clipboardData)) {
+      e.preventDefault();
+    }
+  };
+ 
 
   return (
     <div>
@@ -160,13 +194,21 @@ const AddInfoRecords = () => {
               onValuesChange={handleFieldChange}
             >
               <Form.Item label="First Name" name="firstName" rules={alphabeticRule}>
-                <Input placeholder="Enter first name" />
+                <Input placeholder="Enter first name" 
+                
+                onKeyPress={restrictInputToLetters} 
+              onPaste={preventNonAlphabeticPaste} 
+                
+                
+                />
               </Form.Item>
 
               <Form.Item label="Last Name" name="lastName" rules={alphabeticRule}>
                 <Input
                   placeholder="Enter last name"
                   disabled={isNextFieldDisabled.lastName}
+                  onKeyPress={restrictInputToLetters} 
+                  onPaste={preventNonAlphabeticPaste}
                 />
               </Form.Item>
 
@@ -211,8 +253,9 @@ const AddInfoRecords = () => {
               <Form.Item label="Phone Number" name="Number" rules={phoneRule}>
                 <Input
                   placeholder="Enter your phone number"
-                  maxLength={10}
-                  onKeyPress={handleNumberInput}
+                  onKeyPress={restrictInputToNumbers} 
+                  onPaste={preventNonNumericPaste}
+                  
                   disabled={isNextFieldDisabled.number}
                 />
               </Form.Item>

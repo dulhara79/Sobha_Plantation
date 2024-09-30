@@ -5,6 +5,7 @@ import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import React from "react";
 import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
 import EditTask from "../../components/Employee/EditTask";
+import Breadcrumbs from "../../components/Employee/Breadcrumbss";
 
 export default function EditTaskPage() {
   const breadcrumbItems = [
@@ -19,15 +20,9 @@ export default function EditTaskPage() {
       <Sidebar />
 
       <div className={`ml-[300px]`}>
-        <Breadcrumb
-          items={[
-            {
-              href: "",
-              title: <HomeOutlined />,
-            },
-          ]}
-        />
+        
         <EmployeeNavbar />
+        <Breadcrumbs items={breadcrumbItems} />
         <EditTask />
       </div>
     </div>

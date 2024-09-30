@@ -16,8 +16,8 @@ const validateInput = (data) => {
     errors.dateOfBirth = 'Date of birth is required.';
   }
 
-  if (!data.gender || !['male', 'female', 'other'].includes(data.gender)) {
-    errors.gender = 'Gender is required and must be one of male, female, or other.';
+  if (!data.gender || !['Male', 'Female'].includes(data.gender)) {
+    errors.gender = 'Gender is required and must be either Male or Female.';
   }
 
   if (!data.contactNumber || !/^\d{10}$/.test(data.contactNumber)) {
@@ -32,16 +32,21 @@ const validateInput = (data) => {
     errors.nic = 'NIC must be in old (9 digits and V/X) or new format (12 digits) and is required.';
   }
 
-  if (!data.address) {
-    errors.address = 'Address is required.';
+  if (!data.address || !/^[A-Za-z0-9\s,/-]+$/.test(data.address)) {
+    errors.address = 'Address can contain letters, numbers, spaces, commas, and slashes and is required.';
   }
 
-  if (!data.employeeType) {
-    errors.employeeType = 'Employee type is required.';
+  if (!data.employeeType || !['Permanent', 'Contract'].includes(data.employeeType)) {
+    errors.employeeType = 'Employee type is required and must be either Permanent or Contract.';
   }
 
-  if (!data.hiredDate) {
-    errors.hiredDate = 'Hired date is required.';
+  if (!data.designation || !['Farmer', 'Security', 'Pest and Disease Expert'].includes(data.designation)) {
+    errors.designation = 'Designation is required and must be relevant to coconut cultivation.';
+  }
+
+  // No need to check hiredDate since it is auto-set to the current date
+  if (data.hiredDate && new Date(data.hiredDate).toDateString() !== new Date().toDateString()) {
+    errors.hiredDate = 'Hired date must be set to the current date.';
   }
 
   if (data.hourlyRate === undefined || data.hourlyRate <= 0) {
@@ -51,20 +56,21 @@ const validateInput = (data) => {
   return errors;
 };
 
-
 // Create a new employee
 exports.createEmployee = async (req, res) => {
-  console.log("inside controller createEmployee");
-  
+  console.log("Inside controller createEmployee");
+
   const errors = validateInput(req.body);
   console.log("Validation errors:", errors);
-  console.log("Object.keys:", Object.keys);
-  
+
   if (Object.keys(errors).length > 0) {
     return res.status(400).json({ errors });
   }
 
   try {
+    // Set hiredDate to the current date automatically
+    req.body.hiredDate = new Date();
+
     const employee = new Employee(req.body);
     console.log("Employee data:", req.body);
     await employee.save();
@@ -75,7 +81,6 @@ exports.createEmployee = async (req, res) => {
     res.status(400).json({ status: false, error: error.message });
   }
 };
-
 
 // Get all employees
 exports.getAllEmployees = async (req, res) => {
@@ -109,6 +114,9 @@ exports.updateEmployee = async (req, res) => {
   }
 
   try {
+    // Prevent the hiredDate from being updated
+    delete req.body.hiredDate;
+
     const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!employee) {
       return res.status(404).json({ message: 'Employee not found' });

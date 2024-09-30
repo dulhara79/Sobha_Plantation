@@ -5,21 +5,26 @@ const {
   getSalesTrackingById,
   updateSalesTracking,
   deleteSalesTracking,
-} = require("../../controllers/SalesAndFinance/salesTrackingController");
-const { validate } = require("../../middleware/SalesAndFinance/validateMiddleware");
-const { salesTrackingSchema } = require("../../validations/SalesAndFinance/salesTrackingValidation");
+  getWeeklySalesSummary,
+  getMonthlySalesSummary,
+  getYearlyRevenueSummary,
+} = require("../../controllers/SalesAndFinance/SalesTrackingController");
+const {
+  validate,
+} = require("../../middleware/SalesAndFinance/validateMiddleware");
+const {
+  salesTrackingSchema,
+} = require("../../validations/SalesAndFinance/salesTrackingValidation");
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(getAllSalesTracking)
-  .post(validate(salesTrackingSchema), createSalesTracking);
-
-router
-  .route("/:id")
-  .get(getSalesTrackingById)
-  .put(validate(salesTrackingSchema), updateSalesTracking)
-  .delete(deleteSalesTracking);
+router.post("/", createSalesTracking);
+router.get("/", getAllSalesTracking);
+router.get("/getRecord/:id", getSalesTrackingById);
+router.put("/:id", updateSalesTracking);
+router.delete("/:id", deleteSalesTracking);
+router.get("/weekly-summary", getWeeklySalesSummary);
+router.get("/monthly-summary", getMonthlySalesSummary);
+router.get("/yearly-revenue-summary", getYearlyRevenueSummary); // New route
 
 module.exports = router;

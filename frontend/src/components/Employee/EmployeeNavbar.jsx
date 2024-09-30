@@ -6,8 +6,7 @@ const menuItems = [
     { name: "REGISTRATION", path: "/employee/employeelist" },
     { name: "ASSIGN TASKS", path: "/employee/TaskListview" },
     { name: "ATTENDANCE MARKER", path: "/employee/attendanceList" },
-    { name: "SALARY", path: "/employee/salary" },
-
+    
 
 ];
 
@@ -25,7 +24,7 @@ export default function EmployeeNavbar() {
     };
 
     return (
-        <div className="bg-gray-100 bg-opacity-50 backdrop-blur sticky top-12 border-b w-screen">
+        <div className="bg-gray-100 bg-opacity-50 backdrop-blur sticky top-12 border-b w-full">
             <header className=" ">
                 <nav aria-label="Top" className="">
                     <div className=" border-gray-200 ">

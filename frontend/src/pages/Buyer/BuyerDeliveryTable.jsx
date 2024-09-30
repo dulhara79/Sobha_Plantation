@@ -216,35 +216,32 @@ const BuyerDeliveryTable = () => {
               <LeftOutlined className="text-xl" />
             </button>
             <div className="flex space-x-4">
-              <Link
+            <Link
                 to="/buyerdashboard"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 Home
               </Link>
               <Link
-                to="/Bdeliverytable"
-                className="text-[#236A64] font-semibold"
+                to="/preorders"
+                
+                className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
-                Manage Delivery Information
+                Pre Order 
               </Link>
               <Link
                 to="/buyerinfotable"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
+                
               >
-                Manage Buyer Details
+                 Buyer Records
               </Link>
               <Link
                 to="/Bdeliverytable"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
+                
+                className="text-[#236A64] font-semibold"
               >
-                Manage Orders
-              </Link>
-              <Link
-                to="/CoconutPests"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Manage Feedback
+                 Delivery Records
               </Link>
               
             </div>

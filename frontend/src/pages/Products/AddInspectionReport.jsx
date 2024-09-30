@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Swal from 'sweetalert2'; // SweetAlert2 for confirmation
 import { Form, Input, DatePicker, Select, Button, notification, Row, Col } from 'antd';
 import moment from 'moment';
 
@@ -9,43 +10,121 @@ const { Option } = Select;
 const AddInspectionReport = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({});
+  const [errors, setErrors] = useState({});
+  const fields = ["productType", "inspectionDate", "status", "inspectorName"];
 
-  // Function to disable past dates but allow today
-  const disablePastDates = (current) => {
-    return current && current < moment().startOf('day');
-  };
+  // Disable past dates but allow today
+  const disablePastDates = (current) => current && current < moment().startOf('day');
 
-  // Function to validate inspector name
+  // Validate inspector name
   const validateInspectorName = (_, value) => {
     if (!value) {
-      return Promise.reject(new Error('Please enter the inspector name'));
+      return Promise.reject(new Error('Please enter the inspector name!'));
     }
-    if (!/^[A-Z][a-z\s]*$/.test(value)) {
-      return Promise.reject(new Error('Inspector name must start with an uppercase letter and only contain lowercase letters and spaces after the first letter'));
+    if (!/^[A-Z][a-z]*$/.test(value)) {
+      return Promise.reject(new Error('Inspector name must start with an uppercase letter and only contain lowercase letters.'));
     }
     return Promise.resolve();
   };
 
-  const handleSubmit = async (values) => {
-    try {
-      const payload = {
-        ...values,
-        inspectionDate: values.inspectionDate ? values.inspectionDate.toISOString() : null,
-      };
-      await axios.post('http://localhost:5000/api/quality-control', payload);
-      notification.success({
-        message: 'Success',
-        description: 'Inspection report added successfully!',
+  const handleInspectorNameChange = (e) => {
+    const inputValue = e.target.value;
+
+    // Check if the input starts with an uppercase letter
+    if (inputValue.length === 0 || /^[A-Z]/.test(inputValue)) {
+      // Prevent spaces and only allow letters
+      let formattedValue = inputValue
+        .replace(/\s+/g, '') // Remove all spaces
+        .replace(/[^a-zA-Z]/g, ''); // Remove non-letter characters
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        inspectorName: formattedValue,
+      }));
+
+      // Update the form field value
+      form.setFieldsValue({ inspectorName: formattedValue });
+    } else {
+      // If the first letter is not uppercase, reset the input to the previous valid value
+      notification.warning({
+        message: 'Invalid Input',
+        description: 'The first letter must be uppercase.',
       });
-      form.resetFields();
-      navigate('/products/quality-control');
-    } catch (error) {
-      console.error('Error adding inspection report:', error);
-      notification.error({
-        message: 'Error',
-        description: 'Failed to add inspection report',
-      });
+      form.setFieldsValue({ inspectorName: formData.inspectorName }); // Restore the previous value
     }
+  };
+
+  // Disable copy/paste/cut for inspector name input
+  const handleCopyPasteCut = (e) => {
+    e.preventDefault();
+    notification.warning({
+      message: 'Action Disabled',
+      description: 'Copy, Paste, and Cut actions are disabled for this field.',
+    });
+  };
+
+  // Confirm submission
+  const handleSubmit = async (values) => {
+    const isFormValid = form.getFieldsError().every(({ errors }) => errors.length === 0);
+    if (!isFormValid) return;
+
+    const result = await Swal.fire({
+      title: "Confirmation Required",
+      text: "Are you sure you want to submit this report?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, submit it!",
+      cancelButtonText: "No, cancel!",
+      customClass: {
+        popup: 'swal-custom-popup',
+        title: 'swal-custom-title',
+        html: 'swal-custom-html',
+        confirmButton: 'swal-confirm-button',
+        cancelButton: 'swal-cancel-button',
+      },
+      focusCancel: false,
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const payload = {
+          ...values,
+          inspectionDate: values.inspectionDate ? values.inspectionDate.toISOString() : null,
+        };
+        await axios.post('http://localhost:5000/api/quality-control', payload);
+        Swal.fire('Success', 'Inspection report added successfully!', 'success');
+        form.resetFields();
+        navigate('/products/quality-control');
+      } catch (error) {
+        notification.error({
+          message: 'Error',
+          description: 'Failed to add inspection report.',
+        });
+      }
+    }
+  };
+
+  const handleFieldChange = (name, value) => {
+    const currentIndex = fields.indexOf(name);
+    if (currentIndex > 0) {
+      const previousField = fields[currentIndex - 1];
+      if (errors[previousField] || !formData[previousField]) {
+        return; // Block current field if previous has errors or is empty
+      }
+    }
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  const handleFieldsError = (errorInfo) => {
+    const newErrors = errorInfo.reduce((acc, { name, errors }) => {
+      acc[name[0]] = errors.length > 0;
+      return acc;
+    }, {});
+    setErrors(newErrors);
   };
 
   const handleCancel = () => {
@@ -60,13 +139,18 @@ const AddInspectionReport = () => {
           form={form}
           onFinish={handleSubmit}
           layout="vertical"
+          onFieldsChange={(_, allFields) => handleFieldsError(allFields)}
         >
           <Form.Item
             label="Product Type"
             name="productType"
             rules={[{ required: true, message: 'Please select a product type!' }]}
           >
-            <Select placeholder="Select a product type" style={{ width: '100%' }}>
+            <Select
+              placeholder="Select a product type"
+              onChange={(value) => handleFieldChange('productType', value)}
+              style={{ width: '100%' }}
+            >
               <Option value="coconut-oil">Coconut Oil</Option>
               <Option value="coconut-water">Coconut Water</Option>
               <Option value="coconut-milk">Coconut Milk</Option>
@@ -86,7 +170,10 @@ const AddInspectionReport = () => {
                 <DatePicker
                   format="YYYY-MM-DD"
                   disabledDate={disablePastDates}
+                  disabled={!formData.productType} // Disable based on previous field
+                  onChange={(date) => handleFieldChange('inspectionDate', date)}
                   style={{ width: '100%' }}
+                  inputReadOnly
                 />
               </Form.Item>
             </Col>
@@ -97,7 +184,12 @@ const AddInspectionReport = () => {
                 label="Status"
                 rules={[{ required: true, message: 'Please select the status!' }]}
               >
-                <Select placeholder="Select status" style={{ width: '100%' }}>
+                <Select
+                  placeholder="Select status"
+                  onChange={(value) => handleFieldChange('status', value)}
+                  style={{ width: '100%' }}
+                  disabled={!formData.productType || !formData.inspectionDate}
+                >
                   <Option value="Passed">Pass</Option>
                   <Option value="Failed">Fail</Option>
                 </Select>
@@ -108,27 +200,26 @@ const AddInspectionReport = () => {
           <Form.Item
             label="Inspector Name (Mr/Ms)"
             name="inspectorName"
-            rules={[
-              { required: true, message: 'Please enter the inspector name!' },
-              { validator: validateInspectorName },
-            ]}
+            rules={[{ validator: validateInspectorName }]}
           >
-            <Input 
-              placeholder="Enter inspector name" 
+            <Input
+              placeholder="Enter inspector name"
               style={{ width: '100%' }}
+              disabled={!formData.productType || !formData.inspectionDate || !formData.status}
+              onChange={handleInspectorNameChange} // Updated handler for validation
+              onCopy={handleCopyPasteCut}
+              onCut={handleCopyPasteCut}
+              onPaste={handleCopyPasteCut}
             />
           </Form.Item>
 
-          <Form.Item>
-            <div className="flex justify-between">
-              <Button type="primary" htmlType="submit" style={{ width: '48%', backgroundColor: '#1D6660', borderColor: '#1D6660' }}>
-                Add Report
+          <div className="flex justify-between mt-4">
+            <Button type="primary" htmlType="submit" 
+            style={{ width: '48%', backgroundColor: '#1D6660', borderColor: '#1D6660' }}>
+              Submit
               </Button>
-              <Button type="default" onClick={handleCancel} style={{ width: '48%' }}>
-                Cancel
-              </Button>
-            </div>
-          </Form.Item>
+            <Button onClick={handleCancel} style={{ width: '48%' }} >Cancel</Button>
+          </div>
         </Form>
       </div>
     </div>

@@ -159,20 +159,30 @@ const UpdateBuyerDeliveryRecords = () => {
   const handlePostalCodeChange = (e) => {
     setIsPhoneEnabled(!!e.target.value);
   };
-
+  
+  
   const restrictInputToNumbers = (e) => {
     const key = e.key;
     if (!/[0-9]/.test(key)) {
       e.preventDefault();
     }
-  };
+};
 
-  const restrictInputToLetters = (e) => {
+const restrictInputToLetters = (e) => {
     const key = e.key;
-    if (!/[a-zA-Z\s]/.test(key)) {
+   
+    if (!/[a-zA-Z]/.test(key)) {
       e.preventDefault();
     }
-  };
+};
+
+const restrictInputToAlphanumeric = (e) => {
+    const key = e.key;
+     
+    if (!/^[a-zA-Z0-9]*$/.test(key)) {
+      e.preventDefault();
+    }
+};
 
   const preventNonNumericPaste = (e) => {
     const clipboardData = e.clipboardData.getData("Text");
@@ -286,6 +296,7 @@ const UpdateBuyerDeliveryRecords = () => {
                   placeholder="Enter address"
                   onChange={handleAddressChange}
                   disabled={!isAddressEnabled}
+                  onKeyPress={restrictInputToAlphanumeric}
                 />
               </Form.Item>
 
@@ -298,6 +309,7 @@ const UpdateBuyerDeliveryRecords = () => {
                   placeholder="Enter your city"
                   onChange={handleCityChange}
                   disabled={!isCityEnabled}
+                  onKeyPress={restrictInputToAlphanumeric}
                 />
               </Form.Item>
 

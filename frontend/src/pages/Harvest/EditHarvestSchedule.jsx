@@ -3,12 +3,14 @@ import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
 import { useNavigate, useParams } from 'react-router-dom';
+import Sidebar from "../../components/Sidebar";
+import Header from "../../components/Header";
+import Swal from 'sweetalert2';
 
 const { Option } = Select;
 
 const EditHarvestSchedule = () => {
   const [form] = Form.useForm();
-  const [record, setRecord] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams(); // Get the record ID from the route parameters
 
@@ -23,7 +25,6 @@ const EditHarvestSchedule = () => {
         const response = await axios.get(`http://localhost:5000/api/harvest/${id}`);
         const data = response.data;
 
-        setRecord(data);
         form.setFieldsValue({
           cropType: data.cropType,
           harvestdate: moment(data.harvestDate), // Ensure field name matches backend
@@ -41,37 +42,45 @@ const EditHarvestSchedule = () => {
 
   // Handle form submission
   const handleSubmit = async (values) => {
-    try {
-      // Prepare payload with the correct date format
-      const payload = {
-        cropType: values.cropType,
-        harvestDate: values.harvestdate.format('YYYY-MM-DD'), // Ensure this matches backend
-        startTime: values.startTime,
-        endTime: values.endTime,
-        fieldNumber: values.fieldNumber,
-        numberOfWorkers: values.numberOfWorkers,
-      };
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to update the harvest schedule?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, update it!',
+      cancelButtonText: 'No, cancel!',
+    });
   
-      console.log('Submitting payload:', payload);
+    if (result.isConfirmed) {
+      try {
+        const payload = {
+          cropType: values.cropType,
+          harvestDate: values.harvestdate.format('YYYY-MM-DD'), // Ensure this matches backend
+          startTime: values.startTime,
+          endTime: values.endTime,
+          fieldNumber: values.fieldNumber,
+          numberOfWorkers: values.numberOfWorkers,
+        };
   
-      // Send PUT request to update the record
-      const response = await axios.put(`http://localhost:5000/api/harvest/${id}`, payload);
+        const response = await axios.put(`http://localhost:5000/api/harvest/${id}`, payload);
   
-      notification.success({
-        message: 'Success',
-        description: 'Harvest updated successfully!',
-      });
-      navigate('/harvest/harvest-schedule'); // Redirect to the list page after successful update
-    } catch (error) {
-      console.error('Failed to update harvest:', error.response?.data);
-      notification.error({
-        message: 'Error',
-        description: `Failed to update harvest. ${error.response?.data?.message || 'Please try again.'}`,
-      });
+        Swal.fire('Updated!', 'The harvest schedule has been updated.', 'success');
+        navigate('/harvest/harvest-schedule'); // Redirect after successful update
+      } catch (error) {
+        console.error('Failed to update harvest:', error.response?.data);
+        Swal.fire('Error', `Failed to update harvest. ${error.response?.data?.message || 'Please try again.'}`, 'error');
+      }
+    } else {
+      Swal.fire('Cancelled', 'The update was cancelled', 'info');
     }
   };
-  
+
   return (
+    <div className="flex h-screen">
+         <Sidebar />
+    <div className="flex flex-col flex-grow">
+          <Header />
+
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
         <h2 className="mb-6 text-2xl font-bold text-center">Edit Harvest Schedule</h2>
@@ -86,10 +95,11 @@ const EditHarvestSchedule = () => {
             rules={[{ required: true, message: 'Please select a crop type!' }]}
           >
             <Select placeholder="Select a crop type">
-              <Option value="coconut">Coconut</Option>
-              <Option value="banana">Banana</Option>
-              <Option value="pepper">Pepper</Option>
-              <Option value="papaya">Papaya</Option>
+              <Option value="Coconut">Coconut</Option>
+              <Option value="Banana">Banana</Option>
+              <Option value="Pepper">Pepper</Option>
+              <Option value="Papaya">Papaya</Option>
+              <Option value="Pineapple">Pineapple</Option>
             </Select>
           </Form.Item>
 
@@ -115,7 +125,17 @@ const EditHarvestSchedule = () => {
           <Form.Item
             label="End Time"
             name="endTime"
-            rules={[{ required: true, message: 'Please enter End Time!' }]}
+            rules={[
+              { required: true, message: 'Please enter End Time!' },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || moment(value, 'HH:mm').isAfter(moment(getFieldValue('startTime'), 'HH:mm'))) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('End time must be after Start Time!'));
+                },
+              }),
+            ]}
           >
             <Input type="time" placeholder="Enter End Time" />
           </Form.Item>
@@ -134,12 +154,24 @@ const EditHarvestSchedule = () => {
           </Form.Item>
 
           <Form.Item
-            label="Number of Workers"
-            name="numberOfWorkers"
-            rules={[{ required: true, message: 'Please enter the Number of Workers!' }]}
-          >
-            <Input type="number" placeholder="Enter Number of Workers" />
-          </Form.Item>
+  label="Number of Workers"
+  name="numberOfWorkers"
+  rules={[
+    { required: true, message: "Number of workers is required!" },
+    { pattern: /^\d+$/, message: "Number of workers must be numeric" },
+    ({ getFieldValue }) => ({
+      validator(_, value) {
+        if (!value || (parseInt(value) >= 1 && parseInt(value) <= 40)) {
+          return Promise.resolve();
+        }
+        return Promise.reject(new Error("Number of workers must be between 1 and 40!"));
+      },
+    }),
+  ]}
+>
+  <Input type="number" min={1} placeholder="Enter Number of Workers" />
+</Form.Item>
+
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
@@ -148,6 +180,8 @@ const EditHarvestSchedule = () => {
           </Form.Item>
         </Form>
       </div>
+    </div>
+    </div>
     </div>
   );
 };

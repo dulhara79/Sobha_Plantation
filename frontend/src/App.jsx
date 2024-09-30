@@ -9,14 +9,15 @@ import Dashboard from "./pages/Dashboard.jsx";
  * sales and finance
 */
 
-// //sales
+ //sales
 
 import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
 import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
 import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
 import ViewSalesRecordDashboard from "./pages/SalesAndFinance/Sales/ViewSalesRecordDashboard.jsx";
 import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage.jsx";
-// finance
+
+ // finance
 
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
@@ -24,7 +25,7 @@ import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDispl
 import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
 import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
  
-// // inventory
+ // inventory
 
  import FertilizerRecords from "./pages/Inventory/FertilizerRecords.jsx";
  import EditFertilizerRecord from "./pages/Inventory/EditFertilizerRecord.jsx";
@@ -175,7 +176,23 @@ import BuyerInfo from "./pages/Buyer/BuyerInfo.jsx";
 import BuyerInfoTable from "./pages/Buyer/BuyerInfoTable.jsx";
 import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
 
-// import PageError from "./pages/PageError.jsx";
+// import BuyerPreOrderForm from './pages/Buyer/BuyerPreOrderForm';
+// import BuyerPreOrderTable from './pages/Buyer/BuyerPreOrderTable';
+// import UpdateBuyerPreOrderRequests from './pages/Buyer/UpdatePreOrderForm';
+
+////////////////////////////////////////
+
+// import Cart from './pages/Cart/Cart'
+// import BHome from './pages/Buyer/BHome/BHome'
+// import PlaceOrder from './pages/PlaceOrder/PlaceOrder'
+// // import Footer from './components/Footer/Footer'
+// import LoginPopup from './components/LoginPopup/LoginPopup'
+// import Verify from './pages/Verify/Verify'
+// import MyOrders from './pages/MyOrders/MyOrders'
+// import Navbar from './components/Buyer/Navbar.jsx'
+
+
+import PageError from "./pages/PageError.jsx";
  
 
 
@@ -183,12 +200,13 @@ import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
 export default function App() {
   return (
     <Routes>
+
       {/* landing page and dashboard */}
       <Route path="/" element={<Home />} />
       <Route path="/dashboard" element={<Dashboard />} />
  
       {/* finance */}
-      <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
+       <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
       <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
       <Route path="/salesAndFinance/sales/addSalesRecord" element={<AddSalesRecordDashboard />} /> 
        <Route path="/salesAndFinance/sales/viewSalesRecord" element={<ViewSalesRecordDashboard />} />
@@ -197,11 +215,11 @@ export default function App() {
       <Route path="/salesAndFinance/finance/add-transaction" element={<AddTransactionPage />} /> 
       <Route path="/salesAndFinance/finance/transaction-update/:id" element={<UpdateTransactionPage />} /> 
       <Route path="/salesAndFinance/finance/transaction-display" element={<TransactionDisplay />} />
-      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />  
+      <Route path="/salesAndFinance/finance/analytics" element={<FinancialAnalyticsPage />} />   
  
       
       {/* inventory */}
-     <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} />
+      <Route path="/Inventory/FertilizerRecords" element={<FertilizerRecords/>} />
     <Route path="/Inventory/EditFertilizerRecords/:id" element={<EditFertilizerRecord/>} />
     <Route path="/Inventory/AddFertilizerRecord" element={<AddFertilizerRecord/>} />
     <Route path="/Inventory/InventoryDashboard" element={<InventoryDashboard/>} />
@@ -218,10 +236,10 @@ export default function App() {
     <Route path="/Inventory/EditRequestPaymentRecords/:id" element={<EditRequestPaymentRecord/>} /> 
  
 
-    <Route path="/Inventory/EditRequestPaymentRecords/:id" element={<EditRequestPaymentRecord/>} />
+    <Route path="/Inventory/EditRequestPaymentRecords/:id" element={<EditRequestPaymentRecord/>} /> 
 
       {/* employee */}        
-     <Route path="/employee/dashboard" element={<Edashboard/>}/>
+      <Route path="/employee/dashboard" element={<Edashboard/>}/>
       <Route path="/employee/registration" element= {<Eregistration/>}/>
       <Route path="/employee/salary" element= {<Esalary/>}/>
       <Route path="/employee/task" element= {<EaddTask/>}/>
@@ -229,7 +247,7 @@ export default function App() {
       <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
       <Route path="/employee/attendance" element= {<GetAttendance/>}/>
       <Route path="/employee/employeelist" element= {<EmployeeList/>}/>
-      <Route path="/employee/attendanceList" element= {<EattendenceList/>}/>   
+      <Route path="/employee/attendanceList" element= {<EattendenceList/>}/>    
  
       {/* harvest */}
 
@@ -256,7 +274,7 @@ export default function App() {
  
     
 
-      <Route path="/yield-bar-chart" element={<YieldBarChart />} /> 
+      <Route path="/yield-bar-chart" element={<YieldBarChart />} />  
 
 
       {/* crop care */}
@@ -279,11 +297,7 @@ export default function App() {
       <Route path="/insights" element={<Insights />} />
       <Route path="/detailedOverview" element={<DetailedOverview />} />
       <Route path="/addMaintenance" element={<AddMaintenance />} /> 
-
-
-
-
-    <Route path="/addProfile" element={<AddProfile />} />
+      <Route path="/addProfile" element={<AddProfile />} />
       <Route path="/coconutMite" element={<CoconutMite />} />
       <Route path="/termite" element={<Termite />} />
       <Route path="/redWeevil" element={<RedWeevil />} />
@@ -313,13 +327,13 @@ export default function App() {
 
  
 
-      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />}/> 
+      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />}/>  
 
 
 
        {/* product */}
 
-       <Route path="/products/productdashboard" element={<ProductsDashboard />} />
+        <Route path="/products/productdashboard" element={<ProductsDashboard />} />
       <Route path="/products/production-overview" element={<ProductionScheduleOverview />} />
       <Route path="/products/quality-control" element={<QualityControl />} />
       <Route path="/products/addschedule" element={<AddSchedule />} />
@@ -336,10 +350,11 @@ export default function App() {
       <Route path="/products/gallery" element={<Gallery/>} /> 
  
 
-      <Route path="/products/gallery" element={<Gallery/>} />
+      <Route path="/products/gallery" element={<Gallery/>} /> 
 
 
       {/* field view  */}
+
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="/varietyCrop" element={<VarietyCrop />} />
       <Route path="/cvForm" element={<CropVarietyForm />} />
@@ -349,15 +364,15 @@ export default function App() {
       <Route path="/landPreparation" element={<LandPreparation />} />
       <Route path="/seedlingForm" element={<AddSeedlingForm />} />
 
-      <Route path="/pGrowth" element={<PlantGrowth />} /> 
+      <Route path="/pGrowth" element={<PlantGrowth />} />  
       
       
         
       {/* buyers */}
 
-      {/* <Route path='/cart' element={<Cart/>}/> */}
       <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
       <Route path="/buyert" element={<BuyerTable />} />
+
 
       <Route path="/profile" element={<Profile />} />
       <Route path="/Bdelivery" element={<BuyerDelivery />} />
@@ -368,12 +383,25 @@ export default function App() {
       <Route path="/buyerinfotable" element={<BuyerInfoTable />} />
       <Route path="/updateBuyer/:id" element={<UpdateBuyerInfo />} /> 
 
+       {/* <Route path="/create-preorder" element={<BuyerPreOrderForm/> } />
+      <Route path="/preorders" element={<BuyerPreOrderTable/>} />
+      <Route path="/update-preorder/:id" element={<UpdateBuyerPreOrderRequests/>} />  */}
+
       <Route path="/buyerdashboard" element={<BuyerDashboard />} />
+
+        {/* <Route path="/navbar" element={<Navbar />} /> 
+        <Route path='/buyer/home' element={<BHome/>}/> 
+        <Route path='/cart' element={<Cart/>}/>
+        <Route path='/placeOrder' element={<PlaceOrder/>}/>
+         <Route path='/verify' element={<Verify/>}/>
+         <Route path='/myorders' element={<MyOrders/>}/>  */}
+         
+         {/* <Route path='/Bhome' element={<Home/>}/> */}
  
       {/* page not found & error page */}
-        {/* <Route path="/test" element={<Test />} />  
+         {/* <Route path="/test" element={<Test />} />   */}
  
-      <Route path="*" element={<PageError />} /> */}
+      <Route path="*" element={<PageError />} /> 
 
 
     </Routes>

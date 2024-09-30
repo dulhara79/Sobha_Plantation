@@ -14,7 +14,7 @@ import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 // import Notification from "../../components/Sales_and_Finance/Notification";
 // import NotificationMenu from "../../components/Sales_and_Finance/NotificationMenu";
 // import Calendar from "../../components/Sales_and_Finance/Calendar";
-
+import NewLoadingScreen from '../../components/LoadingDots'
 
 const FinanceDashboard = () => {
   // State for Sales and Finance Data
@@ -57,6 +57,17 @@ const FinanceDashboard = () => {
       console.log("Notifications marked as read.");
     });
   };
+
+  const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      // Simulate loading process (e.g., API calls, component mounting)
+      setTimeout(() => {
+        setLoading(false); // Once the components or data are loaded
+      }, 2000); // Adjust the delay as needed
+    }, []);
+  
+    if (loading) return <NewLoadingScreen />;
 
   return (
     <div>

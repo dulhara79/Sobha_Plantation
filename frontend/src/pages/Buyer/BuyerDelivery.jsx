@@ -137,21 +137,24 @@ const AddDeliveryRecords = () => {
     if (!/[0-9]/.test(key)) {
       e.preventDefault();
     }
-  };
+};
 
-  const restrictInputToLetters = (e) => {
+const restrictInputToLetters = (e) => {
     const key = e.key;
-    if (!/[a-zA-Z\s]/.test(key)) {
+   
+    if (!/[a-zA-Z]/.test(key)) {
       e.preventDefault();
     }
-  };
-  const restrictInputToAlphanumeric = (e) => {
+};
+
+const restrictInputToAlphanumeric = (e) => {
     const key = e.key;
-    // Allow only letters (a-z, A-Z), numbers (0-9), and spaces
-    if (!/^[a-zA-Z0-9\s]*$/.test(key)) {
+     
+    if (!/^[a-zA-Z0-9]*$/.test(key)) {
       e.preventDefault();
     }
-  };
+};
+
   
   // To prevent non-numeric values from being pasted into numeric fields
   const preventNonNumericPaste = (e) => {
@@ -222,8 +225,8 @@ const AddDeliveryRecords = () => {
                 <Input 
                   placeholder="Enter first name" 
                   onChange={handleFirstNameChange} 
-                  onKeyPress={restrictInputToLetters} // Only allow letters
-                onPaste={preventNonAlphabeticPaste} // Prevent non-letter paste
+                  onKeyPress={restrictInputToLetters} 
+                onPaste={preventNonAlphabeticPaste} 
                 />
               </Form.Item>
 
@@ -236,8 +239,8 @@ const AddDeliveryRecords = () => {
                   placeholder="Enter last name"
                   onChange={handleLastNameChange}
                   disabled={!isLastNameEnabled}
-                  onKeyPress={restrictInputToLetters} // Only allow letters
-                  onPaste={preventNonAlphabeticPaste} // Prevent non-letter paste
+                  onKeyPress={restrictInputToLetters} 
+                  onPaste={preventNonAlphabeticPaste} 
                 />
               </Form.Item>
 
@@ -271,6 +274,7 @@ const AddDeliveryRecords = () => {
                   placeholder="Enter address"
                   onChange={handleAddressChange}
                   disabled={!isAddressEnabled}
+                  onKeyPress={restrictInputToAlphanumeric} 
                 />
               </Form.Item>
 
@@ -283,6 +287,7 @@ const AddDeliveryRecords = () => {
                   placeholder="Enter your city"
                   onChange={handleCityChange}
                   disabled={!isCityEnabled}
+                  onKeyPress={restrictInputToAlphanumeric} 
                 />
               </Form.Item>
 
@@ -322,8 +327,8 @@ const AddDeliveryRecords = () => {
                 <Input
                   placeholder="Enter your phone number"
                   disabled={!isPhoneEnabled}
-                  onKeyPress={restrictInputToNumbers} // Only allow numbers
-                  onPaste={preventNonNumericPaste} // Prevent non-numeric paste
+                  onKeyPress={restrictInputToNumbers} 
+                  onPaste={preventNonNumericPaste} 
                 />
               </Form.Item>
 

@@ -97,46 +97,51 @@ const TaskList = () => {
   );
 
   const generatePDF = () => {
-    const input = document.getElementById("task-table");
-    if (input) {
+    if (filteredRecords && filteredRecords.length > 0) {
       const currentDate = new Date().toLocaleString("en-GB");
-
-      html2canvas(input)
-        .then((canvas) => {
-          const imgData = canvas.toDataURL("image/png");
-          const pdf = new jsPDF("l", "mm", "a3");
-
-          const recordCount = filteredRecords.length;
-          const pageWidth = pdf.internal.pageSize.getWidth();
-          const textWidth =
-            (pdf.getStringUnitWidth("Task Details") *
-              pdf.internal.getFontSize()) /
-            pdf.internal.scaleFactor;
-          const centerPosition = (pageWidth - textWidth) / 2;
-
-          pdf.setFontSize(16);
-          pdf.text("Task Details", centerPosition, 10);
-          pdf.setFontSize(12);
-          pdf.text(`As At: ${currentDate}`, centerPosition, 20);
-
-          pdf.text(`Number of Tasks: ${recordCount}`, 10, 40);
-
-          pdf.autoTable({
-            html: "#task-table",
-            startY: 70,
-            theme: "grid",
-          });
-
-          pdf.save(`task-details_generatedAt_${currentDate}.pdf`);
-        })
-        .catch((error) => {
-          console.error("Error generating PDF:", error);
-        });
+  
+      const pdf = new jsPDF("l", "mm", "a3");
+  
+      const recordCount = filteredRecords.length;
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const textWidth =
+        (pdf.getStringUnitWidth("Task Details") * pdf.internal.getFontSize()) /
+        pdf.internal.scaleFactor;
+      const centerPosition = (pageWidth - textWidth) / 2;
+  
+      pdf.setFontSize(16);
+      pdf.text("Task Details", centerPosition, 10);
+      pdf.setFontSize(12);
+      pdf.text(`As At: ${currentDate}`, centerPosition, 20);
+  
+      pdf.text(`Number of Tasks: ${recordCount}`, 10, 40);
+  
+      const headers = ["Employee Name", "Task", "Assign Date", "Due Date", "Description", "Status"];
+      const data = filteredRecords.map((record) => [
+        record.emp_name,
+        record.task,
+        new Date(record.assign_date).toLocaleDateString("en-GB"), // Format date to dd/mm/yyyy
+        new Date(record.due_date).toLocaleDateString("en-GB"),     // Format date to dd/mm/yyyy
+        record.task_des,
+        record.task_status,
+      ]);
+  
+      // Set column headers
+      pdf.autoTable({
+        head: [headers],
+        body: data,
+        startY: 50,
+        theme: "grid",
+        headStyles: { fillColor: [41, 128, 185] }, // Optional: change the header style
+        styles: { fontSize: 10 }, // Optional: set font size for table data
+      });
+  
+      pdf.save(`task-details_generatedAt_${currentDate}.pdf`);
     } else {
-      console.error("Table element not found");
+      console.error("No records found to generate PDF.");
     }
   };
-
+  
   const subtypeBorderColorMap = {
     pending: "border-lime-400",
     inprogress: "border-green-400",
@@ -202,8 +207,8 @@ const TaskList = () => {
               <dd className="text-xl font-semibold text-gray-900">Pending</dd>
             </div>
           </button>
-          <button
-            value="inprogress"
+          {/* <button
+            value="in progress"
             onClick={(e) => setSearchQuery(e.target.value)}
             className="flex-grow overflow-hidden bg-green-100 flex justify-center items-center hover:w-[20%] hover:h-[105%] transition-all duration-300 ease-in-out"
           >
@@ -215,7 +220,23 @@ const TaskList = () => {
                 In Progress
               </div>
             </div>
+          </button> */}
+
+          <button
+            value="in progress"
+            onClick={(e) => setSearchQuery(e.target.value)}
+            className="flex-grow overflow-hidden bg-green-100 flex justify-center items-center hover:w-[20%] hover:h-[105%] transition-all duration-300 ease-in-out"
+          >
+            <div className="flex flex-col items-center content-center justify-between h-full pt-4 pb-4 align-middle ">
+              <div className="w-8 h-8">
+                 <FaTools />
+              </div>
+              <div className="text-xl font-semibold text-gray-900">
+              In Progress
+              </div>
+            </div>
           </button>
+
           <button
             value="completed"
             onClick={(e) => setSearchQuery(e.target.value)}
@@ -314,7 +335,7 @@ const TaskList = () => {
 
                 <td className="py-4 text-right ">
                   <Link
-                    to={`/employees/tasks/viewTask/${record._id}`}
+                    to={`/employee/taskdetails/${record._id}`}
                     className="font-medium text-blue-600 hover:underline"
                   >
                     <InformationCircleIcon

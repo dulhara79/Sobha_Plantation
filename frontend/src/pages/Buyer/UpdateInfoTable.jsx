@@ -122,6 +122,47 @@ const UpdateBuyerInfoRecords = () => {
   const disabledDate = (current) => {
     return current && current > moment().endOf("day");
   };
+  // Helper functions to lock key presses for specific fields
+  const restrictInputToNumbers = (e) => {
+    const key = e.key;
+    if (!/[0-9]/.test(key)) {
+      e.preventDefault();
+    }
+};
+
+const restrictInputToLetters = (e) => {
+    const key = e.key;
+   
+    if (!/[a-zA-Z]/.test(key)) {
+      e.preventDefault();
+    }
+};
+
+const restrictInputToAlphanumeric = (e) => {
+    const key = e.key;
+     
+    if (!/^[a-zA-Z0-9]*$/.test(key)) {
+      e.preventDefault();
+    }
+};
+
+  
+  // To prevent non-numeric values from being pasted into numeric fields
+  const preventNonNumericPaste = (e) => {
+    const clipboardData = e.clipboardData.getData("Text");
+    if (!/^[0-9]*$/.test(clipboardData)) {
+      e.preventDefault();
+    }
+  };
+
+  // To prevent non-letter values from being pasted into letter-only fields
+  const preventNonAlphabeticPaste = (e) => {
+    const clipboardData = e.clipboardData.getData("Text");
+    if (!/^[a-zA-Z\s]*$/.test(clipboardData)) {
+      e.preventDefault();
+    }
+  };
+
 
   return (
     <div>
@@ -165,11 +206,18 @@ const UpdateBuyerInfoRecords = () => {
               onFinish={handleSubmit}
             >
               <Form.Item label="First Name" name="firstName" rules={alphabeticRule}>
-                <Input placeholder="Enter first name" />
+                <Input placeholder="Enter first name" 
+                onKeyPress={restrictInputToLetters} 
+                onPaste={preventNonAlphabeticPaste}
+                />
+                
               </Form.Item>
 
               <Form.Item label="Last Name" name="lastName" rules={alphabeticRule}>
-                <Input placeholder="Enter last name" />
+                <Input placeholder="Enter last name" 
+                onKeyPress={restrictInputToLetters} 
+                onPaste={preventNonAlphabeticPaste}
+                />
               </Form.Item>
 
               <Form.Item label="Gender" name="Gender" rules={[{ required: true, message: "Please select your gender" }]}>
@@ -182,11 +230,18 @@ const UpdateBuyerInfoRecords = () => {
 
               <Form.Item label="Date of Birth" name="DOB" rules={[{ required: true, message: "Please select your date of birth" }]}>
                 <DatePicker format="YYYY-MM-DD" disabledDate={disabledDate} />
+
+                
               </Form.Item>
 
+
               <Form.Item label="Number" name="Number" rules={numericRule}>
-                <Input placeholder="Enter your phone number" />
+                <Input placeholder="Enter your phone number" 
+                onKeyPress={restrictInputToNumbers} 
+                onPaste={preventNonNumericPaste}
+                />
               </Form.Item>
+              
 
               <Form.Item label="Email" name="email" rules={[
                   {
@@ -200,6 +255,7 @@ const UpdateBuyerInfoRecords = () => {
                 ]}
               >
                 <Input placeholder="Enter your email" />
+                
               </Form.Item>
 
               <Form.Item>
