@@ -346,6 +346,7 @@ const Eregistration = () => {
   };
 
   const handleAddressChange = (e) => {
+
     const value = e.target.value;
     const filteredValue = value.replace(/[^0-9a-zA-Z\s,./]/g, ""); // Remove spaces
     setAddress(filteredValue);

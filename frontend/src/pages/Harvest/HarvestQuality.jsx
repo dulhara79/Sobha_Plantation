@@ -13,7 +13,7 @@ import "../../index.css";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { HomeOutlined } from '@mui/icons-material';
 import Swal from 'sweetalert2';
-import LoadingDot from '../../components/LoadingDots'; 
+import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 
 
 const { Search } = Input;
@@ -21,33 +21,35 @@ const { Option } = Select;
 
 // Navigation menu items for the dashboard
 const menuItems = [
-  { name: 'HOME', path: '/products/productdashboard' },
-  { name: 'PRODUCTION', path: '/products/production-overview' },
-  { name: 'QUALITY', path: '/products/quality-control' },
-  { name: 'PACKAGING', path: '/products/packaging-labeling' }
-];
+    { name: "HOME", path: "/harvest/harvestdashboard" },
+    { name: "SCHEDULE", path: "/harvest/harvest-schedule" },
+    { name: "YIELD", path: "/harvest/yield" },
+    { name: "QUALITYCHECKING", path: "/harvest/quality" },
+    { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist" },
+  ];
+  
 
-const QualityControl = () => {
+const HarvestQuality = () => {
   const [qualityControls, setQualityControls] = useState([]);
   const [filteredQualityControls, setFilteredQualityControls] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [sorter, setSorter] = useState({ field: null, order: null });
-  const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState({
     totalInspections: 0,
-    passRate: 0,
-    failRate: 0
+    passCount: 0,
+    failCount: 0
   });
   const [activeTab, setActiveTab] = useState("inspection"); 
   const navigate = useNavigate();
-  const activePage = location.pathname;
+const location = useLocation();  // This should come before using 'location.pathname'
+const activePage = location.pathname;
 
+  
   // Fetch quality controls from API
   const fetchQualityControls = async () => {
     try {
-      setTimeout(async () => {
-      const response = await axios.get("http://localhost:5000/api/quality-control");
+      const response = await axios.get("http://localhost:5000/api/quality");
       if (response.data.success) {
         const data = response.data.data;
         setQualityControls(data);
@@ -56,8 +58,6 @@ const QualityControl = () => {
       } else {
         console.log("Error: Unable to fetch quality controls, success flag not true");
       }
-      setLoading(false); // Stop loading after data fetch
-    }, 150); // Adjust the delay as needed
     } catch (error) {
       console.error("Error fetching quality controls:", error);
     }
@@ -66,37 +66,37 @@ const QualityControl = () => {
   // Calculate metrics
   const calculateMetrics = (data) => {
     const total = data.length;
-    const passCount = data.filter(qc => qc.status === "Passed").length;
-    const failCount = data.filter(qc => qc.status === "Failed").length;
+    const passCount = data.filter(qc => qc.qualityStatus === "Passed").length;
+    const failCount = data.filter(qc => qc.qualityStatus === "Failed").length;
 
     setMetrics({
       totalInspections: total,
-      passRate: total > 0 ? (passCount / total * 100).toFixed(2) : 0,
-      failRate: total > 0 ? (failCount / total * 100).toFixed(2) : 0
+      passCount: passCount,
+      failCount: failCount,
     });
-  };
+  }; 
 
+  const COLORS = ['#60DB19', '#FF4D4F'];
+
+// Ensure totalInspections is greater than 0 to avoid division by zero
+const passRate = metrics.totalInspections > 0 ? (metrics.passCount / metrics.totalInspections) * 100 : 0;
+const failRate = metrics.totalInspections > 0 ? (metrics.failCount / metrics.totalInspections) * 100 : 0;
+
+const pieData = [
+  { name: "Pass Rate", value: passRate },
+  { name: "Fail Rate", value: failRate },
+];
+
+  
+  
   useEffect(() => {
     fetchQualityControls();
   }, []);
 
-  // Handlers for navigation
-  const onHomeClick = useCallback(() => {
-    navigate("/products/productdashboard");
-  }, [navigate]);
-
   const onBackClick = useCallback(() => {
     navigate(-1);
   }, [navigate]);
-
-  const onProductionOverviewClick = useCallback(() => {
-    navigate("/products/production-overview");
-  }, [navigate]);
-
-  const onPackagingClick = useCallback(() => {
-    navigate("/products/packaging-labeling");
-  }, [navigate]);
-
+  
   // Handler for search input
   const onSearch = (value) => {
     setSearchText(value);
@@ -115,12 +115,12 @@ const QualityControl = () => {
 
     if (searchText) {
       filteredData = filteredData.filter((qc) =>
-        qc.productType.toLowerCase().includes(searchText.toLowerCase())
+        qc.cropType.toLowerCase().includes(searchText.toLowerCase())
       );
     }
 
     if (filterStatus !== "All") {
-      filteredData = filteredData.filter((qc) => qc.status === filterStatus);
+      filteredData = filteredData.filter((qc) => qc.qualityStatus === filterStatus);
     }
 
     if (sorter.field) {
@@ -145,7 +145,7 @@ const QualityControl = () => {
 
  // Handle update
  const handleSubmit = (id) => {
-  navigate(`/products/editInspectionReport/${id}`);
+  navigate(`/quality/editinspection/${id}`);
 };
 
   // Confirm delete
@@ -176,7 +176,7 @@ const confirmDelete = (qualityControlId) => {
     // Handle delete
     const handleDelete = async (qualityControlId) => {
       try {
-        await axios.delete(`http://localhost:5000/api/quality-control/${qualityControlId}`);
+        await axios.delete(`http://localhost:5000/api/quality/${qualityControlId}`);
         fetchQualityControls(); // Refresh the quality control list
       } catch (error) {
         Swal.fire({
@@ -186,31 +186,6 @@ const confirmDelete = (qualityControlId) => {
         });
       }
     };
-
-  // // Handle delete
-  // const handleDelete = async (qualityControlId) => {
-  //   try {
-  //     await axios.delete(`http://localhost:5000/api/quality-control/${qualityControlId}`);
-  //     fetchQualityControls(); // Refresh the quality control list
-  //   } catch (error) {
-  //     console.error("Error deleting quality control:", error);
-  //     Modal.error({
-  //       title: 'Error',
-  //       content: 'Failed to delete the quality control item. Please try again later.',
-  //     });
-  //   }
-  // };
-
-  // // Confirm delete
-  // const confirmDelete = (qualityControlId) => {
-  //   Modal.confirm({
-  //     title: "Are you sure you want to delete this quality control item?",
-  //     okText: "Yes",
-  //     okType: "danger",
-  //     cancelText: "No",
-  //     onOk: () => handleDelete(qualityControlId),
-  //   });
-  // };
 
   // Function to get image data URL
 const getImageDataURL = (url) => {
@@ -265,27 +240,17 @@ const generatePDF = async () => {
 
   // Title of the report
   doc.setFontSize(22);
-  doc.text("Quality Control Report", 65, 35); // Adjust y-coordinate to start below header
+  doc.text("Quality Report", 50, 35); // Adjust y-coordinate to start below header
 
-  // Calculate the status summary
-  const statusSummary = filteredQualityControls.reduce((summary, qc) => {
-    const status = qc.status; // Assuming status can be "Pass" or "Fail"
-    if (!summary[status]) {
-      summary[status] = 0;
-    }
-    summary[status]++;
-    return summary;
-  }, {});
-
-  const totalPass = statusSummary["Pass"] || 0;
-  const totalFail = statusSummary["Fail"] || 0;
+  const passRate = metrics.totalInspections > 0 ? (metrics.passCount / metrics.totalInspections) * 100 : 0;
+  const failRate = metrics.totalInspections > 0 ? (metrics.failCount / metrics.totalInspections) * 100 : 0;
 
   // Define the overview details
   const overviewHeaders = [['Detail', 'Value']];
   const overviewRows = [
     ['Total Inspections', `${metrics.totalInspections}`],
-    ['Pass Rate', `${metrics.passRate}%`],
-    ['Fail Rate', `${metrics.failRate}%`],
+    ['Pass Rate', `${passRate.toFixed(2)}%`],  // Show pass rate in percentage format
+    ['Fail Rate', `${failRate.toFixed(2)}%`],  // Show fail rate in percentage format
   ];
 
   // Add Overview Details Table
@@ -308,18 +273,18 @@ const generatePDF = async () => {
 
   // Second Table: Quality Control Data
   const columns = [
-    { title: "Product Type", dataKey: "productType" },
-    { title: "Inspection Date", dataKey: "inspectionDate" },
-    { title: "Status", dataKey: "status" },
-    { title: "Inspector Name", dataKey: "inspectorName" },
+    { title: "Crop Type", dataKey: "cropType" },
+    { title: "Check Date", dataKey: "checkDate" },
+    { title: "Quality Status", dataKey: "qualityStatus" },
+    { title: "Quality Controller", dataKey: "qualityController" },
   ];
 
   // Map the filteredQualityControls data to match the columns
   const rows = filteredQualityControls.map(qc => ({
-    productType: qc.productType,
-    inspectionDate: moment(qc.inspectionDate).format('YYYY-MM-DD'),
-    status: qc.status,
-    inspectorName: qc.inspectorName,
+    cropType: qc.cropType,
+    checkDate: moment(qc.checkDate).format('YYYY-MM-DD'),
+    qualityStatus: qc.qualityStatus,
+    qualityController: qc.qualityController,
   }));
 
   let finalY = doc.lastAutoTable.finalY + 10; // Adjust space between tables
@@ -342,26 +307,18 @@ const generatePDF = async () => {
   });
 
   // Save the PDF
-  doc.save("quality_control_report.pdf");
+  doc.save("Quality_Report.pdf");
 };
 
 
 
   // Handler for "Add Inspection" button
   const handleAddInspection = () => {
-    navigate("/products/addInspectionReport"); // Replace with your actual route
-  };
-
-
-  // Handler for "Issues" page navigation
-  const navigateToIssues = () => {
-    navigate("/products/issues");
+    navigate("/quality/addinspection"); // Replace with your actual route
   };
 
   const isActive = (page) => activePage === page;
   
-  if (loading) return <LoadingDot />;
-
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Header />
@@ -391,48 +348,45 @@ const generatePDF = async () => {
                 title: <HomeOutlined />,
               },
               {
-                title: 'Products',
+                title: 'Harvest',
               },
               {
-                title: 'Production Overview',
+                title: 'Quality Checking',
               },
             ]}
           />
       </div>
+{/* Pass/Fail Rates Table */}
+<div className="flex flex-col p-4 bg-white rounded shadow-md items-center" 
+     style={{ marginTop: "10px", maxWidth: "700px", margin: "0 auto", height: "400px" }}>
+  <h2 className="mb-4 text-xl font-semibold" style={{ marginBottom: '-60px', fontWeight: 'bold', color: '#1D6660' }}>
+    Pass/Fail Count
+  </h2>
+  <PieChart width={400} height={400}>
+    <Pie
+      data={pieData}
+      cx={200}
+      cy={200}
+      labelLine={false}
+      label={({ name, value }) => `${name}: ${value.toFixed(2)}`}
+      outerRadius={100}
+      fill="#8884d8"
+      dataKey="value"
+    >
+      {pieData.map((entry, index) => (
+        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+      ))}
+    </Pie>
+    <Tooltip />
+  </PieChart>
+</div>
 
 
-          {/* Metrics */}
-          <div className="card-container">
-          <Card
-            title="Total Inspections"
-            bordered={false}
-            className="card"
-          >
-            <div className="card-content">
-              {metrics.totalInspections}
-            </div>
-          </Card>
 
-          <Card
-            title="Pass Rate"
-            bordered={false}
-            className="card"
-          >
-            <div className="card-content">
-              {metrics.passRate}%
-            </div>
-          </Card>
 
-          <Card
-            title="Fail Rate"
-            bordered={false}
-            className="card"
-          >
-            <div className="card-content">
-              {metrics.failRate}%
-            </div>
-          </Card>
-        </div>
+
+
+
         
         <div className="flex flex-col p-4 bg-white rounded shadow-md">
         <h2 className="mb-4 text-xl font-semibold" style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}
@@ -442,7 +396,7 @@ const generatePDF = async () => {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <div style={{ display: "flex", alignItems: "center" }}>
             <Search
-                placeholder="Search by product type"
+                placeholder="Search "
                 onChange={(e) => onSearch(e.target.value)} // Trigger search as user types
                 style={{ width: 200, marginRight: 16 }} // Added marginRight for spacing
                 allowClear
@@ -488,28 +442,28 @@ const generatePDF = async () => {
             onChange={(pagination, filters, sorter) => handleSort(sorter.field, sorter.order)} // Handle sorting changes
           >
             <Table.Column 
-              title="Product Type" 
-              dataIndex="productType" 
-              key="productType" 
+              title="Crop Type" 
+              dataIndex="cropType" 
+              key="cropType" 
               sorter={true} // Enable sorting
             />
             <Table.Column 
-              title="Inspection Date" 
-              dataIndex="inspectionDate" 
-              key="inspectionDate" 
+              title="Check Date" 
+              dataIndex="checkDate" 
+              key="checkDate" 
               render={date => moment(date).format('YYYY-MM-DD')}
-              sorter={(a, b) => new Date(a.inspectionDate) - new Date(b.inspectionDate)} // Custom sorting function
+              sorter={(a, b) => new Date(a.checkDate) - new Date(b.checkDate)} // Custom sorting function
             />
             <Table.Column 
-              title="Status" 
-              dataIndex="status" 
-              key="status" 
+              title="Quality Status" 
+              dataIndex="qualityStatus" 
+              key="qualityStatus" 
               sorter={true} // Enable sorting
             />
             <Table.Column 
-              title="Inspector Name" 
-              dataIndex="inspectorName" 
-              key="inspectorName" 
+              title="Quality Controller" 
+              dataIndex="qualityController" 
+              key="qualityController" 
               sorter={true} // Enable sorting
             />
             <Table.Column
@@ -540,4 +494,4 @@ const generatePDF = async () => {
   );
 };
 
-export default QualityControl;
+export default HarvestQuality;

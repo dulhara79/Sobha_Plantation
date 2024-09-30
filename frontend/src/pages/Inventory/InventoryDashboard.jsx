@@ -14,63 +14,52 @@ import { useNavigate } from 'react-router-dom';
 // Import image assets
 import Tools from '../../assets/Inventory/tools.jpg';
 import Fertilizers from '../../assets/Inventory/fertilizerImg.png';
-//import Plants from '../../assets/Inventory/plantsImg.png';
 import Agrochemicals from '../../assets/Inventory/agrochemicalImg.jpg';
 import Maintenance from '../../assets/Inventory/maintenanceImg.png';
 
 ChartJS.register(ArcElement);
 
 const toolsData = {
-  labels: ["Available", "Used"],
+  labels: ["In Stock", "Out of Stock","Maintenance"],
   datasets: [
     {
-      data: [78, 22],
-      backgroundColor: ["#FF9F40", "#FFCE56"],
-      hoverBackgroundColor: ["#FF9F40", "#FFCE56"],
+      data: [78, 22,20],
+      backgroundColor: ['#90EE90', '#0818A8', '#40B5AD'],
+      hoverBackgroundColor: ['#4CAF50', '#191970', '#7DF9FF'],
     },
   ],
 };
+
 
 const fertilizersData = {
-  labels: ["Available", "Used"],
+  labels: ["In Stock", "Out of Stock", "Expired"],
   datasets: [
     {
-      data: [45, 55],
-      backgroundColor: ["#4BC0C0", "#36A2EB"],
-      hoverBackgroundColor: ["#4BC0C0", "#36A2EB"],
+      data: [40, 60,20],
+      backgroundColor: ['#60DB19', '#FF6384', '#FFCE56'],
+      hoverBackgroundColor: ['#4CAF50', '#FF2D55', '#FFCD30'],
     },
   ],
 };
-
-{/*const plantsData = {
-  labels: ["Available", "Used"],
-  datasets: [
-    {
-      data: [64, 36],
-      backgroundColor: ["#36A2EB", "#FF6384"],
-      hoverBackgroundColor: ["#36A2EB", "#FF6384"],
-    },
-  ],
-};
-*/}
+  
 const agroChemicalsData = {
-  labels: ["Available", "Used"],
+  labels: ["Available", "Used","Expired"],
   datasets: [
     {
-      data: [56, 44],
-      backgroundColor: ["#FF6384", "#FFCE56"],
-      hoverBackgroundColor: ["#FF6384", "#FFCE56"],
+      data: [56, 44,10],
+      backgroundColor: ["#FF6384", "#FFCE56","#0818A8"],
+      hoverBackgroundColor: ["#FF6384", "#FFCE56","#191970"],
     },
   ],
 };
 
 const maintenanceData = {
-  labels: ["Completed", "Pending", "Overdue"],
+  labels: ["In Progress", "Completed"],
   datasets: [
     {
-      data: [70, 20, 10],
-      backgroundColor: ["#36A2EB", "#FFCE56", "#FF6384"],
-      hoverBackgroundColor: ["#36A2EB", "#FFCE56", "#FF6384"],
+      data: [70, 20],
+      backgroundColor: ['#FFFF8F', '#90EE90'],
+      hoverBackgroundColor: ['#FFEA00', '#50C878'],
     },
   ],
 };
@@ -205,20 +194,7 @@ const InventoryDashboard = () => {
                   </Row>
                 </Card>
               </Col>
-       { /*      <Col span={8}>
-                <Card title="Plant Varieties">
-                  <Row align="middle" justify="center">
-                    <Col span={12}>
-                      <img src={Plants} alt="Plants" style={{ width: "120px", height: "160px" }} />
-                    </Col>
-                    <Col span={12}>
-                      <Pie data={plantsData} />
-                      <p>64% plant varieties are available.</p>
-                    </Col>
-                  </Row>
-                </Card>
-              </Col>
-            </Row>
+       { /*
 
           <Row gutter={[16, 16]} justify="center" className="mt-5">*/}
               <Col span={8}>

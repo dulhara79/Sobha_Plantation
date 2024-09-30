@@ -7,6 +7,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Header from '../../components/Header';
 import Sidebar from '../../components/Sidebar';
+import FieldViewNavbar from '../../components/FieldView/FieldViewNavbar';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -39,7 +40,6 @@ const Seedling = () => {
   useEffect(() => {
     let filtered = dataSource;
 
-    // Filter by search value (seedling type, current quantity, and min stock)
     if (searchValue) {
       filtered = filtered.filter(item =>
         item.seedlingType.toLowerCase().includes(searchValue.toLowerCase()) ||
@@ -48,7 +48,6 @@ const Seedling = () => {
       );
     }
 
-    // Filter by status
     if (statusFilter !== 'All') {
       filtered = filtered.filter(item => item.status === statusFilter);
     }
@@ -56,10 +55,10 @@ const Seedling = () => {
     setFilteredData(filtered);
   }, [searchValue, statusFilter, dataSource]);
 
-  // Handle edit button click (open modal)
+  // Handle edit button click
   const handleEdit = (record) => {
     setCurrentSeedling(record);
-    form.setFieldsValue({ ...record, minStock: 50 }); // Set minStock to 50
+    form.setFieldsValue({ ...record, minStock: 50 });
     setEditModalVisible(true);
   };
 
@@ -78,8 +77,7 @@ const Seedling = () => {
   const handleUpdate = async () => {
     try {
       const updatedSeedling = await form.validateFields();
-      
-      // Set status based on the currentQuantity value
+
       const status =
         updatedSeedling.currentQuantity === 0
           ? 'Out of Stock'
@@ -87,7 +85,7 @@ const Seedling = () => {
           ? 'Low Stock'
           : 'In Stock';
 
-      const updatedData = { ...updatedSeedling, status, minStock: 50 }; // Ensure minStock is 50
+      const updatedData = { ...updatedSeedling, status, minStock: 50 };
 
       await axios.put(`http://localhost:5000/api/seedlings/${currentSeedling._id}`, updatedData);
       setDataSource(dataSource.map(item => (item._id === currentSeedling._id ? updatedData : item)));
@@ -101,34 +99,89 @@ const Seedling = () => {
   // Handle modal cancel
   const handleCancel = () => {
     setEditModalVisible(false);
-    form.resetFields(); // Reset form fields when modal is closed
+    form.resetFields();
   };
 
-  // Generate PDF Report
-  const generatePDF = () => {
+  // Function to get image data URL for the logo
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous'; // Ensure cross-origin images are handled
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  };
+
+  // Generate PDF Report with the logo
+  const generatePDF = async () => {
     const doc = new jsPDF();
 
-    // Add a title
-    doc.text('Seedling Report', 14, 10);
+    // Load the logo image
+    const logoUrl = '../src/assets/logo.png'; // Ensure this path points to your logo
+    try {
+      const logoDataURL = await getImageDataURL(logoUrl);
 
-    // Prepare the table data
-    const tableData = filteredData.map((item, index) => [
-      index + 1,
-      item.seedlingType,
-      item.currentQuantity,
-      item.minStock,
-      item.status,
-    ]);
+      // Add the logo image to the PDF
+      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20);
 
-    // Add table using autoTable plugin
+    } catch (error) {
+      console.error('Failed to load the logo image:', error);
+    }
+
+    // Define the table columns
+    const columns = [
+      { title: "Seedling Type", dataKey: "seedlingType" },
+      { title: "Current Quantity", dataKey: "currentQuantity" },
+      { title: "Minimum Stock", dataKey: "minStock" },
+      { title: "Status", dataKey: "status" }
+    ];
+
+    // Map the filteredData to match the columns
+    const rows = filteredData.map((item, index) => ({
+      seedlingType: item.seedlingType,
+      currentQuantity: item.currentQuantity,
+      minStock: item.minStock,
+      status: item.status,
+    }));
+
+    // Add title and table to PDF
+    doc.setFontSize(22);
+    doc.text("Seedling Inventory Report", 50, 40);
+
     doc.autoTable({
-      head: [['#', 'Seedling Type', 'Current Qty', 'Min Stock', 'Status']],
-      body: tableData,
-      startY: 20,
+      columns: columns,
+      body: rows,
+      startY: 50,
+      margin: { horizontal: 10 },
+      styles: {
+        fontSize: 10,
+      },
+      headStyles: {
+        fillColor: [64, 133, 126],
+        textColor: [255, 255, 255],
+        fontSize: 12,
+      },
+      theme: 'striped',
+      didDrawPage: (data) => {
+        const pageNumber = doc.internal.getNumberOfPages();
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+
+        doc.setFontSize(10);
+        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10);
+      },
     });
 
     // Save the PDF
-    doc.save('seedling-report.pdf');
+    doc.save("seedling_inventory_report.pdf");
   };
 
   // Column definitions for the table
@@ -191,7 +244,7 @@ const Seedling = () => {
             { href: '', title: 'Seedling' },
           ]}
         />
-        {/* Back Button */}
+        <FieldViewNavbar />
         <div className="mb-4">
           <LeftCircleOutlined onClick={() => navigate(-1)} />
         </div>
@@ -202,8 +255,8 @@ const Seedling = () => {
           <p>Today is {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
         </div>
 
-        {/* Search, Filter, and Buttons */}
-        <div className="my-4">
+         {/* Search, Filter, and Buttons */}
+         <div className="my-4">
           <Row gutter={16} align="middle" style={{ marginBottom: '16px' }}>
             <Col flex="auto">
               <Row gutter={16}>
@@ -238,8 +291,9 @@ const Seedling = () => {
           </Row>
         </div>
 
-        {/* Seedling Table */}
-        <Table dataSource={filteredData} columns={columns} pagination={false} />
+
+        {/* Table Display */}
+        <Table columns={columns} dataSource={filteredData} rowKey="_id" pagination={{ pageSize: 8 }} />
 
         {/* Edit Modal */}
         <Modal
@@ -251,38 +305,14 @@ const Seedling = () => {
           cancelText="Cancel"
         >
           <Form form={form} layout="vertical">
-            <Form.Item
-              name="seedlingType"
-              label="Seedling Type"
-              rules={[{ required: true, message: 'Please select the seedling type' }]}
-            >
-              <Select placeholder="Select a seedling type">
-                <Option value="coconut">Coconut</Option>
-                <Option value="papaya">Papaya</Option>
-                <Option value="banana">Banana</Option>
-                <Option value="pepper">Pepper</Option>
-                <Option value="pineapple">Pineapple</Option>
-              </Select>
+            <Form.Item label="Seedling Type" name="seedlingType" rules={[{ required: true, message: 'Please enter the seedling type!' }]}>
+              <Input />
             </Form.Item>
-            <Form.Item
-              name="currentQuantity"
-              label="Current Quantity"
-              rules={[{ required: true, message: 'Please input the current quantity' }]}
-            >
-              <Input type="number" onChange={() => form.setFieldsValue({ status: '' })} />
+            <Form.Item label="Current Quantity" name="currentQuantity" rules={[{ required: true, message: 'Please enter the current quantity!' }]}>
+              <Input />
             </Form.Item>
-            <Form.Item
-              name="minStock"
-              label="Minimum Stock"
-            >
-              <Input type="number" disabled value={50} />
-            </Form.Item>
-            <Form.Item name="status" label="Status">
-              <Select disabled>
-                <Option value="In Stock">In Stock</Option>
-                <Option value="Low Stock">Low Stock</Option>
-                <Option value="Out of Stock">Out of Stock</Option>
-              </Select>
+            <Form.Item label="Minimum Stock" name="minStock">
+              <Input disabled />
             </Form.Item>
           </Form>
         </Modal>

@@ -5,6 +5,7 @@ import moment from 'moment';
 import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
+import { InputNumber } from 'antd';
 
 const { Option } = Select;
 
@@ -34,36 +35,6 @@ const EditYieldRecord = () => {
     };
     fetchRecord();
   }, [id, form]);
-
-  const validateFieldNumber = (_, value) => {
-    const pattern = /^(AA|BB|CC|DD)\d+$/;
-    if (!value || pattern.test(value)) {
-      return Promise.resolve();
-    }
-    return Promise.reject(new Error('Field number must be AA1, BB1, CC1, or DD1 format!'));
-  };
-
-  const validateQuantity = (_, value) => {
-    if (value >= 1) {
-      return Promise.resolve();
-    }
-    return Promise.reject(new Error('Quantity must be at least 1!'));
-  };
-
-  const validateTreesPicked = (_, value) => {
-    if (value >= 1) {
-      return Promise.resolve();
-    }
-    return Promise.reject(new Error('Trees picked must be at least 1!'));
-  };
-
-  const validateStorageLocation = (_, value) => {
-    const pattern = /^LL[1-4]$/;
-    if (!value || pattern.test(value)) {
-      return Promise.resolve();
-    }
-    return Promise.reject(new Error('Storage location must be LL1, LL2, LL3, or LL4!'));
-  };
 
   const handleSubmit = async (values) => {
     try {
@@ -114,15 +85,20 @@ const EditYieldRecord = () => {
           </Form.Item>
 
           <Form.Item
-            label="Field Number"
-            name="fieldNumber"
-            rules={[
-              { required: true, message: 'Please enter the field number!' },
-              { validator: validateFieldNumber },
-            ]}
-          >
-            <Input placeholder="Enter field number" />
-          </Form.Item>
+                label="Field Number"
+                name="fieldNumber"
+                rules={[{ required: true, message: "Please select a field number!" }]}
+              >
+                <Select placeholder="Select a field number" 
+                style={{ width: '100%' }} // Enable only when harvest date is selected
+              >
+                  <Option value="AA1">AA1</Option>
+                  <Option value="BB1">BB1</Option>
+                  <Option value="CC1">CC1</Option>
+                  <Option value="DD1">DD1</Option>
+                </Select>
+              </Form.Item>
+
 
           <Form.Item
             label="Crop Type"
@@ -130,45 +106,71 @@ const EditYieldRecord = () => {
             rules={[{ required: true, message: 'Please select a crop type!' }]}
           >
             <Select placeholder="Select a crop type">
-              <Option value="coconut">Coconut</Option>
-              <Option value="banana">Banana</Option>
-              <Option value="pepper">Pepper</Option>
-              <Option value="papaya">Papaya</Option>
+              <Option value="Coconut">Coconut</Option>
+              <Option value="Banana">Banana</Option>
+              <Option value="Pepper">Pepper</Option>
+              <Option value="Papaya">Papaya</Option>
+              <Option value="Pineapple">Pineapple</Option>
             </Select>
           </Form.Item>
 
           <Form.Item
-            label="Quantity"
-            name="quantity"
-            rules={[
-              { required: true, message: 'Please enter the quantity!' },
-              { validator: validateQuantity },
-            ]}
-          >
-            <Input type="number" placeholder="Enter quantity" />
-          </Form.Item>
+  label="Quantity"
+  name="quantity"
+  rules={[
+    { required: true, message: 'Please enter the quantity!' },
+    {
+      validator: (_, value) => {
+        if (value && value >= 1) {
+          return Promise.resolve();
+        }
+        return Promise.reject(new Error('Quantity must be at least 1!'));
+      },
+    },
+  ]}
+>
+  <InputNumber
+    placeholder="Enter quantity"
+    min={1} // Minimum value set to 1
+    style={{ width: '100%' }} // Full width input
+  />
+</Form.Item>
+
+          
 
           <Form.Item
-            label="Trees Picked"
-            name="treesPicked"
-            rules={[
-              { required: true, message: 'Please enter the number of trees picked!' },
-              { validator: validateTreesPicked },
-            ]}
-          >
-            <Input type="number" placeholder="Enter number of trees picked" />
-          </Form.Item>
+  label="Trees Picked"
+  name="treesPicked"
+  rules={[
+    { required: true, message: 'Please enter the number of trees picked!' },
+    { pattern: /^\d+$/, message: "Number of workers must be numeric" },
+    ({ getFieldValue }) => ({
+      validator(_, value) {
+        if (!value || (parseInt(value) >= 1 && parseInt(value) <= 40)) {
+          return Promise.resolve();
+        }
+        return Promise.reject(new Error("Trees Picked at least 1"));
+      },
+    }),
+  ]}
+>
+  <Input type="number" min={1} placeholder="Enter number of trees picked" />
+</Form.Item>
 
           <Form.Item
-            label="Storage Location"
-            name="storageLocation"
-            rules={[
-              { required: true, message: 'Please enter the storage location!' },
-              { validator: validateStorageLocation },
-            ]}
-          >
-            <Input type="text" placeholder="Enter storage location" />
-          </Form.Item>
+                label="Storage Location"
+                name="storageLocation"
+                rules={[{ required: true, message: "Please enter the storage location!" }]}
+              >
+                <Select placeholder="Select a Storage Location"
+                style={{ width: '100%' }} // Enable only when harvest date is selected
+              >
+                  <Option value="LL1">LL1</Option>
+                  <Option value="LL2">LL2</Option>
+                  <Option value="LL3">LL3</Option>
+                  <Option value="LL4">LL4</Option>
+                </Select>
+              </Form.Item>
 
           <Form.Item>
             <Button type="primary" htmlType="submit">

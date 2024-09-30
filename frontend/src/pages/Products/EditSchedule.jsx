@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Form, Input, DatePicker, Select, Button, notification } from 'antd';
+import { Form, Input, DatePicker, Select, Button, notification, InputNumber } from 'antd';
 import moment from 'moment';
 import Swal from 'sweetalert2'; // Import SweetAlert2
 
@@ -11,6 +11,10 @@ const EditSchedule = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const [formData, setFormData] = useState({});
+  const [errors, setErrors] = useState({});
+
+  const fields = ["productType", "quantity", "startDate", "endDate", "status", "progress"];
 
   const disableEndDates = (current) => {
     const startDate = form.getFieldValue('startDate');
@@ -80,6 +84,38 @@ const EditSchedule = () => {
     }
   };
 
+  // Block further fields if the previous field has errors or is empty
+  const handleFieldChange = (name, value) => {
+    const currentIndex = fields.indexOf(name);
+    if (currentIndex > 0) {
+      const previousField = fields[currentIndex - 1];
+      if (errors[previousField] || !formData[previousField]) {
+        return; // Block current field if previous has errors or is empty
+      }
+    }
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  const handleFieldsError = (errorInfo) => {
+    const newErrors = errorInfo.reduce((acc, { name, errors }) => {
+      acc[name[0]] = errors.length > 0;
+      return acc;
+    }, {});
+    setErrors(newErrors);
+  };
+
+  // Disable copy-pasting in input fields
+  const handlePreventPaste = (e) => {
+    e.preventDefault();
+    notification.warning({
+      message: 'Paste Disabled',
+      description: 'Copy-pasting is disabled for this field.',
+    });
+  };
+
   const handleSubmit = async (values) => {
     const isFormValid = form.getFieldsError().every(({ errors }) => errors.length === 0);
     if (!isFormValid) return;
@@ -92,8 +128,13 @@ const EditSchedule = () => {
       confirmButtonText: "Yes, submit it!",
       cancelButtonText: "No, cancel!",
       customClass: {
-        popup: 'swal-custom-popup', // Add custom class for styling
+        popup: 'swal-custom-popup',
+        title: 'swal-custom-title',
+        html: 'swal-custom-html',
+        confirmButton: 'swal-confirm-button',
+        cancelButton: 'swal-cancel-button',
       },
+      focusCancel: false,
     });
 
     if (result.isConfirmed) {
@@ -103,7 +144,7 @@ const EditSchedule = () => {
           startDate: values.startDate ? values.startDate.toISOString() : null,
           endDate: values.endDate ? values.endDate.toISOString() : null,
         });
-        Swal.fire('Success', 'Inspection report updated successfully!', 'success');
+        Swal.fire('Success', 'Production schedule updated successfully!', 'success');
         navigate('/products/production-overview');
       } catch (error) {
         notification.error({
@@ -118,6 +159,8 @@ const EditSchedule = () => {
     navigate('/products/production-overview');
   };
 
+ 
+
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
@@ -126,13 +169,14 @@ const EditSchedule = () => {
           form={form}
           onFinish={handleSubmit}
           layout="vertical"
+          onFieldsChange={handleFieldsError}
         >
           <Form.Item
             label="Product Type"
             name="productType"
             rules={[{ required: true, message: 'Please select a product type!' }]}
           >
-            <Select placeholder="Select a product type">
+            <Select placeholder="Select a product type" onChange={(value) => handleFieldChange("productType", value)}>
               <Option value="coconut-oil">Coconut Oil</Option>
               <Option value="coconut-water">Coconut Water</Option>
               <Option value="coconut-milk">Coconut Milk</Option>
@@ -145,17 +189,41 @@ const EditSchedule = () => {
           <Form.Item
             label="Quantity"
             name="quantity"
-            rules={[
-              { required: true, message: 'Quantity is required!' },
-              { validator: validateQuantity }
-            ]}
+            rules={[{ required: true, message: 'Please enter the quantity!' }]}
           >
-            <Input
-              type="number"
-              placeholder="Enter quantity"
-              min="1"
-              max="100"
-            />
+            <InputNumber
+                placeholder="Enter quantity"
+                min={1}
+                max={100}
+                onChange={(value) => handleFieldChange('quantity', value)}
+                style={{ width: '100%' }}
+                parser={(value) => value.replace(/\D/g, '')} // Only allow digits
+                onKeyPress={(e) => {
+                  const key = e.key;
+                  const currentValue = e.target.value;
+
+                  // Only allow numbers between 0-9
+                  if (!/[0-9]/.test(key)) {
+                    e.preventDefault(); // Prevent non-numeric input
+                  }
+
+                  // Prevent typing a value greater than 100 or less than 1
+                  if ((currentValue === '' && key === '0') || parseInt(currentValue + key) > 100) {
+                    e.preventDefault();
+                  }
+                }}
+                onBlur={(e) => {
+                  const value = e.target.value;
+
+                  // If the value exceeds 100, reset it to 100 or if it's less than 1, reset it to 1
+                  if (value > 100) {
+                    form.setFieldsValue({ quantity: 100 });
+                  } else if (value < 1) {
+                    form.setFieldsValue({ quantity: 1 });
+                  }
+                }}
+                onPaste={handlePreventPaste} // Prevent paste
+              />
           </Form.Item>
 
           <Form.Item
@@ -168,6 +236,7 @@ const EditSchedule = () => {
               disabledDate={disableStartDates}
               style={{ width: '100%' }}
               inputReadOnly // Disable manual input
+              onChange={(date) => handleFieldChange("startDate", date)}
             />
           </Form.Item>
 
@@ -182,7 +251,7 @@ const EditSchedule = () => {
               disabledDate={disableEndDates}
               style={{ width: '100%' }}
               inputReadOnly // Disable manual input
-
+              onChange={(date) => handleFieldChange("endDate", date)}
             />
           </Form.Item>
 
@@ -190,11 +259,18 @@ const EditSchedule = () => {
             label="Status"
             name="status"
             rules={[{ required: true, message: 'Please select the status!' }]}
-            onChange={handleStatusChange}
+            onChange={(status) => {
+              handleStatusChange(status);
+              handleFieldChange("status", status);
+            }}
           >
             <Select
               placeholder="Select status"
-              onChange={handleStatusChange}
+              onChange={(value) => {
+                handleStatusChange(value);
+                handleFieldChange('status', value);
+              }}
+              onPaste={handlePreventPaste} // Prevent paste
             >
               <Option value="Scheduled">Scheduled</Option>
               <Option value="In Progress">In Progress</Option>
@@ -205,29 +281,56 @@ const EditSchedule = () => {
           <Form.Item
             label="Progress (%)"
             name="progress"
-            rules={[{ required: true, message: 'Progress is required!' }, { validator: validateProgress }]}
+            rules={[
+              { required: true, message: 'Progress is required!' },
+              { type: 'number', min: 0, max: 100, message: 'Progress must be between 0 and 100!' },
+            ]}
           >
-            <Input
-              type="number"
-              placeholder="Enter progress percentage"
+
+          <InputNumber
+                placeholder="Enter progress percentage"
+                onChange={(value) => handleFieldChange('progress', value)}
+                min={0}
+                max={100}
+                style={{ width: '100%' }}
+                onKeyPress={(e) => {
+                  const key = e.key;
+                  const currentValue = e.target.value;
+
+                  // Only allow numbers between 0-9
+                  if (!/[0-9]/.test(key)) {
+                    e.preventDefault();
+                  }
+
+                  // Prevent typing a value greater than 100
+                  if (currentValue + key > 100 || currentValue + key < 0) {
+                    e.preventDefault();
+                  }
+                }}
+                onBlur={(e) => {
+                  const value = e.target.value;
+
+                  // If the value exceeds 100, reset it to 100 or if it's less than 0, reset it to 0
+                  if (value > 100) {
+                    form.setFieldsValue({ progress: 100 });
+                  } else if (value < 0) {
+                    form.setFieldsValue({ progress: 0 });
+                  }
+                }}
+                onPaste={handlePreventPaste} // Prevent paste
             />
           </Form.Item>
 
-          <Form.Item>
-            <div className="flex justify-between">
-              <Button
-                type="primary"
-                htmlType="submit"
-                style={{ width: '48%', backgroundColor: '#1D6660', borderColor: '#1D6660' }}
-              >
-
-                Update Schedule
-              </Button>
-              <Button type="default" onClick={handleCancel} style={{ width: '48%' }}>
-                Cancel
-              </Button>
-            </div>
-          </Form.Item>
+          <div className="flex justify-between mt-4">
+            <Button type="primary" htmlType="submit" 
+            style={{ width: '48%', backgroundColor: '#1D6660', borderColor: '#1D6660' }}>
+              Update Shedule
+            </Button>
+            <Button type="default" onClick={handleCancel}
+            style={{ width: '48%' }}>
+              Cancel
+            </Button>
+          </div>
         </Form>
       </div>
     </div>
