@@ -59,5 +59,4 @@ const FinanceSchema = mongoose.Schema(
   }
 );
 
-// export const SalariesRecord = mongoose.model("SalariesRecord", FinanceSchema);
 module.exports = mongoose.model("SalariesRecord", FinanceSchema);

@@ -8,22 +8,29 @@ import LearnMore from './components/LearnMore';
 
 /**
  * sales and finance
-*/
+ */
 import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
+
 import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
+
 import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
 import ViewSalesRecordDashboard from "./pages/SalesAndFinance/Sales/ViewSalesRecordDashboard.jsx";
+import EditSalesDataPage from "./pages/SalesAndFinance/Sales/EditSalesDataPage.jsx";
 import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage.jsx";
 // finance
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
+
 import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
-import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
 import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDisplay.jsx";
+import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
 import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
-import ValuationDashboardPage from "./pages/SalesAndFinance/Finance/ValuationDashboard.jsx";
+
 import AddNewValuationPage from "./pages/SalesAndFinance/Finance/AddNewValuationPage.jsx";
+import ValuationDashboardPage from "./pages/SalesAndFinance/Finance/ValuationDashboard.jsx";
 import EditValuationPage from "./pages/SalesAndFinance/Finance/EditValuationPage.jsx";
+
 import Esalary from "./pages/SalesAndFinance/Finance/Esalary.jsx";
+import ViewSalaryRecordPage from "./pages/SalesAndFinance/Finance/ViewSalaryRecordPage.jsx";
 
 // inventory
 import FertilizerRecords from "./pages/Inventory/FertilizerRecords.jsx";
@@ -43,7 +50,6 @@ import EditRequestPaymentRecord from "./pages/Inventory/EditRequestPaymentRecord
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
 import Eregistration from "./pages/employee/Eregistration.jsx";
-import Esalary from "./pages/employee/Esalary";
 import EaddTask from "./pages/employee/EaddTask.jsx";
 import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
@@ -53,7 +59,6 @@ import EattendenceList from "./pages/employee/EattendenceList.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
-import ScheduleOptionsPage from "./pages/Harvest/ScheduleOptionsPage.jsx";
 import HarvestSchedule from "./pages/Harvest/HarvestSchedule";
 import YieldRecords from "./pages/Harvest/YieldRecords";
 import ComplianceCheckList from "./pages/Harvest/ComplianceCheckList";
@@ -163,7 +168,7 @@ export default function App() {
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/learn-more" element={<LearnMore />} />
 
-       {/* sales and finance */}
+        {/* sales and finance */}
       <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
 
       <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
@@ -176,11 +181,16 @@ export default function App() {
         element={<ViewSalesRecordDashboard />}
       />
       <Route
+        path="/salesAndFinance/sales/editSalesRecord/:id"
+        element={<EditSalesDataPage />}
+      />
+      <Route
         path="/salesAndFinance/sales/analytics"
         element={<SalesAnalyticsPage />}
       />
 
       <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
+
       <Route
         path="/salesAndFinance/finance/add-transaction"
         element={<AddTransactionPage />}
@@ -203,6 +213,11 @@ export default function App() {
       />
 
       <Route
+        path="/salesAndFinance/finance/viewSalaryRecord"
+        element={<ViewSalaryRecordPage />}
+      />
+
+      <Route
         path="/salesAndFinance/finance/valuation-dashboard"
         element={<ValuationDashboardPage />}
       />
@@ -211,7 +226,7 @@ export default function App() {
         element={<AddNewValuationPage />}
       />
       <Route
-        path="/salesAndFinance/finance/add-new-valuation"
+        path="/salesAndFinance/finance/edit-valuation"
         element={<EditValuationPage />}
       />
 
@@ -272,7 +287,6 @@ export default function App() {
       {/* employee */}
       <Route path="/employee/dashboard" element={<Edashboard />} />
       <Route path="/employee/registration" element={<Eregistration />} />
-      <Route path="/employee/salary" element={<Esalary />} />
       <Route path="/employee/task" element={<EaddTask />} />
       <Route path="/employee/taskedit/:id" element={<EditTaskPage />} />
       <Route path="/employee/TaskListview" element={<ViewTaskList />} />
@@ -282,12 +296,7 @@ export default function App() {
 
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
-      <Route
-        path="/harvest/schedule-options"
-        element={<ScheduleOptionsPage />}
-      />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
-      <Route path="/yield-options" element={<YieldOptionsPage />} />
       <Route path="/harvest/yield" element={<YieldRecords />} />
       <Route
         path="/harvest/compliancechecklist"
