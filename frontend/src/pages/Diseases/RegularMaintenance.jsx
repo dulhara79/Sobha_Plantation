@@ -14,7 +14,6 @@ import { Breadcrumb, Button, Table, Input, Modal, notification } from "antd";
 import axios from "axios";
 import moment from "moment";
 import { Link } from "react-router-dom";
-import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import LogoImage from "../../assets/Logo.png";
 import "../../index.css";
@@ -42,24 +41,24 @@ ChartJS.register(
 const { Search } = Input;
 
 const RegularMaintenance = () => {
-  const [maintenance, setMaintenance] = useState([]);
-  const [filteredMaintenance, setFilteredMaintenance] = useState([]);
+  const [regularMaintenance, setRegularMaintenance] = useState([]);
+  const [filteredRegularMaintenance, setFilteredRegularMaintenance] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchMaintenance();
+    fetchRegularMaintenance();
   }, []);
 
   // Fetch maintenance data from API
-  const fetchMaintenance = async () => {
+  const fetchRegularMaintenance = async () => {
     try {
       const response = await axios.get(
         "http://localhost:8090/api/regularMaintenance"
       );
-      setMaintenance(response.data.data);
-      setFilteredMaintenance(response.data.data);
+      setRegularMaintenance(response.data.data);
+      setFilteredRegularMaintenance(response.data.data);
     } catch (error) {
       console.error("Error fetching maintenance data: ", error.message);
     }
@@ -68,17 +67,17 @@ const RegularMaintenance = () => {
   // Search maintenance data
   const handleSearch = (value) => {
     setSearchText(value);
-    filterMaintenance(value, filterStatus);
+    filterRegularMaintenance(value, filterStatus);
   };
 
   // Filter maintenance data
-  const filterMaintenance = (searchText, filterStatus) => {
-    let filteredData = maintenance;
+  const filterRegularMaintenance = (searchText, filterStatus) => {
+    let filteredData = regularMaintenance;
 
     if (searchText) {
       const lowercasedSearchText = searchText.toLowerCase();
-      filteredData = filteredData.filter((maintenance) =>
-        Object.values(maintenance).some((value) =>
+      filteredData = filteredData.filter((regularMaintenance) =>
+        Object.values(regularMaintenance).some((value) =>
           String(value).toLowerCase().includes(lowercasedSearchText)
         )
       );
@@ -86,11 +85,11 @@ const RegularMaintenance = () => {
 
     if (filterStatus !== "All") {
       filteredData = filteredData.filter(
-        (maintenance) => maintenance.status === filterStatus
+        (regularMaintenance) => regularMaintenance.status === filterStatus
       );
     }
 
-    setFilteredMaintenance(filteredData);
+    setFilteredRegularMaintenance(filteredData);
   };
 
   //Handle update maintenance
@@ -120,8 +119,8 @@ const RegularMaintenance = () => {
           message: "Success",
           description: "Maintenance record deleted successfully.",
         });
-        setFilteredMaintenance(
-          filteredMaintenance.filter((record) => record.id !== id)
+        setFilteredRegularMaintenance(
+          filteredRegularMaintenance.filter((record) => record.id !== id)
         );
       } else {
         notification.error({
@@ -138,66 +137,67 @@ const RegularMaintenance = () => {
     }
   };
 
-  const generatePDF = () => {
-    const input = document.getElementById("table-to-pdf");
-    html2canvas(input, { scale: 2 }).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const imgWidth = 210; // A4 width in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      const pageHeight = pdf.internal.pageSize.height;
-      let heightLeft = imgHeight;
-
-      // Add title
-      pdf.setFontSize(16);
-      pdf.setTextColor(40, 40, 40);
-      pdf.text("Maintenance Report", 105, 20, { align: "center" });
-
-      // Add the table image
-      let positionY = 30; // Start position for the image on the first page
-      pdf.addImage(imgData, "PNG", 0, positionY, imgWidth, imgHeight);
-      heightLeft -= pageHeight - positionY;
-
-      // Add pages if the content spans multiple pages
-      while (heightLeft > 0) {
-        pdf.addPage();
-        positionY = 0; // Reset position to top of the new page
-        pdf.addImage(
-          imgData,
-          "PNG",
-          0,
-          positionY - heightLeft,
-          imgWidth,
-          imgHeight
-        );
-        heightLeft -= pageHeight;
-      }
-
+  const generatePDF = async () => {
+    const doc = new jsPDF();
+  
+    // Define the columns for the table
+    const columns = [
+     { title: "Date of Maintenance", dataKey: "dateOfMaintenance" },
+     { title: "Task", dataKey: "task" },
+     { title: "Manager in Charge", dataKey: "managerInCharge" },
+     { title: "Progress", dataKey: "progress" },
+    ];
+  
+    // Get the data from the inspections state
+    const rows = filteredRegularMaintenance.map(regularMaintenance => ({
+      dateOfMaintenance: moment(regularMaintenance.dateOfMaintenance).format("YYYY-MM-DD"),
+      task: regularMaintenance.task,
+      managerInCharge: regularMaintenance.managerInCharge,
+      progress: regularMaintenance.progress,
+    }));
+  
+    // Add title (lowered y-coordinate)
+    doc.setFontSize(18);
+    const titleY = 24; // Adjust this value to lower the title
+    doc.text("Maintenance Report", 75, titleY);
+  
+    // Add table (adjusted startY)
+    doc.autoTable({
+      columns: columns,
+      body: rows,
+      startY: titleY + 13, // Adjust this value to set how far below the title the table starts
+      margin: { horizontal: 10 },
+      styles: {
+        fontSize: 10,
+        minCellHeight: 17, // Adjust this value for desired row height
+        halign: 'left',    // Left-align content horizontally
+      valign: 'middle',    // Center content vertically
+      },
+      headStyles: {
+        fillColor: [64, 133, 126],
+        textColor: [255, 255, 255],
+        fontSize: 12,
+      },
+      theme: 'striped',
+    });
+  
       // Add footer with a horizontal line and logo
-      const footerY = pdf.internal.pageSize.height - 30;
-
-      pdf.setDrawColor(0);
-      pdf.setLineWidth(0.5);
-      pdf.line(10, footerY, pdf.internal.pageSize.width - 10, footerY); // Horizontal line
-
+      const footerY = doc.internal.pageSize.height - 30;
+  
+      doc.setDrawColor(0);
+      doc.setLineWidth(0.5);
+      doc.line(10, footerY, doc.internal.pageSize.width - 10, footerY); // Horizontal line
+  
       // Add logo to the footer
       const logoData = LogoImage; // Replace with the path to your logo
       const logoWidth = 40;
       const logoHeight = 20;
-      const xPosition = (pdf.internal.pageSize.width - logoWidth) / 2;
-      const yPosition = footerY - logoHeight - -10; // Adjust margin as needed
+      const xPosition = (doc.internal.pageSize.width - logoWidth) / 2;
+      const yPosition = footerY - logoHeight - (-10); // Adjust margin as needed
+  
+      doc.addImage(logoData, "PNG", xPosition, yPosition, logoWidth, logoHeight);
 
-      pdf.addImage(
-        logoData,
-        "PNG",
-        xPosition,
-        yPosition,
-        logoWidth,
-        logoHeight
-      );
-
-      pdf.save("Maintenance_Report.pdf");
-    });
+      doc.save("Maintenance_Report.pdf");
   };
 
   // Data for the bar chart
@@ -225,8 +225,8 @@ const RegularMaintenance = () => {
     // Calculate the data based on filteredMaintenance
     const monthlyData = Array(12).fill(0); // Assuming a 12-month year
 
-    filteredMaintenance.forEach((maintenance) => {
-      const month = moment(maintenance.dateOfMaintenance).month(); // Get month index (0-11)
+    filteredRegularMaintenance.forEach((regularMaintenance) => {
+      const month = moment(regularMaintenance.dateOfMaintenance).month(); // Get month index (0-11)
       monthlyData[month] += 1; // Increment the count for that month
     });
 
@@ -235,7 +235,7 @@ const RegularMaintenance = () => {
       ...prevData,
       datasets: [{ ...prevData.datasets[0], data: monthlyData }],
     }));
-  }, [filteredMaintenance]); // Runs whenever filteredMaintenance changes
+  }, [filteredRegularMaintenance]); // Runs whenever filteredMaintenance changes
 
   // Options for the bar chart (unchanged)
   const options = {
@@ -301,16 +301,15 @@ const RegularMaintenance = () => {
           </Link>
           <Link
             to="/RegularMaintenance"
-            className="text-[#236A64] font-semibold"
-          >
+            className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold">
             Maintenance
           </Link>
-          <Link
+          {/* <Link
             to="/UserProfile"
             className="text-[#3CCD65] hover:text-[#2b8f57]"
           >
             My Profile
-          </Link>
+          </Link> */}
         </div>
       </nav>
 
@@ -401,7 +400,7 @@ const RegularMaintenance = () => {
                 ),
               },
             ]}
-            dataSource={filteredMaintenance}
+            dataSource={filteredRegularMaintenance}
             rowKey="_id"
             pagination={{ pageSize: 10 }}
             style={{ width: "100%" }}
