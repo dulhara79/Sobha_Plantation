@@ -47,8 +47,8 @@ const agroChemicalsData = {
   datasets: [
     {
       data: [56, 44,10],
-      backgroundColor: ["#FF6384", "#FFCE56","#0818A8"],
-      hoverBackgroundColor: ["#FF6384", "#FFCE56","#191970"],
+      backgroundColor: ["#32CD32", "#FFCE56","#0818A8"],
+      hoverBackgroundColor: ["#00A36C", "#FFCE56","#191970"],
     },
   ],
 };
@@ -57,9 +57,9 @@ const maintenanceData = {
   labels: ["In Progress", "Completed"],
   datasets: [
     {
-      data: [70, 20],
-      backgroundColor: ['#FFFF8F', '#90EE90'],
-      hoverBackgroundColor: ['#FFEA00', '#50C878'],
+      data: [30, 60],
+      backgroundColor: ['#000080', '#40B5AD'],
+      hoverBackgroundColor: ['#4169E1', '#40E0D0'],
     },
   ],
 };
