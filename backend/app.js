@@ -31,7 +31,11 @@ const complianceCheckRoutes = require("./routes/Harvest/compliance.js");
 /**
  * crop care
  */
-const diseasesRoute = require("./routes/DiseaseRoutes/diseasesRoute.js");
+const diseasesRoute = require('./routes/DiseaseRoutes/diseasesRoute.js');
+const cropDiseasesRoute = require('./routes/DiseaseRoutes/cropDiseasesRoute.js')
+const treatmentsRoute = require('./routes/DiseaseRoutes/treatmentsRoute.js');
+const cropTreatmentsRoute = require('./routes/DiseaseRoutes/cropTreatmentsRoute.js');
+const regularMaintenanceRoute = require('./routes/DiseaseRoutes/regularMaintenanceRoute.js');
 
 /**
  * crop
@@ -106,7 +110,11 @@ app.use("/api/compliance-checks", complianceCheckRoutes);
 /**
  * crop care
  */
-app.use("/api/diseases", diseasesRoute);
+app.use('/api/diseases', diseasesRoute);
+app.use('/api/cropDiseases', cropDiseasesRoute);
+app.use('/api/treatments', treatmentsRoute);
+app.use('/api/cropTreatments', cropTreatmentsRoute);
+app.use('/api/regularMaintenance', regularMaintenanceRoute);
 
 /**
  * crop

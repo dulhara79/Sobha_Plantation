@@ -183,6 +183,7 @@ const ETaskForm = () => {
                       errors.task ? "border-red-500" : ""
                     }`}
                     required
+                        disabled={!emp_id}
                   />
                   {errors.task && (
                     <p className="text-sm text-red-500">{errors.task}</p>
@@ -206,6 +207,7 @@ const ETaskForm = () => {
                       errors.assign_date ? "border-red-500" : ""
                     }`}
                     required
+                    disabled={!task}
                   />
                 </div>
               </div>
@@ -226,6 +228,7 @@ const ETaskForm = () => {
                       errors.due_date ? "border-red-500" : ""
                     }`}
                     required
+                    disabled={!assign_date}
                   />
                   {errors.due_date && (
                     <p className="text-sm text-red-500">{errors.due_date}</p>
@@ -243,6 +246,7 @@ const ETaskForm = () => {
                     onChange={(e) => setTask_des(e.target.value)}
                     className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     required
+                    disabled={!due_date}
                   />
                 </div>
               </div>
@@ -257,6 +261,7 @@ const ETaskForm = () => {
                     onChange={(e) => setTask_status(e.target.value)}
                     className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     required
+                    disabled={!task_des}
                   >
                     <option value="">Select a status</option>
                     <option value="In Progress">In Progress</option>

@@ -17,6 +17,7 @@ import {
 import { Link } from "react-router-dom";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import "jspdf-autotable";
 import LogoImage from "../../assets/logo.png";
 import "../../index.css";
 
@@ -115,52 +116,81 @@ const CoconutTreatments = () => {
     }
   };
 
-  const generatePDF = () => {
-    const input = document.getElementById("table-to-pdf");
-    html2canvas(input, { scale: 2 }).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const imgWidth = 210; // A4 width in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      const pageHeight = pdf.internal.pageSize.height;
-      let heightLeft = imgHeight;
+  const generatePDF = async () => {
+    const doc = new jsPDF();
   
-      // Add title
-      pdf.setFontSize(16);
-      pdf.setTextColor(40, 40, 40);
-      pdf.text("Coconut Treatments Report", 105, 20, { align: "center" });
+    // Define the columns for the table
+    const columns = [
+      { title: "Date of Treatment", dataKey: "dateOfTreatment" },
+      { title: "Pest or Disease", dataKey: "pestOrDisease" },
+      { title: "Treatment Method", dataKey: "treatmentMethod" },
+      { title: "Current Health Rate", dataKey: "healthRate" },
+      { title: "Treated By", dataKey: "treatedBy" },
+      { title: "Notes", dataKey: "notes" },
+    ];
   
-      // Add the table image
-      let positionY = 30; // Start position for the image on the first page
-      pdf.addImage(imgData, "PNG", 0, positionY, imgWidth, imgHeight);
-      heightLeft -= pageHeight - positionY;
+    // Get the data from the inspections state
+    const rows = filteredTreatments.map(treatment => ({
+        dateOfTreatment: moment(treatment.dateOfTreatment).format("YYYY-MM-DD"),
+        pestOrDisease: treatment.pestOrDisease,
+        treatmentMethod: treatment.treatmentMethod,
+        healthRate: treatment.healthRate,
+        treatedBy: treatment.treatedBy,
+        notes: treatment.notes,
+      }));
+
+    // Add title (lowered y-coordinate)
+    doc.setFontSize(18);
+    const titleY = 24; // Adjust this value to lower the title
+    doc.text("Coconut Treatments Report", 60, titleY);
   
-      // Add pages if the content spans multiple pages
-      while (heightLeft > 0) {
-        pdf.addPage();
-        positionY = 0; // Reset position to top of the new page
-        pdf.addImage(imgData, "PNG", 0, positionY - heightLeft, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
+    // Add table (adjusted startY)
+    doc.autoTable({
+      columns: columns,
+      body: rows,
+      startY: titleY + 13, // Adjust this value to set how far below the title the table starts
+      margin: { horizontal: 10 },
+      styles: {
+        fontSize: 10,
+        minCellHeight: 17, // Adjust this value for desired row height
+        halign: 'left',    // Left-align content horizontally
+      valign: 'middle',    // Center content vertically
+      },
+      headStyles: {
+        fillColor: [64, 133, 126],
+        textColor: [255, 255, 255],
+        fontSize: 12,
+      },
+      theme: 'striped',
+    //   didDrawPage: (data) => {
+    //     // Add page number to footer
+    //     const pageNumber = doc.internal.getNumberOfPages();
+    //     const pageWidth = doc.internal.pageSize.width;
+    //     const pageHeight = doc.internal.pageSize.height;
+  
+    //     doc.setFontSize(10);
+    //     doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10); // Adjust position as needed
+    //   },
+    // }
+    });
   
       // Add footer with a horizontal line and logo
-      const footerY = pdf.internal.pageSize.height - 30;
+      const footerY = doc.internal.pageSize.height - 30;
   
-      pdf.setDrawColor(0);
-      pdf.setLineWidth(0.5);
-      pdf.line(10, footerY, pdf.internal.pageSize.width - 10, footerY); // Horizontal line
+      doc.setDrawColor(0);
+      doc.setLineWidth(0.5);
+      doc.line(10, footerY, doc.internal.pageSize.width - 10, footerY); // Horizontal line
   
       // Add logo to the footer
       const logoData = LogoImage; // Replace with the path to your logo
       const logoWidth = 40;
       const logoHeight = 20;
-      const xPosition = (pdf.internal.pageSize.width - logoWidth) / 2;
+      const xPosition = (doc.internal.pageSize.width - logoWidth) / 2;
       const yPosition = footerY - logoHeight - (-10); // Adjust margin as needed
   
-      pdf.addImage(logoData, "PNG", xPosition, yPosition, logoWidth, logoHeight);
+      doc.addImage(logoData, "PNG", xPosition, yPosition, logoWidth, logoHeight);
   
-      pdf.save("Coconut_Treatments_Report.pdf");
-    });
+      doc.save("Coconut_Treatments_Report.pdf");
   };
   
   return (
@@ -194,8 +224,7 @@ const CoconutTreatments = () => {
               </Link>
               <Link
                 to="/CoconutTreatments"
-                className="text-[#236A64] font-semibold"
-              >
+                className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold">              
                 Treatments
               </Link>
               <Link
@@ -205,17 +234,17 @@ const CoconutTreatments = () => {
                 Pests and Diseases
               </Link>
               <Link
-                to="/Maintenance"
+                to="/RegularMaintenance"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 Maintenance
               </Link>
-              <Link
+              {/* <Link
                 to="/UserProfile"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 My Profile
-              </Link>
+              </Link> */}
             </div>
           </nav>
 

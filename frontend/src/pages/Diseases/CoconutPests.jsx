@@ -58,21 +58,21 @@ const CoconutPests = () => {
           >
             Treatments
           </Link>
-          <Link to="/CoconutPests" className="text-[#236A64] font-semibold">
+          <Link to="/CoconutPests" className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold">
             Pests and Diseases
           </Link>
           <Link
-            to="/Maintenance"
+            to="/RegularMaintenance"
             className="text-[#3CCD65] hover:text-[#2b8f57]"
           >
             Maintenance
           </Link>
-          <Link
+          {/* <Link
             to="/UserProfile"
             className="text-[#3CCD65] hover:text-[#2b8f57]"
           >
             My Profile
-          </Link>
+          </Link> */}
         </div>
       </nav>
 

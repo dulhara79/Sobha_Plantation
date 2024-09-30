@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
@@ -10,13 +9,12 @@ const { Option } = Select;
 const EditRequestPaymentRecord = () => {
   const [form] = Form.useForm();
   const [record, setRecord] = useState(null);
+  const [formattedAmount, setFormattedAmount] = useState(''); // For formatted amount
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // Function to disable past dates
-  const disablePastDates = (current) => {
-    return current && current < moment().startOf('day');
-  };
+  // Disable past dates
+  const disablePastDates = (current) => current && current < moment().startOf('day');
 
   // Fetch record data
   useEffect(() => {
@@ -26,15 +24,11 @@ const EditRequestPaymentRecord = () => {
         const data = response.data;
         setRecord(data);
 
-        // Convert dates to moment objects if they are valid
         const submittedDate = moment(data.submitteddate);
-       
-
         if (submittedDate.isValid()) {
           form.setFieldsValue({
             ...data,
             submitteddate: submittedDate,
-          
           });
         } else {
           console.error('Invalid date format:', data.submitteddate);
@@ -46,23 +40,31 @@ const EditRequestPaymentRecord = () => {
     fetchRecord();
   }, [id, form]);
 
+  // Format amount as Rs.100.00
+  const handleAmountChange = (e) => {
+    const value = e.target.value;
+    const formatted = parseFloat(value).toLocaleString('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+    });
+    setFormattedAmount(formatted.replace('₹', 'Rs.'));
+  };
+
+  // Handle form submission
   const handleSubmit = async (values) => {
     try {
-      // Prepare payload with the correct date format
       const payload = {
         ...values,
         submitteddate: values.submitteddate ? moment(values.submitteddate).toISOString() : null,
-        
       };
 
-      // Send PUT request to update the record
       await axios.put(`http://localhost:5000/api/requests/${id}`, payload);
 
       notification.success({
         message: 'Success',
-        description: ' Record updated successfully!',
+        description: 'Record updated successfully!',
       });
-      navigate('/Inventory/RequestPaymentRecords'); // Redirect to the list page after successful update
+      navigate('/Inventory/RequestPaymentRecords');
     } catch (error) {
       console.error('Failed to update record:', error);
       notification.error({
@@ -75,80 +77,82 @@ const EditRequestPaymentRecord = () => {
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="mb-6 text-2xl font-bold text-center">Edit Request Payment Records </h2>
+        <h2 className="mb-6 text-2xl font-bold text-center">Edit Request Payment Record</h2>
         <Form
           form={form}
           onFinish={handleSubmit}
           layout="vertical"
         >
+          {/* Section */}
           <Form.Item
-            label="Section "
+            label="Section"
             name="section"
-            rules={[{ required: true, message: 'Please select a section !' }]}
+            rules={[{ required: true, message: 'Please select a section!' }]}
           >
-               <Select placeholder="Select a section ">
-              <Option value="fertilizer">fertilizer</Option>
-              <Option value="equipment">equipment</Option>
-              <Option value="agro chemical">agro chemical</Option>
-        
-            
+            <Select placeholder="Select a section">
+              <Option value="fertilizer">Fertilizer</Option>
+              <Option value="equipment">Equipment</Option>
+              <Option value="agro chemical">Agro Chemical</Option>
             </Select>
           </Form.Item>
 
-
-              <Form.Item
-              label="Item "
-              name="item"
-              rules={[{ required: true, message: 'Please select an item !' }]}
->
-             <Select placeholder="Select an item " >
+          {/* Item */}
+          <Form.Item
+            label="Item"
+            name="item"
+            rules={[{ required: true, message: 'Please select an item!' }]}
+          >
+            <Select placeholder="Select an item">
               <Option value="Coconut fertilizer">Coconut fertilizer</Option>
               <Option value="Banana fertilizer">Banana fertilizer</Option>
               <Option value="Pepper fertilizer">Pepper fertilizer</Option>
               <Option value="Papaya fertilizer">Papaya fertilizer</Option>
               <Option value="Urea">Urea</Option>
               <Option value="Dolomite">Dolomite</Option>
-              <Option value="YPM">YPM</Option> 
-              <Option value="Booster K 45%">Booster K 45%</Option>
-              <Option value="Daconil Chlorothalonil (chlorothalonil 500g/l SC) fungicide">Daconil Chlorothalonil (chlorothalonil 500g/l SC) fungicide</Option>
-              <Option value="Marshal 20 SC (carbosulfan 200g/l SC) insecticide">Marshal 20 SC (carbosulfan 200g/l SC) insecticide</Option>
-              <Option value="Mitsu Abamectin (abamectin 18g/l EC) insecticide">Mitsu Abamectin (abamectin 18g/l EC) insecticide</Option>
-              <Option value="Alberts solution">Alberts solution</Option>
-              <Option value="Crop Master solution">Crop Master solution</Option>
-              <Option value="Oasis Thiram (thiuram disulfide) fungicide">Oasis Thiram (thiuram disulfide) fungicide</Option>
-              <Option value="Glyphosate weedicide">Glyphosate weedicide</Option>
-              <Option value="Rootone">Rootone</Option>
-              { /*<Option value="Bush cutter">Bush cutter</Option>
-              <Option value="4L disel cans">4L disel cans</Option>
-              <Option value="Metal chemical sprayer">Metal chemical sprayer</Option>
-              <Option value="4hp diesel water pump">4hp diesel water pump</Option>
-              <Option value="Boots pairs">Boots pairs</Option>
-              <Option value="8hp petrol hand tractor">8hp petrol hand tractor</Option>
-              <Option value="1hp tube well pump">1hp tube well pump</Option> */}
-           </Select>
+              {/* Add other options as needed */}
+            </Select>
           </Form.Item>
 
-             <Form.Item
-                label="Amount"
-                name="amount"
-                rules={[{ required: true, message: 'Please enter the amount!' }]}
-            >
-             <Input placeholder="Enter amount"
-               type="number"
-            
-             />
-            </Form.Item>
-       
+          {/* Amount */}
+          {/* Amount */}
+<Form.Item
+  label="Amount"
+  name="amount"
+  rules={[
+    { required: true, message: 'Please enter the amount!' },
+    { pattern: /^\d+(\.\d{1,2})?$/, message: 'Amount must be a numeric value' }, // Updated pattern to allow decimals
+    ({ getFieldValue }) => ({
+      validator(_, value) {
+        const amount = parseFloat(value);
+        if (!value || (amount >= 50.00 && amount <= 500000.00)) {
+          return Promise.resolve();
+        }
+        return Promise.reject(new Error('Amount must be between Rs.50.00 and Rs.500,000.00!'));
+      },
+    }),
+  ]}
+>
+  <Input
+    value={formattedAmount}
+    onChange={handleAmountChange}
+    placeholder="Enter amount"
+    type="text" // Set type to text to allow formatted input
+  />
+</Form.Item>
+
+
+          {/* Description */}
           <Form.Item
             label="Description"
             name="description"
             rules={[{ required: true, message: 'Please enter the description!' }]}
           >
-            <Input placeholder="Enter description" />
+            <Input type="text" placeholder="Enter description" />
           </Form.Item>
 
+          {/* Submitted Date */}
           <Form.Item
-            label="submitted Date"
+            label="Submitted Date"
             name="submitteddate"
             rules={[{ required: true, message: 'Please select the submitted date!' }]}
           >
@@ -158,18 +162,19 @@ const EditRequestPaymentRecord = () => {
             />
           </Form.Item>
 
+          {/* Status */}
           <Form.Item
             label="Status"
             name="status"
-            rules={[{ required: true, message: 'Please select status!' }]}
+            rules={[{ required: true, message: 'Please select the status!' }]}
           >
             <Select placeholder="Select status">
               <Option value="Pending">Pending</Option>
-              <Option value="Paid">Paid</Option>        
-   
+              <Option value="Paid">Paid</Option>
             </Select>
           </Form.Item>
 
+          {/* Submit Button */}
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Update Record
@@ -182,4 +187,3 @@ const EditRequestPaymentRecord = () => {
 };
 
 export default EditRequestPaymentRecord;
-

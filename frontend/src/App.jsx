@@ -1,11 +1,10 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
-/**
- * landing page and dashboard
- */
+// landing page and dashboard
 import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import LearnMore from './components/LearnMore';
 
 /**
  * sales and finance
@@ -50,26 +49,20 @@ import RequestPaymentRecords from "./pages/Inventory/RequestPaymentRecords.jsx";
 import AddRequestPaymentRecord from "./pages/Inventory/AddRequestPaymentRecord.jsx";
 import EditRequestPaymentRecord from "./pages/Inventory/EditRequestPaymentRecord.jsx";
 
-/**
- * new employee
- */
+// employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
 import Eregistration from "./pages/employee/Eregistration.jsx";
+import Esalary from "./pages/employee/Esalary";
 import EaddTask from "./pages/employee/EaddTask.jsx";
 import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
-import ViewTaskDetails from "./pages/employee/ViewTaskDetails.jsx";
 import GetAttendance from "./pages/employee/GetAttendance.jsx";
 import EmployeeList from "./pages/employee/EmployeeList.jsx";
 import EattendenceList from "./pages/employee/EattendenceList.jsx";
-import ViewOneAttendance from "./pages/employee/ViewOneAttendance.jsx";
-import EditEmployeePage from "./pages/employee/EditEmployeePage.jsx";
-import ViewOneEmployee from "./pages/employee/ViewOneEmployee.jsx";
 
-/**
- * new harvest
- */
+// harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
+import ScheduleOptionsPage from "./pages/Harvest/ScheduleOptionsPage.jsx";
 import HarvestSchedule from "./pages/Harvest/HarvestSchedule";
 import YieldRecords from "./pages/Harvest/YieldRecords";
 import ComplianceCheckList from "./pages/Harvest/ComplianceCheckList";
@@ -80,10 +73,11 @@ import EditYieldRecords from "./pages/Harvest/EditYieldRecords.jsx";
 import AddComplianceCheck from "./pages/Harvest/AddComplianceCheck.jsx";
 import EditComplianceCheck from "./pages/Harvest/EditComplianceCheck.jsx";
 import YieldBarChart from "./pages/Harvest/YieldBarChart.jsx";
+import HarvestQuality from "./pages/Harvest/HarvestQuality";
+import AddInspection from "./pages/Harvest/AddInspection.jsx";
+import EditInspection from "./pages/Harvest/EditInspection.jsx";
 
-/**
- * crop care new paths
- */
+// crop care (diseases)
 import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
 import CoconutInspections from "./pages/Diseases/CoconutInspections.jsx";
 import IntercropInspections from "./pages/Diseases/IntercropInspections.jsx";
@@ -131,9 +125,7 @@ import UpdateCoconutTreatments from "./pages/Diseases/UpdateCoconutTreatments.js
 import UpdateCropsTreatments from "./pages/Diseases/UpdateCropsTreatments.jsx";
 import UpdateMaintenance from "./pages/Diseases/UpdateMaintenance.jsx";
 
-/**
- * product new
- */
+// product
 import ProductsDashboard from "./pages/Products/ProductsDashboard.jsx";
 import ProductionScheduleOverview from "./pages/Products/ProductionScheduleOverview.jsx";
 import QualityControl from "./pages/Products/QualityControl.jsx";
@@ -148,10 +140,10 @@ import EditPrice from "./pages/Products/EditPrice.jsx";
 import AddLabeling from "./pages/Products/AddLabeling.jsx";
 import EditLabeling from "./pages/Products/EditLabeling.jsx";
 import Gallery from "./pages/Products/Gallery.jsx";
+import AddPackage from "./pages/Products/AddPackage.jsx";
+import EditPackage from "./pages/Products/EditPackage.jsx";
 
-/**
- * field view
- */
+// field view
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
 import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
 import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
@@ -162,24 +154,12 @@ import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
 import AddSeedlingForm from "./pages/CropVarieties/AddSeedlingForm.jsx";
 import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
 
-/**
- * new buyers
- */
-// import Cart from "./pages/Buyer/Cart.jsx";
+// buyers
+// import BuyerRegistrationForm from "./pages/BuyerRegistrationForm.jsx";
 import BuyerRegistrationForm from "./pages/BuyerRegistrationForm.jsx";
 import BuyerTable from "./pages/BuyerTable.jsx";
 import Profile from "./components/Profile";
-import BuyerDashboard from "./pages/Buyer/BuyerDashboard.jsx";
-import BuyerDelivery from "./pages/Buyer/BuyerDelivery.jsx";
-import BuyerDeliveryTable from "./pages/Buyer/BuyerDeliveryTable.jsx";
-import UpdateDeliveryTable from "./pages/Buyer/UpdateDeliveryTable.jsx";
-import BuyerInfo from "./pages/Buyer/BuyerInfo.jsx";
-import BuyerInfoTable from "./pages/Buyer/BuyerInfoTable.jsx";
-import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
 
-/**
- * page not found & error page
- */
 import PageError from "./pages/PageError.jsx";
 
 export default function App() {
@@ -188,8 +168,9 @@ export default function App() {
       {/* landing page and dashboard */}
       <Route path="/" element={<Home />} />
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/learn-more" element={<LearnMore />} />
 
-      {/* sales and finance */}
+       {/* sales and finance */}
       <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
 
       <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
@@ -251,7 +232,7 @@ export default function App() {
         element={<EditValuationPage />}
       />
 
-      {/* inventory new paths */}
+      {/* inventory */}
       <Route
         path="/Inventory/FertilizerRecords"
         element={<FertilizerRecords />}
@@ -301,30 +282,29 @@ export default function App() {
         element={<AddRequestPaymentRecord />}
       />
       <Route
-        path="/Inventory/EditRequestPaymentRecord/:id"
+        path="/Inventory/EditRequestPaymentRecords/:id"
         element={<EditRequestPaymentRecord />}
       />
 
-      {/* new employee */}
+      {/* employee */}
       <Route path="/employee/dashboard" element={<Edashboard />} />
       <Route path="/employee/registration" element={<Eregistration />} />
+      <Route path="/employee/salary" element={<Esalary />} />
       <Route path="/employee/task" element={<EaddTask />} />
       <Route path="/employee/taskedit/:id" element={<EditTaskPage />} />
       <Route path="/employee/TaskListview" element={<ViewTaskList />} />
       <Route path="/employee/attendance" element={<GetAttendance />} />
       <Route path="/employee/employeelist" element={<EmployeeList />} />
       <Route path="/employee/attendanceList" element={<EattendenceList />} />
-      <Route path="/employee/taskdetails/:id" element={<ViewTaskDetails />} />
-      <Route
-        path="/employee/veiwattendence/:id"
-        element={<ViewOneAttendance />}
-      />
-      <Route path="/employee/editemployee/:id" element={<EditEmployeePage />} />
-      <Route path="/employee/viewemployee/:id" element={<ViewOneEmployee />} />
 
-      {/* new harvest */}
+      {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
+      <Route
+        path="/harvest/schedule-options"
+        element={<ScheduleOptionsPage />}
+      />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
+      <Route path="/yield-options" element={<YieldOptionsPage />} />
       <Route path="/harvest/yield" element={<YieldRecords />} />
       <Route
         path="/harvest/compliancechecklist"
@@ -343,8 +323,11 @@ export default function App() {
         element={<EditComplianceCheck />}
       />
       <Route path="/yield-bar-chart" element={<YieldBarChart />} />
+      <Route path="/harvest/quality" element={<HarvestQuality />} />
+      <Route path="/quality/addinspection" element={<AddInspection/>} />
+      <Route path="/quality/editinspection/:id" element={<EditInspection/>} />
 
-      {/* new crop care (diseases) */}
+      {/* crop care */}
       <Route path="/diseases" element={<DiseasesDashboard />} />
       <Route path="/coconutInspections" element={<CoconutInspections />} />
       <Route path="/intercropInspections" element={<IntercropInspections />} />
@@ -353,16 +336,13 @@ export default function App() {
       <Route path="/coconutTreatments" element={<CoconutTreatments />} />
       <Route path="/intercropTreatments" element={<IntercropTreatments />} />
       <Route path="/coconutPests" element={<CoconutPests />} />
-      <Route path="/maintenance" element={<RegularMaintenance />} />
+      <Route path="/RegularMaintenance" element={<RegularMaintenance />} />
       <Route path="/intercropPests" element={<IntercropPests />} />
       <Route path="/UserProfile" element={<UserProfile />} />
       <Route path="/coconutLeafMiner" element={<CoconutLeafMiner />} />
       <Route path="/blackBeetle" element={<BlackBeetle />} />
       <Route path="/addCoconutTreatments" element={<AddCoconutTreatments />} />
-      <Route
-        path="/addIntercropTreatments"
-        element={<AddIntercropTreatments />}
-      />
+      <Route path="/addIntercropTreatments" element={<AddIntercropTreatments />} />
       <Route path="/insights" element={<Insights />} />
       <Route path="/detailedOverview" element={<DetailedOverview />} />
       <Route path="/addMaintenance" element={<AddMaintenance />} />
@@ -389,57 +369,31 @@ export default function App() {
       <Route path="/papayaRingspot" element={<PapayaRingspot />} />
       <Route path="/fusariumWilt" element={<FusariumWilt />} />
       <Route path="/powderyMildew" element={<PowderyMildew />} />
-      <Route
-        path="/updateCoconutDiseases/:id"
-        element={<UpdateCoconutDiseases />}
-      />
-      <Route
-        path="/updateCropsDiseases/:id"
-        element={<UpdateCropsDiseases />}
-      />
-      <Route
-        path="/updateCoconutTreatments/:id"
-        element={<UpdateCoconutTreatments />}
-      />
-      <Route
-        path="/updateCropsTreatments/:id"
-        element={<UpdateCropsTreatments />}
-      />
+      <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />} />
+      <Route path="/updateCropsDiseases/:id" element={<UpdateCropsDiseases />} />
+      <Route path="/updateCoconutTreatments/:id" element={<UpdateCoconutTreatments />} />
+      <Route path="/updateCropsTreatments/:id" element={<UpdateCropsTreatments />} />
       <Route path="/updateMaintenance/:id" element={<UpdateMaintenance />} />
 
+
       {/* product new */}
-      <Route
-        path="/products/productdashboard"
-        element={<ProductsDashboard />}
-      />
-      <Route
-        path="/products/production-overview"
-        element={<ProductionScheduleOverview />}
-      />
+      <Route path="/products/productdashboard" element={<ProductsDashboard />}/>
+      <Route path="/products/production-overview" element={<ProductionScheduleOverview />}/>
       <Route path="/products/quality-control" element={<QualityControl />} />
       <Route path="/products/addschedule" element={<AddSchedule />} />
       <Route path="/products/editschedule/:id" element={<EditSchedule />} />
-      <Route
-        path="/products/addInspectionReport"
-        element={<AddInspectionReport />}
-      />
-      <Route
-        path="/products/editInspectionReport/:id"
-        element={<EditInspectionReport />}
-      />
-      <Route
-        path="/products/packaging-labeling"
-        element={<PackagingLabeling />}
-      />
+      <Route path="/products/addInspectionReport" element={<AddInspectionReport />}/>
+      <Route path="/products/editInspectionReport/:id" element={<EditInspectionReport />}/>
+      <Route path="/products/packaging-labeling" element={<PackagingLabeling />}/>
       <Route path="/products/packaging" element={<Packaging />} />
-      <Route
-        path="/products/packaging-labeling/labeling"
-        element={<Labeling />}
-      />
+      <Route path="/products/packaging-labeling/labeling" element={<Labeling />}/>
       <Route path="/products/editPrice/:id" element={<EditPrice />} />
       <Route path="/products/addLabeling" element={<AddLabeling />} />
       <Route path="/products/editLabeling/:id" element={<EditLabeling />} />
       <Route path="/products/gallery" element={<Gallery />} />
+      <Route path="/products/addPackage" element={<AddPackage />} />
+      <Route path="/products/editPackage/:id" element={<EditPackage />} />
+
 
       {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
@@ -450,21 +404,17 @@ export default function App() {
       <Route path="/scheduleForm" element={<ScheduleForm />} />
       <Route path="/landPreparation" element={<LandPreparation />} />
       <Route path="/seedlingForm" element={<AddSeedlingForm />} />
+      <Route path="/pGrowth" element={<PlantGrowth />} />
 
-      {/* new buyers */}
-      {/* <Route path='/cart' element={<Cart/>}/> */}
+      {/* buyers */}
+      {/* <Route path="/buyer-registration" element={<BuyerRegistrationForm />} /> */}
       <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
       <Route path="/buyert" element={<BuyerTable />} />
       <Route path="/profile" element={<Profile />} />
-      <Route path="/Bdelivery" element={<BuyerDelivery />} />
-      <Route path="/Bdeliverytable" element={<BuyerDeliveryTable />} />
-      <Route path="/updateDelivery/:id" element={<UpdateDeliveryTable />} />
-      <Route path="/buyerinfo" element={<BuyerInfo />} />
-      <Route path="/buyerinfotable" element={<BuyerInfoTable />} />
-      <Route path="/updateBuyer/:id" element={<UpdateBuyerInfo />} />
-      <Route path="/buyerdashboard" element={<BuyerDashboard />} />
 
       {/* page not found & error page */}
+      {/* <Route path="/test" element={<Test />} /> */}
+
       <Route path="*" element={<PageError />} />
     </Routes>
   );
