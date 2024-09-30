@@ -369,11 +369,12 @@ const RequestPaymentRecords = () => {
           sortOrder: sorter.field === 'item' ? sorter.order : null,
         },
         {
-          title: "Amount",
+          title: "Amount (Rs:)",
           dataIndex: "amount",
           key: "amount",
           sorter: true,
           sortOrder: sorter.field === 'amount' ? sorter.order : null,
+          render: (amount) => `Rs. ${amount.toFixed(2)}`,  // Format amount to two decimal places
         },
         {
           title: "Description",
@@ -440,7 +441,7 @@ const RequestPaymentRecords = () => {
 {/* Display the total amount */}
 {totalAmount > 0 && (
   <div className="mt-2">
-    <strong>Total Amount for Selected Month: Rs:{totalAmount} </strong>
+    <strong>Total Amount for Selected Month: Rs:{totalAmount.toFixed(2)}</strong>
 
   </div>
 )}

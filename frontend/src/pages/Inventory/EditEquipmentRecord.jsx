@@ -128,6 +128,10 @@ const EditEquipmentRecord = () => {
             rules={[
               { required: true, message: 'Please enter the storage location!' },
               { validator: validateStorageLocation },
+              {
+                pattern: /^[A-Za-z\s]*(\d{0,1})[A-Za-z\s]*$/,  // Validation rule allowing at most 1 number
+                message: 'Storage location can only contain letters, spaces, and at most one number!',
+              },
             ]}
           >
             <Input type="text" placeholder="Enter storage location" />

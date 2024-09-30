@@ -114,27 +114,32 @@ const EditRequestPaymentRecord = () => {
           </Form.Item>
 
           {/* Amount */}
-          <Form.Item
-            label="Amount"
-            name="amount"
-            rules={[
-              { required: true, message: 'Please enter the amount!' },
-              {
-                validator(_, value) {
-                  if (!value || value > 0) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error('Amount must be greater than 0!'));
-                },
-              },
-            ]}
-          >
-            <Input
-              value={formattedAmount}
-              onChange={handleAmountChange}
-              placeholder="Enter amount"
-            />
-          </Form.Item>
+          {/* Amount */}
+<Form.Item
+  label="Amount"
+  name="amount"
+  rules={[
+    { required: true, message: 'Please enter the amount!' },
+    { pattern: /^\d+(\.\d{1,2})?$/, message: 'Amount must be a numeric value' }, // Updated pattern to allow decimals
+    ({ getFieldValue }) => ({
+      validator(_, value) {
+        const amount = parseFloat(value);
+        if (!value || (amount >= 50.00 && amount <= 500000.00)) {
+          return Promise.resolve();
+        }
+        return Promise.reject(new Error('Amount must be between Rs.50.00 and Rs.500,000.00!'));
+      },
+    }),
+  ]}
+>
+  <Input
+    value={formattedAmount}
+    onChange={handleAmountChange}
+    placeholder="Enter amount"
+    type="text" // Set type to text to allow formatted input
+  />
+</Form.Item>
+
 
           {/* Description */}
           <Form.Item

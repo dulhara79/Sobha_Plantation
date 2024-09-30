@@ -127,23 +127,25 @@ const AddRequestPaymentRecord = () => {
 
           {/* Amount */}
           <Form.Item
-            label="Amount"
-            name="amount"
-            rules={[
-              { required: true, message: 'Please enter the amount!' },
-              { pattern: /^\d+$/, message: 'Amount must be numeric' },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || (parseInt(value) > 0)) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error('Amount must be a positive number!'));
-                },
-              }),
-            ]}
-          >
-            <Input placeholder="Enter amount" type="number" disabled={!itemComplete} />
-          </Form.Item>
+  label="Amount"
+  name="amount"
+  rules={[
+    { required: true, message: 'Please enter the amount!' },
+    { pattern: /^\d+(\.\d{1,2})?$/, message: 'Amount must be a numeric value' }, // Updated pattern to allow decimals
+    ({ getFieldValue }) => ({
+      validator(_, value) {
+        const amount = parseFloat(value);
+        if (!value || (amount >= 50 && amount <= 500000)) {
+          return Promise.resolve();
+        }
+        return Promise.reject(new Error('Amount must be between 50.00 and 500,000.00!'));
+      },
+    }),
+  ]}
+>
+  <Input placeholder="Enter amount" type="number" disabled={!itemComplete} />
+</Form.Item>
+
 
           {/* Description */}
           <Form.Item

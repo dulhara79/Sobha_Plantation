@@ -145,12 +145,19 @@ const AddFertilizerRecord = () => {
         
           {/* Storage Location */}
           <Form.Item
-            label="Storage Location"
-            name="storagelocation"
-            rules={[{ required: true, message: 'Please enter the storage location!' }]}
-          >
-            <Input placeholder="Enter Storage Location" disabled={!unitComplete} />
-          </Form.Item>
+  label="Storage Location"
+  name="storagelocation"
+  rules={[
+    { required: true, message: 'Please enter the storage location!' },
+    {
+      pattern: /^[A-Za-z\s]*(\d{0,1})[A-Za-z\s]*$/, // Modified regex
+      message: 'Storage location can only contain letters, spaces, and at most one number!',
+    },
+  ]}
+>
+  <Input placeholder="Enter Storage Location" disabled={!unitComplete} />
+</Form.Item>
+
 
           {/* Expired Date */}
           <Form.Item

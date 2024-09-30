@@ -147,12 +147,19 @@ const EditFertilizerRecord = () => {
           </Form.Item>
 
           <Form.Item
-            label="Storage Location"
-            name="storagelocation"
-            rules={[{ required: true, message: 'Please enter the storage location!' }]}
-          >
-            <Input type="text" placeholder="Enter storage location" />
-          </Form.Item>
+  label="Storage Location"
+  name="storagelocation"
+  rules={[
+    { required: true, message: 'Please enter the storage location!' },
+    {
+      pattern: /^[A-Za-z\s]*(\d{0,1})[A-Za-z\s]*$/,  // Validation rule allowing at most 1 number
+      message: 'Storage location can only contain letters, spaces, and at most one number!',
+    },
+  ]}
+>
+  <Input type="text" placeholder="Enter storage location" />
+</Form.Item>
+
 
           <Form.Item
             label="Expired Date"

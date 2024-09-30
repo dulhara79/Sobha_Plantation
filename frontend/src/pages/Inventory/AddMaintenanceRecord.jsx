@@ -134,13 +134,21 @@ const AddMaintenanceRecord = () => {
           </Form.Item>
 
           {/* Referred Location */}
-          <Form.Item
-            label="Referred Location"
-            name="referredlocation"
-            rules={[{ required: true, message: 'Please enter the referred location!' }]}
-          >
-            <Input placeholder="Enter Referred Location" disabled={!quantityComplete} />
-          </Form.Item>
+       {/* Referred Location */}
+<Form.Item
+  label="Referred Location"
+  name="referredlocation"
+  rules={[
+    { required: true, message: 'Please enter the referred location!' },
+    {
+      pattern: /^[A-Za-z\s&]+$/,
+      message: 'Referred location can only contain letters, spaces, and the "&" symbol!',
+    },
+  ]}
+>
+  <Input placeholder="Enter Referred Location" disabled={!quantityComplete} />
+</Form.Item>
+
 
           {/* Received Date */}
           <Form.Item
@@ -162,8 +170,8 @@ const AddMaintenanceRecord = () => {
             rules={[{ required: true, message: 'Please select status!' }]}
           >
             <Select placeholder="Select status" disabled={!receivedDateComplete}>
-              <Option value="progress">In Progress</Option>
-              <Option value="completed">Completed</Option>
+              <Option value="In Progress">In Progress</Option>
+              <Option value="Completed">Completed</Option>
             </Select>
           </Form.Item>
 

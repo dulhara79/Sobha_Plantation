@@ -8,7 +8,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import jsPDF from "jspdf";
-import "jspdf-autotable"; // Import jsPDF AutoTable
+import "jspdf-autotable";
+import { Pie } from 'react-chartjs-2';  // Import Pie from react-chartjs-2
+import { Chart, ArcElement, Tooltip, Legend } from 'chart.js'; // Chart.js components
+
+Chart.register(ArcElement, Tooltip, Legend);
 
 const { Search } = Input;
 const { Option } = Select;
@@ -19,9 +23,9 @@ const FertilizerRecords = () => {
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [sorter, setSorter] = useState({ field: null, order: null });
-  const [selectedItem, setSelectedItem] = useState(""); // Selected fertilizer/agrochemical
-  const [totalQuantity, setTotalQuantity] = useState(null); // Total quantity result
-  
+  const [selectedItem, setSelectedItem] = useState(""); 
+  const [totalQuantity, setTotalQuantity] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,8 +41,8 @@ const FertilizerRecords = () => {
       console.error('Error fetching records:', error);
     }
   };
-
-  const onHomeClick = useCallback(() => {
+	
+	const onHomeClick = useCallback(() => {
     navigate("/Inventory/InventoryDashboard");
   }, [navigate]);
 
@@ -268,16 +272,65 @@ const FertilizerRecords = () => {
 
   };
   
-  
+  const getStatusCounts = () => {
+    const statusCounts = {
+      available: 0,
+      outOfStock: 0,
+      expired: 0,
+    };
 
-  
+    fertilizers.forEach((fertilizer) => {
+      const status = fertilizer.status.toLowerCase();
+      if (status === "in stock") {
+        statusCounts.available += 1;
+      } else if (status === "out of stock") {
+        statusCounts.outOfStock += 1;
+      } else if (status === "expired") {
+        statusCounts.expired += 1;
+      }
+    });
+
+    return statusCounts;
+  };
+
+  const statusCounts = getStatusCounts();
+
+  const pieData = {
+    labels: ['In Stock', 'Out of Stock', 'Expired'],
+    datasets: [
+      {
+        label: 'Fertilizer Status',
+        data: [statusCounts.available, statusCounts.outOfStock, statusCounts.expired],
+        backgroundColor: ['#60DB19', '#FF6384', '#FFCE56'],
+        hoverBackgroundColor: ['#4CAF50', '#FF2D55', '#FFCD30'],
+      },
+    ],
+  };
+
+  const pieOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem) {
+            const value = tooltipItem.raw;
+            return `${tooltipItem.label}: ${value}`;
+          },
+        },
+      },
+    },
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Header />
       <div className="flex flex-1">
         <Sidebar />
         <div className="ml-[300px] pt-3 flex-1">
-          <nav className="p-4 mb-5">
+ <nav className="p-4 mb-5">
             {/* Navigation Buttons */}
             <div className="container flex items-center justify-between mx-auto space-x-4">
               <div
@@ -329,19 +382,16 @@ const FertilizerRecords = () => {
             </div>
           </nav>
 
-          <Breadcrumb
-            items={[
-              { title: 'Home', href: '/' },
-              { title: 'fertilizers', href: '/Inventory/FertilizerRecords' }
-            ]}
-          />
-          {/* Welcome Message Component 
-          <div className="flex flex-row items-center justify-between shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-[98%] mb-5">
-            <b className="text-3xl">Welcome Maheesha</b>
-          </div> */}
+          <Breadcrumb items={[{ title: 'Home', href: '/' }, { title: 'Fertilizers', href: '/Inventory/FertilizerRecords' }]} />
+          
+                    {/* Pie chart for status visualization */}
+<div className="mt-6 mb-10" style={{ width: '400px', height: '300px' }}> {/* Adjust the width and height as needed */}
+  <h3>Status of Fertilizers & Agrochemicals</h3>
+  <Pie data={pieData} options={pieOptions} />
+</div>
 
           <div className="p-6 bg-white rounded-lg shadow-lg">
-            <div className="flex items-center justify-between mb-4">
+               <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-4">
                 <Search
                   placeholder="Search by any field"
@@ -364,13 +414,11 @@ const FertilizerRecords = () => {
 
             </div>
             </div>
-
-
-            {/* Fertilizer Table */}
+   
             <Table
               dataSource={filteredFertilizers}
               rowKey="_id"
-              columns={[
+               columns={[
                 {
                   title: "Added Date",
                   dataIndex: "addeddate",
@@ -438,7 +486,7 @@ const FertilizerRecords = () => {
                 },
               ]}
              
-       
+             
               onChange={(pagination, filters, sorter) => {
                 if (sorter && sorter.order) {
                   handleSort(sorter.field, sorter.order);
@@ -450,7 +498,7 @@ const FertilizerRecords = () => {
               pagination={{ pageSize: 10 }}
             />
 
-            {/* Dropdown and Calculate Button placed below the table */}
+{/* Dropdown and Calculate Button placed below the table */}
             <div className="mt-6">
             <Select
  
@@ -472,11 +520,14 @@ const FertilizerRecords = () => {
               </Button>
 
               {totalQuantity && (
-                <div className="mt-3">
+                <div className="mt-4">
                   <h3>Total Quantity: {totalQuantity.total} {totalQuantity.unit}</h3>
                 </div>
               )}
             </div>
+ 
+
+
           </div>
         </div>
       </div>
@@ -485,3 +536,20 @@ const FertilizerRecords = () => {
 };
 
 export default FertilizerRecords;
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -3,15 +3,21 @@ import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import "../../index.css";
 import { ArrowBack } from "@mui/icons-material";
-import { Breadcrumb, Table, Button, Input, Modal, notification, Select } from "antd"; // Import Select
+import { Breadcrumb, Table, Button, Input, Modal, notification, Select } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import jsPDF from "jspdf";
-import "jspdf-autotable"; // Import jsPDF AutoTable
+import "jspdf-autotable";
+import { Pie } from 'react-chartjs-2';  // Import Pie from react-chartjs-2
+import { Chart, ArcElement, Tooltip, Legend } from 'chart.js'; // Chart.js components
+
+Chart.register(ArcElement, Tooltip, Legend);
 
 const { Search } = Input;
-const { Option } = Select; // Destructure Select.Option
+const { Option } = Select;
+
+//const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']; // Colors for pie chart slices
 
 const EquipmentRecords = () => {
   const [equipments, setEquipments] = useState([]);
@@ -19,8 +25,9 @@ const EquipmentRecords = () => {
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [sorter, setSorter] = useState({ field: null, order: null });
-  const [selectedEquipment, setSelectedEquipment] = useState(null); // State to hold selected equipment
-  const [totalQuantity, setTotalQuantity] = useState(0); // State for total quantity
+  const [selectedEquipment, setSelectedEquipment] = useState(null);
+  const [totalQuantity, setTotalQuantity] = useState(0);
+  const [statusData, setStatusData] = useState([]); // State for pie chart data
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,12 +39,14 @@ const EquipmentRecords = () => {
       const response = await axios.get('http://localhost:5000/api/equipments');
       setEquipments(response.data.data);
       setFilteredEquipments(response.data.data);
+      prepareChartData(response.data.data);  // Prepare pie chart data
     } catch (error) {
       console.error('Error fetching records:', error);
     }
   };
 
-  const onHomeClick = useCallback(() => {
+
+ const onHomeClick = useCallback(() => {
     navigate("/Inventory/InventoryDashboard");
   }, [navigate]);
 
@@ -265,77 +274,134 @@ const EquipmentRecords = () => {
       });
     }
   };
-  
-  
+  const getStatusCounts = () => {
+    const statusCounts = {
+      instock: 0,
+      outOfStock: 0,
+      maintenance: 0,
+    };
+
+    equipments.forEach((equipment) => {
+      const status = equipment.status.toLowerCase();
+      if (status === "in stock") {
+        statusCounts.instock += 1;
+      } else if (status === "out of stock") {
+        statusCounts.outOfStock += 1;
+      } else if (status === "maintenance") {
+        statusCounts.maintenance += 1;
+      }
+    });
+
+
+    return statusCounts;
+  };
+  const statusCounts = getStatusCounts();
+
+  const pieData = {
+    labels: ['In Stock', 'Out of Stock', 'Maintenance'],
+    datasets: [
+      {
+        label: 'Equipment & Machine Status',
+        data: [statusCounts.instock, statusCounts.outOfStock, statusCounts.maintenance],
+        backgroundColor: ['#90EE90', '#0818A8', '#40B5AD'],
+        hoverBackgroundColor: ['#4CAF50', '#191970', '#7DF9FF'],
+      },
+    ],
+  };
+
+ 
+  const pieOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem) {
+            const value = tooltipItem.raw;
+            return `${tooltipItem.label}: ${value}`;
+          },
+        },
+      },
+    },
+  };
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
-      <Header />
-      <div className="flex flex-1">
-        <Sidebar />
-        <div className="ml-[300px] pt-3 flex-1">
-          <nav className="p-4 mb-5">
-            {/* Navigation Buttons */}
-            <div className="container flex items-center justify-between mx-auto space-x-4">
-              <div
-                className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform bg-gray-200 rounded-41xl hover:bg-gray-300"
-                onClick={onBackClick}
-              >
-                <ArrowBack className="text-gray-700" />
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onHomeClick}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Home
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Fertilizers & Agrochemicals
-                </a>
-              </div>
-              <div
-                className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-                onClick={onGroupContainerClick1}
-              >
-                <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                  Maintenance Records
-                </a>
-              </div>
-              <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-              onClick={onGroupContainerClick2}
+    <Header />
+    <div className="flex flex-1">
+      <Sidebar />
+      <div className="ml-[300px] pt-3 flex-1">
+<nav className="p-4 mb-5">
+          {/* Navigation Buttons */}
+          <div className="container flex items-center justify-between mx-auto space-x-4">
+            <div
+              className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform bg-gray-200 rounded-41xl hover:bg-gray-300"
+              onClick={onBackClick}
+            >
+              <ArrowBack className="text-gray-700" />
+            </div>
+            <div
+              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+              onClick={onHomeClick}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Equipments & Machines
+                Home
               </a>
             </div>
             <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-              onClick={onGroupContainerClick3}
+              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+              onClick={onGroupContainerClick}
             >
               <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-              Request Payment Details
+                Fertilizers & Agrochemicals
               </a>
             </div>
+            <div
+              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
+              onClick={onGroupContainerClick1}
+            >
+              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+                Maintenance Records
+              </a>
             </div>
-          </nav>
+            <div
+            className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
+            onClick={onGroupContainerClick2}
+          >
+            <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+              Equipments & Machines
+            </a>
+          </div>
+          <div
+            className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
+            onClick={onGroupContainerClick3}
+          >
+            <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
+            Request Payment Details
+            </a>
+          </div>
+          </div>
+        </nav>
+
 
           <Breadcrumb
             items={[
               { title: 'Home', href: '/' },
-              { title: 'equipments', href: '/Inventory/EquipmentRecords' }
+              { title: 'equipments', href: '/Inventory/EquipmentRecords' },
             ]}
           />
+
+             {/* Pie chart for status visualization */}
+<div className="mt-6 mb-10" style={{ width: '400px', height: '300px' }}> {/* Adjust the width and height as needed */}
+  <h3>Status of Equipment & Machines</h3>
+  <Pie data={pieData} options={pieOptions} />
+</div>
 
           <div className="p-6 bg-white rounded-lg shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-4">
-                <Search
+                     <Search
                   placeholder="Search by any field"
                   onChange={(e) => onSearch(e.target.value)}  // Trigger filter on input change
                   style={{ width: 200 }}
@@ -356,8 +422,7 @@ const EquipmentRecords = () => {
               </div>
             </div>
 
-
-            <Table
+                 <Table
           columns={[
             {
               title: "Added Date",
@@ -412,10 +477,10 @@ const EquipmentRecords = () => {
               ),
             },
           ]}
-              dataSource={filteredEquipments}
+               dataSource={filteredEquipments}
               rowKey="_id"
              // pagination={false}  // Disable pagination
-              scroll={{ y: 400 }} // Optional: Add vertical scroll if there are many rows
+             // Optional: Add vertical scroll if there are many rows
             onChange={(pagination, filters, sorter) => {
                 if (sorter && sorter.order) {
                   handleSort(sorter.field, sorter.order);
@@ -426,9 +491,9 @@ const EquipmentRecords = () => {
               }}
               pagination={{ pageSize: 10 }}
             />
+      
 
-          
-            {/* Dropdown to select equipment */}
+                        {/* Dropdown to select equipment */}
   <div className="mb-4">
 
 <Select
@@ -444,20 +509,18 @@ const EquipmentRecords = () => {
     )
   )}
 </Select>
-
-               <Button type="primary" onClick={calculateTotalQuantity} style={{ marginLeft: 8 }}>
+              <Button type="primary" onClick={calculateTotalQuantity} style={{ marginLeft: 8 }}>
                 Calculate Total Quantity
               </Button>
 
-               {/* Display total quantity immediately below the button */}
-  {selectedEquipment && (
-    <div className="mt-2">
-      <strong>Total Quantity for {selectedEquipment}: </strong>
-      {totalQuantity}
-
+              {selectedEquipment && (
+                <div className="mt-2">
+                  <strong>Total Quantity for {selectedEquipment}: </strong>
+                  {totalQuantity}
+                </div>
+              )}
             </div>
-             )}
-                 </div>
+                  
           </div>
         </div>
       </div>

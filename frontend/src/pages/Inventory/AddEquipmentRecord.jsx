@@ -131,7 +131,13 @@ const AddEquipmentRecord = () => {
           <Form.Item
             label="Storage Location"
             name="storagelocation"
-            rules={[{ required: true, message: 'Please enter the storage location!' }]}
+            rules={[{ required: true, message: 'Please enter the storage location!' },
+              {
+                pattern: /^[A-Za-z\s]*(\d{0,1})[A-Za-z\s]*$/, 
+                message: 'Storage location can only contain letters, spaces, and at most one number!',
+              }
+              
+            ]}
           >
             <Input placeholder="Enter Storage Location" disabled={!quantityComplete} />
           </Form.Item>
