@@ -201,7 +201,7 @@ const PlantGrowth = () => {
       item.healthIssues.toLowerCase().includes(lowerCaseSearchText)
     );
   }).filter(item => (healthFilter ? item.healthIssues === healthFilter : true));
-  
+
 
   const columns = [
     {
@@ -272,7 +272,7 @@ const PlantGrowth = () => {
     <div>
       <Header />
       <Sidebar />
-      
+
       <div style={{ marginLeft: '300px', padding: '20px' }}>
         <Breadcrumb
           items={[
@@ -282,7 +282,6 @@ const PlantGrowth = () => {
             { href: '', title: 'Plant Growth' },
           ]}
         />
-        
         <div className="mb-4">
         <FieldViewNavbar />
           <LeftCircleOutlined onClick={() => navigate(-1)} style={{ fontSize: '24px', cursor: 'pointer' }} />
@@ -321,15 +320,15 @@ const PlantGrowth = () => {
             </Button>
           </div>
         </div>
-
-        <Table columns={columns} dataSource={filteredData} rowKey="_id" />
+        <Table dataSource={filteredData} columns={columns} rowKey="_id" />
       </div>
 
+      {/* Modal for adding/editing plant growth */}
       <Modal
-        title={editingRecord ? "Edit Plant Growth" : "Add Plant Growth"}
+        title={editingRecord ? 'Edit Plant Growth' : 'Add New Plant Growth'}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
-        footer={null}
+        onOk={() => form.submit()}
       >
         <Form form={form} layout="vertical" onFinish={handleFormSubmit}>
           <Form.Item

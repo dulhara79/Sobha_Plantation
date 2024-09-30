@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; 
 import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
@@ -59,7 +59,7 @@ const EditFertilizerRecord = () => {
 
       notification.success({
         message: 'Success',
-        description: ' Record updated successfully!',
+        description: 'Record updated successfully!',
       });
       navigate('/Inventory/FertilizerRecords'); // Redirect to the list page after successful update
     } catch (error) {
@@ -92,7 +92,7 @@ const EditFertilizerRecord = () => {
           </Form.Item>
 
           <Form.Item
-            label="Fertilizer/Agrochemical Name "
+            label="Fertilizer/Agrochemical Name"
             name="fertilizertype"
             rules={[{ required: true, message: 'Please select a fertilizer/agrochemical type!' }]}
           >
@@ -105,13 +105,12 @@ const EditFertilizerRecord = () => {
               <Option value="Dolomite">Dolomite</Option>
               <Option value="YPM">YPM</Option> 
               <Option value="Booster K 45%">Booster K 45%</Option>
-              <Option value="Daconil Chlorothalonil (chlorothalonil 500g/l SC) fungicide">Daconil Chlorothalonil (chlorothalonil 500g/l SC) fungicide</Option>
-              <Option value="Marshal 20 SC (carbosulfan 200g/l SC) insecticide">Marshal 20 SC (carbosulfan 200g/l SC) insecticide</Option>
-              <Option value="Mitsu Abamectin (abamectin 18g/l EC) insecticide">Mitsu Abamectin (abamectin 18g/l EC) insecticide</Option>
+              <Option value="Daconil Chlorothalonil">Daconil Chlorothalonil (fungicide)</Option>
+              <Option value="Marshal 20 SC">Marshal 20 SC (insecticide)</Option>
+              <Option value="Mitsu Abamectin">Mitsu Abamectin (insecticide)</Option>
               <Option value="Alberts solution">Alberts solution</Option>
               <Option value="Crop Master solution">Crop Master solution</Option>
-              <Option value="Oasis Thiram (thiuram disulfide) fungicide">Oasis Thiram (thiuram disulfide) fungicide</Option>
-              <Option value="weeGlyphosate weedicideicide">Glyphosate weedicide</Option>
+              <Option value="Glyphosate weedicide">Glyphosate weedicide</Option>
               <Option value="Rootone">Rootone</Option>
             </Select>
           </Form.Item>
@@ -119,7 +118,17 @@ const EditFertilizerRecord = () => {
           <Form.Item
             label="Quantity"
             name="quantity"
-            rules={[{ required: true, message: 'Please enter the quantity!' }]}
+            rules={[
+              { required: true, message: 'Please enter the quantity!' },
+              {
+                validator(_, value) {
+                  if (!value || value > 0) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Quantity must be greater than zero!'));
+                },
+              },
+            ]}
           >
             <Input type="number" placeholder="Enter quantity" />
           </Form.Item>
@@ -127,24 +136,30 @@ const EditFertilizerRecord = () => {
           <Form.Item
             label="Unit"
             name="unit"
-            rules={[{ required: true, message: 'Please select unit!' }]}
+            rules={[{ required: true, message: 'Please select a unit!' }]}
           >
             <Select placeholder="Select unit">
               <Option value="l">l</Option>
               <Option value="ml">ml</Option>
               <Option value="kg">kg</Option>
               <Option value="g">g</Option>
-   
             </Select>
           </Form.Item>
 
           <Form.Item
-            label="Storage Location"
-            name="storagelocation"
-            rules={[{ required: true, message: 'Please enter the storage location!' }]}
-          >
-            <Input type="text" placeholder="Enter storage location" />
-          </Form.Item>
+  label="Storage Location"
+  name="storagelocation"
+  rules={[
+    { required: true, message: 'Please enter the storage location!' },
+    {
+      pattern: /^[A-Za-z\s]*(\d{0,1})[A-Za-z\s]*$/,  // Validation rule allowing at most 1 number
+      message: 'Storage location can only contain letters, spaces, and at most one number!',
+    },
+  ]}
+>
+  <Input type="text" placeholder="Enter storage location" />
+</Form.Item>
+
 
           <Form.Item
             label="Expired Date"
@@ -163,10 +178,9 @@ const EditFertilizerRecord = () => {
             rules={[{ required: true, message: 'Please select status!' }]}
           >
             <Select placeholder="Select status">
-            <Option value="In Stock">In Stock</Option>
+              <Option value="In Stock">In Stock</Option>
               <Option value="Out Of Stock">Out Of Stock</Option>
               <Option value="Expired">Expired</Option>
-   
             </Select>
           </Form.Item>
 

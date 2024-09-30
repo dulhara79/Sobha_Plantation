@@ -224,6 +224,7 @@ const LandPreparation = () => {
           ]}
         />
         <FieldViewNavbar/>
+
         <div className="mb-4">
           <LeftCircleOutlined onClick={() => navigate(-1)} style={{ fontSize: '24px', cursor: 'pointer' }} />
         </div>

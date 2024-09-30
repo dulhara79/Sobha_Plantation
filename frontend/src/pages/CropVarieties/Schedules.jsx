@@ -41,7 +41,6 @@ const VarietySchedule = () => {
       e.preventDefault();
     }
   };
-  
 
   useEffect(() => {
     const fetchSchedules = async () => {
