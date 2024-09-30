@@ -50,11 +50,12 @@ const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
 /**
  * buyer
  */
-// const BuyerRoutes = require('./routes/buyerRoute');
+
 // const buyerRoutes = require('./routes/buyerRoutes');
 const buyerRoutes = require('./routes/buyerRoute');
 const buyerDeliveryRoute = require('./routes/buyerDeliveryRoute'); 
 const buyerInfoRoute = require('./routes/buyerInfoRoute');
+// const buyerPreOrderRoutes = require('./routes/buyerPreOrderRoutes');
 
 // const orderRouter = require('./routes/orderRoute');
 // import foodRouter from "./routes/foodRoute.js"
@@ -68,7 +69,9 @@ const buyerInfoRoute = require('./routes/buyerInfoRoute');
 const FinancialTransactionRoutes = require('./routes/SalesAndFinance/FinancialTransactionRoutes.js');
 const InvoiceRoutes = require('./routes/SalesAndFinance/InvoiceRoutes.js');
 const SalesAnalyticsRoutes = require('./routes/SalesAndFinance/SalesAnalyticsRoutes.js');
-const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoutes.js');
+
+// const SalesTrackingRoutes = require('./routes/SalesAndFinance/SalesTrackingRoutes.js');
+
 const attendanceRoute = require('./routes/Employee/AttendanceRoute.js');
 const salaryEmployeeRoutes = require("./routes/Employee/salaryEmployeeRoutes.js");
 const ETaskRoutes = require('./routes/Employee/ETaskRoutes.js');
@@ -136,22 +139,23 @@ app.use('/api/diseases', diseasesRoute);
 app.use("/api/salesAndFinance/finance/transaction", FinancialTransactionRoutes);
 app.use("/api/salesAndFinance/finance/invoice", InvoiceRoutes);
 app.use("/api/salesAndFinance/sales/analytics", SalesAnalyticsRoutes);
-app.use("/api/salesAndFinance/sales/tracking", SalesTrackingRoutes);
+
+// app.use("/api/salesAndFinance/sales/tracking", SalesTrackingRoutes);
+
 // app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
 
 /**
  * buyer
  */
-// app.use('/api/buyers', buyerRoutes);
+
 app.use("/api/broute", buyerRoutes);
 app.use("/api/deliveryRecords", buyerDeliveryRoute); 
 app.use("/api/buyerInfo", buyerInfoRoute);
-
+// app.use('/api/preorders', buyerPreOrderRoutes);
 
 
 // app.use("/api/order", orderRouter);
 // app.use("/api/food",foodRouter)
-
 // app.use("/api/user",userRouter)
 // app.use("/api/cart",cartRouter)
 
