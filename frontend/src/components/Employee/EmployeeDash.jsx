@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faUserTie, faCheckCircle, faTasks } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom'; // Step 1: Import useNavigate
+import { useNavigate } from 'react-router-dom';
+import PieChartComponent from '../../components/Employee/PieChartComponent';
 
-
-// Styled Components
+// Styled Components (unchanged)
 const Container = styled.div`
   padding: 20px;
 `;
@@ -28,7 +29,7 @@ const WidgetRow = styled.div`
 const Card = styled.div`
   background-color: #61b356;
   color: white;
-  width: 400px;
+  width: 450px;
   height: 300px;
   display: flex;
   flex-direction: column;
@@ -54,28 +55,96 @@ const Button = styled.button`
   }
 `;
 
+const ChartContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
 const EmployeeDash = () => {
+  const [taskRecords, setTaskRecords] = useState([]);
+  const [employeeRecords, setEmployeeRecords] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState({
-    totalEmployees: 20,
-    permanentEmployees: 10,
-    completedTasks: 10,
-    totalTasks: 15,
+    totalEmployees: 0,
+    permanentEmployees: 0,
+    completedTasks: 0,
+    totalTasks: 0,
   });
-  const navigate = useNavigate(); // Step 1: Initialize navigate
+  const navigate = useNavigate();
 
   const handleViewAllTasks = () => {
-    // Step 2: Create the click handler
-    navigate('/employee/TaskListview'); // Use navigate to redirect
+    navigate('/employee/TaskListview');
   };
 
   const handleViewAllEmployees = () => {
-    navigate('/employee/employeelist'); // Update the route as needed
+    navigate('/employee/employeelist');
   };
 
   useEffect(() => {
-    // Fetch the data from your API
-    // Example: axios.get('/api/dashboard').then((response) => setData(response.data));
+    setLoading(true);
+    Promise.all([
+      axios.get(`http://localhost:5000/api/taskRecords`),
+      axios.get(`http://localhost:5000/api/employee`)
+    ])
+      .then(([taskResponse, employeeResponse]) => {
+        if (taskResponse.data && Array.isArray(taskResponse.data.data)) {
+          setTaskRecords(taskResponse.data.data);
+          updateTaskStats(taskResponse.data.data);
+        }
+        if (employeeResponse.data && Array.isArray(employeeResponse.data)) {
+          setEmployeeRecords(employeeResponse.data);
+          updateEmployeeStats(employeeResponse.data);
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
   }, []);
+
+  const updateTaskStats = (tasks) => {
+    const completedTasks = tasks.filter(task => task.task_status === 'Completed').length;
+    setData(prevData => ({
+      ...prevData,
+      completedTasks: completedTasks,
+      totalTasks: tasks.length
+    }));
+  };
+
+  const updateEmployeeStats = (employees) => {
+    const permanentEmployees = employees.filter(employee => employee.employeeType === 'Permanent').length;
+    setData(prevData => ({
+      ...prevData,
+      totalEmployees: employees.length,
+      permanentEmployees: permanentEmployees
+    }));
+  };
+
+  const formatPieChartData = () => {
+    const employeeTypeCounts = { 'Permanent': 0, 'Contract': 0 };
+
+    employeeRecords.forEach((employee) => {
+      if (employee.employeeType in employeeTypeCounts) {
+        employeeTypeCounts[employee.employeeType] += 1;
+      }
+    });
+
+    return Object.entries(employeeTypeCounts).map(([name, value]) => ({ name, value }));
+  };
+
+  const formatPieChartData1 = () => {
+    const statusCounts = { 'Completed': 0, 'In Progress': 0, 'Pending': 0 };
+
+    taskRecords.forEach((task) => {
+      if (task.task_status in statusCounts) {
+        statusCounts[task.task_status] += 1;
+      }
+    });
+
+    return Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
+  };
 
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -126,8 +195,25 @@ const EmployeeDash = () => {
           <p>{data.totalTasks}</p>
         </Card>
 
-        <Button onClick={handleViewAllTasks}>View All Tasks</Button> {/* Attach click handler */}
+        <Button onClick={handleViewAllTasks}>View All Tasks</Button>
       </WidgetRow>
+
+      {/* Pie Chart */}
+      <ChartContainer>
+        <PieChartComponent
+          title="Employee Type Distribution"
+          data={formatPieChartData()}
+          loading={loading}
+        />
+
+        <PieChartComponent
+          title="Task Status Distribution"
+          data={formatPieChartData1()}
+          loading={loading}
+        />
+      </ChartContainer>
+
+      
     </Container>
   );
 };
