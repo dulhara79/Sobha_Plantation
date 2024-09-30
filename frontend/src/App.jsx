@@ -52,7 +52,7 @@ import EditRequestPaymentRecord from "./pages/Inventory/EditRequestPaymentRecord
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
 import Eregistration from "./pages/employee/Eregistration.jsx";
-import Esalary from "./pages/employee/Esalary";
+// import Esalary from "./pages/employee/Esalary";
 import EaddTask from "./pages/employee/EaddTask.jsx";
 import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
@@ -62,7 +62,6 @@ import EattendenceList from "./pages/employee/EattendenceList.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
-import ScheduleOptionsPage from "./pages/Harvest/ScheduleOptionsPage.jsx";
 import HarvestSchedule from "./pages/Harvest/HarvestSchedule";
 import YieldRecords from "./pages/Harvest/YieldRecords";
 import ComplianceCheckList from "./pages/Harvest/ComplianceCheckList";
@@ -289,7 +288,7 @@ export default function App() {
       {/* employee */}
       <Route path="/employee/dashboard" element={<Edashboard />} />
       <Route path="/employee/registration" element={<Eregistration />} />
-      <Route path="/employee/salary" element={<Esalary />} />
+      {/* <Route path="/employee/salary" element={<Esalary />} /> */}
       <Route path="/employee/task" element={<EaddTask />} />
       <Route path="/employee/taskedit/:id" element={<EditTaskPage />} />
       <Route path="/employee/TaskListview" element={<ViewTaskList />} />
@@ -299,12 +298,7 @@ export default function App() {
 
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
-      <Route
-        path="/harvest/schedule-options"
-        element={<ScheduleOptionsPage />}
-      />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
-      <Route path="/yield-options" element={<YieldOptionsPage />} />
       <Route path="/harvest/yield" element={<YieldRecords />} />
       <Route
         path="/harvest/compliancechecklist"
