@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Swal from 'sweetalert2'; // Import SweetAlert2
+import Swal from 'sweetalert2';
 import { Form, InputNumber, DatePicker, Select, Button, notification } from 'antd';
 import moment from 'moment';
 
@@ -113,14 +113,17 @@ const AddSchedule = () => {
     setErrors(newErrors);
   };
 
-  // Disable copy-pasting in input fields
-  const handlePreventPaste = (e) => {
+// Allow pasting only valid values
+const handlePaste = (e, validationFn) => {
+  const pasteData = e.clipboardData.getData('text');
+  if (!validationFn(pasteData)) {
     e.preventDefault();
-    notification.warning({
-      message: 'Paste Disabled',
-      description: 'Copy-pasting is disabled for this field.',
+    notification.error({
+      message: 'Invalid Paste',
+      description: 'The pasted value is invalid for this field.',
     });
-  };
+  }
+};
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
@@ -140,7 +143,7 @@ const AddSchedule = () => {
             <Select
               placeholder="Select a product type"
               onChange={(value) => handleFieldChange('productType', value)}
-              onPaste={handlePreventPaste} // Prevent paste
+              onPaste={(e) => handlePaste(e, value => ['coconut-oil', 'coconut-water', 'coconut-milk', 'coconut-cream', 'coir', 'shell-products'].includes(value))}
             >
               <Option value="coconut-oil">Coconut Oil</Option>
               <Option value="coconut-water">Coconut Water</Option>
@@ -188,7 +191,7 @@ const AddSchedule = () => {
                     form.setFieldsValue({ quantity: 1 });
                   }
                 }}
-                onPaste={handlePreventPaste} // Prevent paste
+                onPaste={(e) => handlePaste(e, value => !isNaN(value) && value >= 1 && value <= 100)}
               />
           </Form.Item>
 
@@ -204,7 +207,7 @@ const AddSchedule = () => {
               disabled={!formData.productType || !formData.quantity}
               inputReadOnly
               onChange={(date) => handleFieldChange('startDate', date)}
-              onPaste={handlePreventPaste} // Prevent paste
+              
             />
           </Form.Item>
 
@@ -221,7 +224,7 @@ const AddSchedule = () => {
               disabled={!formData.productType || !formData.quantity || !formData.startDate}
               inputReadOnly
               onChange={(date) => handleFieldChange('endDate', date)}
-              onPaste={handlePreventPaste} // Prevent paste
+              
             />
           </Form.Item>
 
@@ -237,7 +240,7 @@ const AddSchedule = () => {
                 handleFieldChange('status', value);
               }}
               disabled={!formData.productType || !formData.quantity || !formData.startDate || !formData.endDate}
-              onPaste={handlePreventPaste} // Prevent paste
+              
             >
               <Option value="Scheduled">Scheduled</Option>
               <Option value="In Progress">In Progress</Option>
@@ -284,7 +287,7 @@ const AddSchedule = () => {
                     form.setFieldsValue({ progress: 0 });
                   }
                 }}
-                onPaste={handlePreventPaste} // Prevent paste
+                onPaste={(e) => handlePaste(e, value => !isNaN(value) && value >= 0 && value <= 100)}
             />
           </Form.Item>
 
