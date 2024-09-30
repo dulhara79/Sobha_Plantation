@@ -14,8 +14,8 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import "jspdf-autotable";
 import LogoImage from "../../assets/Logo.png";
 import "../../index.css";
 
@@ -39,7 +39,10 @@ const CoconutInspections = () => {
       setInspections(response.data.data);
       setFilteredInspections(response.data.data);
     } catch (error) {
-      console.error("Error fetching inspections: ", error.response ? error.response.data : error.message);
+      console.error(
+        "Error fetching inspections: ",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -63,7 +66,9 @@ const CoconutInspections = () => {
     }
 
     if (filterStatus !== "All") {
-      filteredData = filteredData.filter((inspection) => inspection.status === filterStatus);
+      filteredData = filteredData.filter(
+        (inspection) => inspection.status === filterStatus
+      );
     }
 
     setFilteredInspections(filteredData);
@@ -88,13 +93,17 @@ const CoconutInspections = () => {
   // Delete inspection
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:8090/api/diseases/${id}`);
+      const response = await axios.delete(
+        `http://localhost:8090/api/diseases/${id}`
+      );
       if (response.status === 200) {
         notification.success({
           message: "Success",
           description: "Inspection record deleted successfully",
         });
-        setFilteredInspections(filteredInspections.filter(record => record._id !== id));
+        setFilteredInspections(
+          filteredInspections.filter((record) => record._id !== id)
+        );
       } else {
         notification.error({
           message: "Error",
@@ -110,54 +119,78 @@ const CoconutInspections = () => {
     }
   };
 
-  const generatePDF = () => {
-    const input = document.getElementById("table-to-pdf");
-    html2canvas(input, { scale: 2 }).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const imgWidth = 210; // A4 width in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      const pageHeight = pdf.internal.pageSize.height;
-      let heightLeft = imgHeight;
-  
-      // Add title
-      pdf.setFontSize(16);
-      pdf.setTextColor(40, 40, 40);
-      pdf.text("Coconut Inspections and Disease Identification Report", 105, 20, { align: "center" });
-  
-      // Add the table image
-      let positionY = 30; // Start position for the image on the first page
-      pdf.addImage(imgData, "PNG", 0, positionY, imgWidth, imgHeight);
-      heightLeft -= pageHeight - positionY;
-  
-      // Add pages if the content spans multiple pages
-      while (heightLeft > 0) {
-        pdf.addPage();
-        positionY = 0; // Reset position to top of the new page
-        pdf.addImage(imgData, "PNG", 0, positionY - heightLeft, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-  
-      // Add footer with a horizontal line and logo
-      const footerY = pdf.internal.pageSize.height - 30;
-  
-      pdf.setDrawColor(0);
-      pdf.setLineWidth(0.5);
-      pdf.line(10, footerY, pdf.internal.pageSize.width - 10, footerY); // Horizontal line
-  
-      // Add logo to the footer
-      const logoData = LogoImage; // Replace with the path to your logo
-      const logoWidth = 40;
-      const logoHeight = 20;
-      const xPosition = (pdf.internal.pageSize.width - logoWidth) / 2;
-      const yPosition = footerY - logoHeight - (-10); // Adjust margin as needed
-  
-      pdf.addImage(logoData, "PNG", xPosition, yPosition, logoWidth, logoHeight);
-  
-      pdf.save("Coconut_Diseases_Report.pdf");
+  const generatePDF = async () => {
+    const doc = new jsPDF();
+
+    // Define the columns for the table
+    const columns = [
+      { title: "Date", dataKey: "dateOfInspection" },
+      { title: "Field Section", dataKey: "sectionOfLand" },
+      { title: "Identified Pests", dataKey: "identifiedPest" },
+      { title: "Identified Diseases", dataKey: "identifiedDisease" },
+      { title: "Inspected By", dataKey: "inspectedBy" },
+      { title: "Inspection Result", dataKey: "inspectionResult" },
+      { title: "Re-Inspection Date", dataKey: "suggestedReInspectionDate" },
+    ];
+
+    // Get the data from the inspections state
+    const rows = filteredInspections.map((inspection) => ({
+      dateOfInspection: moment(inspection.dateOfInspection).format(
+        "YYYY-MM-DD"
+      ),
+      sectionOfLand: inspection.sectionOfLand,
+      identifiedPest: inspection.identifiedPest,
+      identifiedDisease: inspection.identifiedDisease,
+      inspectedBy: inspection.inspectedBy,
+      inspectionResult: inspection.inspectionResult,
+      suggestedReInspectionDate: moment(
+        inspection.suggestedReInspectionDate
+      ).format("YYYY-MM-DD"),
+    }));
+
+    // Add title (lowered y-coordinate)
+    doc.setFontSize(18);
+    const titleY = 24; // Adjust this value to lower the title
+    doc.text("Coconut Inspections and Disease Identification", 35, titleY);
+
+    // Add table (adjusted startY)
+    doc.autoTable({
+      columns: columns,
+      body: rows,
+      startY: titleY + 13, // Adjust this value to set how far below the title the table starts
+      margin: { horizontal: 10 },
+      styles: {
+        fontSize: 10,
+        minCellHeight: 17, // Adjust this value for desired row height
+        halign: "left", // Left-align content horizontally
+        valign: "middle", // Center content vertically
+      },
+      headStyles: {
+        fillColor: [64, 133, 126],
+        textColor: [255, 255, 255],
+        fontSize: 12,
+      },
+      theme: "striped",
     });
+
+    // Add footer with a horizontal line and logo
+    const footerY = doc.internal.pageSize.height - 30;
+
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.5);
+    doc.line(10, footerY, doc.internal.pageSize.width - 10, footerY); // Horizontal line
+
+    // Add logo to the footer
+    const logoData = LogoImage; // Replace with the path to your logo
+    const logoWidth = 40;
+    const logoHeight = 20;
+    const xPosition = (doc.internal.pageSize.width - logoWidth) / 2;
+    const yPosition = footerY - logoHeight - -10; // Adjust margin as needed
+
+    doc.addImage(logoData, "PNG", xPosition, yPosition, logoWidth, logoHeight);
+
+    doc.save("Coconut_Diseases_Report.pdf");
   };
-  
 
   return (
     <div
@@ -191,7 +224,7 @@ const CoconutInspections = () => {
               </Link>
               <Link
                 to="/CoconutInspections"
-                className="text-[#236A64] font-semibold"
+                className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold"
               >
                 Inspections
               </Link>
@@ -208,17 +241,17 @@ const CoconutInspections = () => {
                 Pests and Diseases
               </Link>
               <Link
-                to="/Maintenance"
+                to="/RegularMaintenance"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 Maintenance
               </Link>
-              <Link
+              {/* <Link
                 to="/UserProfile"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 My Profile
-              </Link>
+              </Link> */}
             </div>
           </nav>
           <div className="mt-4">
@@ -279,11 +312,31 @@ const CoconutInspections = () => {
                     key: "dateOfInspection",
                     render: (text) => moment(text).format("YYYY-MM-DD"),
                   },
-                  { title: "Field Section", dataIndex: "sectionOfLand", key: "sectionOfLand" },
-                  { title: "Identified Pests", dataIndex: "identifiedPest", key: "identifiedPest" },
-                  { title: "Identified Diseases", dataIndex: "identifiedDisease", key: "identifiedDisease" },
-                  { title: "Inspected By", dataIndex: "inspectedBy", key: "inspectedBy" },
-                  { title: "Inspection Result", dataIndex: "inspectionResult", key: "inspectionResult" },
+                  {
+                    title: "Field Section",
+                    dataIndex: "sectionOfLand",
+                    key: "sectionOfLand",
+                  },
+                  {
+                    title: "Identified Pests",
+                    dataIndex: "identifiedPest",
+                    key: "identifiedPest",
+                  },
+                  {
+                    title: "Identified Diseases",
+                    dataIndex: "identifiedDisease",
+                    key: "identifiedDisease",
+                  },
+                  {
+                    title: "Inspected By",
+                    dataIndex: "inspectedBy",
+                    key: "inspectedBy",
+                  },
+                  {
+                    title: "Inspection Result",
+                    dataIndex: "inspectionResult",
+                    key: "inspectionResult",
+                  },
                   {
                     title: "Re-Inspection Date",
                     dataIndex: "suggestedReInspectionDate",
@@ -295,9 +348,17 @@ const CoconutInspections = () => {
                     key: "actions",
                     render: (text, record) => (
                       <span style={{ display: "flex", gap: "2px" }}>
-                         <Button type="link" icon={<EditOutlined />} onClick={() => handleUpdate(record._id)}/>
-                      <Button type="link" icon={<DeleteOutlined />} danger onClick={() => confirmDelete(record._id)}/>
-                      
+                        <Button
+                          type="link"
+                          icon={<EditOutlined />}
+                          onClick={() => handleUpdate(record._id)}
+                        />
+                        <Button
+                          type="link"
+                          icon={<DeleteOutlined />}
+                          danger
+                          onClick={() => confirmDelete(record._id)}
+                        />
                       </span>
                     ),
                   },
@@ -309,10 +370,10 @@ const CoconutInspections = () => {
                 bordered
               />
             </div>
-            
+
             {/* Learn More and Add Buttons */}
             <div className="flex flex-col items-center mt-1 pb-8">
-            <Button
+              <Button
                 style={{
                   backgroundColor: "#236A64",
                   color: "#fff",
@@ -340,6 +401,4 @@ const CoconutInspections = () => {
     </div>
   );
 };
-
 export default CoconutInspections;
-

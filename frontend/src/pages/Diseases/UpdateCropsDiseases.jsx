@@ -22,6 +22,39 @@ const UpdateCropsDiseases = () => {
   // Disable past dates
   const disablePastDates = (current) => current && current < moment().startOf("day");
 
+      // Alphabetic characters only (A-Z, a-z, space)
+const handleAlphabeticKeyPress = (e) => {
+  const regex = /^[A-Za-z\s]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-alphabetic characters
+    setErrorMessage("Only alphabetic characters are allowed."); // Set error message
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
+// Numeric characters only (0-9)
+const handleNumericKeyPress = (e) => {
+  const regex = /^[0-9]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-numeric characters
+    setErrorMessage("Only numeric characters are allowed.");
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
+// Alphanumeric characters only (A-Z, a-z, 0-9)
+const handleAlphanumericKeyPress = (e) => {
+  const regex = /^[A-Za-z0-9\s%]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-alphanumeric characters
+    setErrorMessage("Only alphanumeric characters are allowed.");
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
   // Fetch record by ID
   useEffect(() => {
     const fetchRecord = async () => {
@@ -98,18 +131,18 @@ const UpdateCropsDiseases = () => {
               <Link to="/diseases" className="text-[#3CCD65] hover:text-[#2b8f57]">Home</Link>
               <Link to="/CoconutInspections" className="text-[#3CCD65] hover:text-[#2b8f57]">Inspections</Link>
               <Link to="/CoconutTreatments" className="text-[#236A64] font-semibold">Treatments</Link>
-              <Link to="/pests-diseases" className="text-[#3CCD65] hover:text-[#2b8f57]">Pests and Diseases</Link>
-              <Link to="/maintenance" className="text-[#3CCD65] hover:text-[#2b8f57]">Maintenance</Link>
-              <Link to="/UserProfile" className="text-[#3CCD65] hover:text-[#2b8f57]">My Profile</Link>
+              <Link to="/CoconutPests" className="text-[#3CCD65] hover:text-[#2b8f57]">Pests and Diseases</Link>
+              <Link to="/RegularMaintenance" className="text-[#3CCD65] hover:text-[#2b8f57]">Maintenance</Link>
+              {/* <Link to="/UserProfile" className="text-[#3CCD65] hover:text-[#2b8f57]">My Profile</Link> */}
             </div>
           </nav>
 
           <div className="mt-4">
-            <Breadcrumb items={[{ href: "/diseases", title: <HomeOutlined /> }, { href: "", title: "Update current record for Coconut Diseases" }]} />
+            <Breadcrumb items={[{ href: "/diseases", title: <HomeOutlined /> }, { href: "", title: "Update current record for Inter-Crops Diseases" }]} />
           </div>
 
           <div className="mt-4 p-6 bg-white shadow-md rounded-md">
-            <h1 className="text-2xl font-bold text-center">Pest / Disease Records - Coconuts</h1>
+            <h1 className="text-2xl font-bold text-center">Pest / Disease Records - Inter Crops</h1>
 
             <Form form={form} layout="vertical" className="mt-6" onFinish={handleSubmit}>
               <Form.Item
@@ -146,7 +179,9 @@ const UpdateCropsDiseases = () => {
                   { required: true, message: "This field is required." }
                 ]}
               >
-                <Input placeholder="Enter identified pest" />
+                <Input 
+                placeholder="Enter identified pest"
+                onKeyPress={handleAlphabeticKeyPress} />
               </Form.Item>
 
               <Form.Item
@@ -157,7 +192,9 @@ const UpdateCropsDiseases = () => {
                   { required: true, message: "This field is required." }
                 ]}
               >
-                <Input placeholder="Enter identified disease" />
+                <Input 
+                placeholder="Enter identified disease" 
+                onKeyPress={handleAlphabeticKeyPress}/>
               </Form.Item>
 
               <Form.Item
@@ -168,18 +205,22 @@ const UpdateCropsDiseases = () => {
                   { required: true, message: "This field is required." }
                 ]}
               >
-                <Input placeholder="Enter name of inspector" />
+                <Input 
+                placeholder="Enter name of inspector"
+                onKeyPress={handleAlphabeticKeyPress} />
               </Form.Item>
 
               <Form.Item
                 label="Inspection Result"
                 name="inspectionResult"
                 rules={[
-                  { pattern: /^[a-zA-Z\s]*$/, message: "Only alphabetic characters are allowed." },
+                  { pattern: /^[a-zA-Z0-9\s%]*$/, message: "Only alphabetic characters, numbers and % are allowed." },
                   { required: true, message: "This field is required." }
                 ]}
               >
-                <Input placeholder="Enter the inspection result" />
+                <Input 
+                placeholder="Enter the inspection result" 
+                onKeyPress={handleAlphanumericKeyPress}/>
               </Form.Item>
 
               <Form.Item

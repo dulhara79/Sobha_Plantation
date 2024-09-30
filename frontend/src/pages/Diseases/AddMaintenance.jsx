@@ -78,6 +78,39 @@ const AddMaintenance = () => {
 
   ];
 
+    // Alphabetic characters only (A-Z, a-z, space)
+const handleAlphabeticKeyPress = (e) => {
+  const regex = /^[A-Za-z\s]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-alphabetic characters
+    setErrorMessage("Only alphabetic characters are allowed."); // Set error message
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
+// Numeric characters only (0-9)
+const handleNumericKeyPress = (e) => {
+  const regex = /^[0-9%]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-numeric characters
+    setErrorMessage("Only numeric characters are allowed.");
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
+// Alphanumeric characters only (A-Z, a-z, 0-9)
+const handleAlphanumericKeyPress = (e) => {
+  const regex = /^[A-Za-z0-9\s%]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-alphanumeric characters
+    setErrorMessage("Only alphanumeric characters are allowed.");
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
@@ -88,7 +121,7 @@ const AddMaintenance = () => {
         dateOfMaintenance,
         task,
         managerInCharge,
-        progress,
+        progress
       });
 
       notification.success({
@@ -98,7 +131,7 @@ const AddMaintenance = () => {
       setLoading(false);
       form.resetFields();
 
-      navigate("/maintenance");
+      navigate("/RegularMaintenance");
     } catch (error) {
       console.error("An error occurred: ", error);
       setLoading(false);
@@ -110,7 +143,7 @@ const AddMaintenance = () => {
   };
 
   const handleCancel = () => {
-    navigate("/maintenance");
+    navigate("/RegularMaintenance");
   };
 
   return (
@@ -146,23 +179,23 @@ const AddMaintenance = () => {
                 Treatments
               </Link>
               <Link
-                to="/pests-diseases"
+                to="/CoconutPests"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 Pests and Diseases
               </Link>
               <Link
-                to="/maintenance"
+                to="/RegularMaintenance"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 Maintenance
               </Link>
-              <Link
+              {/* <Link
                 to="/UserProfile"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 My Profile
-              </Link>
+              </Link> */}
             </div>
           </nav>
 
@@ -229,6 +262,7 @@ const AddMaintenance = () => {
                 <Input
                   placeholder="Enter the task"
                   disabled={!fieldValidity.dateOfMaintenance}
+                  onKeyPress={handleAlphabeticKeyPress}
                 />
               </Form.Item>
 
@@ -240,6 +274,7 @@ const AddMaintenance = () => {
                 <Input
                   placeholder="Enter the name of the manager in charge"
                   disabled={!fieldValidity.task}
+                  onKeyPress={handleAlphabeticKeyPress}
                 />
               </Form.Item>
 

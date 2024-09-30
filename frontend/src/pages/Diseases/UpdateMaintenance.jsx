@@ -17,34 +17,69 @@ const UpdateMaintenance = () => {
     
     // Disable future dates
     const disableFutureDates = (current) => current && current > moment().endOf("day");
+
+      // Alphabetic characters only (A-Z, a-z, space)
+const handleAlphabeticKeyPress = (e) => {
+    const regex = /^[A-Za-z\s]*$/;
+    if (!regex.test(e.key)) {
+      e.preventDefault(); // Prevent non-alphabetic characters
+      setErrorMessage("Only alphabetic characters are allowed."); // Set error message
+    } else {
+      setErrorMessage(""); // Clear message when valid input is entered
+    }
+  };
+  
+  // Numeric characters only (0-9)
+  const handleNumericKeyPress = (e) => {
+    const regex = /^[0-9%]*$/;
+    if (!regex.test(e.key)) {
+      e.preventDefault(); // Prevent non-numeric characters
+      setErrorMessage("Only numeric characters are allowed.");
+    } else {
+      setErrorMessage(""); // Clear message when valid input is entered
+    }
+  };
+  
+  // Alphanumeric characters only (A-Z, a-z, 0-9)
+  const handleAlphanumericKeyPress = (e) => {
+    const regex = /^[A-Za-z0-9\s%]*$/;
+    if (!regex.test(e.key)) {
+      e.preventDefault(); // Prevent non-alphanumeric characters
+      setErrorMessage("Only alphanumeric characters are allowed.");
+    } else {
+      setErrorMessage(""); // Clear message when valid input is entered
+    }
+  };
         
     // Fetch record by ID
     useEffect(() => {
-        const fetchRecord = async () => {
+      const fetchRecord = async () => {
         try {
-            const response = await axios.get(`http://localhost:8090/api/regularMaintenance/${id}`);
-            const data = response.data.maintenanceRecord;
+          const response = await axios.get(`http://localhost:8090/api/regularMaintenance/${id}`);
+          const data = response.data.regularMaintenanceRecord;
     
-            // Set form values including DatePicker values
-            form.setFieldsValue({
-            dateOfMaintenance: data.dateOfMaintenance ? moment(data.dateOfMaintenance) : null,
+          // Log response to check data
+          console.log("Fetched data:", data);
+    
+          form.setFieldsValue({
             task: data.task || "",
             managerInCharge: data.managerInCharge || "",
             progress: data.progress || "",
-            });
+            dateOfMaintenance: data.dateOfMaintenance ? moment(data.dateOfMaintenance) : null
+          });
     
-            // Update state with DatePicker values
-            setDateOfMaintenance(data.dateOfMaintenance ? moment(data.dateOfMaintenance) : null);
+          setDateOfMaintenance(data.dateOfMaintenance ? moment(data.dateOfMaintenance) : null);
         } catch (error) {
-            notification.error({
+          notification.error({
             message: "Fetch Error",
             description: error.response?.data?.message || "Error fetching record data.",
-            });
+          });
         }
-        };
+      };
     
-        fetchRecord();
+      fetchRecord();
     }, [id, form]);
+    
     
     // Handle form submission
     const handleSubmit = async (values) => {
@@ -61,7 +96,7 @@ const UpdateMaintenance = () => {
             description: "Record updated successfully.",
         });
     
-        navigate("/maintenance");
+        navigate("/RegularMaintenance");
         } catch (error) {
         notification.error({
             message: "Update Error",
@@ -72,7 +107,7 @@ const UpdateMaintenance = () => {
 
     //Cancel button function
     const handleCancel = () => {
-        navigate("/maintenance");
+        navigate("/RegularMaintenance");
     };
 
     return (
@@ -89,9 +124,9 @@ const UpdateMaintenance = () => {
                   <Link to="/diseases" className="text-[#3CCD65] hover:text-[#2b8f57]">Home</Link>
                   <Link to="/CoconutInspections" className="text-[#3CCD65] hover:text-[#2b8f57]">Inspections</Link>
                   <Link to="/CoconutTreatments" className="text-[#3CCD65] hover:text-[#2b8f57]">Treatments</Link>
-                  <Link to="/pests-diseases" className="text-[#3CCD65] hover:text-[#2b8f57]">Pests and Diseases</Link>
-                  <Link to="/maintenance" className="text-[#236A64] font-semibold">Maintenance</Link>
-                  <Link to="/UserProfile" className="text-[#3CCD65] hover:text-[#2b8f57]">My Profile</Link>
+                  <Link to="/CoconutPests" className="text-[#3CCD65] hover:text-[#2b8f57]">Pests and Diseases</Link>
+                  <Link to="/RegularMaintenance" className="text-[#236A64] font-semibold">Maintenance</Link>
+                  {/* <Link to="/UserProfile" className="text-[#3CCD65] hover:text-[#2b8f57]">My Profile</Link> */}
                 </div>
               </nav>
     
@@ -124,7 +159,9 @@ const UpdateMaintenance = () => {
                             { required: true, message: "Task is required" }
                         ]}
                     >
-                        <Input placeholder="Enter task name"/>
+                        <Input 
+                        placeholder="Enter task name"
+                        onKeyPress={handleAlphabeticKeyPress}/>
                     </Form.Item>
 
                     <Form.Item
@@ -135,7 +172,9 @@ const UpdateMaintenance = () => {
                             { required: true, message: "Manager in charge is required" }
                         ]}
                     >
-                        <Input placeholder="Enter name of Manager in Charge"/>
+                        <Input 
+                        placeholder="Enter name of Manager in Charge"
+                        onKeyPress={handleAlphabeticKeyPress}/>
                     </Form.Item>
 
                     <Form.Item
