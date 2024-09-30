@@ -57,7 +57,11 @@ const ValuationForm = () => {
   const handleQuantityChange = (e) => {
     const value = e.target.value;
     const filteredValue = value.replace(/[^0-9 ]/g, "");
-    if(filteredValue >= 0 || !(filteredValue === "") || !(filteredValue > 100000)) {
+    if (
+      filteredValue >= 0 ||
+      !(filteredValue === "") ||
+      !(filteredValue > 100000)
+    ) {
       setQuantity(filteredValue);
     }
     setFieldDisabled({
@@ -69,7 +73,11 @@ const ValuationForm = () => {
   const handlePriceChange = (e) => {
     const value = e.target.value;
     const filteredValue = value.replace(/[^0-9 ]/g, "");
-    if(filteredValue >= 0 || !(filteredValue === "") || !(filteredValue > 10000000)) {
+    if (
+      filteredValue >= 0 ||
+      !(filteredValue === "") ||
+      !(filteredValue > 10000000)
+    ) {
       setPrice(filteredValue);
     }
     setFieldDisabled({
@@ -81,7 +89,7 @@ const ValuationForm = () => {
   const handleDescriptionChange = (e) => {
     const value = e.target.value;
     const filteredValue = value.replace(/[^a-zA-Z0-9 ]/g, "");
-    if(filteredValue.length <= 100) {
+    if (filteredValue.length <= 100) {
       setDescription(filteredValue);
     }
     setFieldDisabled({
@@ -93,7 +101,7 @@ const ValuationForm = () => {
   const handlePayerPayeeChange = (e) => {
     const value = e.target.value;
     const filteredValue = value.replace(/[^a-zA-Z ]/g, "");
-    if(filteredValue.length <= 100) {
+    if (filteredValue.length <= 100) {
       setPayerPayee(filteredValue);
     }
     setFieldDisabled({
@@ -101,11 +109,15 @@ const ValuationForm = () => {
       appreciationOrDepreciation: false,
     });
   };
-  
+
   const handleAppreciationOrDepreciationChange = (e) => {
     const value = e.target.value;
     const filteredValue = value.replace(/[^0-9 ]/g, "");
-    if(filteredValue >= 0 || !(filteredValue === "") || !(filteredValue > 100)) {
+    if (
+      filteredValue >= 0 ||
+      !(filteredValue === "") ||
+      !(filteredValue > 100)
+    ) {
       setAppreciationOrDepreciation(filteredValue);
       setDisabledSubmit(false);
     }
@@ -250,7 +262,7 @@ const ValuationForm = () => {
                   value="asset"
                   checked={type === "asset"}
                   onChange={handleValuationTypeChange}
-                  className="w-4 h-4 border-gray-900 text-lime-600 focus:ring-lime-600" 
+                  className="w-4 h-4 border-gray-900 text-lime-600 focus:ring-lime-600"
                   required
                 />
                 <label
@@ -268,7 +280,8 @@ const ValuationForm = () => {
                   value="liability"
                   checked={type === "liability"}
                   onChange={handleValuationTypeChange}
-                  className="w-4 h-4 border-gray-900 text-lime-600 focus:ring-lime-600" required
+                  className="w-4 h-4 border-gray-900 text-lime-600 focus:ring-lime-600"
+                  required
                 />
                 <label
                   htmlFor="liability"
@@ -294,7 +307,8 @@ const ValuationForm = () => {
               onChange={handleSubtypeChange}
               id="subtype"
               disabled={fieldDisabled.subtype}
-              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:text-sm sm:leading-6" required
+              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:text-sm sm:leading-6"
+              required
             >
               {type === "asset" ? (
                 <>
@@ -348,7 +362,8 @@ const ValuationForm = () => {
               onChange={handleQuantityChange}
               disabled={fieldDisabled.quantity}
               type="text"
-              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:text-sm sm:leading-6" required
+              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:text-sm sm:leading-6"
+              required
             />
           </div>
           <div className="sm:col-span-3">
@@ -365,7 +380,8 @@ const ValuationForm = () => {
               onChange={handlePriceChange}
               disabled={fieldDisabled.price}
               type="text"
-              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:text-sm sm:leading-6" required
+              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:text-sm sm:leading-6"
+              required
             />
           </div>
 
@@ -384,7 +400,8 @@ const ValuationForm = () => {
               value={description}
               disabled={fieldDisabled.description}
               onChange={handleDescriptionChange}
-              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:max-w-xs sm:text-sm sm:leading-6" required
+              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:max-w-xs sm:text-sm sm:leading-6"
+              required
             />
           </div>
 
@@ -403,7 +420,8 @@ const ValuationForm = () => {
               disabled={fieldDisabled.payerPayee}
               onChange={handlePayerPayeeChange}
               id="payer_payee"
-              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:text-sm sm:leading-6" required
+              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:text-sm sm:leading-6"
+              required
             />
           </div>
 
@@ -422,7 +440,8 @@ const ValuationForm = () => {
               disabled={fieldDisabled.appreciationOrDepreciation}
               onChange={handleAppreciationOrDepreciationChange}
               id="appreciationOrDepreciation"
-              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:text-sm sm:leading-6" required
+              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:text-sm sm:leading-6"
+              required
             />
           </div>
 
