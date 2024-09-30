@@ -57,10 +57,7 @@ const buyerDeliveryRoute = require('./routes/buyerDeliveryRoute');
 const buyerInfoRoute = require('./routes/buyerInfoRoute');
 // const buyerPreOrderRoutes = require('./routes/buyerPreOrderRoutes');
 
-// const orderRouter = require('./routes/orderRoute');
-// import foodRouter from "./routes/foodRoute.js"
-// import userRouter from "./routes/userRoute.js"
-// import cartRouter from "./routes/cartRoute.js"
+
 
 
 /**
@@ -154,10 +151,7 @@ app.use("/api/buyerInfo", buyerInfoRoute);
 // app.use('/api/preorders', buyerPreOrderRoutes);
 
 
-// app.use("/api/order", orderRouter);
-// app.use("/api/food",foodRouter)
-// app.use("/api/user",userRouter)
-// app.use("/api/cart",cartRouter)
+
 
 
 

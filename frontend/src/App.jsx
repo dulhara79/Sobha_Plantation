@@ -182,14 +182,7 @@ import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
 
 ////////////////////////////////////////
 
-// import Cart from './pages/Cart/Cart'
-// import BHome from './pages/Buyer/BHome/BHome'
-// import PlaceOrder from './pages/PlaceOrder/PlaceOrder'
-// // import Footer from './components/Footer/Footer'
-// import LoginPopup from './components/LoginPopup/LoginPopup'
-// import Verify from './pages/Verify/Verify'
-// import MyOrders from './pages/MyOrders/MyOrders'
-// import Navbar from './components/Buyer/Navbar.jsx'
+
 
 
 import PageError from "./pages/PageError.jsx";
@@ -389,15 +382,7 @@ export default function App() {
 
       <Route path="/buyerdashboard" element={<BuyerDashboard />} />
 
-        {/* <Route path="/navbar" element={<Navbar />} /> 
-        <Route path='/buyer/home' element={<BHome/>}/> 
-        <Route path='/cart' element={<Cart/>}/>
-        <Route path='/placeOrder' element={<PlaceOrder/>}/>
-         <Route path='/verify' element={<Verify/>}/>
-         <Route path='/myorders' element={<MyOrders/>}/>  */}
-         
-         {/* <Route path='/Bhome' element={<Home/>}/> */}
- 
+        
       {/* page not found & error page */}
          {/* <Route path="/test" element={<Test />} />   */}
  
