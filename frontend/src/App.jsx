@@ -154,7 +154,7 @@ import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
 
 // buyers
 // import Cart from "./pages/Buyer/Cart.jsx";
-impor tBuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
+import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
 import BuyerTable from "./pages/BuyerTable.jsx";
 import Profile from './components/Profile';
 import BuyerDashboard from './pages/Buyer/BuyerDashboard.jsx';

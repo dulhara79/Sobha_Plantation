@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
-import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
-import axios from 'axios';
-import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Button, Form, Input, DatePicker, Select, notification } from "antd";
+import axios from "axios";
+import moment from "moment";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
-import Swal from 'sweetalert2';
-import { InputNumber } from 'antd';
-
+import Swal from "sweetalert2";
+import { InputNumber } from "antd";
 
 const { Option } = Select;
 
@@ -17,52 +16,35 @@ const AddSchedule = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
-  const fields = ["harvestdate", "fieldNumber", "cropType", "quantity", "treesPicked", "storageLocation"];
-  
+  const fields = [
+    "harvestdate",
+    "fieldNumber",
+    "cropType",
+    "quantity",
+    "treesPicked",
+    "storageLocation",
+  ];
 
   const disableFutureDates = (current) => {
-    return current && current >= moment().startOf('day');
+    return current && current >= moment().startOf("day");
   };
-  
+
   const validateQuantity = (_, value) => {
     if (value >= 1) {
       setQuantityComplete(true);
       return Promise.resolve();
     }
     setQuantityComplete(false);
-    return Promise.reject(new Error('Quantity must be at least 1!'));
-  };
-
-  const validateTreesPicked = (_, value) => {
-    if (value >= 1) {
-      setTreesPickedComplete(true);
-      return Promise.resolve();
-    }
-    setTreesPickedComplete(false);
-    return Promise.reject(new Error('Trees picked must be at least 1!'));
-  };
-
-  const handleHarvestDateChange = (date) => {
-    if (date && date.isBefore(moment().startOf('day'))) {
-      setHarvestDateComplete(true);
-    } else {
-      setHarvestDateComplete(false);
-    }
-  };
-
-  const handleCropTypeChange = (value) => {
-    if (value) {
-      setCropTypeComplete(true);
-    } else {
-      setCropTypeComplete(false);
-    }
+    return Promise.reject(new Error("Quantity must be at least 1!"));
   };
 
   const handleSubmit = async (values) => {
     // Validate form fields
-    const isFormValid = form.getFieldsError().every(({ errors }) => errors.length === 0);
+    const isFormValid = form
+      .getFieldsError()
+      .every(({ errors }) => errors.length === 0);
     if (!isFormValid) return; // Exit if there are validation errors
-  
+
     // Display confirmation modal
     const result = await Swal.fire({
       title: "Confirmation Required",
@@ -72,41 +54,43 @@ const AddSchedule = () => {
       confirmButtonText: "Yes, submit it!",
       cancelButtonText: "No, cancel!",
       customClass: {
-        popup: 'swal-custom-popup',
-        title: 'swal-custom-title',
-        html: 'swal-custom-html',
-        confirmButton: 'swal-confirm-button',
-        cancelButton: 'swal-cancel-button',
+        popup: "swal-custom-popup",
+        title: "swal-custom-title",
+        html: "swal-custom-html",
+        confirmButton: "swal-confirm-button",
+        cancelButton: "swal-cancel-button",
       },
       focusCancel: false,
     });
 
     console.log("Form data:", formData);
     console.log("result.isConfirmed:", result.isConfirmed);
-    
+
     if (result.isConfirmed) {
       try {
         const payload = {
           ...values,
-          harvestDate: values.harvestdate ? values.harvestdate.toISOString() : null,
+          harvestDate: values.harvestdate
+            ? values.harvestdate.toISOString()
+            : null,
         };
-  
+
         // Send the API request
-        await axios.post('http://localhost:5000/api/yield', payload);
-  
+        await axios.post("http://localhost:5000/api/yield", payload);
+
         // Show success message using SweetAlert2
-        Swal.fire('Success', 'Yield record added successfully!', 'success');
-  
+        Swal.fire("Success", "Yield record added successfully!", "success");
+
         // Reset form fields and navigate to the desired page
         form.resetFields();
-        navigate('/harvest/yield');
+        navigate("/harvest/yield");
       } catch (error) {
-        console.error('Error adding yield record:', error);
-  
+        console.error("Error adding yield record:", error);
+
         // Show error notification
         notification.error({
-          message: 'Error',
-          description: 'Failed to add the yield record.',
+          message: "Error",
+          description: "Failed to add the yield record.",
         });
       } finally {
         setLoading(false); // Stop the loading spinner
@@ -142,7 +126,9 @@ const AddSchedule = () => {
         <Header />
         <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
           <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="mb-6 text-2xl font-bold text-center">Add Yield Records</h2>
+            <h2 className="mb-6 text-2xl font-bold text-center">
+              Add Yield Records
+            </h2>
             <Form
               form={form}
               onFinish={handleSubmit}
@@ -150,39 +136,44 @@ const AddSchedule = () => {
               nFieldsChange={(_, allFields) => handleFieldsError(allFields)}
             >
               <Form.Item
-               label="Harvest Date"
-               name="harvestdate"
-               rules={[
-                  { required: true, message: 'Please select a harvest date!' },
+                label="Harvest Date"
+                name="harvestdate"
+                rules={[
+                  { required: true, message: "Please select a harvest date!" },
                   {
-                        validator: (_, value) => {
-                      if (value && value.isBefore(moment().startOf('day'))) {
-                       return Promise.resolve();
-                          }
-                return Promise.reject(new Error('Harvest date must be a past date!'));
-                        },
-                      },
-                    ]}
-                  >
-                  <DatePicker
+                    validator: (_, value) => {
+                      if (value && value.isBefore(moment().startOf("day"))) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error("Harvest date must be a past date!")
+                      );
+                    },
+                  },
+                ]}
+              >
+                <DatePicker
                   format="YYYY-MM-DD"
-                 disabledDate={disableFutureDates} // This disables today and future dates
-                 onChange={(date) => handleFieldChange('harvestdate', date)}
-                 style={{ width: '100%' }}
-                 inputReadOnly
-                 />
-                </Form.Item>
+                  disabledDate={disableFutureDates} // This disables today and future dates
+                  onChange={(date) => handleFieldChange("harvestdate", date)}
+                  style={{ width: "100%" }}
+                  inputReadOnly
+                />
+              </Form.Item>
 
-                <Form.Item
+              <Form.Item
                 label="Field Number"
                 name="fieldNumber"
-                rules={[{ required: true, message: "Please select a field number!" }]}
+                rules={[
+                  { required: true, message: "Please select a field number!" },
+                ]}
               >
-                <Select placeholder="Select a field number" 
-                disabled={!formData.harvestdate} // Enable only when crop type is selected
-                onChange={(value) => handleFieldChange('fieldNumber', value)}
-                style={{ width: '100%' }} // Enable only when harvest date is selected
-              >
+                <Select
+                  placeholder="Select a field number"
+                  disabled={!formData.harvestdate} // Enable only when crop type is selected
+                  onChange={(value) => handleFieldChange("fieldNumber", value)}
+                  style={{ width: "100%" }} // Enable only when harvest date is selected
+                >
                   <Option value="AA1">AA1</Option>
                   <Option value="BB1">BB1</Option>
                   <Option value="CC1">CC1</Option>
@@ -193,12 +184,16 @@ const AddSchedule = () => {
               <Form.Item
                 label="Crop Type"
                 name="cropType"
-                rules={[{ required: true, message: "Please select a crop type!" }]}
+                rules={[
+                  { required: true, message: "Please select a crop type!" },
+                ]}
               >
-                <Select placeholder="Select a crop type"
-                        onChange={(value) => handleFieldChange('cropType', value)}
-                        disabled={!formData.harvestdate || !formData.fieldNumber}
-                        style={{ width: '100%' }}>
+                <Select
+                  placeholder="Select a crop type"
+                  onChange={(value) => handleFieldChange("cropType", value)}
+                  disabled={!formData.harvestdate || !formData.fieldNumber}
+                  style={{ width: "100%" }}
+                >
                   <Option value="Coconut">Coconut</Option>
                   <Option value="Banana">Banana</Option>
                   <Option value="Pepper">Pepper</Option>
@@ -208,70 +203,97 @@ const AddSchedule = () => {
               </Form.Item>
 
               <Form.Item
-  label="Quantity"
-  name="quantity"
-  rules={[{ required: true, message: 'quantity is required!' }]}
->
-  <InputNumber
-    placeholder="quantity Picked"
-    min={1} // Minimum value set to 1
-    disabled={!formData.harvestdate || !formData.fieldNumber || !formData.cropType} // Disable based on other fields
-    onChange={(value) => handleFieldChange('quantity', value)} // Update field value on change
-    style={{ width: '100%' }} // Make input full width
-    parser={(value) => value.replace(/\D/g, '')} // Ensure only numbers are entered
-    onKeyPress={(e) => {
-      if (!/[0-9]/.test(e.key)) {
-        e.preventDefault(); // Prevent non-numeric input
-      }
-    }}
-    onBlur={(e) => {
-      const value = e.target.value;
-      // Clear input if it's invalid on blur (less than 1)
-      if (value && value < 1) {
-        form.setFieldsValue({ quantity: undefined });
-      }
-    }}
-  />
-</Form.Item>
+                label="Quantity"
+                name="quantity"
+                rules={[{ required: true, message: "Quantity is required!" }]}
+              >
+                <InputNumber
+                  placeholder="Quantity Picked"
+                  min={1} // Minimum value set to 1
+                  disabled={
+                    !formData.harvestdate ||
+                    !formData.fieldNumber ||
+                    !formData.cropType
+                  } // Disable based on other fields
+                  onChange={(value) => handleFieldChange("quantity", value)} // Update field value on change
+                  style={{ width: "100%" }} // Make input full width
+                  parser={(value) => value.replace(/\D/g, "")} // Ensure only numbers are entered
+                  onKeyPress={(e) => {
+                    if (!/[0-9]/.test(e.key)) {
+                      e.preventDefault(); // Prevent non-numeric input
+                    }
+                  }}
+                  onPaste={(e) => e.preventDefault()} // Prevent pasting
+                  onBlur={(e) => {
+                    const value = e.target.value;
+                    // Clear input if it's invalid on blur (less than 1)
+                    if (value && value < 1) {
+                      form.setFieldsValue({ quantity: undefined });
+                    }
+                  }}
+                />
+              </Form.Item>
 
-<Form.Item
-  label="Trees Picked"
-  name="treesPicked"
-  rules={[{ required: true, message: 'Number of trees picked is required!' }]}
->
-  <InputNumber
-    placeholder="Enter Number of Trees Picked"
-    min={1} // Minimum value set to 1
-    disabled={!formData.harvestdate || !formData.fieldNumber || !formData.cropType || !formData.quantity} // Disable based on other fields
-    onChange={(value) => handleFieldChange('treesPicked', value)} // Update field value on change
-    style={{ width: '100%' }} // Make input full width
-    parser={(value) => value.replace(/\D/g, '')} // Ensure only numbers are entered
-    onKeyPress={(e) => {
-      if (!/[0-9]/.test(e.key)) {
-        e.preventDefault(); // Prevent non-numeric input
-      }
-    }}
-    onBlur={(e) => {
-      const value = e.target.value;
-      // Clear input if it's invalid on blur (less than 1)
-      if (value && value < 1) {
-        form.setFieldsValue({ treesPicked: undefined });
-      }
-    }}
-  />
-</Form.Item>
-
+              <Form.Item
+                label="Trees Picked"
+                name="treesPicked"
+                rules={[
+                  {
+                    required: true,
+                    message: "Number of trees picked is required!",
+                  },
+                ]}
+              >
+                <InputNumber
+                  placeholder="Enter Number of Trees Picked"
+                  min={1} // Minimum value set to 1
+                  max={100000000}
+                  disabled={
+                    !formData.harvestdate ||
+                    !formData.fieldNumber ||
+                    !formData.cropType ||
+                    !formData.quantity
+                  } // Disable based on other fields
+                  onChange={(value) => handleFieldChange("treesPicked", value)} // Update field value on change
+                  style={{ width: "100%" }} // Make input full width
+                  parser={(value) => value.replace(/\D/g, "")} // Ensure only numbers are entered
+                  onKeyPress={(e) => {
+                    if (!/[0-9]/.test(e.key)) {
+                      e.preventDefault(); // Prevent non-numeric input
+                    }
+                  }}
+                  onPaste={(e) => e.preventDefault()} // Prevent pasting
+                  onBlur={(e) => {
+                    const value = e.target.value;
+                    // Clear input if it's invalid on blur (less than 1)
+                    if (value && value < 1) {
+                      form.setFieldsValue({ treesPicked: undefined });
+                    }
+                  }}
+                />
+              </Form.Item>
 
               <Form.Item
                 label="Storage Location"
                 name="storageLocation"
-                rules={[{ required: true, message: "Please select a field number!" }]}
+                rules={[
+                  { required: true, message: "Please select a field number!" },
+                ]}
               >
-                <Select placeholder="Select a Storage Location" 
-               disabled={!formData.harvestdate || !formData.fieldNumber || !formData.cropType || !formData.quantity || !formData.treesPicked}
-                onChange={(value) => handleFieldChange('storageLocation', value)}
-                style={{ width: '100%' }} // Enable only when harvest date is selected
-              >
+                <Select
+                  placeholder="Select a Storage Location"
+                  disabled={
+                    !formData.harvestdate ||
+                    !formData.fieldNumber ||
+                    !formData.cropType ||
+                    !formData.quantity ||
+                    !formData.treesPicked
+                  }
+                  onChange={(value) =>
+                    handleFieldChange("storageLocation", value)
+                  }
+                  style={{ width: "100%" }} // Enable only when harvest date is selected
+                >
                   <Option value="LL1">LL1</Option>
                   <Option value="LL2">LL2</Option>
                   <Option value="LL3">LL3</Option>
@@ -279,7 +301,20 @@ const AddSchedule = () => {
                 </Select>
               </Form.Item>
               <Form.Item>
-                <Button type="primary" htmlType="submit" block loading={loading} disabled={!formData.harvestdate || !formData.fieldNumber || !formData.cropType || !formData.quantity || !formData.treesPicked || !formData.storageLocation}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  block
+                  loading={loading}
+                  disabled={
+                    !formData.harvestdate ||
+                    !formData.fieldNumber ||
+                    !formData.cropType ||
+                    !formData.quantity ||
+                    !formData.treesPicked ||
+                    !formData.storageLocation
+                  }
+                >
                   Add Records
                 </Button>
               </Form.Item>
