@@ -217,27 +217,6 @@ const TransactionTable = () => {
       sorter: (a, b) => new Date(a.date) - new Date(b.date),
     },
     {
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
-      sorter: (a, b) => a.type.localeCompare(b.type),
-      render: (text) => (
-        <div
-          style={{
-            borderLeft: text === "income" ? "5px solid green" : "5px solid red",
-            paddingLeft: "10px",
-          }}
-        >
-          {text}
-        </div>
-      ),
-    },
-    {
-      title: "Sub Type",
-      dataIndex: "subtype",
-      key: "subtype",
-    },
-    {
       title: "Description",
       dataIndex: "description",
       key: "description",
@@ -248,16 +227,18 @@ const TransactionTable = () => {
       key: "payer_payee",
     },
     {
-      title: "Method",
-      dataIndex: "method",
-      key: "method",
+      title: "Income",
+      dataIndex: "income",
+      key: "income",
+      render: (text, record) => (record.type === "income" ? record.amount.toFixed(2) : "-"),
+      sorter: (a, b) => (a.type === "income" ? a.amount : 0) - (b.type === "income" ? b.amount : 0),
     },
     {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
-      render: (text) => <>{text.toFixed(2)}</>,
-      sorter: (a, b) => a.amount - b.amount,
+      title: "Expense",
+      dataIndex: "expense",
+      key: "expense",
+      render: (text, record) => (record.type === "expense" ? record.amount.toFixed(2) : "-"),
+      sorter: (a, b) => (a.type === "expense" ? a.amount : 0) - (b.type === "expense" ? b.amount : 0),
     },
     {
       title: "Actions",
