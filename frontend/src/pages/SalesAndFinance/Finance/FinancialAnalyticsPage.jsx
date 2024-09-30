@@ -62,6 +62,7 @@ const FinancialAnalyticsPage = () => {
 export default FinancialAnalyticsPage
  */
 
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Header from "../../../components/Header";
 import Sidebar from "../../../components/Sidebar";
@@ -78,7 +79,20 @@ import AnalyticsCashbook from '../../../components/Sales_and_Finance/Finance/Ana
 import AnalyticsTransactionTable from '../../../components/Sales_and_Finance/Finance/AnalyticsTransactionTable';
 import AnalyticsSummaryCard from '../../../components/Sales_and_Finance/Finance/AnalyticsSummaryCard';
 
+import NewLoadingScreen from '../../../components/LoadingDots'
+
 const FinancialAnalyticsPage = () => {
+  const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      // Simulate loading process (e.g., API calls, component mounting)
+      setTimeout(() => {
+        setLoading(false); // Once the components or data are loaded
+      }, 2000); // Adjust the delay as needed
+    }, []);
+  
+    if (loading) return <NewLoadingScreen />;
+    
   return (
     <div>
        <Header />

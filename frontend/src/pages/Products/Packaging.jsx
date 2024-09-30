@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Input, DatePicker, Select, Form, notification, Divider, Typography, Space } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, QrcodeOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, DeleteOutlined, QrcodeOutlined, FilePdfOutlined } from '@ant-design/icons';
 import { Table } from 'antd';
 import { QRCodeCanvas } from 'qrcode.react';
 import PackagingInstructions from '../../components/Products/PackagingInstructions';
@@ -68,7 +68,7 @@ const Packaging = () => {
   return (
     <div style={{ padding: '24px' }}>
       {/* Packaging Management Section */}
-      <Title level={3} style={{ marginBottom: '24px', fontWeight: 'bold' }}>Packaging Management</Title>
+      <Title level={3} style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>Packaging Management</Title>
       
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
         <PackageOverviewChart data={performanceMetrics} />
@@ -82,12 +82,7 @@ const Packaging = () => {
         type="primary"
         icon={<PlusOutlined />}
         onClick={() => showModal()}
-        style={{
-          marginBottom: '24px',
-          backgroundColor: '#1D6660',
-          borderColor: '#1D6660',
-          fontWeight: 'bold'
-        }}
+        style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
       >
         Add Packaging
       </Button>

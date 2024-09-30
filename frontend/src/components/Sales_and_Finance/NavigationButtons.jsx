@@ -20,7 +20,7 @@ const NavigationButtons = () => {
   };
   
   return (
-    <div className="sticky w-screen bg-gray-100 bg-opacity-50 border-b backdrop-blur top-16">
+    <div className="sticky w-full bg-opacity-50 border-b bgf-gray-100 backdrop-blur top-16">
       <header>
         <nav aria-label="Top">
           <div className="border-gray-200">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
@@ -9,6 +9,8 @@ import NavigationButtons from "../../../components/Sales_and_Finance/NavigationB
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
 
+import NewLoadingScreen from '../../../components/LoadingDots'
+
 // import FinanceNavigation from "../../../components/finances/FinanceNavigation.js";
 
 import {useNavigate} from "react-router-dom";
@@ -17,7 +19,18 @@ import { useSnackbar } from 'notistack';
 const AddTransactionPage = () => {
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
-    const [loading, setLoading] = useState(false);
+
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      // Simulate loading process (e.g., API calls, component mounting)
+      setTimeout(() => {
+        setLoading(false); // Once the components or data are loaded
+      }, 2000); // Adjust the delay as needed
+    }, []);
+  
+    if (loading) return <NewLoadingScreen />;
+
   return (
     <div>
     <Header />

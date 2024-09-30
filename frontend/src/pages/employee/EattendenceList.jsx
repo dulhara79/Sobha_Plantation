@@ -5,12 +5,12 @@ import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import React from "react";
 import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
 import EattendenceTable from "../../components/Employee/EattendenceTable";
+import Breadcrumbs from "../../components/Employee/Breadcrumbss";
 
-export default function EditTaskPage() {
+export default function EattendenceList() {
   const breadcrumbItems = [
-    { name: "Employees", href: "/employees/home" },
-    { name: "Assign Tasks", href: "/employees/tasks" },
-    { name: "Edit Task Details", href: "/employees/tasks/editTasks" },
+    { name: "Employee", href: "/employees/home" },
+    { name: "Attendance Marker", href: "/employees/attendance" },
   ];
 
   return (
@@ -19,15 +19,8 @@ export default function EditTaskPage() {
       <Sidebar />
 
       <div className={`ml-[300px]`}>
-        <Breadcrumb
-          items={[
-            {
-              href: "",
-              title: <HomeOutlined />,
-            },
-          ]}
-        />
         <EmployeeNavbar />
+        <Breadcrumbs items={breadcrumbItems} />
         <EattendenceTable />
       </div>
     </div>

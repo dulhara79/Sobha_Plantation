@@ -53,6 +53,7 @@ const EditTask = () => {
           id: employee._id,
           name: `${employee.firstName} ${employee.lastName}`,
         }));
+
         setEmployees(formattedEmployees);
       })
       .catch((error) => {
@@ -126,7 +127,11 @@ const EditTask = () => {
         (employee) => employee.id === value
       );
       if (selectedEmployee) {
-        setFormData({ ...formData, emp_id: value, emp_name: selectedEmployee.name });
+        setFormData({
+          ...formData,
+          emp_id: value,
+          emp_name: selectedEmployee.name,
+        });
       }
     }
   };
@@ -152,7 +157,6 @@ const EditTask = () => {
               {/* Employee Name Field */}
               <div className="col-span-full">
                 <label className="block text-sm font-medium leading-6 text-black">
-
                   Employee Name
                 </label>
                 <div className="mt-2">
@@ -161,15 +165,18 @@ const EditTask = () => {
                     value={formData.emp_id}
                     onChange={handleInputChange}
                     className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-
                     required
                   >
-                    <option value="">Select an employee</option>
-                    {employees.map((employee) => (
-                      <option key={employee.id} value={employee.id}>
-                        {employee.name}
-                      </option>
-                    ))}
+                    <option value={formData.emp_id}>
+                      {formData.emp_name || "Select an employee"}
+                    </option>
+                    {employees
+                      .filter((employee) => employee.id !== formData.emp_id) // Filter out current employee from the dropdown list
+                      .map((employee) => (
+                        <option key={employee.id} value={employee.id}>
+                          {employee.name}
+                        </option>
+                      ))}
                   </select>
                 </div>
               </div>
@@ -177,7 +184,6 @@ const EditTask = () => {
               {/* Other Fields */}
               <div className="col-span-full">
                 <label className="block text-sm font-medium leading-6 text-black">
-
                   Task
                 </label>
                 <div className="mt-2">
@@ -187,7 +193,6 @@ const EditTask = () => {
                     value={formData.task}
                     onChange={handleInputChange}
                     className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
-
                       errors.task ? "border-red-500" : ""
                     }`}
                     required
@@ -199,7 +204,6 @@ const EditTask = () => {
               </div>
               <div className="col-span-full">
                 <label className="block text-sm font-medium leading-6 text-black">
-
                   Assign Date
                 </label>
                 <div className="mt-2">
@@ -209,14 +213,12 @@ const EditTask = () => {
                     value={formData.assign_date}
                     onChange={handleInputChange}
                     className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-
                     required
                   />
                 </div>
               </div>
               <div className="col-span-full">
                 <label className="block text-sm font-medium leading-6 text-black">
-
                   Due Date
                 </label>
                 <div className="mt-2">
@@ -226,7 +228,6 @@ const EditTask = () => {
                     value={formData.due_date}
                     onChange={handleInputChange}
                     className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
-
                       errors.due_date ? "border-red-500" : ""
                     }`}
                     required
@@ -238,7 +239,6 @@ const EditTask = () => {
               </div>
               <div className="col-span-full">
                 <label className="block text-sm font-medium leading-6 text-black">
-
                   Task Description
                 </label>
                 <div className="mt-2">
@@ -248,14 +248,12 @@ const EditTask = () => {
                     onChange={handleInputChange}
                     rows={4}
                     className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-
                     required
                   />
                 </div>
               </div>
               <div className="col-span-full">
                 <label className="block text-sm font-medium leading-6 text-black">
-
                   Task Status
                 </label>
                 <div className="mt-2">
@@ -275,7 +273,7 @@ const EditTask = () => {
                 </div>
               </div>
             </div>
-          </div>y
+          </div>
           <div className="flex justify-end space-x-4">
             <button
               type="button"
@@ -287,12 +285,10 @@ const EditTask = () => {
             <button
               type="submit"
               className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-
               disabled={isSubmitting}
             >
               {isSubmitting ? "Updating..." : "Update Task"}
             </button>
-
           </div>
         </div>
       </form>

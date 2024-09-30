@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Form, Input, Button, notification } from 'antd';
+import { Form, Input, Button, notification, InputNumber } from 'antd';
+import Swal from 'sweetalert2';
 
 const EditPrice = () => {
   const { id } = useParams();
@@ -17,7 +18,7 @@ const EditPrice = () => {
           ...data,
         });
       } catch (error) {
-        console.error("Error fetching labeling price:", error); // Detailed error log
+        console.error("Error fetching labeling price:", error);
         notification.error({
           message: 'Error',
           description: 'Failed to fetch labeling price details.',
@@ -31,13 +32,10 @@ const EditPrice = () => {
   const handleSubmit = async (values) => {
     try {
       await axios.put(`http://localhost:5000/api/labeling-prices/${id}`, values);
-      notification.success({
-        message: 'Success',
-        description: 'Labeling price updated successfully!',
-      });
+      Swal.fire("Success", "Unit price updated successfully!", "success");
       navigate('/products/packaging-labeling/labeling');
     } catch (error) {
-      console.error("Error updating labeling price:", error); // Detailed error log
+      console.error("Error updating labeling price:", error);
       notification.error({
         message: 'Error',
         description: 'Failed to update labeling price.',
@@ -47,6 +45,15 @@ const EditPrice = () => {
 
   const handleCancel = () => {
     navigate('/products/packaging-labeling/labeling');
+  };
+
+  const handleUnitPriceChange = (value) => {
+    // If value is less than 0, set to 0
+    if (value < 0) {
+      form.setFieldsValue({ unitPrice: 0 });
+    } else {
+      form.setFieldsValue({ unitPrice: value });
+    }
   };
 
   return (
@@ -61,17 +68,46 @@ const EditPrice = () => {
           <Form.Item
             label="Product Type"
             name="productType"
-            rules={[{ required: true, message: 'Please input the product type!' }]}
+            rules={[{ required: true, message: 'Product type cannot be changed!' }]}
           >
-            <Input placeholder="Enter product type" />
+            <Input placeholder="Enter product type" disabled />
           </Form.Item>
+          
           <Form.Item
-            label="Unit Price (Rs)"
-            name="unitPrice"
-            rules={[{ required: true, message: 'Please input the unit price!' }]}
-          >
-            <Input type="number" placeholder="Enter unit price" />
-          </Form.Item>
+  label="Unit Price (Rs)"
+  name="unitPrice"
+  rules={[
+    { required: true, message: 'Please input the unit price!' },
+    {
+      type: 'number',
+      min: 0,
+      message: 'Unit price cannot be negative!',
+    },
+  ]}
+>
+  <InputNumber
+    placeholder="Enter unit price"
+    min={0} // Set minimum value to 0
+    style={{ width: '100%' }}
+    onChange={(value) => {
+      // If the value is not a valid number, set to undefined
+      if (isNaN(value)) {
+        form.setFieldsValue({ unitPrice: undefined });
+      } else {
+        // If the value is a valid number, set it to the form
+        form.setFieldsValue({ unitPrice: value < 0 ? 0 : value });
+      }
+    }} 
+    onBlur={(e) => {
+      const value = e.target.value;
+      // Clear input if invalid after focus loss
+      if (value && value < 0) {
+        form.setFieldsValue({ unitPrice: undefined });
+      }
+    }}
+  />
+</Form.Item>
+
           <Form.Item
             label="Type Unit"
             name="typeUnit"
@@ -81,8 +117,10 @@ const EditPrice = () => {
           </Form.Item>
           <Form.Item>
             <div className="flex justify-between">
-              <Button type="primary" htmlType="submit" style={{ width: '48%' }}>
-                Save
+              <Button type="primary" htmlType="submit"
+                style={{ width: '48%', backgroundColor: '#1D6660', borderColor: '#1D6660' }}
+              >
+                Update price
               </Button>
               <Button type="default" onClick={handleCancel} style={{ width: '48%' }}>
                 Cancel
