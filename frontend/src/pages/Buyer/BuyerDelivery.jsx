@@ -12,6 +12,7 @@ const AddDeliveryRecords = () => {
   const [loading, setLoading] = useState(false);
 
   // State to track which fields are enabled
+  
   const [isLastNameEnabled, setIsLastNameEnabled] = useState(false);
   const [isEmailEnabled, setIsEmailEnabled] = useState(false);
   const [isAddressEnabled, setIsAddressEnabled] = useState(false);
@@ -46,6 +47,18 @@ const AddDeliveryRecords = () => {
     {
       pattern: /^[0-9]*$/,
       message: "Only numbers are allowed.",
+    },
+    {
+      required: true,
+      message: "This field is required.",
+    },
+  ];
+
+  // Phone rule with exactly 10 digits required
+  const phoneRule = [
+    {
+      pattern: /^[0-9]{10}$/,
+      message: "Phone number must be exactly 10 digits.",
     },
     {
       required: true,
@@ -115,7 +128,45 @@ const AddDeliveryRecords = () => {
   };
 
   const handleCancel = () => {
-    navigate("/BuyerDeliveryTable");
+    navigate("/Bdeliverytable");
+  };
+
+  // Helper functions to lock key presses for specific fields
+  const restrictInputToNumbers = (e) => {
+    const key = e.key;
+    if (!/[0-9]/.test(key)) {
+      e.preventDefault();
+    }
+  };
+
+  const restrictInputToLetters = (e) => {
+    const key = e.key;
+    if (!/[a-zA-Z\s]/.test(key)) {
+      e.preventDefault();
+    }
+  };
+  const restrictInputToAlphanumeric = (e) => {
+    const key = e.key;
+    // Allow only letters (a-z, A-Z), numbers (0-9), and spaces
+    if (!/^[a-zA-Z0-9\s]*$/.test(key)) {
+      e.preventDefault();
+    }
+  };
+  
+  // To prevent non-numeric values from being pasted into numeric fields
+  const preventNonNumericPaste = (e) => {
+    const clipboardData = e.clipboardData.getData("Text");
+    if (!/^[0-9]*$/.test(clipboardData)) {
+      e.preventDefault();
+    }
+  };
+
+  // To prevent non-letter values from being pasted into letter-only fields
+  const preventNonAlphabeticPaste = (e) => {
+    const clipboardData = e.clipboardData.getData("Text");
+    if (!/^[a-zA-Z\s]*$/.test(clipboardData)) {
+      e.preventDefault();
+    }
   };
 
   return (
@@ -166,10 +217,13 @@ const AddDeliveryRecords = () => {
                 label="First Name"
                 name="firstName"
                 rules={alphabeticRule}
+                
               >
                 <Input 
                   placeholder="Enter first name" 
                   onChange={handleFirstNameChange} 
+                  onKeyPress={restrictInputToLetters} // Only allow letters
+                onPaste={preventNonAlphabeticPaste} // Prevent non-letter paste
                 />
               </Form.Item>
 
@@ -182,6 +236,8 @@ const AddDeliveryRecords = () => {
                   placeholder="Enter last name"
                   onChange={handleLastNameChange}
                   disabled={!isLastNameEnabled}
+                  onKeyPress={restrictInputToLetters} // Only allow letters
+                  onPaste={preventNonAlphabeticPaste} // Prevent non-letter paste
                 />
               </Form.Item>
 
@@ -239,6 +295,8 @@ const AddDeliveryRecords = () => {
                   placeholder="Enter your country"
                   onChange={handleCountryChange}
                   disabled={!isCountryEnabled}
+                  onKeyPress={restrictInputToLetters} // Only allow letters
+                  onPaste={preventNonAlphabeticPaste} // Prevent non-letter paste
                 />
               </Form.Item>
 
@@ -251,33 +309,42 @@ const AddDeliveryRecords = () => {
                   placeholder="Enter your postal code"
                   onChange={handlePostalCodeChange}
                   disabled={!isPostalCodeEnabled}
+                  onKeyPress={restrictInputToNumbers} // Only allow numbers
+                  onPaste={preventNonNumericPaste} // Prevent non-numeric paste
                 />
               </Form.Item>
 
               <Form.Item
                 label="Phone"
                 name="phone"
-                rules={numericRule}
+                rules={phoneRule}
               >
                 <Input
                   placeholder="Enter your phone number"
                   disabled={!isPhoneEnabled}
+                  onKeyPress={restrictInputToNumbers} // Only allow numbers
+                  onPaste={preventNonNumericPaste} // Prevent non-numeric paste
                 />
               </Form.Item>
 
-              <div className="flex justify-center mt-4 space-x-4">
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  style={{ backgroundColor: "#236A64", color: "#fff" }}
-                >
-                  Submit
-                </Button>
-                <Button type="default" htmlType="button" onClick={handleCancel}>
-                  Cancel
-                </Button>
-              </div>
+              <Form.Item>
+  <Button
+    type="primary"
+    htmlType="submit"
+    loading={loading}
+    style={{ backgroundColor: "#236A64", color: "#fff", padding: '0 24px' }} // Padding to adjust button width
+  >
+    Submit
+  </Button>
+  <Button
+    type="default"
+    onClick={handleCancel}
+    style={{ marginLeft: '16px', padding: '0 24px' }} // Add space between buttons and padding
+  >
+    Cancel
+  </Button>
+</Form.Item>
+
             </Form>
           </div>
         </div>
