@@ -48,7 +48,7 @@ const PackageOverviewChart = ({ data }) => {
       },
     },
     animation: {
-      duration: 1500, // Duration of the chart animation
+      duration: 2500, // Duration of the chart animation
       easing: 'easeInOutCubic', // Easing effect for animation
     },
   };

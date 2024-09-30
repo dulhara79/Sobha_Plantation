@@ -3,14 +3,24 @@ import Sidebar from "../../components/Sidebar";
 import { Breadcrumb } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 
-import React from "react";
+import React, {useState, useEffect}  from "react";
 import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
 import GetEmpAttendance from "../../components/Employee/GetEmpAttendance";
 import Breadcrumbs from "../../components/Employee/Breadcrumbss";
 
 import { SnackbarProvider } from "notistack";
 
-export default function GetAttendance() {
+import NewLoadingScreen from "../../components/LoadingDots";
+  const GetAttendance = () => {
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+      // Simulate loading process (e.g., API calls, component mounting)
+      setTimeout(() => {
+        setLoading(false); // Once the components or data are loaded
+      }, 2000); // Adjust the delay as needed
+    }, []);
+  
+    if (loading) return <NewLoadingScreen />;
   const breadcrumbItems = [
     { name: "Employee", href: "/employees/home" },
     { name: "Attendance Marker", href: "/employees/attendance" },
@@ -31,4 +41,5 @@ export default function GetAttendance() {
       </div>
     </SnackbarProvider>
   );
-}
+};
+export default GetAttendance;

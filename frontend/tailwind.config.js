@@ -109,6 +109,9 @@ module.exports = {
       "28xl": "47px",
       "8xl": "27px",
       "17xl": "36px",
+      '10xl': '8rem',   // 128px
+        '11xl': '10rem',   // 160px
+        '90px': '90px',
       inherit: "inherit",
     },
     screens: {

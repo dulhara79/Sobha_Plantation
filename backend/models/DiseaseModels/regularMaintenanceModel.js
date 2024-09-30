@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const maintenanceSchema = new mongoose.Schema({
+const regularMaintenanceSchema = new mongoose.Schema({
     dateOfMaintenance: {
     type: Date,
     required: true,
@@ -25,4 +25,4 @@ const maintenanceSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("maintenanceRecords", maintenanceSchema);
+module.exports = mongoose.model("regularMaintenanceRecords", regularMaintenanceSchema);

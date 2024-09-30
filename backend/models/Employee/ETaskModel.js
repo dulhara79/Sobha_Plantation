@@ -30,7 +30,7 @@ const ETaskSchema = new mongoose.Schema({
   task_status: {
     type: String,
     required: true,
-    enum: ['Not Started', 'In Progress', 'Completed'],
+    enum: ['Pending', 'In Progress', 'Completed'],
   },
 });
 module.exports = mongoose.model('ETasks', ETaskSchema);

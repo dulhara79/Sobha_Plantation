@@ -14,6 +14,7 @@ const AddCoconutDiseases = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [fieldValidity, setFieldValidity] = useState({
     dateOfInspection: false,
@@ -43,7 +44,7 @@ const AddCoconutDiseases = () => {
 
   const alphabeticNumericRule = [
     {
-      pattern: /^[a-zA-Z0-9\s]*$/,
+      pattern: /^[a-zA-Z0-9\s%]*$/,
       message: "Only alphabetic characters and numbers are allowed.",
     },
     {
@@ -62,6 +63,40 @@ const AddCoconutDiseases = () => {
       message: "This field is required.",
     },
   ];
+
+  // Alphabetic characters only (A-Z, a-z, space)
+const handleAlphabeticKeyPress = (e) => {
+  const regex = /^[A-Za-z\s]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-alphabetic characters
+    setErrorMessage("Only alphabetic characters are allowed."); // Set error message
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
+// Numeric characters only (0-9)
+const handleNumericKeyPress = (e) => {
+  const regex = /^[0-9%]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-numeric characters
+    setErrorMessage("Only numeric characters are allowed.");
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
+// Alphanumeric characters only (A-Z, a-z, 0-9)
+const handleAlphanumericKeyPress = (e) => {
+  const regex = /^[A-Za-z0-9\s%]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-alphanumeric characters
+    setErrorMessage("Only alphanumeric characters are allowed.");
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
 
   const handleSubmit = async (values) => {
     try {
@@ -138,23 +173,23 @@ const AddCoconutDiseases = () => {
                 Treatments
               </Link>
               <Link
-                to="/pests-diseases"
+                to="/CoconutPests"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 Pests and Diseases
               </Link>
               <Link
-                to="/maintenance"
+                to="/RegularMaintenance"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 Maintenance
               </Link>
-              <Link
+              {/* <Link
                 to="/UserProfile"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 My Profile
-              </Link>
+              </Link> */}
             </div>
           </nav>
 
@@ -240,6 +275,7 @@ const AddCoconutDiseases = () => {
                 <Input
                   placeholder="Enter identified pest"
                   disabled={!fieldValidity.sectionOfLand}
+                  onKeyPress={handleAlphabeticKeyPress}
                 />
               </Form.Item>
 
@@ -251,6 +287,7 @@ const AddCoconutDiseases = () => {
                 <Input
                   placeholder="Enter identified disease"
                   disabled={!fieldValidity.identifiedPest}
+                  onKeyPress={handleAlphabeticKeyPress}
                 />
               </Form.Item>
 
@@ -262,6 +299,7 @@ const AddCoconutDiseases = () => {
                 <Input
                   placeholder="Enter name of inspector"
                   disabled={!fieldValidity.identifiedDisease}
+                  onKeyPress={handleAlphabeticKeyPress}
                 />
               </Form.Item>
 
@@ -273,6 +311,7 @@ const AddCoconutDiseases = () => {
                 <Input
                   placeholder="Enter the inspection result"
                   disabled={!fieldValidity.inspectedBy}
+                  onKeyPress={handleAlphanumericKeyPress}
                 />
               </Form.Item>
 

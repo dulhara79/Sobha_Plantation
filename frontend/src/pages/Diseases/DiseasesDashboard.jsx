@@ -48,7 +48,7 @@ const DiseasesDashboard = () => {
         </button>
         {/* Navigation Items */}
         <div className="flex space-x-4">
-          <Link to="/diseases" className="text-[#236A64] font-semibold">
+          <Link to="/diseases" className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold">
             Home
           </Link>
           <Link
@@ -70,17 +70,17 @@ const DiseasesDashboard = () => {
             Pests and Diseases
           </Link>
           <Link
-            to="/Maintenance"
+            to="/RegularMaintenance"
             className="text-[#3CCD65] hover:text-[#2b8f57]"
           >
             Maintenance
           </Link>
-          <Link
+          {/* <Link
             to="/UserProfile"
             className="text-[#3CCD65] hover:text-[#2b8f57]"
           >
             My Profile
-          </Link>
+          </Link> */}
         </div>
       </nav>
 
@@ -149,7 +149,7 @@ const DiseasesDashboard = () => {
 
           {/* Second Row: Functions Overview */}
           <Link
-            to="/Maintenance"
+            to="/RegularMaintenance"
             className="bg-[#7EF486] p-8 rounded-lg text-center hover:bg-gradient-to-r from-yellow-300  via-white to-green-500 transition cursor-pointer"
           >
             <h1 className="text-3xl font-bold mb-2">Maintenance Activities</h1>

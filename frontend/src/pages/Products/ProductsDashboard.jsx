@@ -10,7 +10,8 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import CollectionsSharpIcon from '@mui/icons-material/CollectionsSharp';
 import DateTimeDisplay from '../../components/Products/DateTimeDisplay';
-import PieChartComponent from '../../components/Products/PieChartComponent'; // Import new PieChartComponent
+import PieChartComponent from '../../components/Products/PieChartComponent'; 
+import LoadingDot from '../../components/LoadingDots'; 
 
 const menuItems = [
   { name: 'HOME', path: '/products/productdashboard' },
@@ -22,7 +23,7 @@ const menuItems = [
 const ProductsDashboard = () => {
   const [scheduleData, setScheduleData] = useState([]);
   const [inspectionData, setInspectionData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); 
   const navigate = useNavigate();
   const location = useLocation();
   const activePage = location.pathname;
@@ -30,23 +31,27 @@ const ProductsDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const scheduleResponse = await axios.get('http://localhost:5000/api/production');
-        if (scheduleResponse.data.success) {
-          setScheduleData(scheduleResponse.data.data);
-        } else {
-          console.error('Error fetching schedule data');
-        }
+        // Simulate loading delay (optional)
+        setTimeout(async () => {
+          const scheduleResponse = await axios.get('http://localhost:5000/api/production');
+          if (scheduleResponse.data.success) {
+            setScheduleData(scheduleResponse.data.data);
+          } else {
+            console.error('Error fetching schedule data');
+          }
 
-        const inspectionResponse = await axios.get('http://localhost:5000/api/quality-control');
-        if (inspectionResponse.data.success) {
-          setInspectionData(inspectionResponse.data.data);
-        } else {
-          console.error('Error fetching inspection data');
-        }
+          const inspectionResponse = await axios.get('http://localhost:5000/api/quality-control');
+          if (inspectionResponse.data.success) {
+            setInspectionData(inspectionResponse.data.data);
+          } else {
+            console.error('Error fetching inspection data');
+          }
+
+          setLoading(false); // Stop loading after data fetch
+        }, 500); // Adjust the delay as needed
       } catch (error) {
         console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
+        setLoading(false); // Stop loading on error
       }
     };
 
@@ -88,6 +93,8 @@ const ProductsDashboard = () => {
   const onBackClick = useCallback(() => {
     navigate(-1);
   }, [navigate]);
+
+  if (loading) return <LoadingDot />; // Show loading screen if loading is true
 
   return (
     <div>

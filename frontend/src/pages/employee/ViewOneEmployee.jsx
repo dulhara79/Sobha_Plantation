@@ -82,85 +82,76 @@ export default function ViewOneEmpDetails() {
             <p className="mt-1 max-w-2xl text-sm leading-6 text-black">Personal details of the employee.</p>
           </div>
           <div id="print-area">
-            <div className="mt-6 border-t border-black">
-              <dl className="divide-y divide-black">
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-black">First Name</dt>
-                  <dd className="mt-1 text-sm leading-6 text-black sm:col-span-2 sm:mt-0">
-                    {RegistrationRecords.firstName}
-                  </dd>
-                </div>
+          <div className="mt-6 border-t border-black">
+  <div className="grid grid-cols-2 gap-6">
+    {/* Left Column */}
+    <dl className="divide-y divide-black">
+      <div className="px-4 py-6">
+        <dt className="text-sm font-medium leading-6 text-black">First Name</dt>
+        <dd className="mt-1 text-sm leading-6 text-black">{RegistrationRecords.firstName}</dd>
+      </div>
 
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-black">Last Name</dt>
-                  <dd className="mt-1 text-sm leading-6 text-black sm:col-span-2 sm:mt-0">
-                    {RegistrationRecords.lastName}
-                  </dd>
-                </div>
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-black">Date of Birth</dt>
-                  <dd className="mt-1 text-sm leading-6 text-black sm:col-span-2 sm:mt-0">
-                    {RegistrationRecords.dateOfBirth}
-                  </dd>
-                </div>
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-black">Gender</dt>
-                  <dd className="mt-1 text-sm leading-6 text-black sm:col-span-2 sm:mt-0">
-                    {RegistrationRecords.gender}
-                  </dd>
-                </div>
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-black">Contact Number</dt>
-                  <dd className="mt-1 text-sm leading-6 text-black sm:col-span-2 sm:mt-0">
-                    {RegistrationRecords.contactNumber}
-                  </dd>
-                </div>
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-black">Email</dt>
-                  <dd className="mt-1 text-sm leading-6 text-black sm:col-span-2 sm:mt-0">
-                    {RegistrationRecords.email}
-                  </dd>
-                </div>
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-black">NIC</dt>
-                  <dd className="mt-1 text-sm leading-6 text-black sm:col-span-2 sm:mt-0">
-                    {RegistrationRecords.nic}
-                  </dd>
-                </div>
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-black">Address</dt>
-                  <dd className="mt-1 text-sm leading-6 text-black sm:col-span-2 sm:mt-0">
-                    {RegistrationRecords.address}
-                  </dd>
-                </div>
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-black">Employee Type</dt>
-                  <dd className="mt-1 text-sm leading-6 text-black sm:col-span-2 sm:mt-0">
-                    {RegistrationRecords.employeeType}
-                  </dd>
-                </div>
+      <div className="px-4 py-6">
+        <dt className="text-sm font-medium leading-6 text-black">Date of Birth</dt>
+        <dd className="mt-1 text-sm leading-6 text-black">{new Date(RegistrationRecords.dateOfBirth).toLocaleDateString("en-GB")}</dd>
+      </div>
 
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-black">Designation</dt>
-                  <dd className="mt-1 text-sm leading-6 text-black sm:col-span-2 sm:mt-0">
-                    {RegistrationRecords.designation}
-                  </dd>
-                </div>
+      <div className="px-4 py-6">
+        <dt className="text-sm font-medium leading-6 text-black">Contact Number</dt>
+        <dd className="mt-1 text-sm leading-6 text-black">{RegistrationRecords.contactNumber}</dd>
+      </div>
 
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-black">Hired Date</dt>
-                  <dd className="mt-1 text-sm leading-6 text-black sm:col-span-2 sm:mt-0">
-                    {RegistrationRecords.hiredDate}
-                  </dd>
-                </div>
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-sm font-medium leading-6 text-black">Hourly Rate</dt>
-                  <dd className="mt-1 text-sm leading-6 text-black sm:col-span-2 sm:mt-0">
-                    {RegistrationRecords.hourlyRate}
-                  </dd>
-                </div>
-              </dl>
-            </div>
+      <div className="px-4 py-6">
+        <dt className="text-sm font-medium leading-6 text-black">NIC</dt>
+        <dd className="mt-1 text-sm leading-6 text-black">{RegistrationRecords.nic}</dd>
+      </div>
+
+      <div className="px-4 py-6">
+        <dt className="text-sm font-medium leading-6 text-black">Employee Type</dt>
+        <dd className="mt-1 text-sm leading-6 text-black">{RegistrationRecords.employeeType}</dd>
+      </div>
+
+      <div className="px-4 py-6">
+        <dt className="text-sm font-medium leading-6 text-black">Hired Date</dt>
+        <dd className="mt-1 text-sm leading-6 text-black">{new Date(RegistrationRecords.hiredDate).toLocaleDateString("en-GB")}</dd>
+      </div>
+    </dl>
+
+    {/* Right Column */}
+    <dl className="divide-y divide-black">
+      <div className="px-4 py-6">
+        <dt className="text-sm font-medium leading-6 text-black">Last Name</dt>
+        <dd className="mt-1 text-sm leading-6 text-black">{RegistrationRecords.lastName}</dd>
+      </div>
+
+      <div className="px-4 py-6">
+        <dt className="text-sm font-medium leading-6 text-black">Gender</dt>
+        <dd className="mt-1 text-sm leading-6 text-black">{RegistrationRecords.gender}</dd>
+      </div>
+
+      <div className="px-4 py-6">
+        <dt className="text-sm font-medium leading-6 text-black">Email</dt>
+        <dd className="mt-1 text-sm leading-6 text-black">{RegistrationRecords.email}</dd>
+      </div>
+
+      <div className="px-4 py-6">
+        <dt className="text-sm font-medium leading-6 text-black">Address</dt>
+        <dd className="mt-1 text-sm leading-6 text-black">{RegistrationRecords.address}</dd>
+      </div>
+
+      <div className="px-4 py-6">
+        <dt className="text-sm font-medium leading-6 text-black">Designation</dt>
+        <dd className="mt-1 text-sm leading-6 text-black">{RegistrationRecords.designation}</dd>
+      </div>
+
+      <div className="px-4 py-6">
+        <dt className="text-sm font-medium leading-6 text-black">Hourly Rate</dt>
+        <dd className="mt-1 text-sm leading-6 text-black">{RegistrationRecords.hourlyRate}</dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
           </div>
           <div className="mt-6 flex items-center justify-end gap-x-6">
             <button
