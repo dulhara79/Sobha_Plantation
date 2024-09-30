@@ -50,9 +50,11 @@ const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
 /**
  * buyer
  */
-const buyerRoutes = require("./routes/buyerRoute");
-const buyerDeliveryRoute = require("./routes/buyerDeliveryRoute");
-const buyerInfoRoute = require("./routes/buyerInfoRoute");
+// const buyerRoutes = require('./routes/buyerRoutes');
+const buyerRoutes = require('./routes/buyerRoute');
+const buyerDeliveryRoute = require('./routes/buyerDeliveryRoute'); 
+const buyerInfoRoute = require('./routes/buyerInfoRoute');
+// const buyerPreOrderRoutes = require('./routes/buyerPreOrderRoutes');
 
 /**
  * Sales and Finance Routes
@@ -131,8 +133,9 @@ app.use("/api/plant-growth", plantGrowthRoutes);
  * buyer
  */
 app.use("/api/broute", buyerRoutes);
-app.use("/api/buyerDelivery", buyerDeliveryRoute);
+app.use("/api/deliveryRecords", buyerDeliveryRoute); 
 app.use("/api/buyerInfo", buyerInfoRoute);
+// app.use('/api/preorders', buyerPreOrderRoutes);
 
 /**
  * Sales and Finance Routes
