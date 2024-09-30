@@ -93,7 +93,7 @@ export default function ViewOneEmpDetails() {
 
       <div className="px-4 py-6">
         <dt className="text-sm font-medium leading-6 text-black">Date of Birth</dt>
-        <dd className="mt-1 text-sm leading-6 text-black">{RegistrationRecords.dateOfBirth}</dd>
+        <dd className="mt-1 text-sm leading-6 text-black">{new Date(RegistrationRecords.dateOfBirth).toLocaleDateString("en-GB")}</dd>
       </div>
 
       <div className="px-4 py-6">
@@ -113,7 +113,7 @@ export default function ViewOneEmpDetails() {
 
       <div className="px-4 py-6">
         <dt className="text-sm font-medium leading-6 text-black">Hired Date</dt>
-        <dd className="mt-1 text-sm leading-6 text-black">{RegistrationRecords.hiredDate}</dd>
+        <dd className="mt-1 text-sm leading-6 text-black">{new Date(RegistrationRecords.hiredDate).toLocaleDateString("en-GB")}</dd>
       </div>
     </dl>
 
