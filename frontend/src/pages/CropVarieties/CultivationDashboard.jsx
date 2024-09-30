@@ -4,6 +4,7 @@ import Sidebar from '../../components/Sidebar';
 import { HomeOutlined } from '@ant-design/icons';
 import { Breadcrumb } from 'antd';
 import { Link } from 'react-router-dom';
+import FieldViewNavbar from '../../components/FieldView/FieldViewNavbar';
 
 const CultivationDashboard = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -43,10 +44,11 @@ const CultivationDashboard = () => {
             },
           ]}
         />
+        <FieldViewNavbar/>
 
         {/* Welcome Message */}
         <div className="bg-white shadow-md rounded-lg p-6 my-6">
-          <h2 className="text-2xl font-bold">👋 Welcome Piyushi,</h2>
+          <h2 className="text-2xl font-bold">👋 Welcome,</h2>
           <p className="text-gray-600">Today is {formattedDate}</p>
         </div>
 
