@@ -134,9 +134,11 @@ import Gallery from "./pages/Products/Gallery.jsx";
 import AddPackage from "./pages/Products/AddPackage.jsx";
 import EditPackage from "./pages/Products/EditPackage.jsx";
 
-// field view
+/**
+ * field view
+ */
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
-import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
+import VarietyCrop from "./pages/CropVarieties/VarietyCrop.jsx";
 import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
 import Seedling from "./pages/CropVarieties/Seedling.jsx";
 import Schedules from "./pages/CropVarieties/Schedules.jsx";
@@ -376,7 +378,7 @@ export default function App() {
       <Route path="/products/editPackage/:id" element={<EditPackage />} />
 
 
-      {/* field view  */}
+     {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="/varietyCrop" element={<VarietyCrop />} />
       <Route path="/cvForm" element={<CropVarietyForm />} />
