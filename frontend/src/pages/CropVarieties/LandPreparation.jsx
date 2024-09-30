@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Breadcrumb, message, Modal, Form, Input, Collapse } from "antd";
+import { Table, Button, Breadcrumb, message, Modal, Form, Input, Collapse, Select } from "antd";
 import { HomeOutlined, FilePdfOutlined, EditOutlined, LeftCircleOutlined } from "@ant-design/icons";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
@@ -11,6 +11,7 @@ import moment from 'moment'; // Add moment for date formatting
 import FieldViewNavbar from "../../components/FieldView/FieldViewNavbar";
 
 const { Panel } = Collapse;
+const { Option } = Select; // Import Option from Select
 
 const LandPreparation = () => {
   const [data, setData] = useState([]);
@@ -43,7 +44,7 @@ const LandPreparation = () => {
   const handleOk = () => {
     form.validateFields().then((values) => {
       const updatedRecord = { ...currentRecord, ...values };
-      
+
       axios.put(`http://localhost:5000/api/soil-tests/${currentRecord._id}`, updatedRecord)
         .then(response => {
           message.success("Record updated successfully");
@@ -63,6 +64,23 @@ const LandPreparation = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
     setCurrentRecord(null);
+  };
+
+  const determineNutrientLevels = (soilPH) => {
+    if (soilPH < 6) {
+      return "high"; // High nutrient levels for acidic soil
+    } else if (soilPH >= 6 && soilPH <= 7.5) {
+      return "medium"; // Medium nutrient levels for neutral soil
+    } else {
+      return "low"; // Low nutrient levels for alkaline soil
+    }
+  };
+
+  const handleSoilPHChange = (value) => {
+    if (value >= 0 && value <= 14) {
+      const nutrientLevel = determineNutrientLevels(value);
+      form.setFieldsValue({ nutrientLevels: nutrientLevel }); // Automatically set nutrient level
+    }
   };
 
   // Function to get image data URL for the logo
@@ -206,7 +224,6 @@ const LandPreparation = () => {
           ]}
         />
         <FieldViewNavbar/>
-        {/* Back Button */}
         <div className="mb-4">
           <LeftCircleOutlined onClick={() => navigate(-1)} style={{ fontSize: '24px', cursor: 'pointer' }} />
         </div>
@@ -214,41 +231,75 @@ const LandPreparation = () => {
           <h2 className="text-xl font-semibold">Land Preparation</h2>
         </div>
 
-        {/* Generate Report Button */}
         <div className="bg-white shadow-md rounded-lg p-4 my-4">
           <Button type="primary" icon={<FilePdfOutlined />} onClick={generatePDF}>
             Generate PDF Report
           </Button>
         </div>
 
-        {/* Pie Chart for Soil pH by Field Name */}
         <div className="bg-white shadow-md rounded-lg p-4 my-4" id="report-content">
           <h2 className="text-lg font-semibold">Soil pH Distribution by Field</h2>
           <Pie {...pieConfig} />
         </div>
 
-        {/* Table of Soil Tests */}
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
           <Table columns={columns} dataSource={data} rowKey="_id" loading={loading} pagination={false} bordered />
         </div>
 
-        {/* Modal for editing */}
         <Modal title="Edit Soil Test" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
           <Form form={form}>
-            <Form.Item name="soilPH" label="Soil pH">
-              <Input />
+            <Form.Item 
+              name="soilPH" 
+              label="Soil pH" 
+              rules={[{ required: true, message: 'Please input a valid Soil pH!' }]}
+            >
+              <Input 
+                type="number" 
+                min={0} 
+                max={14} 
+                step="0.1" 
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value);
+                  handleSoilPHChange(value);
+                }} 
+              />
             </Form.Item>
-            <Form.Item name="nutrientLevels" label="Nutrient Levels">
-              <Input />
+            
+            <Form.Item name="nutrientLevels" label="Nutrient Levels" rules={[{ required: true, message: 'Please select the nutrient levels!' }]}>
+            <Select disabled> {/* Disable the dropdown to prevent manual selection */}
+          <Select.Option value="high">High</Select.Option>
+          <Select.Option value="medium">Medium</Select.Option>
+          <Select.Option value="low">Low</Select.Option>
+        </Select>
             </Form.Item>
-            <Form.Item name="organicMatterContent" label="Organic Matter Content">
-              <Input />
+
+            <Form.Item name="organicMatterContent" label="Organic Matter Content" rules={[{ required: true, message: 'Please select the organic matter content!' }]}>
+              <Select>
+                <Select.Option value="high">High</Select.Option>
+                <Select.Option value="medium">Medium</Select.Option>
+                <Select.Option value="low">Low</Select.Option>
+              </Select>
             </Form.Item>
+
             <Form.Item name="soilType" label="Soil Type">
-              <Input />
+            <Select>
+        <Select.Option value="sandy">Sandy</Select.Option>
+        <Select.Option value="loamy">Loamy</Select.Option>
+        <Select.Option value="clay">Clay</Select.Option>
+        <Select.Option value="peat">Peat</Select.Option>
+        <Select.Option value="chalky">Chalky</Select.Option>
+        {/* Add more soil types as needed */}
+      </Select>
             </Form.Item>
+
             <Form.Item name="remarks" label="Remarks">
-              <Input />
+            <Input 
+    onKeyPress={(e) => {
+      if (/[0-9]/.test(e.key)) {
+        e.preventDefault();
+      }
+    }} 
+  />
             </Form.Item>
           </Form>
         </Modal>
