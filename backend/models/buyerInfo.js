@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const BuyerInfoSchema = new mongoose.Schema( 
+const BuyerInfoSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
@@ -10,29 +10,13 @@ const BuyerInfoSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    userName: {
-      type: String,
-      required: true,
-      default: "None",
-    },
-    Password: {
-      type: String,
-      required: true,
-      default: "None",
-    },
-    ConfirmPassword: {
-      type: String,
-      required: true,
-      default: "None",
-    },
     Gender: {
       type: String,
       required: true,
     },
     DOB: {
-      type: Date, // Changed to Date type for better handling
+      type: Date, 
       required: true,
-
     },
     Number: {
       type: Number,
@@ -48,11 +32,10 @@ const BuyerInfoSchema = new mongoose.Schema(
       unique: true,
       sparse: true,
     },
-    
   },
   {
     timestamps: false,
-  },
+  }
 );
 
 module.exports = mongoose.model("BuyerInfoRecords", BuyerInfoSchema);

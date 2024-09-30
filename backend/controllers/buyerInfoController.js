@@ -6,9 +6,6 @@ exports.createBuyerInfoRecords = async (req, res) => {
     const {
       firstName,
       lastName,
-      userName,
-      Password,
-      ConfirmPassword,
       Gender,
       DOB,
       Number,
@@ -16,7 +13,7 @@ exports.createBuyerInfoRecords = async (req, res) => {
     } = req.body;
 
     // Validate request
-    if (!firstName || !lastName || !userName || !Password || !ConfirmPassword || !Gender || !DOB || !Number || !email) {
+    if (!firstName || !lastName || !Gender || !DOB || !Number || !email) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -24,9 +21,6 @@ exports.createBuyerInfoRecords = async (req, res) => {
     const newRecord = new BuyerInfoRecords({
       firstName,
       lastName,
-      userName,
-      Password,
-      ConfirmPassword,
       Gender,
       DOB,
       Number,
@@ -76,20 +70,20 @@ exports.getBuyerInfoRecordsById = async (req, res) => {
 exports.updateBuyerInfoRecords = async (req, res) => {
     try {
         const { InfoId } = req.params;
-        const { firstName, lastName, userName, Password, ConfirmPassword, Gender, DOB, Number, email } = req.body;
+        const { firstName, lastName, Gender, DOB, Number, email } = req.body;
 
         if (!mongoose.Types.ObjectId.isValid(InfoId)) {
             return res.status(400).json({ message: "Invalid Info ID" });
         }
 
-        if (!firstName || !lastName || !email || !userName || !Password || !ConfirmPassword || !Gender || !DOB || !Number) {
+        if (!firstName || !lastName || !Gender || !DOB || !Number || !email) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
         // Update the Info record
         const updatedBuyerInfoRecord = await BuyerInfoRecords.findByIdAndUpdate(
             InfoId,
-            { firstName, lastName, userName, Password, ConfirmPassword, Gender, DOB: new Date(DOB), Number, email },
+            { firstName, lastName, Gender, DOB: new Date(DOB), Number, email },
             { new: true }
         );
 

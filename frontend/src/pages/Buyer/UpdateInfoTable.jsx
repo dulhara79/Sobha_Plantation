@@ -1,4 +1,4 @@
-
+////
 import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
@@ -18,17 +18,6 @@ const UpdateBuyerInfoRecords = () => {
   const [loading, setLoading] = useState(false);
 
   // Validation rules
-  const alphabeticNumericRule = [
-    {
-      pattern: /^[a-zA-Z0-9\s]*$/,
-      message: "Only alphabetic characters and numbers are allowed.",
-    },
-    {
-      required: true,
-      message: "This field is required.",
-    },
-  ];
-
   const alphabeticRule = [
     {
       pattern: /^[a-zA-Z\s]*$/,
@@ -52,29 +41,31 @@ const UpdateBuyerInfoRecords = () => {
   ];
 
   // Fetch the record data from the backend
-  useEffect(() => { 
+  useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         const response = await axios.get(`http://localhost:8090/api/buyerInfo/${id}`);
-        const data = response.data.BuyerInfoRecord
-        console.log("response.data: " + response.data.InfoRecord);
-        console.log(response.data.BuyerInfoRecord);
         
-        
-        
+        const data = response.data.BuyerInfoRecord;
+
+        if (!data) {
+          throw new Error("BuyerInfoRecord not found in response");
+        }
+
+        // Log the fetched data to debug
+        console.log("Fetched data: ", data);
+
         // Set form values with the fetched data
         form.setFieldsValue({
           firstName: data.firstName || "",
           lastName: data.lastName || "",
-          UserName: data.UserName || "",
-          Password: data.Password || "",
-          ConfirmPassword: data.ConfirmPassword || "",
           Gender: data.Gender || "",
-          DOB: data.DOB || "",
+          DOB: data.DOB ? moment(data.DOB) : null,
           Number: data.Number || "",
-            email: data.email || "",
+          email: data.email || "",
         });
+
         setLoading(false);
       } catch (error) {
         console.error("An error occurred while fetching data: ", error);
@@ -94,8 +85,17 @@ const UpdateBuyerInfoRecords = () => {
     try {
       setLoading(true);
 
+      // Ensure date format is correct before sending
+      const updatedValues = {
+        ...values,
+        DOB: values.DOB ? values.DOB.format('YYYY-MM-DD') : null,
+      };
+
+      // Log the values being sent to debug
+      console.log("Updating with values: ", updatedValues);
+
       // Make a PUT request to update the record
-      await axios.put(`http://localhost:8090/api/buyerInfo/${id}`, values);
+      await axios.put(`http://localhost:8090/api/buyerInfo/${id}`, updatedValues);
 
       notification.success({
         message: "Record Updated",
@@ -103,7 +103,7 @@ const UpdateBuyerInfoRecords = () => {
       });
 
       form.resetFields();
-      navigate("/BInfotable");
+      navigate("/BuyerInfoTable");
       setLoading(false);
     } catch (error) {
       console.error("An error occurred: ", error);
@@ -116,8 +116,9 @@ const UpdateBuyerInfoRecords = () => {
   };
 
   const handleCancel = () => {
-    navigate("/BInfotable");
+    navigate("/BuyerInfoTable");
   };
+
   const disabledDate = (current) => {
     return current && current > moment().endOf("day");
   };
@@ -171,18 +172,6 @@ const UpdateBuyerInfoRecords = () => {
                 <Input placeholder="Enter last name" />
               </Form.Item>
 
-              <Form.Item label="User Name" name="userName" rules={alphabeticRule}>
-                <Input placeholder="Enter User Name" />
-              </Form.Item>
-
-              <Form.Item label="Password" name="Password" rules={alphabeticNumericRule}>
-                <Input type="password" placeholder="Enter a Password" />
-              </Form.Item>
-
-              <Form.Item label="Confirm Password" name="ConfirmPassword" rules={alphabeticNumericRule}>
-                <Input type="password" placeholder="Confirm your Password" />
-              </Form.Item>
-
               <Form.Item label="Gender" name="Gender" rules={[{ required: true, message: "Please select your gender" }]}>
                 <Select placeholder="Select your Gender">
                   <Option value="male">Male</Option>
@@ -192,7 +181,7 @@ const UpdateBuyerInfoRecords = () => {
               </Form.Item>
 
               <Form.Item label="Date of Birth" name="DOB" rules={[{ required: true, message: "Please select your date of birth" }]}>
-              <DatePicker format="YYYY-MM-DD" disabledDate={disabledDate} disabled/>
+                <DatePicker format="YYYY-MM-DD" disabledDate={disabledDate} />
               </Form.Item>
 
               <Form.Item label="Number" name="Number" rules={numericRule}>
@@ -230,4 +219,3 @@ const UpdateBuyerInfoRecords = () => {
 };
 
 export default UpdateBuyerInfoRecords;
-
