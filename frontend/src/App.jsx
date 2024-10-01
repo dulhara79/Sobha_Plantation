@@ -226,7 +226,7 @@ export default function App() {
         element={<AddNewValuationPage />}
       />
       <Route
-        path="/salesAndFinance/finance/edit-valuation"
+        path="/salesAndFinance/finance/edit-valuation/:id"
         element={<EditValuationPage />}
       />
 
