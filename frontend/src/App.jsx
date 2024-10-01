@@ -1,7 +1,9 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
-// landing page and dashboard
+/**
+ * landing page and dashboard
+ */
 import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import LearnMore from './components/LearnMore';
@@ -21,12 +23,11 @@ import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 
 import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
-import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDisplay.jsx";
 import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
+import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDisplay.jsx";
 import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
-
-import AddNewValuationPage from "./pages/SalesAndFinance/Finance/AddNewValuationPage.jsx";
 import ValuationDashboardPage from "./pages/SalesAndFinance/Finance/ValuationDashboard.jsx";
+import AddNewValuationPage from "./pages/SalesAndFinance/Finance/AddNewValuationPage.jsx";
 import EditValuationPage from "./pages/SalesAndFinance/Finance/EditValuationPage.jsx";
 
 import Esalary from "./pages/SalesAndFinance/Finance/Esalary.jsx";
