@@ -37,7 +37,7 @@ const BuyerDeliveryTable = () => {
   // Fetch delivery records from API
   const fetchDeliveryRecords = async () => {
     try {
-      const response = await axios.get("http://localhost:8090/api/deliveryRecords");
+      const response = await axios.get("http://localhost:5000/api/deliveryRecords");
       setDeliveryRecords(response.data.data);
       setFilteredDeliveryRecords(response.data.data);
     } catch (error) {
@@ -90,7 +90,7 @@ const BuyerDeliveryTable = () => {
   // Delete delivery record
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:8090/api/deliveryRecords/${id}`);
+      const response = await axios.delete(`http://localhost:5000/api/deliveryRecords/${id}`);
       if (response.status === 200) {
         notification.success({
           message: "Success",

@@ -43,9 +43,9 @@ const AddHarvestSchedule = () => {
   const [numberOfWorkers, setnumberOfWorkers] = useState(false);
 
   // Function to disable past dates
-  const disablePastDates = (current) => {
-    // Disable past dates
-    return current && current < moment().startOf("nextweek");
+  const disablePastAndFutureDates = (current) => {
+    // Disable dates before today and after the end of the current year
+    return current && (current < moment().startOf('day') || current > moment().endOf('year'));
   };
   // Confirm submission
   const handleSubmit = async (values) => {
@@ -171,24 +171,24 @@ const AddHarvestSchedule = () => {
 
               {/* Harvest Date */}
               <Form.Item
-                label="Harvest Date"
-                name="harvestDate"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select the harvest date!",
-                  },
-                ]}
-              >
-                <DatePicker
-                  format="YYYY-MM-DD"
-                  disabledDate={disablePastDates}
-                  disabled={!formData.cropType} // Enable only when crop type is selected
-                  onChange={(date) => handleFieldChange("harvestDate", date)}
-                  style={{ width: "100%" }}
-                  inputReadOnly
-                />
-              </Form.Item>
+  label="Harvest Date"
+  name="harvestDate"
+  rules={[
+    {
+      required: true,
+      message: "Please select the harvest date!",
+    },
+  ]}
+>
+  <DatePicker
+    format="YYYY-MM-DD"
+    disabledDate={disablePastAndFutureDates}
+    disabled={!formData.cropType} // Enable only when crop type is selected
+    onChange={(date) => handleFieldChange("harvestDate", date)}
+    style={{ width: "100%" }}
+    inputReadOnly
+  />
+</Form.Item>
 
               {/* Start Time */}
               <Form.Item
