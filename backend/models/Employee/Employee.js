@@ -58,8 +58,8 @@ const EmployeeSchema = new mongoose.Schema({
   hiredDate: {
     type: Date,
     required: [true, 'Hired date is required'],
-    default: Date.now,  // Automatically set to the current date
-    immutable: true,    // Makes the field unchangeable
+    //default: Date.now,  // Automatically set to the current date
+   // immutable: true,    // Makes the field unchangeable
   },
   hourlyRate: {
     type: Number,
