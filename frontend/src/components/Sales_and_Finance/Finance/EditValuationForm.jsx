@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; 
 import { useNavigate, useParams } from "react-router-dom";
 import { SnackbarProvider, useSnackbar } from "notistack";
 import axios from "axios";
@@ -23,6 +23,7 @@ function EditValuationForm() {
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams();
 
+  // Fetch data for the form fields based on ID
   useEffect(() => {
     setLoading(true);
     axios
@@ -45,16 +46,19 @@ function EditValuationForm() {
       });
   }, [id]);
 
+  // Validation and submission handler for editing the valuation record
   const handleEditValuationRecord = async (e) => {
     e.preventDefault();
+    // Additional validation for positive values
     if (isNaN(quantity) || quantity <= 0 || isNaN(price) || price <= 0) {
       message.warning("Quantity and price must be positive numbers.");
       return;
     }
     if (!date || !type || !subtype || !quantity || !price || !description || !payerPayee || !appreciationOrDepreciation) {
-      message.warning("Please fill in all fields. The record will not be saved with incomplete data");
+      message.warning("Please fill in all fields. The record will not be saved with incomplete data.");
       return;
     }
+    
     const data = {
       date,
       type,
@@ -71,14 +75,55 @@ function EditValuationForm() {
       .then(() => {
         setLoading(false);
         message.success("Valuation record has successfully updated.");
-        navigate("/finances/valuation");
+        navigate("/salesAndFinance/finance/valuation-dashboard");
       })
       .catch((error) => {
         setLoading(false);
         message.error("Valuation record updating failed.");
         console.log(error);
-        navigate("/finances/valuation");
+        // navigate("/finances/valuation");
       });
+  };
+
+  // Validation for each input field
+  const handleQuantityChange = (e) => {
+    const value = e.target.value;
+    const filteredValue = value.replace(/[^0-9 ]/g, "");
+    if (filteredValue !== "" && filteredValue <= 100000) {
+      setQuantity(filteredValue);
+    }
+  };
+
+  const handlePriceChange = (e) => {
+    const value = e.target.value;
+    const filteredValue = value.replace(/[^0-9 ]/g, "");
+    if (filteredValue !== "" && filteredValue <= 10000000) {
+      setPrice(filteredValue);
+    }
+  };
+
+  const handleDescriptionChange = (e) => {
+    const value = e.target.value;
+    const filteredValue = value.replace(/[^a-zA-Z0-9 ]/g, "");
+    if (filteredValue.length <= 100) {
+      setDescription(filteredValue);
+    }
+  };
+
+  const handlePayerPayeeChange = (e) => {
+    const value = e.target.value;
+    const filteredValue = value.replace(/[^a-zA-Z ]/g, "");
+    if (filteredValue.length <= 100) {
+      setPayerPayee(filteredValue);
+    }
+  };
+
+  const handleAppreciationOrDepreciationChange = (e) => {
+    const value = e.target.value;
+    const filteredValue = value.replace(/[^0-9 ]/g, "");
+    if (filteredValue !== "" && filteredValue <= 100) {
+      setAppreciationOrDepreciation(filteredValue);
+    }
   };
 
   const handleTypeChange = (e) => {
@@ -109,7 +154,7 @@ function EditValuationForm() {
                 value={subtype}
                 onChange={setSubType}
                 className="w-full mt-2"
-                style={{ fontSize: '1rem' }} // Increase font size
+                style={{ fontSize: '1rem' }}
               >
                 {type === "asset" ? (
                   <>
@@ -139,7 +184,7 @@ function EditValuationForm() {
                 onChange={(date) => setDate(date)}
                 className="w-full mt-2"
                 disabledDate={(current) => current && current > moment().endOf('day')}
-                style={{ fontSize: '1rem' }} // Increase font size
+                style={{ fontSize: '1rem' }}
               />
             </div>
 
@@ -150,9 +195,9 @@ function EditValuationForm() {
                 id="quantity"
                 name="quantity"
                 value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
+                onChange={handleQuantityChange}
                 type="number"
-                style={{ fontSize: '1rem' }} // Increase font size
+                style={{ fontSize: '1rem' }}
               />
             </div>
 
@@ -163,9 +208,9 @@ function EditValuationForm() {
                 id="price"
                 name="price"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={handlePriceChange}
                 type="number"
-                style={{ fontSize: '1rem' }} // Increase font size
+                style={{ fontSize: '1rem' }}
               />
             </div>
 
@@ -177,8 +222,8 @@ function EditValuationForm() {
                 name="description"
                 rows={3}
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                style={{ fontSize: '1rem' }} // Increase font size
+                onChange={handleDescriptionChange}
+                style={{ fontSize: '1rem' }}
               />
             </div>
 
@@ -189,40 +234,29 @@ function EditValuationForm() {
                 type="text"
                 name="payer_payee"
                 value={payerPayee}
-                onChange={(e) => setPayerPayee(e.target.value)}
+                onChange={handlePayerPayeeChange}
                 id="payer_payee"
-                style={{ fontSize: '1rem' }} // Increase font size
+                style={{ fontSize: '1rem' }}
               />
             </div>
 
             {/* Percentage */}
             <div className="sm:col-span-2">
-              <label htmlFor="percentage" className="block text-sm font-medium text-gray-900">Percentage Change</label>
+              <label htmlFor="percentage" className="block text-sm font-medium text-gray-900">Appreciation / Depreciation %</label>
               <Input
-                type="text"
-                name="percentage"
+                id="appreciationOrDepreciation"
+                name="appreciationOrDepreciation"
                 value={appreciationOrDepreciation}
-                onChange={(e) => setAppreciationOrDepreciation(e.target.value)}
-                id="percentage"
-                style={{ fontSize: '1rem' }} // Increase font size
+                onChange={handleAppreciationOrDepreciationChange}
+                type="number"
+                style={{ fontSize: '1rem' }}
               />
             </div>
 
-            {/* Buttons */}
-            <div className="flex justify-end space-x-4 col-span-full">
-              <Button
-                type="button"
-                onClick={() => navigate(-1)}
-                className="text-white bg-red-600"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                className="text-white bg-lime-600"
-                loading={loading}
-              >
-                Update Valuation
+            {/* Submit Button */}
+            <div className="col-span-full">
+              <Button type="primary" loading={loading} htmlType="submit" className="w-full py-3">
+                Save Valuation Record
               </Button>
             </div>
           </div>
