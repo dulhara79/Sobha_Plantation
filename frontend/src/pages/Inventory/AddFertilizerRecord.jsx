@@ -109,16 +109,21 @@ const AddFertilizerRecord = () => {
 
           {/* Added Date */}
           <Form.Item
-            label="Added Date"
-            name="addeddate"
-            rules={[{ required: true, message: 'Please select the added date!' }]}
-          >
-            <DatePicker
-              format="YYYY-MM-DD"
-              disabledDate={disablePastDates}
-              disabled={!fertilizerTypeComplete}  // Enabled only when fertilizer/agrochemical type is selected
-            />
-          </Form.Item>
+  label="Added Date"
+  name="addeddate"
+  rules={[{ required: true, message: 'Please select the added date!' }]}
+>
+  <DatePicker
+    format="YYYY-MM-DD"
+    disabledDate={(current) => {
+      const today = moment().startOf('day');
+      const fiveDaysAgo = moment().subtract(5, 'days').startOf('day');
+      return current && (current < fiveDaysAgo || current > today);
+    }}
+    disabled={!fertilizerTypeComplete} // Enable only when equipment type is selected
+  />
+</Form.Item>
+  
 
            {/* Quantity */}
            <Form.Item
@@ -172,16 +177,21 @@ const AddFertilizerRecord = () => {
 
           {/* Expired Date */}
           <Form.Item
-            label="Expired Date"
-            name="expireddate"
-            rules={[{ required: true, message: 'Please select the expired date!' }]}
-          >
-            <DatePicker
-              format="YYYY-MM-DD"
-              disabledDate={disablePastDates}
-              disabled={!storageLocationComplete} // Enabled only when storage location is entered
-            />
-          </Form.Item>
+  label="Expired Date"
+  name="expireddate"
+  rules={[{ required: true, message: 'Please select the expired date!' }]}
+>
+  <DatePicker
+    format="YYYY-MM-DD"
+    disabledDate={(current) => {
+      const today = moment().startOf('day');
+      const threeYearsFromToday = moment().add(3, 'years').endOf('day');
+      return current && (current < today || current > threeYearsFromToday);
+    }}
+    disabled={!storageLocationComplete} // Enabled only when storage location is entered
+  />
+</Form.Item>
+
 
           {/* Status */}
           <Form.Item
