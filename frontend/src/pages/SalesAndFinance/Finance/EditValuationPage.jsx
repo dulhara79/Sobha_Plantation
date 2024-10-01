@@ -4,7 +4,7 @@ import { SnackbarProvider } from "notistack";
 import axios from "axios";
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
-import ValuationForm from "../../../components/Sales_and_Finance/Finance/ValuationForm";
+import EditValuationForm from "../../../components/Sales_and_Finance/Finance/EditValuationForm.jsx";
 import { message, Breadcrumb } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import NavigationButtons from "../../../components/Sales_and_Finance/NavigationButtons";
@@ -62,7 +62,7 @@ const AddNewValuationPage = () => {
             <h1 className="my-4 ml-20 text-3xl font-bold text-gray-800">
               Add New Valuation Record
             </h1>
-            <ValuationForm />
+            <EditValuationForm />
           </div>
         </div>
       </div>
