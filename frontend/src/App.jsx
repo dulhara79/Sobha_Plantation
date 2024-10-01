@@ -1,9 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
-/**
- * landing page and dashboard
- */
+// landing page and dashboard
 import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import LearnMore from './components/LearnMore';
@@ -23,11 +21,12 @@ import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 
 import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
-import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
 import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDisplay.jsx";
+import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
 import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
-import ValuationDashboardPage from "./pages/SalesAndFinance/Finance/ValuationDashboard.jsx";
+
 import AddNewValuationPage from "./pages/SalesAndFinance/Finance/AddNewValuationPage.jsx";
+import ValuationDashboardPage from "./pages/SalesAndFinance/Finance/ValuationDashboard.jsx";
 import EditValuationPage from "./pages/SalesAndFinance/Finance/EditValuationPage.jsx";
 
 import Esalary from "./pages/SalesAndFinance/Finance/Esalary.jsx";
@@ -54,13 +53,9 @@ import Eregistration from "./pages/employee/Eregistration.jsx";
 import EaddTask from "./pages/employee/EaddTask.jsx";
 import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
-import ViewTaskDetails from "./pages/employee/ViewTaskDetails.jsx";
 import GetAttendance from "./pages/employee/GetAttendance.jsx";
 import EmployeeList from "./pages/employee/EmployeeList.jsx";
 import EattendenceList from "./pages/employee/EattendenceList.jsx";
-import ViewOneAttendance from "./pages/employee/ViewOneAttendance.jsx";
-import  EditEmployeePage from "./pages/employee/EditEmployeePage.jsx";
-import ViewOneEmployee from "./pages/employee/ViewOneEmployee.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
@@ -159,7 +154,7 @@ import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
 
 // buyers
 // import Cart from "./pages/Buyer/Cart.jsx";
-import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
+impor tBuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
 import BuyerTable from "./pages/BuyerTable.jsx";
 import Profile from './components/Profile';
 import BuyerDashboard from './pages/Buyer/BuyerDashboard.jsx';
@@ -244,7 +239,7 @@ export default function App() {
         element={<AddNewValuationPage />}
       />
       <Route
-        path="/salesAndFinance/finance/edit-valuation"
+        path="/salesAndFinance/finance/edit-valuation/:id"
         element={<EditValuationPage />}
       />
 
@@ -302,19 +297,16 @@ export default function App() {
         element={<EditRequestPaymentRecord />}
       />
 
-      {/* employee */}        
-      <Route path="/employee/dashboard" element={<Edashboard/>}/>
-      <Route path="/employee/registration" element= {<Eregistration/>}/>
-      <Route path="/employee/task" element= {<EaddTask/>}/>
-      <Route path="/employee/taskedit/:id" element= {<EditTaskPage/>}/>
-      <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
-      <Route path="/employee/attendance" element= {<GetAttendance/>}/>
-      <Route path="/employee/employeelist" element= {<EmployeeList/>}/>
-      <Route path="/employee/attendanceList" element= {<EattendenceList/>}/>
-      <Route path="/employee/taskdetails/:id" element= {<ViewTaskDetails/>}/>
-      <Route path= "/employee/veiwattendence/:id" element= {<ViewOneAttendance/>}/>
-      <Route path= "/employee/editemployee/:id" element={<EditEmployeePage/>}/>
-      <Route path= "/employee/viewemployee/:id" element={<ViewOneEmployee/>}/>
+      {/* employee */}
+      <Route path="/employee/dashboard" element={<Edashboard />} />
+      <Route path="/employee/registration" element={<Eregistration />} />
+      <Route path="/employee/task" element={<EaddTask />} />
+      <Route path="/employee/taskedit/:id" element={<EditTaskPage />} />
+      <Route path="/employee/TaskListview" element={<ViewTaskList />} />
+      <Route path="/employee/attendance" element={<GetAttendance />} />
+      <Route path="/employee/employeelist" element={<EmployeeList />} />
+      <Route path="/employee/attendanceList" element={<EattendenceList />} />
+
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
@@ -445,4 +437,4 @@ export default function App() {
       <Route path="*" element={<PageError />} />
     </Routes>
   );
-}
+

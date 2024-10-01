@@ -520,72 +520,82 @@ export default function Valuation() {
                 </tr>
               </thead>
               <tbody className="border-b border-gray-200">
-                {filteredValuationRecords.map((record, index) => (
-                  <tr
-                    key={record._id}
-                    className={`divide-y border-l-4 ${getBorderColorClass(
-                      record.subtype
-                    )}`}
-                  >
-                    <td></td>
-                    <td className="px-6 py-4">{formattedDate(record.date)}</td>
-                    <td className="px-6 py-4">{record.type}</td>
-                    <td className="px-6 py-4">{record.subtype}</td>
-                    <td className="px-6 py-4">{record.quantity}</td>
-                    <td className="px-6 py-4">
-                      Rs.{record.price.toLocaleString()}
-                    </td>
-                    <td className="px-6 py-4">{record.description}</td>
-                    <td className="px-6 py-4">{record.payer_payee}</td>
-                    <td className="px-6 py-4">
-                      {record.appreciationOrDepreciation}
-                    </td>
-                    <td className="px-4 py-4">
-                      <div className="py-1 text-center text-black rounded-full bg-zinc-200 hover:bg-zinc-400">
-                        Rs.{(record.quantity * record.price).toLocaleString()}
-                      </div>
-                    </td>
-                    <td className="py-4 text-right ">
-                      <Link
-                        to={`/finances/valuation/viewValuation/${record._id}`}
-                      >
-                        <InformationCircleIcon
-                          className="flex-none w-6 h-6 p-1 text-gray-800 bg-gray-200 rounded-full hover:bg-gray-500"
-                          aria-hidden="true"
-                        />
-                      </Link>
-                    </td>
-                    {/* { getPermission("update:records").isGranted ? ( */}
-                    <td className="py-4 text-right ">
-                      <Link to={`/${record._id}`}>
-                        <PencilSquareIcon
-                          className="flex-none w-6 h-6 p-1 text-gray-800 bg-blue-200 rounded-full hover:bg-blue-500"
-                          aria-hidden="true"
-                        />
-                      </Link>
-                    </td>
-                    {/* ) : null
+                {filteredValuationRecords.length > 0 ? (
+                  filteredValuationRecords.map((record, index) => (
+                    <tr
+                      key={record._id}
+                      className={`divide-y border-l-4 ${getBorderColorClass(
+                        record.subtype
+                      )}`}
+                    >
+                      <td></td>
+                      <td className="px-6 py-4">
+                        {formattedDate(record.date)}
+                      </td>
+                      <td className="px-6 py-4">{record.type}</td>
+                      <td className="px-6 py-4">{record.subtype}</td>
+                      <td className="px-6 py-4">{record.quantity}</td>
+                      <td className="px-6 py-4">
+                        Rs.{record.price.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4">{record.description}</td>
+                      <td className="px-6 py-4">{record.payer_payee}</td>
+                      <td className="px-6 py-4">
+                        {record.appreciationOrDepreciation}
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="py-1 text-center text-black rounded-full bg-zinc-200 hover:bg-zinc-400">
+                          Rs.{(record.quantity * record.price).toLocaleString()}
+                        </div>
+                      </td>
+                      <td className="py-4 text-right ">
+                        <Link
+                          to={`/finances/valuation/viewValuation/${record._id}`}
+                        >
+                          <InformationCircleIcon
+                            className="flex-none w-6 h-6 p-1 text-gray-800 bg-gray-200 rounded-full hover:bg-gray-500"
+                            aria-hidden="true"
+                          />
+                        </Link>
+                      </td>
+                      {/* { getPermission("update:records").isGranted ? ( */}
+                      <td className="py-4 text-right ">
+                        <Link to={`/salesAndFinance/finance/edit-valuation/${record._id}`}>
+                          <PencilSquareIcon
+                            className="flex-none w-6 h-6 p-1 text-gray-800 bg-blue-200 rounded-full hover:bg-blue-500"
+                            aria-hidden="true"
+                          />
+                        </Link>
+                      </td>
+                      {/* ) : null
                                     } */}
-                    {/* { getPermission("update:records").isGranted ? ( */}
-                    <td className="">
-                      <Button
-                        shape="circle"
-                        type="text"
-                        onClick={() => {
-                          handleDeleteValuation(record._id);
-                        }}
-                      >
-                        <TrashIcon
-                          className="flex-none w-6 h-6 p-1 text-gray-800 bg-red-200 rounded-full hover:bg-red-500"
-                          aria-hidden="true"
-                        />
-                      </Button>
-                    </td>
+                      {/* { getPermission("update:records").isGranted ? ( */}
+                      <td className="">
+                        <Button
+                          shape="circle"
+                          type="text"
+                          onClick={() => {
+                            handleDeleteValuation(record._id);
+                          }}
+                        >
+                          <TrashIcon
+                            className="flex-none w-6 h-6 p-1 text-gray-800 bg-red-200 rounded-full hover:bg-red-500"
+                            aria-hidden="true"
+                          />
+                        </Button>
+                      </td>
 
-                    {/* ) : null
+                      {/* ) : null
                                         } */}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={13} className="py-4 text-center">
+                      No records found.
+                    </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
