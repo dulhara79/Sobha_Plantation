@@ -7,6 +7,7 @@ import axios from 'axios';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Swal from 'sweetalert2';
+import LoadingDot from '../../components/LoadingDots'; 
 
 const { Title } = Typography;
 const { Search } = Input;
@@ -23,13 +24,17 @@ const Labeling = () => {
   const [filters, setFilters] = useState({});
   const [sorter, setSorter] = useState({});
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Fetch product types from backend
     const fetchProductTypes = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/labeling-prices');
-        setProductTypes(response.data.data || []);
+        setTimeout(async () => {
+          const response = await axios.get('http://localhost:5000/api/labeling-prices');
+          setProductTypes(response.data.data || []);
+        setLoading(false); // Stop loading after data fetch
+    }, 150); // Adjust the delay as needed
       } catch (error) {
         console.error('Error fetching product types:', error);
         message.error('Failed to fetch product types');
@@ -238,7 +243,7 @@ const handleDelete = async (labelingId) => {
     // First Table: Upper table details
     const upperTableHeaders = [['Detail', 'Value']];
     const upperTableRows = [
-      ['Total Products', `${filteredData.length}`],
+      ['Total Labeling Products', `${filteredData.length}`],
       ['Total Quantity', `${filteredData.reduce((sum, item) => sum + item.quantity, 0)}`],
       ['Total Price (Rs)', `Rs ${filteredData.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)}`],
     ];
@@ -304,7 +309,7 @@ const handleDelete = async (labelingId) => {
     // Third Table: Unit Prices Table details
     const unitPriceRows = filteredData.map(item => [
       item.productName,
-      `Rs ${item.price.toFixed(2)}`
+      `Rs ${item.unitPrice.toFixed(2)}`
     ]);
   
     // Define the table headers for the third table
@@ -332,6 +337,8 @@ const handleDelete = async (labelingId) => {
     doc.save('labeling_report.pdf');
   };
 
+  if (loading) return <LoadingDot />;
+
   return (
     <div style={{ padding: '24px' }}>
       <Button
@@ -351,26 +358,6 @@ const handleDelete = async (labelingId) => {
       <Title level={3} style={{ marginBottom: '24px', fontWeight: 'bold' }}>
         Labeling Management
       </Title>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '24px' }}>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => navigate('/products/addLabeling')}
-          style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
-        >
-          Add Label
-        </Button>
-        
-        <Button
-          type="default"
-          icon={<FilePdfOutlined />}
-          onClick={generatePDF}
-          style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
-        >
-          Generate PDF
-        </Button>
-      </div>
-
 
       <Title level={4} style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>
         Unit Prices Table
@@ -406,7 +393,8 @@ const handleDelete = async (labelingId) => {
         Products Labeling Table
       </Title>
       
-       <div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+      <div style={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
         <Space style={{ marginBottom: '16px' }}>
 
           <Search 
@@ -427,6 +415,28 @@ const handleDelete = async (labelingId) => {
             {/* Add other status options as needed */}
           </Select>
         </Space>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '24px' }}>
+      <Button
+          type="default"
+          icon={<FilePdfOutlined />}
+          onClick={generatePDF}
+          style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
+        >
+          Generate PDF
+        </Button>
+        
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => navigate('/products/addLabeling')}
+          style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
+        >
+          Add Label
+        </Button>
+        
+      </div>
       </div>
 
       <Table

@@ -4,9 +4,14 @@ import Sidebar from '../../components/Sidebar';
 import { HomeOutlined } from '@ant-design/icons';
 import { Breadcrumb } from 'antd';
 import { Link } from 'react-router-dom';
+import FieldViewNavbar from '../../components/FieldView/FieldViewNavbar';
+import PieChartComponent from '../../components/Products/PieChartComponent'; // Import the PieChartComponent
+import axios from 'axios';
 
 const CultivationDashboard = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [scheduleData, setScheduleData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Update the date and time every minute
   useEffect(() => {
@@ -16,6 +21,43 @@ const CultivationDashboard = () => {
 
     return () => clearInterval(timer); // Clean up the interval on component unmount
   }, []);
+
+  // Fetch schedule data for the pie chart
+  useEffect(() => {
+    const fetchScheduleData = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/production'); // Adjust API endpoint as necessary
+        if (response.data.success) {
+          setScheduleData(response.data.data);
+        } else {
+          console.error('Error fetching schedule data');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchScheduleData();
+  }, []);
+
+  // Format the schedule data for the pie chart
+  const formatPieChartData = () => {
+    const statusCounts = { 'Planned': 0, 'In Progress': 0, 'Completed': 0 };
+
+    scheduleData.forEach((schedule) => {
+      if (schedule.status === 'Planned') statusCounts['Planned'] += 1;
+      else if (schedule.status === 'In Progress') statusCounts['In Progress'] += 1;
+      else if (schedule.status === 'Completed') statusCounts['Completed'] += 1;
+    });
+
+    return [
+      { name: 'Planned', value: statusCounts['Planned'] },
+      { name: 'In Progress', value: statusCounts['In Progress'] },
+      { name: 'Completed', value: statusCounts['Completed'] },
+    ];
+  };
 
   // Format the date
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -43,11 +85,17 @@ const CultivationDashboard = () => {
             },
           ]}
         />
+        <FieldViewNavbar />
 
         {/* Welcome Message */}
         <div className="bg-white shadow-md rounded-lg p-6 my-6">
-          <h2 className="text-2xl font-bold">👋 Welcome Piyushi,</h2>
+          <h2 className="text-2xl font-bold">👋 Welcome,</h2>
           <p className="text-gray-600">Today is {formattedDate}</p>
+        </div>
+
+        {/* Pie Chart Section */}
+        <div className="flex justify-center">
+          <PieChartComponent title="Production Schedule Status" data={formatPieChartData()} loading={loading} />
         </div>
 
         {/* Summary Section */}

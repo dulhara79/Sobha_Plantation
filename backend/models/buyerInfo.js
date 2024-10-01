@@ -10,47 +10,32 @@ const BuyerInfoSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    userName: {
-      type: String,
-      required: true,
-      default: "None",
-    },
-    password: {
-        type: String,
-        required: true,
-        default: "None",
-      },
-    confirmPassword: {
-      type: String,
-      required: true,
-      default: "None",
-    },
-    dateOfBirth: {
+    Gender: {
       type: String,
       required: true,
     },
-    gender: {
-      type: String,
+    DOB: {
+      type: Date, 
       required: true,
     },
-    contactNumber: {
+    Number: {
       type: Number,
       required: true,
     },
     email: {
-        type: String,
-        required: true,
-      },
-      City: {
-        type: String,
-        required: true,
-      },
+      type: String,
+      required: true,
+    },
     InfoId: {
-        type: mongoose.Schema.Types.ObjectId,
-        default: () => new mongoose.Types.ObjectId(),
-        unique: true,
-        sparse: true
-        }
-    });
+      type: mongoose.Schema.Types.ObjectId,
+      default: () => new mongoose.Types.ObjectId(),
+      unique: true,
+      sparse: true,
+    },
+  },
+  {
+    timestamps: false,
+  }
+);
 
 module.exports = mongoose.model("BuyerInfoRecords", BuyerInfoSchema);

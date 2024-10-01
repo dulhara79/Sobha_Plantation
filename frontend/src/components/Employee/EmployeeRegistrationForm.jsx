@@ -5,6 +5,9 @@ import Swal from "sweetalert2";
 import { DatePicker } from "antd";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import { DatePicker } from "antd";
+import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 // Styled Components
 const Container = styled.div`
@@ -78,6 +81,7 @@ const Button = styled.button`
 
 // Helper function for validations
 /*const validateField = (name, value, formData) => {
+/*const validateField = (name, value, formData) => {
   const errors = {};
   switch (name) {
     case "firstName":
@@ -86,9 +90,14 @@ const Button = styled.button`
         errors[name] = `${
           name === "firstName" ? "First" : "Last"
         } name can only contain letters.`;
+        errors[name] = `${
+          name === "firstName" ? "First" : "Last"
+        } name can only contain letters.`;
       }
       break;
     case "contactNumber":
+      console.log(value);
+
       console.log(value);
 
       if (!/^\d{10}$/.test(value)) {
@@ -104,12 +113,16 @@ const Button = styled.button`
       if (!/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(value)) {
         errors[name] =
           "NIC must be in old (9 digits and V/X) or new format (12 digits).";
+        errors[name] =
+          "NIC must be in old (9 digits and V/X) or new format (12 digits).";
       } else if (!validateNICWithDOB(value, formData.dateOfBirth)) {
         errors[name] = "NIC does not match the date of birth.";
       }
       break;
     case "address":
       if (!/^[a-zA-Z0-9\s,\/]+$/.test(value)) {
+        errors[name] =
+          "Address can only contain letters, numbers, spaces, commas, and slashes.";
         errors[name] =
           "Address can only contain letters, numbers, spaces, commas, and slashes.";
       }
@@ -139,7 +152,10 @@ const validateNICWithDOB = (nic, dob) => {
   const dobYear = new Date(dob).getFullYear();
   const yearFromNIC =
     nic.length === 10 ? `19${nic.substr(0, 2)}` : nic.substr(0, 4);
+  const yearFromNIC =
+    nic.length === 10 ? `19${nic.substr(0, 2)}` : nic.substr(0, 4);
   return dobYear === parseInt(yearFromNIC, 10);
+};*/
 };*/
 
 const Eregistration = () => {
@@ -164,6 +180,8 @@ const Eregistration = () => {
   const handleNICChange = (value) => {
     let yearFromNIC = null;
     if (/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(value)) {
+      yearFromNIC =
+        value.length === 10 ? `19${value.substr(0, 2)}` : value.substr(0, 4);
       yearFromNIC =
         value.length === 10 ? `19${value.substr(0, 2)}` : value.substr(0, 4);
       setAllowedYear(parseInt(yearFromNIC, 10));
@@ -478,6 +496,7 @@ const Eregistration = () => {
       handleNICChange(value); // Adjust year when NIC is valid
       return; // Skip further validation until full NIC is entered
     }
+    }
 
     // Validate the field as the user types
     const fieldErrors = validateField(name, value, formData);
@@ -489,6 +508,8 @@ const Eregistration = () => {
       <Title>Employee Registration Form</Title>
       {/* onSubmit={handleSubmit} */}
       <form>
+      {/* onSubmit={handleSubmit} */}
+      <form>
         <FormRow>
           <FormGroup>
             <label htmlFor="firstName">First Name</label>
@@ -497,8 +518,14 @@ const Eregistration = () => {
               // onCopy={(e) => e.preventDefault()} // Prevent copying
               // onCut={(e) => e.preventDefault()} // Prevent cutting
               // onPaste={(e) => e.preventDefault()} // Prevent pasting
+              // onCopy={(e) => e.preventDefault()} // Prevent copying
+              // onCut={(e) => e.preventDefault()} // Prevent cutting
+              // onPaste={(e) => e.preventDefault()} // Prevent pasting
               name="firstName"
               placeholder="First Name"
+              value={firstName}
+              onChange={handleFirstNameChange}
+              disabled={disabledFields.firstName}
               value={firstName}
               onChange={handleFirstNameChange}
               disabled={disabledFields.firstName}
@@ -512,6 +539,9 @@ const Eregistration = () => {
               type="text"
               name="lastName"
               placeholder="Last Name"
+              value={lastName}
+              onChange={handleLastNameChange}
+              disabled={disabledFields.lastName}
               value={lastName}
               onChange={handleLastNameChange}
               disabled={disabledFields.lastName}
@@ -531,6 +561,9 @@ const Eregistration = () => {
               value={nic}
               onChange={handleNicChange}
               disabled={disabledFields.nic}
+              value={nic}
+              onChange={handleNicChange}
+              disabled={disabledFields.nic}
             />
             {errors.nic && <p>{errors.nic}</p>}
           </FormGroup>
@@ -543,8 +576,11 @@ const Eregistration = () => {
               placeholder="Date of Birth"
               value={dateOfBirth}
               onChange={handleDateOfBirthChange}
+              value={dateOfBirth}
+              onChange={handleDateOfBirthChange}
               max={allowedYear ? `${allowedYear}-12-31` : undefined}
               min={allowedYear ? `${allowedYear}-01-01` : undefined}
+              disabled={disabledFields.dateOfBirth}
               disabled={disabledFields.dateOfBirth}
             />
             {errors.dateOfBirth && <p>{errors.dateOfBirth}</p>}
@@ -555,6 +591,12 @@ const Eregistration = () => {
         <FormRow>
           <FormGroup>
             <label htmlFor="gender">Gender</label>
+            <select
+              name="gender"
+              value={gender}
+              onChange={handleGenderChange}
+              disabled={disabledFields.gender}
+            >
             <select
               name="gender"
               value={gender}
@@ -577,6 +619,9 @@ const Eregistration = () => {
               value={contactNumber}
               onChange={handleContactNumberChange}
               disabled={disabledFields.contactNumber}
+              value={contactNumber}
+              onChange={handleContactNumberChange}
+              disabled={disabledFields.contactNumber}
             />
             {errors.contactNumber && <p>{errors.contactNumber}</p>}
           </FormGroup>
@@ -593,6 +638,9 @@ const Eregistration = () => {
               value={email}
               onChange={handleEmailChange}
               disabled={disabledFields.email}
+              value={email}
+              onChange={handleEmailChange}
+              disabled={disabledFields.email}
             />
             {errors.email && <p>{errors.email}</p>}
           </FormGroup>
@@ -605,6 +653,9 @@ const Eregistration = () => {
               value={address}
               onChange={handleAddressChange}
               disabled={disabledFields.address}
+              value={address}
+              onChange={handleAddressChange}
+              disabled={disabledFields.address}
             />
             {errors.address && <p>{errors.address}</p>}
           </FormGroup>
@@ -614,6 +665,12 @@ const Eregistration = () => {
         <FormRow>
           <FormGroup>
             <label htmlFor="employeeType">Employee Type</label>
+            <select
+              name="employeeType"
+              value={employeeType}
+              onChange={handleEmployeeTypeChange}
+              disabled={disabledFields.employeeType}
+            >
             <select
               name="employeeType"
               value={employeeType}
@@ -635,8 +692,16 @@ const Eregistration = () => {
               onChange={handleDesignationChange}
               disabled={disabledFields.designation}
             >
+            <select
+              name="designation"
+              value={designation}
+              onChange={handleDesignationChange}
+              disabled={disabledFields.designation}
+            >
               <option value="">Select Designation</option>
               <option value="Farmer">Farmer</option>
+              <option value="Supervisor"> pest and disease expert </option>
+              <option value="Supervisor">Security</option>
               <option value="Supervisor"> pest and disease expert </option>
               <option value="Supervisor">Security</option>
             </select>
@@ -649,10 +714,20 @@ const Eregistration = () => {
           <FormGroup>
             <label htmlFor="hiredDate">Hired Date</label>
             {/* <input
+            {/* <input
               type="date"
               name="hiredDate"
               value={formData.hiredDate}
               disabled={true}
+            /> */}
+
+            {/* value={date ? moment(date) : null} */}
+            <DatePicker
+              name="hiredDate"
+              value={moment()}
+              format="YYYY-MM-DD"
+              className="block w-full h-8 p-2  mt-2 text-black bg-white border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
+              disabledDate={(current) => current !== moment()}
             /> */}
 
             {/* value={date ? moment(date) : null} */}
@@ -674,6 +749,9 @@ const Eregistration = () => {
               value={hourlyRate}
               onChange={handleHourlyRateChange}
               disabled={disabledFields.hourlyRate}
+              value={hourlyRate}
+              onChange={handleHourlyRateChange}
+              disabled={disabledFields.hourlyRate}
             />
             {errors.hourlyRate && <p>{errors.hourlyRate}</p>}
           </FormGroup>
@@ -681,6 +759,12 @@ const Eregistration = () => {
 
         {/* Form submission buttons */}
         <ButtonGroup>
+          <Button
+            type="button"
+            onClick={handleSubmit}
+            disabled={disabledFields.submitted}
+            primary
+          >
           <Button
             type="button"
             onClick={handleSubmit}

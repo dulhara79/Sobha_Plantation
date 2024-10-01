@@ -16,6 +16,7 @@ import "jspdf-autotable";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { HomeOutlined } from '@mui/icons-material';
 import Swal from 'sweetalert2';
+import LoadingDot from '../../components/LoadingDots'; 
 
 const { Search } = Input;
 const { Option } = Select;
@@ -38,17 +39,23 @@ const ProductionScheduleOverview = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const activePage = location.pathname;
+  const [loading, setLoading] = useState(true);
 
   // Fetch schedules from API
   const fetchSchedules = async () => {
+  
     try {
+      setTimeout(async () => {
       const response = await axios.get("http://localhost:5000/api/production");
       if (response.data.success) {
         setSchedules(response.data.data);
         setFilteredSchedules(response.data.data);
       } else {
         console.log("Error: Unable to fetch schedules, success flag not true");
-      }
+      } 
+      setLoading(false); // Stop loading after data fetch
+    }, 150); // Adjust the delay as needed
+      
     } catch (error) {
       console.error("Error fetching schedules:", error);
     }
@@ -85,11 +92,10 @@ const ProductionScheduleOverview = () => {
     return new Date().toLocaleDateString(undefined, options);
   };
 
-  // Handler for search input
-  const onSearch = (value) => {
-    setSearchText(value);
-    filterSchedules(value, filterStatus);
-  };
+  // const onSearch = (value) => {
+  //   setSearchText(value);
+  //   filterSchedules(value.toLowerCase(), filterStatus);
+  // };
 
   // Handler for filter change
   const onFilterChange = (value) => {
@@ -97,32 +103,49 @@ const ProductionScheduleOverview = () => {
     filterSchedules(searchText, value);
   };
 
-  // Function to filter schedules based on search text and filter status
-  const filterSchedules = (searchText, filterStatus) => {
-    let filteredData = schedules;
+// Function to filter schedules based on search text and filter status
+const filterSchedules = (searchText, filterStatus) => {
+  let filteredData = schedules;
 
-    if (searchText) {
-      filteredData = filteredData.filter((schedule) =>
-        schedule.productType.toLowerCase().includes(searchText.toLowerCase())
+  // Search across multiple fields: productType, quantity, startDate, endDate, status, progress
+  if (searchText) {
+    filteredData = filteredData.filter((schedule) => {
+      const searchString = searchText.toLowerCase();
+      return (
+        schedule.productType.toLowerCase().includes(searchString) ||
+        schedule.quantity.toString().includes(searchString) ||
+        moment(schedule.startDate).format('YYYY-MM-DD').includes(searchString) ||
+        moment(schedule.endDate).format('YYYY-MM-DD').includes(searchString) ||
+        schedule.status.toLowerCase().includes(searchString) ||
+        schedule.progress.toString().includes(searchString)
       );
-    }
+    });
+  }
 
-    if (filterStatus !== "All") {
-      filteredData = filteredData.filter((schedule) => schedule.status === filterStatus);
-    }
+  // Filter by status
+  if (filterStatus !== "All") {
+    filteredData = filteredData.filter((schedule) => schedule.status === filterStatus);
+  }
 
-    if (sorter.field) {
-      filteredData = [...filteredData].sort((a, b) => {
-        if (sorter.order === 'ascend') {
-          return a[sorter.field] > b[sorter.field] ? 1 : -1;
-        } else {
-          return a[sorter.field] < b[sorter.field] ? 1 : -1;
-        }
-      });
-    }
+  // Apply sorting if active
+  if (sorter.field) {
+    filteredData = [...filteredData].sort((a, b) => {
+      if (sorter.order === 'ascend') {
+        return a[sorter.field] > b[sorter.field] ? 1 : -1;
+      } else {
+        return a[sorter.field] < b[sorter.field] ? 1 : -1;
+      }
+    });
+  }
 
-    setFilteredSchedules(filteredData);
-  };
+  setFilteredSchedules(filteredData);
+};
+
+// Search handler
+const onSearch = (value) => {
+  setSearchText(value);
+  filterSchedules(value.toLowerCase(), filterStatus);
+};
 
   // Sorting handler
   const handleSort = (field, order) => {
@@ -335,6 +358,7 @@ const generatePDF = async () => {
 
 const isActive = (page) => activePage === page;
 
+if (loading) return <LoadingDot />;
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">

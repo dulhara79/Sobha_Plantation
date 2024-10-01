@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Breadcrumb, message, Modal, Form, Input, Collapse } from "antd";
+import { Table, Button, Breadcrumb, message, Modal, Form, Input, Collapse, Select } from "antd";
 import { HomeOutlined, FilePdfOutlined, EditOutlined, LeftCircleOutlined } from "@ant-design/icons";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
@@ -7,9 +7,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Pie } from '@ant-design/charts';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import moment from 'moment'; // Add moment for date formatting
+import FieldViewNavbar from "../../components/FieldView/FieldViewNavbar";
 
 const { Panel } = Collapse;
+const { Option } = Select; // Import Option from Select
 
 const LandPreparation = () => {
   const [data, setData] = useState([]);
@@ -42,7 +44,7 @@ const LandPreparation = () => {
   const handleOk = () => {
     form.validateFields().then((values) => {
       const updatedRecord = { ...currentRecord, ...values };
-      
+
       axios.put(`http://localhost:5000/api/soil-tests/${currentRecord._id}`, updatedRecord)
         .then(response => {
           message.success("Record updated successfully");
@@ -64,32 +66,108 @@ const LandPreparation = () => {
     setCurrentRecord(null);
   };
 
-  const generateReport = () => {
-    const content = document.getElementById('report-content');
-    html2canvas(content, { useCORS: true })
-      .then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 210; // A4 width in mm
-        const imgHeight = canvas.height * imgWidth / canvas.width;
-        let position = 0;
+  const determineNutrientLevels = (soilPH) => {
+    if (soilPH < 6) {
+      return "high"; // High nutrient levels for acidic soil
+    } else if (soilPH >= 6 && soilPH <= 7.5) {
+      return "medium"; // Medium nutrient levels for neutral soil
+    } else {
+      return "low"; // Low nutrient levels for alkaline soil
+    }
+  };
 
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        let heightLeft = imgHeight - 295;
+  const handleSoilPHChange = (value) => {
+    if (value >= 0 && value <= 14) {
+      const nutrientLevel = determineNutrientLevels(value);
+      form.setFieldsValue({ nutrientLevels: nutrientLevel }); // Automatically set nutrient level
+    }
+  };
 
-        while (heightLeft >= 0) {
-          position = heightLeft - imgHeight;
-          pdf.addPage();
-          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-          heightLeft -= 295;
-        }
+  // Function to get image data URL for the logo
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  };
 
-        pdf.save('land-preparation-report.pdf');
-      })
-      .catch(error => {
-        console.error("Error generating PDF report:", error);
-        message.error("Failed to generate report.");
-      });
+  // Updated generatePDF function
+  const generatePDF = async () => {
+    const doc = new jsPDF();
+
+    // Load the logo image
+    const logoUrl = '../src/assets/logo.png'; 
+    try {
+      const logoDataURL = await getImageDataURL(logoUrl);
+
+      // Add the logo image to the PDF
+      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
+
+    } catch (error) {
+      console.error('Failed to load the logo image:', error);
+    }
+
+    // Define the table columns
+    const columns = [
+      { title: "Field Name", dataKey: "fieldName" },
+      { title: "Soil pH", dataKey: "soilPH" },
+      { title: "Organic Matter Content", dataKey: "organicMatterContent" },
+      { title: "Soil Type", dataKey: "soilType" },
+      { title: "Nutrient Levels", dataKey: "nutrientLevels" },
+      { title: "Remarks", dataKey: "remarks" },
+    ];
+
+    // Map the data to match the columns
+    const rows = data.map(item => ({
+      fieldName: item.fieldName,
+      soilPH: item.soilPH,
+      organicMatterContent: item.organicMatterContent,
+      soilType: item.soilType,
+      nutrientLevels: item.nutrientLevels,
+      remarks: item.remarks,
+    }));
+
+    // Add title and table
+    doc.setFontSize(22);
+    doc.text("Land Preparation Report", 50, 40); // Adjust y-coordinate as needed
+
+    doc.autoTable({
+      columns: columns,
+      body: rows,
+      startY: 50, 
+      margin: { horizontal: 10 },
+      styles: {
+        fontSize: 10,
+      },
+      headStyles: {
+        fillColor: [64, 133, 126], 
+        textColor: [255, 255, 255], 
+        fontSize: 12,
+      },
+      theme: 'striped',
+      didDrawPage: (data) => {
+        // Add page number to footer
+        const pageNumber = doc.internal.getNumberOfPages();
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+
+        doc.setFontSize(10);
+        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10); // Adjust position as needed
+      },
+    });
+
+    // Save the PDF
+    doc.save("land_preparation_report.pdf");
   };
 
   // Pie chart configuration for soil pH level distribution by field name
@@ -145,7 +223,8 @@ const LandPreparation = () => {
             { href: "", title: "Land Preparation" },
           ]}
         />
-        {/* Back Button */}
+        <FieldViewNavbar/>
+
         <div className="mb-4">
           <LeftCircleOutlined onClick={() => navigate(-1)} style={{ fontSize: '24px', cursor: 'pointer' }} />
         </div>
@@ -153,72 +232,75 @@ const LandPreparation = () => {
           <h2 className="text-xl font-semibold">Land Preparation</h2>
         </div>
 
-        {/* Guidelines Section */}
         <div className="bg-white shadow-md rounded-lg p-4 my-4">
-          <h2 className="text-lg font-semibold">Guidelines for Land Preparation</h2>
-          <Collapse accordion>
-            <Panel header="1. Soil Testing" key="1">
-              <p>Conduct soil testing to determine the nutrient levels, pH, and organic matter content. This will guide the necessary adjustments for your land.</p>
-            </Panel>
-            <Panel header="2. Clearing the Land" key="2">
-              <p>Remove any debris, weeds, and unwanted vegetation. Ensure the land is clean and ready for tilling.</p>
-            </Panel>
-            <Panel header="3. Tilling the Soil" key="3">
-              <p>Till the soil to improve its structure and promote water and nutrient penetration. Depending on your crop, till to the appropriate depth.</p>
-            </Panel>
-            <Panel header="4. Adding Organic Matter" key="4">
-              <p>Incorporate compost or organic matter to enhance soil fertility and improve its ability to retain water.</p>
-            </Panel>
-            <Panel header="5. Leveling the Land" key="5">
-              <p>Level the soil to prevent waterlogging or uneven irrigation. This is particularly important for certain crops like rice.</p>
-            </Panel>
-            <Panel header="6. Irrigation Planning" key="6">
-              <p>Ensure proper irrigation channels or systems are in place to support efficient water distribution during crop growth.</p>
-            </Panel>
-            <Panel header="7. Fertilization" key="7">
-              <p>Based on soil test results, apply the necessary fertilizers to address nutrient deficiencies before planting.</p>
-            </Panel>
-          </Collapse>
-        </div>
-
-        {/* Generate Report Button */}
-        <div className="bg-white shadow-md rounded-lg p-4 my-4">
-          <Button type="primary" icon={<FilePdfOutlined />} onClick={generateReport}>
-            Generate Report
+          <Button type="primary" icon={<FilePdfOutlined />} onClick={generatePDF}>
+            Generate PDF Report
           </Button>
         </div>
 
-        {/* Pie Chart for Soil pH by Field Name */}
         <div className="bg-white shadow-md rounded-lg p-4 my-4" id="report-content">
           <h2 className="text-lg font-semibold">Soil pH Distribution by Field</h2>
           <Pie {...pieConfig} />
         </div>
 
-        {/* Table of Soil Tests */}
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
           <Table columns={columns} dataSource={data} rowKey="_id" loading={loading} pagination={false} bordered />
         </div>
 
-        {/* Modal for editing */}
         <Modal title="Edit Soil Test" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-          <Form form={form} layout="vertical">
-            <Form.Item name="soilPH" label="Soil pH" rules={[{ required: true, message: 'Please input Soil pH!' }]}>
-              <Input />
+          <Form form={form}>
+            <Form.Item 
+              name="soilPH" 
+              label="Soil pH" 
+              rules={[{ required: true, message: 'Please input a valid Soil pH!' }]}
+            >
+              <Input 
+                type="number" 
+                min={0} 
+                max={14} 
+                step="0.1" 
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value);
+                  handleSoilPHChange(value);
+                }} 
+              />
             </Form.Item>
-            <Form.Item name="nutrientLevels" label="Nutrient Levels" rules={[{ required: true, message: 'Please input Nutrient Levels!' }]}>
-              <Input />
+            
+            <Form.Item name="nutrientLevels" label="Nutrient Levels" rules={[{ required: true, message: 'Please select the nutrient levels!' }]}>
+            <Select disabled> {/* Disable the dropdown to prevent manual selection */}
+          <Select.Option value="high">High</Select.Option>
+          <Select.Option value="medium">Medium</Select.Option>
+          <Select.Option value="low">Low</Select.Option>
+        </Select>
             </Form.Item>
-            <Form.Item name="fieldName" label="Field Name" rules={[{ required: true, message: 'Please input Field Name!' }]}>
-              <Input />
+
+            <Form.Item name="organicMatterContent" label="Organic Matter Content" rules={[{ required: true, message: 'Please select the organic matter content!' }]}>
+              <Select>
+                <Select.Option value="high">High</Select.Option>
+                <Select.Option value="medium">Medium</Select.Option>
+                <Select.Option value="low">Low</Select.Option>
+              </Select>
             </Form.Item>
-            <Form.Item name="organicMatterContent" label="Organic Matter Content" rules={[{ required: true, message: 'Please input Organic Matter Content!' }]}>
-              <Input />
+
+            <Form.Item name="soilType" label="Soil Type">
+            <Select>
+        <Select.Option value="sandy">Sandy</Select.Option>
+        <Select.Option value="loamy">Loamy</Select.Option>
+        <Select.Option value="clay">Clay</Select.Option>
+        <Select.Option value="peat">Peat</Select.Option>
+        <Select.Option value="chalky">Chalky</Select.Option>
+        {/* Add more soil types as needed */}
+      </Select>
             </Form.Item>
-            <Form.Item name="soilType" label="Soil Type" rules={[{ required: true, message: 'Please input Soil Type!' }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item name="remarks" label="Remarks" rules={[{ required: true, message: 'Please input Remarks!' }]}>
-              <Input />
+
+            <Form.Item name="remarks" label="Remarks">
+            <Input 
+    onKeyPress={(e) => {
+      if (/[0-9]/.test(e.key)) {
+        e.preventDefault();
+      }
+    }} 
+  />
             </Form.Item>
           </Form>
         </Modal>

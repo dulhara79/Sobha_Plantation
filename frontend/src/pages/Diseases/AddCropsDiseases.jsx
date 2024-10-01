@@ -6,6 +6,7 @@ import { Breadcrumb, Button, Input, DatePicker, Form, Select, notification } fro
 import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import axios from "axios";
+
 const { Option } = Select;
 
 const AddCropsDiseases = () => {
@@ -61,6 +62,40 @@ const AddCropsDiseases = () => {
       message: "This field is required.",
     },
   ];
+
+    // Alphabetic characters only (A-Z, a-z, space)
+const handleAlphabeticKeyPress = (e) => {
+  const regex = /^[A-Za-z\s]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-alphabetic characters
+    setErrorMessage("Only alphabetic characters are allowed."); // Set error message
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
+// Numeric characters only (0-9)
+const handleNumericKeyPress = (e) => {
+  const regex = /^[0-9%]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-numeric characters
+    setErrorMessage("Only numeric characters are allowed.");
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
+// Alphanumeric characters only (A-Z, a-z, 0-9)
+const handleAlphanumericKeyPress = (e) => {
+  const regex = /^[A-Za-z0-9\s%]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-alphanumeric characters
+    setErrorMessage("Only alphanumeric characters are allowed.");
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
 
   const handleSubmit = async (values) => {
     try {
@@ -136,23 +171,23 @@ const AddCropsDiseases = () => {
                 Treatments
               </Link>
               <Link
-                to="/pests-diseases"
+                to="/CoconutPests"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 Pests and Diseases
               </Link>
               <Link
-                to="/maintenance"
+                to="/RegularMaintenance"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 Maintenance
               </Link>
-              <Link
+              {/* <Link
                 to="/UserProfile"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 My Profile
-              </Link>
+              </Link> */}
             </div>
           </nav>
 
@@ -237,6 +272,7 @@ const AddCropsDiseases = () => {
                 <Input
                   placeholder="Enter identified pest"
                   disabled={!fieldValidity.sectionOfLand}
+                  onKeyPress={handleAlphabeticKeyPress}
                 />
               </Form.Item>
 
@@ -248,6 +284,7 @@ const AddCropsDiseases = () => {
                 <Input
                   placeholder="Enter identified disease"
                   disabled={!fieldValidity.identifiedPest}
+                  onKeyPress={handleAlphabeticKeyPress}
                 />
               </Form.Item>
 
@@ -259,17 +296,19 @@ const AddCropsDiseases = () => {
                 <Input
                   placeholder="Enter name of inspector"
                   disabled={!fieldValidity.identifiedDisease}
+                  onKeyPress={handleAlphabeticKeyPress}
                 />
               </Form.Item>
 
               <Form.Item
                 label="Inspection Result"
                 name="inspectionResult"
-                rules={alphabeticRule}
+                rules={alphabeticNumericRule}
               >
                 <Input
                   placeholder="Enter the inspection result"
                   disabled={!fieldValidity.inspectedBy}
+                  onKeyPress={handleAlphanumericKeyPress}
                 />
               </Form.Item>
 

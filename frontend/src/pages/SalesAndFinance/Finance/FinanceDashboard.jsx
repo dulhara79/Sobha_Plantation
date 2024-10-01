@@ -14,6 +14,10 @@ import {Add, List, Assessment, AttachMoney, Analytics} from "@mui/icons-material
 
 import NewLoadingScreen from '../../../components/LoadingDots'
 
+const SriLankanRupeeIcon = () => (
+  <span style={{ fontSize: '28px', fontWeight: 900 , margin: '10px'}}>LKR.</span>
+);
+
 const SalesDashboard = () => {
   const navigate = useNavigate();
 
@@ -87,7 +91,8 @@ const SalesDashboard = () => {
               className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
               onClick={() => navigateTo("/salesAndFinance/finance/employeeSalary")}
             >
-              <AttachMoney fontSize="large" className="mb-8 mr-2 size-24" />
+              {/* <AttachMoney fontSize="large" className="mb-8 mr-2 size-24" /> */}
+              <SriLankanRupeeIcon fontSize="large" className="mb-8 mr-2 size-24" />
               <span className="text-xl font-semibold">Salary</span>
             </div>
             {/* <div

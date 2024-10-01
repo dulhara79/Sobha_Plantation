@@ -13,6 +13,8 @@ import "../../index.css";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { HomeOutlined } from '@mui/icons-material';
 import Swal from 'sweetalert2';
+import LoadingDot from '../../components/LoadingDots'; 
+
 
 const { Search } = Input;
 const { Option } = Select;
@@ -31,6 +33,7 @@ const QualityControl = () => {
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [sorter, setSorter] = useState({ field: null, order: null });
+  const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState({
     totalInspections: 0,
     passRate: 0,
@@ -43,6 +46,7 @@ const QualityControl = () => {
   // Fetch quality controls from API
   const fetchQualityControls = async () => {
     try {
+      setTimeout(async () => {
       const response = await axios.get("http://localhost:5000/api/quality-control");
       if (response.data.success) {
         const data = response.data.data;
@@ -52,6 +56,8 @@ const QualityControl = () => {
       } else {
         console.log("Error: Unable to fetch quality controls, success flag not true");
       }
+      setLoading(false); // Stop loading after data fetch
+    }, 150); // Adjust the delay as needed
     } catch (error) {
       console.error("Error fetching quality controls:", error);
     }
@@ -92,44 +98,50 @@ const QualityControl = () => {
   }, [navigate]);
 
   // Handler for search input
-  const onSearch = (value) => {
-    setSearchText(value);
-    filterQualityControls(value, filterStatus);
-  };
+const onSearch = (value) => {
+  setSearchText(value);
+  filterQualityControls(value, filterStatus);
+};
 
-  // Handler for filter change
-  const onFilterChange = (value) => {
-    setFilterStatus(value);
-    filterQualityControls(searchText, value);
-  };
+// Handler for filter change
+const onFilterChange = (value) => {
+  setFilterStatus(value);
+  filterQualityControls(searchText, value);
+};
 
-  // Function to filter quality controls based on search text and filter status
-  const filterQualityControls = (searchText, filterStatus) => {
-    let filteredData = qualityControls;
+// Function to filter quality controls based on search text and filter status
+const filterQualityControls = (searchText, filterStatus) => {
+  let filteredData = qualityControls;
 
-    if (searchText) {
-      filteredData = filteredData.filter((qc) =>
-        qc.productType.toLowerCase().includes(searchText.toLowerCase())
-      );
-    }
+  if (searchText) {
+    // Convert search text to lowercase for case-insensitive search
+    const lowerSearchText = searchText.toLowerCase();
+    filteredData = filteredData.filter((qc) =>
+      // Search across multiple fields
+      qc.productType.toLowerCase().includes(lowerSearchText) ||
+      qc.inspectionDate.toLowerCase().includes(lowerSearchText) || // Include inspectionDate in search
+      qc.status.toLowerCase().includes(lowerSearchText) ||
+      qc.inspectorName.toLowerCase().includes(lowerSearchText) // Include inspectorName in search
+    );
+  }
 
-    if (filterStatus !== "All") {
-      filteredData = filteredData.filter((qc) => qc.status === filterStatus);
-    }
+  if (filterStatus !== "All") {
+    filteredData = filteredData.filter((qc) => qc.status === filterStatus);
+  }
 
-    if (sorter.field) {
-      filteredData = [...filteredData].sort((a, b) => {
-        if (sorter.order === 'ascend') {
-          return a[sorter.field] > b[sorter.field] ? 1 : -1;
-        } else {
-          return a[sorter.field] < b[sorter.field] ? 1 : -1;
-        }
-      });
-    }
+  if (sorter.field) {
+    filteredData = [...filteredData].sort((a, b) => {
+      if (sorter.order === 'ascend') {
+        return a[sorter.field] > b[sorter.field] ? 1 : -1;
+      } else {
+        return a[sorter.field] < b[sorter.field] ? 1 : -1;
+      }
+    });
+  }
 
-    setFilteredQualityControls(filteredData);
-    calculateMetrics(filteredData); // Update metrics based on filtered data
-  };
+  setFilteredQualityControls(filteredData);
+  calculateMetrics(filteredData); // Update metrics based on filtered data
+};
 
   // Sorting handler
   const handleSort = (field, order) => {
@@ -259,7 +271,7 @@ const generatePDF = async () => {
 
   // Title of the report
   doc.setFontSize(22);
-  doc.text("Quality Control Report", 50, 35); // Adjust y-coordinate to start below header
+  doc.text("Quality Control Report", 65, 35); // Adjust y-coordinate to start below header
 
   // Calculate the status summary
   const statusSummary = filteredQualityControls.reduce((summary, qc) => {
@@ -354,6 +366,8 @@ const generatePDF = async () => {
 
   const isActive = (page) => activePage === page;
   
+  if (loading) return <LoadingDot />;
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Header />
@@ -386,7 +400,7 @@ const generatePDF = async () => {
                 title: 'Products',
               },
               {
-                title: 'Production Overview',
+                title: 'Quality Control',
               },
             ]}
           />
@@ -434,7 +448,7 @@ const generatePDF = async () => {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <div style={{ display: "flex", alignItems: "center" }}>
             <Search
-                placeholder="Search by product type"
+                placeholder="Search in quality control"
                 onChange={(e) => onSearch(e.target.value)} // Trigger search as user types
                 style={{ width: 200, marginRight: 16 }} // Added marginRight for spacing
                 allowClear

@@ -81,9 +81,9 @@ const EditMaintenanceRecord = () => {
           layout="vertical"
         >
           <Form.Item
-            label="Reffered Date"
+            label="Referred Date"
             name="reffereddate"
-            rules={[{ required: true, message: 'Please select the reffered date!' }]}
+            rules={[{ required: true, message: 'Please select the referred date!' }]}
           >
             <DatePicker
               format="YYYY-MM-DD"
@@ -97,8 +97,8 @@ const EditMaintenanceRecord = () => {
             rules={[{ required: true, message: 'Please select Equipment/Machine name!' }]}
           >
             <Select placeholder="Select a Equipment/Machine name">
-            <Option value="Bush cutter">Bush cutter</Option>
-              <Option value="4L disel cans">4L disel cans</Option>
+              <Option value="Bush cutter">Bush cutter</Option>
+              <Option value="4L diesel cans">4L diesel cans</Option>
               <Option value="Metal chemical sprayer">Metal chemical sprayer</Option>
               <Option value="4hp diesel water pump">4hp diesel water pump</Option>
               <Option value="Boots pairs">Boots pairs</Option>
@@ -108,20 +108,37 @@ const EditMaintenanceRecord = () => {
           </Form.Item>
 
           <Form.Item
-            label="Quantity"
-            name="quantity"
-            rules={[{ required: true, message: 'Please enter the quantity!' }]}
-          >
-            <Input type="number" placeholder="Enter quantity" />
-          </Form.Item>
+  label="Quantity"
+  name="quantity"
+  rules={[
+    { required: true, message: 'Please enter the quantity!' },
+    {
+      validator(_, value) {
+        if (!value || /^[1-9]\d*$/.test(value)) {
+          return Promise.resolve();
+        }
+        return Promise.reject(new Error('Quantity must be a whole number greater than 0!'));
+      },
+    },
+  ]}
+>
+  <Input placeholder="Enter quantity" type="number" min={1} step={1} />
+</Form.Item>
 
           <Form.Item
-            label="Referred Location"
-            name="referredlocation"
-            rules={[{ required: true, message: 'Please enter the referred location!' }]}
-          >
-            <Input type="text" placeholder="Enter referred location" />
-          </Form.Item>
+  label="Referred Location"
+  name="referredlocation"
+  rules={[
+    { required: true, message: 'Please enter the referred location!' },
+    {
+      pattern: /^[A-Za-z\s&]+$/,
+      message: 'Referred location can only contain letters, spaces, and the "&" symbol!',
+    },
+  ]}
+>
+  <Input type="text" placeholder="Enter referred location" />
+</Form.Item>
+
 
           <Form.Item
             label="Received Date"
@@ -140,9 +157,8 @@ const EditMaintenanceRecord = () => {
             rules={[{ required: true, message: 'Please select status!' }]}
           >
             <Select placeholder="Select status">
-              <Option value="progress">In Progress</Option>
-              <Option value="completed">Completed</Option>
-   
+              <Option value="In Progress">In Progress</Option>
+              <Option value="Completed">Completed</Option>
             </Select>
           </Form.Item>
 

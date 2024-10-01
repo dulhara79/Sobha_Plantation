@@ -5,6 +5,7 @@ import moment from 'moment';
 import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
+import Swal from 'sweetalert2';
 
 const { Option } = Select;
 
@@ -41,29 +42,36 @@ const EditHarvestSchedule = () => {
 
   // Handle form submission
   const handleSubmit = async (values) => {
-    try {
-      const payload = {
-        cropType: values.cropType,
-        harvestDate: values.harvestdate.format('YYYY-MM-DD'), // Ensure this matches backend
-        startTime: values.startTime,
-        endTime: values.endTime,
-        fieldNumber: values.fieldNumber,
-        numberOfWorkers: values.numberOfWorkers,
-      };
-
-      const response = await axios.put(`http://localhost:5000/api/harvest/${id}`, payload);
-
-      notification.success({
-        message: 'Success',
-        description: 'Harvest updated successfully!',
-      });
-      navigate('/harvest/harvest-schedule'); // Redirect to the list page after successful update
-    } catch (error) {
-      console.error('Failed to update harvest:', error.response?.data);
-      notification.error({
-        message: 'Error',
-        description: `Failed to update harvest. ${error.response?.data?.message || 'Please try again.'}`,
-      });
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to update the harvest schedule?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, update it!',
+      cancelButtonText: 'No, cancel!',
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        const payload = {
+          cropType: values.cropType,
+          harvestDate: values.harvestdate.format('YYYY-MM-DD'), // Ensure this matches backend
+          startTime: values.startTime,
+          endTime: values.endTime,
+          fieldNumber: values.fieldNumber,
+          numberOfWorkers: values.numberOfWorkers,
+        };
+  
+        const response = await axios.put(`http://localhost:5000/api/harvest/${id}`, payload);
+  
+        Swal.fire('Updated!', 'The harvest schedule has been updated.', 'success');
+        navigate('/harvest/harvest-schedule'); // Redirect after successful update
+      } catch (error) {
+        console.error('Failed to update harvest:', error.response?.data);
+        Swal.fire('Error', `Failed to update harvest. ${error.response?.data?.message || 'Please try again.'}`, 'error');
+      }
+    } else {
+      Swal.fire('Cancelled', 'The update was cancelled', 'info');
     }
   };
 
@@ -87,10 +95,11 @@ const EditHarvestSchedule = () => {
             rules={[{ required: true, message: 'Please select a crop type!' }]}
           >
             <Select placeholder="Select a crop type">
-              <Option value="coconut">Coconut</Option>
-              <Option value="banana">Banana</Option>
-              <Option value="pepper">Pepper</Option>
-              <Option value="papaya">Papaya</Option>
+              <Option value="Coconut">Coconut</Option>
+              <Option value="Banana">Banana</Option>
+              <Option value="Pepper">Pepper</Option>
+              <Option value="Papaya">Papaya</Option>
+              <Option value="Pineapple">Pineapple</Option>
             </Select>
           </Form.Item>
 
@@ -148,15 +157,16 @@ const EditHarvestSchedule = () => {
   label="Number of Workers"
   name="numberOfWorkers"
   rules={[
-    { required: true, message: 'Please enter the Number of Workers!' },
-    {
+    { required: true, message: "Number of workers is required!" },
+    { pattern: /^\d+$/, message: "Number of workers must be numeric" },
+    ({ getFieldValue }) => ({
       validator(_, value) {
-        if (!value || value >= 1) {
+        if (!value || (parseInt(value) >= 1 && parseInt(value) <= 40)) {
           return Promise.resolve();
         }
-        return Promise.reject(new Error('Number of workers must be at least 1!'));
+        return Promise.reject(new Error("Number of workers must be between 1 and 40!"));
       },
-    },
+    }),
   ]}
 >
   <Input type="number" min={1} placeholder="Enter Number of Workers" />
