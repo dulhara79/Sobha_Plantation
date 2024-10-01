@@ -346,7 +346,6 @@ const Eregistration = () => {
   };
 
   const handleAddressChange = (e) => {
-
     const value = e.target.value;
     const filteredValue = value.replace(/[^0-9a-zA-Z\s,./]/g, ""); // Remove spaces
     setAddress(filteredValue);
@@ -638,8 +637,8 @@ const Eregistration = () => {
             >
               <option value="">Select Designation</option>
               <option value="Farmer">Farmer</option>
-              <option value="Supervisor"> pest and disease expert </option>
-              <option value="Supervisor">Security</option>
+              <option value="Pest and Disease Expert"> Pest and Disease Expert </option>
+              <option value="Security">Security</option>
             </select>
             {errors.designation && <p>{errors.designation}</p>}
           </FormGroup>
