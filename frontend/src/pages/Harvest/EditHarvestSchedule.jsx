@@ -14,8 +14,8 @@ const EditHarvestSchedule = () => {
   const navigate = useNavigate();
   const { id } = useParams(); // Get the record ID from the route parameters
 
-  const disablePastDates = (current) => {
-    return current && current < moment().startOf("day");
+  const disablePastAndFutureDates = (current) => {
+    return current && (current < moment().startOf("day") || current > moment().endOf("year"));
   };
 
   // Fetch harvest schedule data
@@ -130,7 +130,7 @@ const EditHarvestSchedule = () => {
               >
                 <DatePicker
                   format="YYYY-MM-DD"
-                  disabledDate={disablePastDates}
+                  disabledDate={disablePastAndFutureDates}
                 />
               </Form.Item>
 
