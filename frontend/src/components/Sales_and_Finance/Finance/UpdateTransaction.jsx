@@ -31,12 +31,12 @@ export default function EditTransaction() {
 
   // New state to handle disabled status of each field
   const [fieldDisabled, setFieldDisabled] = useState({
-    subtype: true,
-    date: true,
-    amount: true,
-    description: true,
-    payerPayee: true,
-    method: true,
+    subtype: false,
+    date: false,
+    amount: false,
+    description: false,
+    payerPayee: false,
+    method: false,
   });
 
   const [amountError, setAmountError] = useState("");
@@ -147,26 +147,26 @@ export default function EditTransaction() {
 
   const handleTypeChange = (e) => {
     setType(e.target.value);
-    setFieldDisabled({
-      ...fieldDisabled,
-      subtype: false, // Enable subtype when type is selected
-    });
+    // setFieldDisabled({
+    //   ...fieldDisabled,
+    //   subtype: false, // Enable subtype when type is selected
+    // });
   };
 
   const handleSubTypeChange = (e) => {
     setSubtype(e.target.value);
-    setFieldDisabled({
-      ...fieldDisabled,
-      date: false, // Enable amount when subtype is selected
-    });
+    // setFieldDisabled({
+    //   ...fieldDisabled,
+    //   date: false, // Enable amount when subtype is selected
+    // });
   };
 
   const handleDateChange = (date) => {
     setDate(date ? date.toISOString() : "");
-    setFieldDisabled({
-      ...fieldDisabled,
-      amount: false, // Enable amount when date is selected
-    });
+    // setFieldDisabled({
+    //   ...fieldDisabled,
+    //   amount: false, // Enable amount when date is selected
+    // });
   };
 
   const validateAmount = (value) => {
@@ -176,7 +176,7 @@ export default function EditTransaction() {
 
   const handleAmountChange = (event) => {
     const { value } = event.target;
-    const regex = /^[0-9 ]*$/;
+    const regex = /^[0-9.]*$/;
     if (!regex.test(value)) {
       console.error("Invalid amount input:", value);
       setAmountError("Invalid charactors in amount input");
@@ -190,10 +190,10 @@ export default function EditTransaction() {
     setValidation({ ...validation, amount: validateAmount(filteredValue) });
 
     if (validateAmount(filteredValue)) {
-      setFieldDisabled({
-        ...fieldDisabled,
-        description: false, // Enable description when amount is valid
-      });
+      // setFieldDisabled({
+      //   ...fieldDisabled,
+      //   description: false, // Enable description when amount is valid
+      // });
       setDisabledSave(false);
     } else {
       setDisabledSave(true);
@@ -226,10 +226,10 @@ export default function EditTransaction() {
   
     // Enable the 'payerPayee' field if there is any valid description input
     if (filteredValue.length > 0) {
-      setFieldDisabled({
-        ...fieldDisabled,
-        payerPayee: false, // Enable payer/payee when description is filled
-      });
+      // setFieldDisabled({
+      //   ...fieldDisabled,
+      //   payerPayee: false, // Enable payer/payee when description is filled
+      // });
       setDisabledSave(false);
     } else {
       setDisabledSave(true);
@@ -254,10 +254,10 @@ export default function EditTransaction() {
     const filteredValue = value.replace(/[^a-zA-Z  ]/g, "");
     setPayerPayee(filteredValue);
     if (filteredValue.length > 0) {
-      setFieldDisabled({
-        ...fieldDisabled,
-        method: false, // Enable method when payer/payee is filled
-      });
+      // setFieldDisabled({
+      //   ...fieldDisabled,
+      //   method: false, // Enable method when payer/payee is filled
+      // });
       setDisabledSave(false);
     } else {
       setDisabledSave(true);
@@ -274,7 +274,7 @@ export default function EditTransaction() {
       <form className="flex flex-col items-center justify-center p-8 bg-white border border-gray-300 rounded-lg shadow-lg">
         <div className="w-full space-y-6">
           <h1 className="text-5xl font-bold text-center text-black mb-11">
-            Add Transaction
+            Edit Transaction
           </h1>
           <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-6">
             <fieldset className="sm:col-span-4">

@@ -1,4 +1,3 @@
-// working with error in date
 import React, { useState, useEffect } from "react"; 
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -22,17 +21,12 @@ const EditSalesRecord = () => {
   const [soldQuantity, setSoldQuantity] = useState(null);
   const [totalAmount, setTotalAmount] = useState(null);
   const [submitData, setSubmitData] = useState({});
-  const [submitDisabled, setSubmitDisabled] = useState(true);
-  const [fieldsDisabled, setFieldsDisabled] = useState({
-    product: false,
-    saleDate: true,
-    soldQuantity: true,
-  });
+  const [submitDisabled, setSubmitDisabled] = useState(false);
 
   const [productCompletedQty, setProductCompletedQty] = useState();
   const [productToGetQuantity, setProductToGetQuantity] = useState([]);
   const [unitType, setUnitType] = useState("");
-  const [productError , setProductError] = useState("");
+  const [productError, setProductError] = useState("");
   const [quantityError, setQuantityError] = useState("");
 
   const navigate = useNavigate();
@@ -73,23 +67,6 @@ const EditSalesRecord = () => {
   }, []);
 
   // Handle product change
-  // const handleProductChange = (value) => {
-    // const selectedProduct = products.find((product) => product.productType === value);
-    // if (selectedProduct) {
-    //   setUnitPrice(selectedProduct.unitPrice);
-    //   form.setFieldsValue({
-    //     unitPrice: selectedProduct.unitPrice,
-    //     totalAmount: selectedProduct.unitPrice * soldQuantity,
-    //   });
-    //   setSubmitData((prev) => ({
-    //     ...prev,
-    //     product: value,
-    //     unitPrice: selectedProduct.unitPrice,
-    //     revenueGenerated: selectedProduct.unitPrice * soldQuantity,
-    //   }));
-    // }
-  // };
-
   const handleProductChange = (value) => {
     const selectedProduct = products.find(
       (product) => product.productType === value
@@ -116,10 +93,6 @@ const EditSalesRecord = () => {
         revenueGenerated: selectedProduct.unitPrice * soldQuantity,
       }));
       setProductError("");
-      setFieldsDisabled({
-        ...fieldsDisabled,
-        saleDate: false,
-      });
     } else {
       setProductError("Product is not available for sale.");
       form.setFieldsValue({
@@ -137,40 +110,15 @@ const EditSalesRecord = () => {
         unitType: "",
       }));
       setSubmitDisabled(true);
-      setFieldsDisabled({
-        ...fieldsDisabled,
-        saleDate: true,
-      });
     }
   };
 
-  // Handle quantity change
-  // const handleSoldQuantityChange = (e) => {
-  //   const quantity = e.target.value;
-  //   if (!/^[0-9\b]+$/.test(quantity)) {
-  //     message.error("Invalid quantity. Only numbers are allowed.");
-  //   } else {
-  //     setSoldQuantity(quantity);
-  //     const calculatedAmount = quantity * unitPrice;
-  //     setTotalAmount(calculatedAmount);
-  //     form.setFieldsValue({ totalAmount: calculatedAmount });
-  //     setSubmitData((prev) => ({
-  //       ...prev,
-  //       quantitySold: quantity,
-  //       revenueGenerated: calculatedAmount,
-  //     }));
-  //     setSubmitDisabled(false);
-  //   }
-  // };
-
+  // Handle sold quantity change
   const handleSoldQuantityChange = (e) => {
     const { value } = e.target;
-
-    console.log(value);
     const regex = /^[0-9\b]+$/;
     if (!regex.test(value)) {
       setQuantityError("Invalid quantity. Only numbers are allowed.");
-      console.log("!regex.test(value)", !regex.test(value));
     } else {
       setQuantityError("");
     }
@@ -188,40 +136,33 @@ const EditSalesRecord = () => {
     } else {
       setQuantityError("");
       setSubmitDisabled(false);
-    
 
-    console.log(productToGetQuantity);
-
-    // Calculate total amount
-    if (filteredValue > 0 && unitPrice > 0) {
-      setSoldQuantity(filteredValue);
-      const calculatedAmount = filteredValue * unitPrice;
-      setTotalAmount(calculatedAmount);
-      form.setFieldsValue({ totalAmount: calculatedAmount });
-      setSubmitData((prev) => ({
-        ...prev,
-        quantitySold: filteredValue,
-        revenueGenerated: calculatedAmount,
-      }));
-      setSubmitDisabled(false);
-    } else {
-      form.setFieldsValue({ totalAmount: 0 });
-      setSubmitDisabled(true);
+      // Calculate total amount
+      if (filteredValue > 0 && unitPrice > 0) {
+        const calculatedAmount = filteredValue * unitPrice;
+        setTotalAmount(calculatedAmount);
+        form.setFieldsValue({ totalAmount: calculatedAmount });
+        setSubmitData((prev) => ({
+          ...prev,
+          quantitySold: filteredValue,
+          revenueGenerated: calculatedAmount,
+        }));
+        setSubmitDisabled(false);
+      } else {
+        form.setFieldsValue({ totalAmount: 0 });
+        setSubmitDisabled(true);
+      }
     }
-  }
   };
 
-   const disabledDate = (current) => {
-    return current && current > moment(current).endOf('day');
+  // Disable future dates
+  const disabledDate = (current) => {
+    return current && current > moment().endOf('day');
   };
 
   // Handle date change
   const handleDateChange = (date) => {
     setSubmitData((prev) => ({ ...prev, saleDate: date }));
-    setFieldsDisabled({
-      ...fieldsDisabled,
-      soldQuantity: false,
-    });
   };
 
   // Handle form submission
@@ -257,7 +198,7 @@ const EditSalesRecord = () => {
     <div>
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
         <Form.Item name="product" label="Product Name">
-          <Select onChange={handleProductChange} value={submitData.product} disabled={fieldsDisabled.product}>
+          <Select onChange={handleProductChange} value={submitData.product}>
             {products.map((product) => (
               <Select.Option key={product._id} value={product.productType}>
                 {product.productType}
@@ -269,11 +210,9 @@ const EditSalesRecord = () => {
 
         <Form.Item name="saleDate" label="Sale Date">
           <DatePicker
-            // disabledDate={disabledDate}
-            disabledDate = {disabledDate}
+            disabledDate={disabledDate}
             onChange={handleDateChange}
             defaultValue={moment(submitData.saleDate)}
-            disabled={fieldsDisabled.saleDate}
           />
         </Form.Item>
 
@@ -282,20 +221,19 @@ const EditSalesRecord = () => {
             type="text"
             value={soldQuantity}
             onChange={handleSoldQuantityChange}
-            disabled={fieldsDisabled.soldQuantity}
           />
           {quantityError && 
             <span style={{ color: "red" }}>{quantityError}</span>
           }
         </Form.Item>
 
-        <Form.Item name="unitType" label="Unit Type">
+        {/* <Form.Item name="unitType" label="Unit Type">
           <Input type="text" value={unitType} readOnly />
         </Form.Item>
 
         <Form.Item name="productToGetQuantity" label="Total Quantity">
           <Input type="text" value={productCompletedQty} readOnly />
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item name="unitPrice" label="Unit Price">
           <Input value={unitPrice} readOnly />

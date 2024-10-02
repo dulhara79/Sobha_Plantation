@@ -189,7 +189,6 @@ const AddHarvestSchedule = () => {
     inputReadOnly
   />
 </Form.Item>
-
               {/* Start Time */}
               <Form.Item
                 label="Start Time"

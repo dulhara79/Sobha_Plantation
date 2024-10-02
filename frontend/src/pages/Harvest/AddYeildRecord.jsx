@@ -162,7 +162,6 @@ const AddSchedule = () => {
     inputReadOnly
   />
 </Form.Item>
-
               <Form.Item
                 label="Field Number"
                 name="fieldNumber"

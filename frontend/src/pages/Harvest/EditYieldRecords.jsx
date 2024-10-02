@@ -114,8 +114,6 @@ const EditYieldRecord = () => {
                   disabledDate={disableDateRange} // Limit to past 7 days
                 />
               </Form.Item>
-
-
               <Form.Item
                 label="Field Number"
                 name="fieldNumber"
