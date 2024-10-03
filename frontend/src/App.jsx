@@ -19,6 +19,7 @@ import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecor
 import ViewSalesRecordDashboard from "./pages/SalesAndFinance/Sales/ViewSalesRecordDashboard.jsx";
 import EditSalesDataPage from "./pages/SalesAndFinance/Sales/EditSalesDataPage.jsx";
 import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage.jsx";
+
 // finance
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 
@@ -244,7 +245,7 @@ export default function App() {
         element={<AddNewValuationPage />}
       />
       <Route
-        path="/salesAndFinance/finance/edit-valuation"
+        path="/salesAndFinance/finance/edit-valuation/:id"
         element={<EditValuationPage />}
       />
 
@@ -302,20 +303,17 @@ export default function App() {
         element={<EditRequestPaymentRecord />}
       />
 
-      {/* employee */}        
-      <Route path="/employee/dashboard" element={<Edashboard/>}/>
-      <Route path="/employee/registration" element= {<Eregistration/>}/>
-      <Route path="/employee/task" element= {<EaddTask/>}/>
-      <Route path="/employee/taskedit/:id" element= {<EditTaskPage/>}/>
-      <Route path="/employee/TaskListview" element= {<ViewTaskList/>}/>
-      <Route path="/employee/attendance" element= {<GetAttendance/>}/>
-      <Route path="/employee/employeelist" element= {<EmployeeList/>}/>
-      <Route path="/employee/attendanceList" element= {<EattendenceList/>}/>
-      <Route path="/employee/taskdetails/:id" element= {<ViewTaskDetails/>}/>
-      <Route path= "/employee/veiwattendence/:id" element= {<ViewOneAttendance/>}/>
-      <Route path= "/employee/editemployee/:id" element={<EditEmployeePage/>}/>
-      <Route path= "/employee/viewemployee/:id" element={<ViewOneEmployee/>}/>
-      {/* harvest */}
+      {/* employee */}
+      <Route path="/employee/dashboard" element={<Edashboard />} />
+      <Route path="/employee/registration" element={<Eregistration />} />
+      <Route path="/employee/task" element={<EaddTask />} />
+      <Route path="/employee/taskedit/:id" element={<EditTaskPage />} />
+      <Route path="/employee/TaskListview" element={<ViewTaskList />} />
+      <Route path="/employee/attendance" element={<GetAttendance />} />
+      <Route path="/employee/employeelist" element={<EmployeeList />} />
+      <Route path="/employee/attendanceList" element={<EattendenceList />} />
+
+     {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
       <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
       <Route path="/harvest/yield" element={<YieldRecords />} />
