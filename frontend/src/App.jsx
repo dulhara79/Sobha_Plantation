@@ -154,7 +154,7 @@ import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
 
 // buyers
 // import Cart from "./pages/Buyer/Cart.jsx";
-import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
+impor tBuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
 import BuyerTable from "./pages/BuyerTable.jsx";
 import Profile from './components/Profile';
 import BuyerDashboard from './pages/Buyer/BuyerDashboard.jsx';
@@ -239,7 +239,7 @@ export default function App() {
         element={<AddNewValuationPage />}
       />
       <Route
-        path="/salesAndFinance/finance/edit-valuation"
+        path="/salesAndFinance/finance/edit-valuation/:id"
         element={<EditValuationPage />}
       />
 
@@ -412,16 +412,16 @@ export default function App() {
       <Route path="/pGrowth" element={<PlantGrowth />} />
 
       {/* buyers */}
-      {/* <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
-      <Route path="/buyert" element={<BuyerTable />} /> */}
+      <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
+      <Route path="/buyert" element={<BuyerTable />} />
 
 
       <Route path="/profile" element={<Profile />} />
-      <Route path="/Bdelivery" element={<BuyerDelivery />} /> 
+      <Route path="/Bdelivery" element={<BuyerDelivery />} />
       <Route path="/Bdeliverytable" element={<BuyerDeliveryTable />} />
       <Route path="/updateDelivery/:id" element={<UpdateDeliveryTable />} />
 
-      <Route path="/buyerinfo" element={<BuyerInfo />} /> 
+      <Route path="/buyerinfo" element={<BuyerInfo />} />
       <Route path="/buyerinfotable" element={<BuyerInfoTable />} />
       <Route path="/updateBuyer/:id" element={<UpdateBuyerInfo />} /> 
 
@@ -437,4 +437,4 @@ export default function App() {
       <Route path="*" element={<PageError />} />
     </Routes>
   );
-}
+

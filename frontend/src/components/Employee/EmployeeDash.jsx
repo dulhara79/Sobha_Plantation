@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers, faUserTie, faCheckCircle, faTasks } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from 'react-router-dom';
-import PieChartComponent from '../../components/Employee/PieChartComponent';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUsers,
+  faUserTie,
+  faCheckCircle,
+  faTasks,
+} from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
+import PieChartComponent from "../../components/Employee/PieChartComponent";
 
 // Styled Components (unchanged)
 const Container = styled.div`
@@ -36,7 +41,7 @@ const Card = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 10px;
-  margin: 10px; 
+  margin: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 `;
 
@@ -59,7 +64,6 @@ const ChartContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 20px;
-  
 `;
 
 const EmployeeDash = () => {
@@ -75,18 +79,18 @@ const EmployeeDash = () => {
   const navigate = useNavigate();
 
   const handleViewAllTasks = () => {
-    navigate('/employee/TaskListview');
+    navigate("/employee/TaskListview");
   };
 
   const handleViewAllEmployees = () => {
-    navigate('/employee/employeelist');
+    navigate("/employee/employeelist");
   };
 
   useEffect(() => {
     setLoading(true);
     Promise.all([
       axios.get(`http://localhost:5000/api/taskRecords`),
-      axios.get(`http://localhost:5000/api/employee`)
+      axios.get(`http://localhost:5000/api/employee`),
     ])
       .then(([taskResponse, employeeResponse]) => {
         if (taskResponse.data && Array.isArray(taskResponse.data.data)) {
@@ -106,25 +110,29 @@ const EmployeeDash = () => {
   }, []);
 
   const updateTaskStats = (tasks) => {
-    const completedTasks = tasks.filter(task => task.task_status === 'Completed').length;
-    setData(prevData => ({
+    const completedTasks = tasks.filter(
+      (task) => task.task_status === "Completed"
+    ).length;
+    setData((prevData) => ({
       ...prevData,
       completedTasks: completedTasks,
-      totalTasks: tasks.length
+      totalTasks: tasks.length,
     }));
   };
 
   const updateEmployeeStats = (employees) => {
-    const permanentEmployees = employees.filter(employee => employee.employeeType === 'Permanent').length;
-    setData(prevData => ({
+    const permanentEmployees = employees.filter(
+      (employee) => employee.employeeType === "Permanent"
+    ).length;
+    setData((prevData) => ({
       ...prevData,
       totalEmployees: employees.length,
-      permanentEmployees: permanentEmployees
+      permanentEmployees: permanentEmployees,
     }));
   };
 
   const formatPieChartData = () => {
-    const employeeTypeCounts = { 'Permanent': 0, 'Contract': 0 };
+    const employeeTypeCounts = { Permanent: 0, Contract: 0 };
 
     employeeRecords.forEach((employee) => {
       if (employee.employeeType in employeeTypeCounts) {
@@ -132,11 +140,14 @@ const EmployeeDash = () => {
       }
     });
 
-    return Object.entries(employeeTypeCounts).map(([name, value]) => ({ name, value }));
+    return Object.entries(employeeTypeCounts).map(([name, value]) => ({
+      name,
+      value,
+    }));
   };
 
   const formatPieChartData1 = () => {
-    const statusCounts = { 'Completed': 0, 'In Progress': 0, 'Pending': 0 };
+    const statusCounts = { Completed: 0, "In Progress": 0, Pending: 0 };
 
     taskRecords.forEach((task) => {
       if (task.task_status in statusCounts) {
@@ -144,14 +155,17 @@ const EmployeeDash = () => {
       }
     });
 
-    return Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
+    return Object.entries(statusCounts).map(([name, value]) => ({
+      name,
+      value,
+    }));
   };
 
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+  const currentDate = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 
   return (
@@ -164,6 +178,20 @@ const EmployeeDash = () => {
       </Header>
 
       <h3>Welcome to the Employee Management System.</h3>
+      {/* Pie Chart */}
+      <ChartContainer>
+        <PieChartComponent
+          title="Employee Type Distribution"
+          data={formatPieChartData()}
+          loading={loading}
+        />
+
+        <PieChartComponent
+          title="Task Status Distribution"
+          data={formatPieChartData1()}
+          loading={loading}
+        />
+      </ChartContainer>
 
       {/* First Row of Widgets */}
       <WidgetRow>
@@ -182,7 +210,6 @@ const EmployeeDash = () => {
         <Button onClick={handleViewAllEmployees}>View All Employees</Button>
       </WidgetRow>
 
-
       {/* Second Row of Widgets */}
       <WidgetRow>
         <Card>
@@ -199,25 +226,6 @@ const EmployeeDash = () => {
 
         <Button onClick={handleViewAllTasks}>View All Tasks</Button>
       </WidgetRow>
-      
-       {/* Pie Chart */}
-       <ChartContainer>
-        <PieChartComponent
-          title="Employee Type Distribution"
-          data={formatPieChartData()}
-          loading={loading}
-        />
-
-        <PieChartComponent
-          title="Task Status Distribution"
-          data={formatPieChartData1()}
-          loading={loading}
-        />
-      </ChartContainer>
-
-     
-
-      
     </Container>
   );
 };

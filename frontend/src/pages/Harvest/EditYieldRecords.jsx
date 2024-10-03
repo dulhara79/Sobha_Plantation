@@ -17,9 +17,8 @@ const EditYieldRecord = () => {
   const { id } = useParams(); // Get the record ID from the route parameters
 
   // Function to disable past dates
-  const disableDateRange = (current) => {
-    const oneWeekAgo = moment().subtract(7, "days").startOf("day");
-    return current && (current > moment().endOf("day") || current < oneWeekAgo);
+  const disableFutureDates = (current) => {
+    return current && current >= moment().startOf("day");
   };
   // Fetch record data
   useEffect(() => {
@@ -99,7 +98,7 @@ const EditYieldRecord = () => {
               Edit Yield Record
             </h2>
             <Form form={form} onFinish={handleSubmit} layout="vertical">
-            <Form.Item
+              <Form.Item
                 label="Harvest Date"
                 name="harvestdate"
                 rules={[
@@ -111,10 +110,9 @@ const EditYieldRecord = () => {
               >
                 <DatePicker
                   format="YYYY-MM-DD"
-                  disabledDate={disableDateRange} // Limit to past 7 days
+                  disabledDate={disableFutureDates}
                 />
               </Form.Item>
-
 
               <Form.Item
                 label="Field Number"
