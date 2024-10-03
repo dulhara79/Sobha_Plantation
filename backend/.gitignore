@@ -4,3 +4,4 @@ package-lock.json
 *.png
 
 .env
+client_secret.apps.googleusercontent.com.json
