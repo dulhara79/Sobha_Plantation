@@ -25,8 +25,10 @@ const AddSchedule = () => {
     "storageLocation",
   ];
 
-  const disableFutureDates = (current) => {
-    return current && current >= moment().startOf("day");
+  const disableDateRange = (current) => {
+    // Disable future dates and allow only dates from today to 7 days ago
+    const oneWeekAgo = moment().subtract(7, "days").startOf("day");
+    return current && (current > moment().endOf("day") || current < oneWeekAgo);
   };
 
   const validateQuantity = (_, value) => {
@@ -135,32 +137,31 @@ const AddSchedule = () => {
               layout="vertical"
               nFieldsChange={(_, allFields) => handleFieldsError(allFields)}
             >
-              <Form.Item
-                label="Harvest Date"
-                name="harvestdate"
-                rules={[
-                  { required: true, message: "Please select a harvest date!" },
-                  {
-                    validator: (_, value) => {
-                      if (value && value.isBefore(moment().startOf("day"))) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(
-                        new Error("Harvest date must be a past date!")
-                      );
-                    },
-                  },
-                ]}
-              >
-                <DatePicker
-                  format="YYYY-MM-DD"
-                  disabledDate={disableFutureDates} // This disables today and future dates
-                  onChange={(date) => handleFieldChange("harvestdate", date)}
-                  style={{ width: "100%" }}
-                  inputReadOnly
-                />
-              </Form.Item>
-
+             <Form.Item
+  label="Harvest Date"
+  name="harvestdate"
+  rules={[
+    { required: true, message: "Please select a harvest date!" },
+    {
+      validator: (_, value) => {
+        if (value && value.isBefore(moment().startOf("day"))) {
+          return Promise.resolve();
+        }
+        return Promise.reject(
+          new Error("Harvest date must be within the last week!")
+        );
+      },
+    },
+  ]}
+>
+  <DatePicker
+    format="YYYY-MM-DD"
+    disabledDate={disableDateRange} // Apply the new date range validation
+    onChange={(date) => handleFieldChange("harvestdate", date)}
+    style={{ width: "100%" }}
+    inputReadOnly
+  />
+</Form.Item>
               <Form.Item
                 label="Field Number"
                 name="fieldNumber"
