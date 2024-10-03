@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AddSeedlingForm = () => {
-  const [seedlingType, setSeedlingType] = useState('');
-  const [currentQuantity, setCurrentQuantity] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  
+  const [seedlingType, setSeedlingType] = useState("");
+  const [currentQuantity, setCurrentQuantity] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [disableFields, setDisabledFields] = useState({
+    seedlingtype: false,
+    currentStock: true,
+  });
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -20,14 +24,14 @@ const AddSeedlingForm = () => {
     };
 
     try {
-      await axios.post('http://localhost:5000/api/seedlings', newSeedling);
-      setSuccessMessage('Seedling added successfully!');
-      setSeedlingType('');
-      setCurrentQuantity('');
-      setErrorMessage('');
+      await axios.post("http://localhost:5000/api/seedlings", newSeedling);
+      setSuccessMessage("Seedling added successfully!");
+      setSeedlingType("");
+      setCurrentQuantity("");
+      setErrorMessage("");
     } catch (error) {
-      setErrorMessage('Error adding seedling: ' + error.response?.data.message);
-      setSuccessMessage('');
+      setErrorMessage("Error adding seedling: " + error.response?.data.message);
+      setSuccessMessage("");
     }
   };
 
@@ -40,7 +44,16 @@ const AddSeedlingForm = () => {
     // Allow only letters and spaces
     if (/^[a-zA-Z\s]*$/.test(value)) {
       setSeedlingType(value);
+      setDisabledFields({
+        ...disableFields,
+        currentStock: false,
+      });
     }
+    // } else {
+    //   setDisabledFields({
+    //     ...disableFields,
+    //     currentStock: true,
+    //   })    }
   };
 
   return (
@@ -134,6 +147,7 @@ const AddSeedlingForm = () => {
               id="seedlingType"
               value={seedlingType}
               onChange={handleSeedlingTypeChange}
+              disabled={disableFields.seedlingtype}
               required
             />
           </div>
@@ -144,15 +158,25 @@ const AddSeedlingForm = () => {
               id="currentQuantity"
               value={currentQuantity}
               onChange={(e) => setCurrentQuantity(e.target.value)}
+              disabled={disableFields.currentStock}
               required
             />
           </div>
           <div className="form-group">
             <label>Minimum Stock</label>
-            <p className="minStock">50</p> {/* Display the fixed minimum stock value */}
+            <p className="minStock">50</p>{" "}
+            {/* Display the fixed minimum stock value */}
           </div>
-          <button type="submit" className="button">Add Seedling</button>
-          <button type="button" className="cancel-button" onClick={handleCancel}>Cancel</button>
+          <button type="submit" className="button">
+            Add Seedling
+          </button>
+          <button
+            type="button"
+            className="cancel-button"
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
         </form>
       </div>
     </div>

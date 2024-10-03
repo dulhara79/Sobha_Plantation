@@ -109,24 +109,40 @@ const AddFertilizerRecord = () => {
 
           {/* Added Date */}
           <Form.Item
-            label="Added Date"
-            name="addeddate"
-            rules={[{ required: true, message: 'Please select the added date!' }]}
-          >
-            <DatePicker
-              format="YYYY-MM-DD"
-              disabledDate={disablePastDates}
-              disabled={!fertilizerTypeComplete}  // Enabled only when fertilizer/agrochemical type is selected
-            />
-          </Form.Item>
+  label="Added Date"
+  name="addeddate"
+  rules={[{ required: true, message: 'Please select the added date!' }]}
+>
+  <DatePicker
+    format="YYYY-MM-DD"
+    disabledDate={(current) => {
+      const today = moment().startOf('day');
+      const fiveDaysAgo = moment().subtract(5, 'days').startOf('day');
+      return current && (current < fiveDaysAgo || current > today);
+    }}
+    disabled={!fertilizerTypeComplete} // Enable only when equipment type is selected
+  />
+</Form.Item>
+  
 
-          {/* Quantity */}
-          <Form.Item
+           {/* Quantity */}
+           <Form.Item
             label="Quantity"
             name="quantity"
-            rules={[{ required: true, message: 'Please enter the quantity!' }]}
+            rules={[
+              { required: true, message: 'Please enter the quantity!' },
+              { pattern: /^\d+$/, message: 'Quantity must be numeric' },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || (parseInt(value) >= 1 && parseInt(value) <= 100)) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Quantity must be between 1 and 100!'));
+                },
+              }),
+            ]}
           >
-            <Input type="number" placeholder="Enter quantity" min={0} disabled={!addedDateComplete} />
+            <Input placeholder="Enter quantity" type="number" disabled={!addedDateComplete} />
           </Form.Item>
 
           {/* Unit */}
@@ -143,34 +159,39 @@ const AddFertilizerRecord = () => {
             </Select>
           </Form.Item>
         
-          {/* Storage Location */}
-          <Form.Item
-  label="Storage Location"
-  name="storagelocation"
-  rules={[
-    { required: true, message: 'Please enter the storage location!' },
-    {
-      pattern: /^[A-Za-z\s]*(\d{0,1})[A-Za-z\s]*$/, // Modified regex
-      message: 'Storage location can only contain letters, spaces, and at most one number!',
-    },
-  ]}
->
-  <Input placeholder="Enter Storage Location" disabled={!unitComplete} />
-</Form.Item>
+  {/* Storage Location */}
+  <Form.Item
+            label="Storage Location"
+            name="storagelocation"
+            rules={[{ required: true, message: 'Please enter the storage location!'}]}
+           
+          >
+          <Select placeholder="Select Storage Location" disabled={!unitComplete}>
+              <Option value="warehouse1">warehouse1</Option>
+              <Option value="warehouse2">warehouse2</Option>
+              <Option value="warehouse3">warehouse3</Option>
+            </Select>
+            
+          </Form.Item>
 
 
           {/* Expired Date */}
           <Form.Item
-            label="Expired Date"
-            name="expireddate"
-            rules={[{ required: true, message: 'Please select the expired date!' }]}
-          >
-            <DatePicker
-              format="YYYY-MM-DD"
-              disabledDate={disablePastDates}
-              disabled={!storageLocationComplete} // Enabled only when storage location is entered
-            />
-          </Form.Item>
+  label="Expired Date"
+  name="expireddate"
+  rules={[{ required: true, message: 'Please select the expired date!' }]}
+>
+  <DatePicker
+    format="YYYY-MM-DD"
+    disabledDate={(current) => {
+      const today = moment().startOf('day');
+      const threeYearsFromToday = moment().add(3, 'years').endOf('day');
+      return current && (current < today || current > threeYearsFromToday);
+    }}
+    disabled={!storageLocationComplete} // Enabled only when storage location is entered
+  />
+</Form.Item>
+
 
           {/* Status */}
           <Form.Item

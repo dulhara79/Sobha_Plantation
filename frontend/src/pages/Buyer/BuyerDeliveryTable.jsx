@@ -6,6 +6,7 @@ import axios from "axios";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import moment from "moment";
+
 import {
   HomeOutlined,
   LeftOutlined,
@@ -16,6 +17,7 @@ import {
 import { Link } from "react-router-dom";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import "jspdf-autotable";
 import LogoImage from "../../assets/Logo.png";
 import "../../index.css";
 
@@ -35,7 +37,7 @@ const BuyerDeliveryTable = () => {
   // Fetch delivery records from API
   const fetchDeliveryRecords = async () => {
     try {
-      const response = await axios.get("http://localhost:8090/api/deliveryRecords");
+      const response = await axios.get("http://localhost:5000/api/deliveryRecords");
       setDeliveryRecords(response.data.data);
       setFilteredDeliveryRecords(response.data.data);
     } catch (error) {
@@ -88,7 +90,7 @@ const BuyerDeliveryTable = () => {
   // Delete delivery record
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:8090/api/deliveryRecords/${id}`);
+      const response = await axios.delete(`http://localhost:5000/api/deliveryRecords/${id}`);
       if (response.status === 200) {
         notification.success({
           message: "Success",
@@ -110,52 +112,83 @@ const BuyerDeliveryTable = () => {
     }
   };
 
-  const generatePDF = () => {
-    const input = document.getElementById("table-to-pdf");
-    html2canvas(input, { scale: 2 }).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const imgWidth = 210; // A4 width in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      const pageHeight = pdf.internal.pageSize.height;
-      let heightLeft = imgHeight;
-  
-      // Add title
-      pdf.setFontSize(16);
-      pdf.setTextColor(40, 40, 40);
-      pdf.text("delivery record Identification", 105, 20, { align: "center" });
-  
-      // Add the table image
-      let positionY = 30; // Start position for the image on the first page
-      pdf.addImage(imgData, "PNG", 0, positionY, imgWidth, imgHeight);
-      heightLeft -= pageHeight - positionY;
-  
-      // Add pages if the content spans multiple pages
-      while (heightLeft > 0) {
-        pdf.addPage();
-        positionY = 0; // Reset position to top of the new page
-        pdf.addImage(imgData, "PNG", 0, positionY - heightLeft, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-  
-      // Add footer with a horizontal line and logo
-      const footerY = pdf.internal.pageSize.height - 30;
-  
-      pdf.setDrawColor(0);
-      pdf.setLineWidth(0.5);
-      pdf.line(10, footerY, pdf.internal.pageSize.width - 10, footerY); // Horizontal line
-  
-      // Add logo to the footer
-      const logoData = LogoImage; // Replace with the path to your logo
-      const logoWidth = 40;
-      const logoHeight = 20;
-      const xPosition = (pdf.internal.pageSize.width - logoWidth) / 2;
-      const yPosition = footerY - logoHeight - (-10); // Adjust margin as needed
-  
-      pdf.addImage(logoData, "PNG", xPosition, yPosition, logoWidth, logoHeight);
-  
-      pdf.save("deliveryRecord.pdf");
+
+  //pdf generation
+  const generatePDF = async () => {
+    const doc = new jsPDF();
+
+    // Define the columns for the table
+    const columns = [
+      { title: "First Name", dataKey: "firstName" },
+      { title: "Last Name", dataKey: "lastName" },
+      { title: "Email", dataKey: "email" },
+      { title: "Address", dataKey: "address" },
+      { title: "City", dataKey: "city" },
+      { title: "Country", dataKey: "country" },
+      { title: "Postal Code", dataKey: "postalCode" },
+      { title: "Phone Number", dataKey: "phone" },
+    ]; 
+
+    // Get the data from the inspections state
+    const rows = filteredDeliveryRecords.map((deliveryRecord) => ({
+      
+      firstName: deliveryRecord.firstName,
+      lastName: deliveryRecord.lastName,
+      email: deliveryRecord.email,
+      address: deliveryRecord.address,
+      city: deliveryRecord.city,
+      country: deliveryRecord.country,
+      postalCode: deliveryRecord.postalCode,
+      phone: deliveryRecord.phone,
+      
+      
+    }));
+
+    // Add title (lowered y-coordinate)
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    const titleY = 24; // Adjust this value to lower the title
+    doc.text("Buyer Delivery Records", 70, titleY);
+    
+
+    // Add table (adjusted startY)
+    
+    doc.autoTable({
+      columns: columns,
+      body: rows,
+      startY: titleY + 5, // Adjust this value to set how far below the title the table starts
+      margin: { horizontal: 10 },
+      styles: {
+        fontSize: 10,
+        minCellHeight: 17, // Adjust this value for desired row height
+        halign: "left", // Left-align content horizontally
+        valign: "middle", // Center content vertically
+      },
+      headStyles: {
+        fillColor: [64, 133, 126],
+        textColor: [255, 255, 255],
+        fontSize: 10,
+      },
+      theme: "striped",
     });
+
+    // Add footer with a horizontal line and logo
+    const footerY = doc.internal.pageSize.height - 30;
+
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.5);
+    doc.line(10, footerY, doc.internal.pageSize.width - 10, footerY); // Horizontal line
+
+    // Add logo to the footer
+    const logoData = LogoImage; // Replace with the path to your logo
+    const logoWidth = 40;
+    const logoHeight = 20;
+    const xPosition = (doc.internal.pageSize.width - logoWidth) / 2;
+    const yPosition = footerY - logoHeight - -10; // Adjust margin as needed
+
+    doc.addImage(logoData, "PNG", xPosition, yPosition, logoWidth, logoHeight);
+
+    doc.save("Delivery_Records.pdf");
   };
   
 
@@ -183,35 +216,32 @@ const BuyerDeliveryTable = () => {
               <LeftOutlined className="text-xl" />
             </button>
             <div className="flex space-x-4">
-              <Link
+            <Link
                 to="/buyerdashboard"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
                 Home
               </Link>
               <Link
-                to="/Bdeliverytable"
-                className="text-[#236A64] font-semibold"
+                to="/preorders"
+                
+                className="text-[#3CCD65] hover:text-[#2b8f57]"
               >
-                Manage Delivery Information
+                Pre Order 
               </Link>
               <Link
                 to="/buyerinfotable"
                 className="text-[#3CCD65] hover:text-[#2b8f57]"
+                
               >
-                Manage Buyer Details
+                 Buyer Records
               </Link>
               <Link
                 to="/Bdeliverytable"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
+                
+                className="text-[#236A64] font-semibold"
               >
-                Manage Orders
-              </Link>
-              <Link
-                to="/CoconutPests"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Manage Feedback
+                 Delivery Records
               </Link>
               
             </div>
@@ -228,6 +258,8 @@ const BuyerDeliveryTable = () => {
                   href: "",
                   title: "Buyers Delivery Records",
                 },
+              
+                
               ]}
             />
             {/* Topic Heading */}
@@ -247,6 +279,7 @@ const BuyerDeliveryTable = () => {
                 onChange={(e) => handleSearch(e.target.value)}
                 style={{ width: "100%" }}
               />
+              
             <Button
               icon={<FilePdfOutlined />}
               onClick={generatePDF}

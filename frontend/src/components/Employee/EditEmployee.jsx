@@ -99,6 +99,11 @@ const validateNIC = (nic, dob) => {
 
   return { valid: true };
 };
+const formatDateToLocal = (date) => {
+  const d = new Date(date);
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); // Adjust to local timezone
+  return d.toISOString().split('T')[0]; // Return in YYYY-MM-DD format
+};
 
 const EditEmployee = () => {
   const { id } = useParams();
@@ -136,7 +141,7 @@ const EditEmployee = () => {
           address: data.address,
           employeeType: data.employeeType,
           designation: data.designation,
-          hiredDate: data.hiredDate.split("T")[0],
+          hiredDate: formatDateToLocal(data.hiredDate),
           hourlyRate: data.hourlyRate,
         });
       })
@@ -170,11 +175,11 @@ const EditEmployee = () => {
 
     // Email validation (contains @ and uses only lowercase letters)
     if (!formData.email) newErrors.email = "Email is required.";
-    else if (!/^[a-z]+@[a-z]+\.[a-z]+$/.test(formData.email)) newErrors.email = "Email format is invalid.";
+    else if (!/^[0-9a-z]+@[a-z]+\.[a-z]+$/.test(formData.email)) newErrors.email = "Email format is invalid.";
 
     // Address validation (letters, spaces, ',', '.', '/')
     if (!formData.address) newErrors.address = "Address is required.";
-    else if (!/^[A-Za-z\s,./]+$/.test(formData.address)) newErrors.address = "Address contains invalid characters.";
+    else if (!/^[A-Za-z\s,./0-9]+$/.test(formData.address)) newErrors.address = "Address contains invalid characters.";
 
     // Employee Type validation
     if (!formData.employeeType) newErrors.employeeType = "Employee type is required.";

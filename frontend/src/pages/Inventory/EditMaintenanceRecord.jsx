@@ -108,22 +108,22 @@ const EditMaintenanceRecord = () => {
           </Form.Item>
 
           <Form.Item
-            label="Quantity"
-            name="quantity"
-            rules={[
-              { required: true, message: 'Please enter the quantity!' },
-              {
-                validator(_, value) {
-                  if (!value || value > 0) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error('Quantity must be greater than 0!'));
-                },
-              },
-            ]}
-          >
-            <Input type="number" min={1} placeholder="Enter quantity" />
-          </Form.Item>
+  label="Quantity"
+  name="quantity"
+  rules={[
+    { required: true, message: 'Please enter the quantity!' },
+    {
+      validator(_, value) {
+        if (!value || /^[1-9]\d*$/.test(value)) {
+          return Promise.resolve();
+        }
+        return Promise.reject(new Error('Quantity must be a whole number greater than 0!'));
+      },
+    },
+  ]}
+>
+  <Input placeholder="Enter quantity" type="number" min={1} step={1} />
+</Form.Item>
 
           <Form.Item
   label="Referred Location"
