@@ -1,9 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 
-/**
- * landing page and dashboard
- */
+// landing page and dashboard
 import Home from "./pages/Home.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import LearnMore from './components/LearnMore';
@@ -24,11 +22,12 @@ import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 
 import AddTransactionPage from "./pages/SalesAndFinance/Finance/AddTransactionPage.jsx";
-import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
 import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDisplay.jsx";
+import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
 import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
-import ValuationDashboardPage from "./pages/SalesAndFinance/Finance/ValuationDashboard.jsx";
+
 import AddNewValuationPage from "./pages/SalesAndFinance/Finance/AddNewValuationPage.jsx";
+import ValuationDashboardPage from "./pages/SalesAndFinance/Finance/ValuationDashboard.jsx";
 import EditValuationPage from "./pages/SalesAndFinance/Finance/EditValuationPage.jsx";
 
 import Esalary from "./pages/SalesAndFinance/Finance/Esalary.jsx";
@@ -55,13 +54,9 @@ import Eregistration from "./pages/employee/Eregistration.jsx";
 import EaddTask from "./pages/employee/EaddTask.jsx";
 import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
-import ViewTaskDetails from "./pages/employee/ViewTaskDetails.jsx";
 import GetAttendance from "./pages/employee/GetAttendance.jsx";
 import EmployeeList from "./pages/employee/EmployeeList.jsx";
 import EattendenceList from "./pages/employee/EattendenceList.jsx";
-import ViewOneAttendance from "./pages/employee/ViewOneAttendance.jsx";
-import  EditEmployeePage from "./pages/employee/EditEmployeePage.jsx";
-import ViewOneEmployee from "./pages/employee/ViewOneEmployee.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
@@ -443,4 +438,4 @@ export default function App() {
       <Route path="*" element={<PageError />} />
     </Routes>
   );
-
+}
