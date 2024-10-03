@@ -17,6 +17,7 @@ import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecor
 import ViewSalesRecordDashboard from "./pages/SalesAndFinance/Sales/ViewSalesRecordDashboard.jsx";
 import EditSalesDataPage from "./pages/SalesAndFinance/Sales/EditSalesDataPage.jsx";
 import SalesAnalyticsPage from "./pages/SalesAndFinance/Sales/SalesAnalyticsPage.jsx";
+
 // finance
 import FinanceDashboard from "./pages/SalesAndFinance/Finance/FinanceDashboard.jsx";
 
