@@ -47,7 +47,7 @@ const Footer = () => {
           </div>
           <div className='flex flex-row items-center justify-start w-full py-2 mt-0 mb-0 text-center no-underline '>
             <Email />
-          <p className='pl-8'>info@gmail.com</p>
+          <p className='pl-8'>sobhaplantationsltd@gmail.com</p>
           </div>
           <div className='flex flex-row items-center justify-start w-full py-2 mt-0 mb-0 text-center no-underline '>
             <AlternateEmail />

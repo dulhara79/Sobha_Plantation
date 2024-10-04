@@ -22,6 +22,8 @@ import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
+import img from "../../../../src/assets/logo.png";
+
 // import NewLoadingScreen from '../../NewLoadingScreen';
 import NewLoadingScreen from "../../../components/LoadingDots";
 import { useNavigate } from "react-router-dom";
@@ -41,6 +43,7 @@ const SalesTable = () => {
   const [dateRange, setDateRange] = useState([]);
   const [typeFilter, setTypeFilter] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [filteredSchedules, setFilteredSchedules] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,11 +51,8 @@ const SalesTable = () => {
         const response = await axios.get(
           "http://localhost:5000/api/salesAndFinance/sales/tracking"
         );
-        const data = response.data.data; 
+        const data = response.data.data;
 
-        console.log("response: ", response);
-        
-               
         setTransactions(data);
         setFilteredData(data);
         calculateTotal(data);
@@ -80,11 +80,12 @@ const SalesTable = () => {
     };
   }, []);
 
-  let total = 0;
   const calculateTotal = (data) => {
-    var totalIncome = data
-        total += totalIncome;
-    setTotalAmount(total);
+    const totalIncome = data.reduce(
+      (sum, transaction) => sum + transaction.revenueGenerated,
+      0
+    );
+    setTotalAmount(totalIncome);
   };
 
   const applyFilters = (data) => {
@@ -155,31 +156,148 @@ const SalesTable = () => {
     XLSX.writeFile(wb, "sales Data.xlsx");
   };
 
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text("sales Data", 14, 16);
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "Anonymous"; // Ensure cross-origin images are handled
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  };
 
-    autoTable(doc, {
-      head: [
-        [
-          "Date",
-          "Product",
-          "Unit Price",
-          "Quantity",
-          "Revenue Generated"
-        ],
-      ],
-      body: filteredData.map((tx) => [
-        format(new Date(tx.saleDate), "yyyy-MM-dd"),
-        tx.product,
-        tx.unitPrice,
-        tx.quantitySold,
-        tx.revenueGenerated.toFixed(2),
-      ]),
-      foot: [["", "", "", "", "", "Balance:", revenueGenerated.toFixed(2)]],
+  const exportToPDF = async () => {
+    const doc = new jsPDF();
+
+    // Load the logo image
+    const logoUrl = "../../../../src/assets/logo.png";
+    let logoDataURL;
+    try {
+      logoDataURL = await getImageDataURL(logoUrl);
+    } catch (error) {
+      console.error("Failed to load the logo image:", error);
+    }
+
+    // Function to draw header, footer, and horizontal line
+    const drawHeaderFooter = (data) => {
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+
+      // Header with logo
+      if (logoDataURL) {
+        doc.addImage(logoDataURL, "PNG", 10, 10, 40, 10); // Adjust position and size
+      }
+      doc.setFontSize(12);
+      doc.text("Sobha Plantation", 170, 15); // Adjust x, y position
+      doc.line(10, 25, pageWidth - 10, 25); // Line under header
+
+      // Footer with page number
+      doc.setFontSize(10);
+      doc.text(
+        `Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`,
+        pageWidth - 30,
+        pageHeight - 10
+      );
+    };
+
+    // Set the margins for header and footer space
+    const marginTop = 30; // space reserved for header
+    const marginBottom = 20; // space reserved for footer
+
+    // Title of the report
+    doc.setFontSize(22);
+    doc.text("Sales Report", 50, 35); // Adjust y-coordinate to start below header
+
+    // First Table: Overview Details
+    const overviewHeaders = [["Detail", "Value"]];
+
+    // Calculate total quantity and total revenue
+    const totalQuantity = filteredSchedules.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    );
+    const totalSalesCount = filteredData.length; // Total sales count
+    const totalRevenue = filteredData
+      .reduce((sum, item) => sum + item.revenueGenerated, 0)
+      .toFixed(2); // Total revenue
+
+    const overviewRows = [
+      ["Total Sales Count", `${totalSalesCount}`], // Total sales count
+      ["Total Revenue", `${totalRevenue}`], // Total revenue
+    ];
+
+    // Render the first table
+    doc.autoTable({
+      startY: marginTop + 20, // Start the first table below the header space
+      head: overviewHeaders,
+      body: overviewRows,
+      margin: { top: marginTop, bottom: marginBottom, horizontal: 10 },
+      styles: {
+        fontSize: 10,
+      },
+      headStyles: {
+        fillColor: [64, 133, 126],
+        textColor: [255, 255, 255],
+        fontSize: 12,
+      },
+      theme: "grid",
+      didDrawPage: drawHeaderFooter, // Add header and footer to each page
     });
 
-    doc.save("sales Data.pdf");
+    // Second Table: Production Schedule Data
+    const scheduleRows = filteredData
+      .map((tx) => [
+        format(new Date(tx.saleDate), "yyyy-MM-dd"),
+        tx.product,
+        tx.unitPrice.toFixed(2),
+        tx.quantitySold,
+        tx.revenueGenerated.toFixed(2),
+      ])
+      .filter((row) => row.every((cell) => cell !== undefined)); // Ensure no undefined values
+
+    const scheduleHeaders = [
+      ["Date", "Product", "Unit Price", "Quantity", "Revenue Generated"],
+    ];
+
+    let finalY = doc.lastAutoTable.finalY + 10; // Adjust space between tables
+
+    // Render the second table only if there are valid rows
+    if (scheduleRows.length > 0) {
+      doc.autoTable({
+        startY: finalY, // Start this table below the first table
+        head: scheduleHeaders,
+        body: scheduleRows,
+        margin: { top: marginTop, bottom: marginBottom, horizontal: 10 },
+        styles: {
+          fontSize: 10,
+        },
+        headStyles: {
+          fillColor: [64, 133, 126],
+          textColor: [255, 255, 255],
+          fontSize: 12,
+        },
+        theme: "striped",
+        didDrawPage: drawHeaderFooter,
+      });
+    } else {
+      // Handle the case where there are no schedule rows
+      doc.setFontSize(10);
+      doc.text(
+        "No data available for the production schedule.",
+        10,
+        finalY + 10
+      );
+    }
+
+    // Save the PDF
+    doc.save("sales_report.pdf");
   };
 
   const handleDelete = async (id) => {
@@ -202,7 +320,7 @@ const SalesTable = () => {
   };
 
   const handleEdit = (id) => {
-    navigate(`/api/salesAndFinance/sales/tracking/${id}`);
+    navigate(`/salesAndFinance/sales/editSalesRecord/${id}`);
   };
 
   const columns = [
@@ -217,7 +335,7 @@ const SalesTable = () => {
       title: "Product Name",
       dataIndex: "product",
       key: "product",
-      sorter: (a, b) => a.type.localeCompare(b.type),
+      sorter: (a, b) => a.product.localeCompare(b.product),
     },
     {
       title: "Unit Price",
@@ -234,8 +352,8 @@ const SalesTable = () => {
       title: "Amount",
       dataIndex: "revenueGenerated",
       key: "revenueGenerated",
-      render: (text) => <>{text.toFixed(2)}</>, // text.toFixed(2)
-      sorter: (a, b) => a.amount - b.amount,
+      render: (text) => <>{text.toFixed(2)}</>,
+      sorter: (a, b) => a.revenueGenerated - b.revenueGenerated,
     },
     {
       title: "Actions",
@@ -262,12 +380,6 @@ const SalesTable = () => {
       ),
     },
   ];
-
-  // Determine the balance color
-//   const balanceColor = revenueGenerated > 0 ? "green" : "red";
-
-  if (loading) return <NewLoadingScreen />;
-  if (error) return <p>{error}</p>;
 
   return (
     <div className="p-4">
@@ -298,11 +410,19 @@ const SalesTable = () => {
             Export to PDF
           </Button>
         </div>
-        <Table columns={columns} dataSource={filteredData} rowKey="_id" />
-        <div className="mt-4 text-5xl" >
-          {/* <strong>Total Balance:</strong> {revenueGenerated.toFixed(2)} */}
-        </div>
+        <Table
+          dataSource={filteredData}
+          columns={columns}
+          rowKey="_id"
+          footer={() => (
+            <div className="flex justify-end">
+              <strong className="mr-64 text-lg">Total Revenue: {revenueGenerated.toFixed(2)}</strong>
+            </div>
+          )}
+        />
       </Card>
+      {loading && <NewLoadingScreen />}
+      {error && <div>{error}</div>}
     </div>
   );
 };

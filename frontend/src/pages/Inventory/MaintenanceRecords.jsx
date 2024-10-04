@@ -262,8 +262,8 @@ const MaintenanceRecords = () => {
       {
         label: 'Maintenance Status',
         data: [statusCounts.inprogress, statusCounts.completed],
-        backgroundColor: ['#FFFF8F', '#90EE90'],
-        hoverBackgroundColor: ['#FFEA00', '#50C878'],
+        backgroundColor: ['#000080', '#40B5AD'],
+        hoverBackgroundColor: ['#4169E1', '#40E0D0'],
       },
     ],
   };

@@ -33,7 +33,7 @@ const GetEmpAttendance = () => {
         const statusMap = {
             present: 'Present',
             absent: 'Absent',
-            halfday: 'Late', // Adjust this as 'Late' or another value depending on your logic
+            halfday: 'Half Day', // Adjust this as 'Late' or another value depending on your logic
         };
     
         const updatedAttendanceData = {

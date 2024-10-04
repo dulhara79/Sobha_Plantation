@@ -5,34 +5,54 @@ import Sidebar from '../../components/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import { HomeOutlined, LeftCircleOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Breadcrumb } from 'antd';
-import jsPDF from 'jspdf'; // Import jsPDF
-import 'jspdf-autotable'; // Import the plugin for creating tables in jsPDF
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import FieldViewNavbar from '../../components/FieldView/FieldViewNavbar';
-import moment from 'moment';
 
 const { Option } = Select;
 
 const PlantGrowth = () => {
   const [plantGrowthData, setPlantGrowthData] = useState([
+    
     {
-      _id: '1',
-      plantType: 'Tomato',
-      fieldName: 'Field A',
-      date: '2024-09-15',
-      height: 30,
-      numberOfLeaves: 15,
-      leafSize: 'Medium',
+      _id: '3',
+      plantType: 'Coconut',
+      fieldName: 'Field C',
+      date: '2024-09-20',
+      height: 150,
+      numberOfLeaves: 12,
+      leafSize: 'Large',
       healthIssues: 'None',
     },
     {
-      _id: '2',
-      plantType: 'Corn',
-      fieldName: 'Field B',
-      date: '2024-09-10',
-      height: 100,
-      numberOfLeaves: 8,
+      _id: '4',
+      plantType: 'Banana',
+      fieldName: 'Field D',
+      date: '2024-09-18',
+      height: 180,
+      numberOfLeaves: 15,
       leafSize: 'Large',
-      healthIssues: 'Pests',
+      healthIssues: 'None',
+    },
+    {
+      _id: '5',
+      plantType: 'Pepper',
+      fieldName: 'Field E',
+      date: '2024-09-22',
+      height: 50,
+      numberOfLeaves: 10,
+      leafSize: 'Small',
+      healthIssues: 'None',
+    },
+    {
+      _id: '6',
+      plantType: 'Pineapple',
+      fieldName: 'Field F',
+      date: '2024-09-25',
+      height: 60,
+      numberOfLeaves: 12,
+      leafSize: 'Medium',
+      healthIssues: 'None',
     },
   ]);
 
@@ -44,7 +64,45 @@ const PlantGrowth = () => {
 
   const navigate = useNavigate();
 
-  // Function to get image data URL
+  const handleAddNew = () => {
+    setEditingRecord(null);
+    setIsModalVisible(true);
+    form.resetFields();
+  };
+
+  const handleFormSubmit = (values) => {
+    if (editingRecord) {
+      const updatedData = plantGrowthData.map((item) =>
+        item._id === editingRecord._id ? { ...item, ...values } : item
+      );
+      setPlantGrowthData(updatedData);
+      message.success('Plant growth record updated successfully');
+    } else {
+      const newRecord = {
+        ...values,
+        _id: (plantGrowthData.length + 1).toString(),
+        date: new Date().toISOString().split('T')[0],
+      };
+      setPlantGrowthData([...plantGrowthData, newRecord]);
+      message.success('Plant growth record added successfully');
+    }
+    setIsModalVisible(false);
+    form.resetFields();
+  };
+
+  const handleEdit = (record) => {
+    setEditingRecord(record);
+    form.setFieldsValue(record);
+    setIsModalVisible(true);
+  };
+
+  const handleDelete = (id) => {
+    const updatedData = plantGrowthData.filter((item) => item._id !== id);
+    setPlantGrowthData(updatedData);
+    message.success('Plant growth record deleted successfully');
+  };
+
+  // Function to get image data URL for the logo
   const getImageDataURL = (url) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -62,111 +120,89 @@ const PlantGrowth = () => {
     });
   };
 
-  // Generate report as PDF
+  // Generate PDF Report with the logo
   const handleGenerateReport = async () => {
     const doc = new jsPDF();
 
     // Load the logo image
-    const logoUrl = '../src/assets/logo.png';
+    const logoUrl = '../src/assets/logo.png'; // Ensure this path points to your logo
     try {
       const logoDataURL = await getImageDataURL(logoUrl);
       // Add the logo image to the PDF
-      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
+      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20);
     } catch (error) {
       console.error('Failed to load the logo image:', error);
     }
 
-    // Define table columns
+    // Define the table columns
     const columns = [
-      'Plant Type',
-      'Field Name',
-      'Date',
-      'Height (cm)',
-      'Number of Leaves',
-      'Leaf Size',
-      'Health Issues',
+      { title: "Plant Type", dataKey: "plantType" },
+      { title: "Field Name", dataKey: "fieldName" },
+      { title: "Date", dataKey: "date" },
+      { title: "Height (cm)", dataKey: "height" },
+      { title: "Number of Leaves", dataKey: "numberOfLeaves" },
+      { title: "Leaf Size", dataKey: "leafSize" },
+      { title: "Health Issues", dataKey: "healthIssues" }
     ];
 
-    // Prepare data for the table
-    const rows = plantGrowthData.map((item) => [
-      item.plantType,
-      item.fieldName,
-      new Date(item.date).toLocaleDateString(),
-      item.height,
-      item.numberOfLeaves,
-      item.leafSize,
-      item.healthIssues,
-    ]);
+    // Map the filteredData to match the columns
+    const rows = plantGrowthData.map((item) => ({
+      plantType: item.plantType,
+      fieldName: item.fieldName,
+      date: new Date(item.date).toLocaleDateString(),
+      height: item.height,
+      numberOfLeaves: item.numberOfLeaves,
+      leafSize: item.leafSize,
+      healthIssues: item.healthIssues,
+    }));
 
-    // Add the title
-    doc.setFontSize(18);
-    doc.text('Plant Growth Report', 14, 30);
+    // Add title and table to PDF
+    doc.setFontSize(22);
+    doc.text("Plant Growth Report", 50, 40);
 
-    // Add the table to the PDF
     doc.autoTable({
-      head: [columns],
+      columns: columns,
       body: rows,
-      startY: 40, // Adjust the start position of the table
+      startY: 50,
+      margin: { horizontal: 10 },
+      styles: {
+        fontSize: 10,
+      },
+      headStyles: {
+        fillColor: [64, 133, 126],
+        textColor: [255, 255, 255],
+        fontSize: 12,
+      },
+      theme: 'striped',
+      didDrawPage: (data) => {
+        const pageNumber = doc.internal.getNumberOfPages();
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+
+        doc.setFontSize(10);
+        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10);
+      },
     });
 
-    // Save the generated PDF
-    doc.save('PlantGrowthReport.pdf');
-
+    // Save the PDF
+    doc.save("PlantGrowthReport.pdf");
     message.success('PDF report generated and downloaded!');
   };
 
-  // Show modal for creating a new record
-  const handleAddNew = () => {
-    setEditingRecord(null);
-    setIsModalVisible(true);
-    form.resetFields();
-  };
+  const filteredData = plantGrowthData.filter(item => {
+    const lowerCaseSearchText = searchText.toLowerCase();
+    return (
+      item.plantType.toLowerCase().includes(lowerCaseSearchText) ||
+      item.fieldName.toLowerCase().includes(lowerCaseSearchText) ||
+      new Date(item.date).toLocaleDateString().toLowerCase().includes(lowerCaseSearchText) || // Fix applied here
+      item.height.toString().includes(lowerCaseSearchText) ||
+      item.numberOfLeaves.toString().includes(lowerCaseSearchText) ||
+      item.leafSize.toLowerCase().includes(lowerCaseSearchText) ||
+      item.healthIssues.toLowerCase().includes(lowerCaseSearchText)
+    );
+  }).filter(item => (healthFilter ? item.healthIssues === healthFilter : true));
 
-  // Submit form data
-  const handleFormSubmit = (values) => {
-    if (editingRecord) {
-      // Update existing record
-      const updatedData = plantGrowthData.map((item) =>
-        item._id === editingRecord._id ? { ...item, ...values } : item
-      );
-      setPlantGrowthData(updatedData);
-      message.success('Plant growth record updated successfully');
-    } else {
-      // Add new record
-      const newRecord = {
-        ...values,
-        _id: (plantGrowthData.length + 1).toString(), // Temporary ID for frontend
-        date: new Date().toISOString().split('T')[0],
-      };
-      setPlantGrowthData([...plantGrowthData, newRecord]);
-      message.success('Plant growth record added successfully');
-    }
-    setIsModalVisible(false);
-    form.resetFields();
-  };
 
-  // Edit a plant growth record
-  const handleEdit = (record) => {
-    setEditingRecord(record);
-    form.setFieldsValue(record);
-    setIsModalVisible(true);
-  };
-
-  // Delete a plant growth record
-  const handleDelete = (id) => {
-    const updatedData = plantGrowthData.filter((item) => item._id !== id);
-    setPlantGrowthData(updatedData);
-    message.success('Plant growth record deleted successfully');
-  };
-
-  // Filter data based on search and health issues
-  const filteredData = plantGrowthData
-    .filter(item =>
-      item.plantType.toLowerCase().includes(searchText.toLowerCase())
-    )
-    .filter(item => (healthFilter ? item.healthIssues === healthFilter : true));
-
-  // Columns for the Ant Design Table
   const columns = [
     {
       title: 'Plant Type',
@@ -209,21 +245,28 @@ const PlantGrowth = () => {
       key: 'actions',
       render: (text, record) => (
         <>
-          <Button
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-            type="primary"
-            style={{ marginRight: 8 }}
+          <Button 
+            onClick={() => handleEdit(record)} 
+            type="link" 
+            icon={<EditOutlined />} 
+            style={{ marginRight: 8 }} 
           />
-          <Button
-            icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record._id)}
-            type="danger"
+          <Button 
+            onClick={() => handleDelete(record._id)} 
+            type="link" 
+            icon={<DeleteOutlined />} 
+            danger 
           />
         </>
       ),
     },
   ];
+
+  const blockAlphabetInput = (e) => {
+    if (!/[0-9]/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
 
   return (
     <div>
@@ -239,12 +282,10 @@ const PlantGrowth = () => {
             { href: '', title: 'Plant Growth' },
           ]}
         />
-        <FieldViewNavbar />
-        {/* Back Button */}
         <div className="mb-4">
+        <FieldViewNavbar />
           <LeftCircleOutlined onClick={() => navigate(-1)} style={{ fontSize: '24px', cursor: 'pointer' }} />
         </div>
-        {/* Page Header */}
         <div className="bg-white shadow-md rounded-lg p-4 my-4">
           <h2 className="text-xl font-semibold">Plant Growth</h2>
           <p>
@@ -254,7 +295,7 @@ const PlantGrowth = () => {
         <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Input
-              placeholder="Search by plant type"
+              placeholder="Search here"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               style={{ width: 200, marginRight: 16 }}
@@ -270,12 +311,12 @@ const PlantGrowth = () => {
             </Select>
           </div>
           <div>
-            <Button type="primary" onClick={handleAddNew} style={{ marginRight: 16 }}>+ Add New Record</Button>
+            <Button type="primary" onClick={handleAddNew} style={{ marginRight: 16 }}>+Add New Record</Button>
             <Button
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
               onClick={handleGenerateReport}
             >
-              Generate PDF Report
+              Generate Reports
             </Button>
           </div>
         </div>
@@ -289,24 +330,78 @@ const PlantGrowth = () => {
         onCancel={() => setIsModalVisible(false)}
         onOk={() => form.submit()}
       >
-        <Form form={form} onFinish={handleFormSubmit}>
-          <Form.Item label="Plant Type" name="plantType" rules={[{ required: true, message: 'Please input plant type!' }]}>
-            <Input />
+        <Form form={form} layout="vertical" onFinish={handleFormSubmit}>
+          <Form.Item
+            label="Plant Type"
+            name="plantType"
+            rules={[{ required: true, message: 'Please select plant type!' }]}
+          >
+            <Select>
+              <Option value="Coconut">Coconut</Option>
+              <Option value="Banana">Banana</Option>
+              <Option value="Pepper">Pepper</Option>
+              <Option value="Pineapple">Pineapple</Option>
+            </Select>
           </Form.Item>
-          <Form.Item label="Field Name" name="fieldName" rules={[{ required: true, message: 'Please input field name!' }]}>
-            <Input />
+          <Form.Item
+            label="Field Name"
+            name="fieldName"
+            rules={[{ required: true, message: 'Please select field name!' }]}
+          >
+            <Select>
+              <Option value="Field A">Field A</Option>
+              <Option value="Field B">Field B</Option>
+              <Option value="Field C">Field C</Option>
+              <Option value="Field D">Field D</Option>
+              
+            </Select>
           </Form.Item>
-          <Form.Item label="Height (cm)" name="height" rules={[{ required: true, message: 'Please input plant height!' }]}>
-            <InputNumber min={0} />
+          <Form.Item
+            label="Height (cm)"
+            name="height"
+            rules={[{ required: true, message: 'Please enter height!' }]}
+          >
+            <InputNumber
+              onKeyPress={blockAlphabetInput}
+              onChange={(value) => form.setFieldsValue({ height: value })}
+            />
           </Form.Item>
-          <Form.Item label="Number of Leaves" name="numberOfLeaves" rules={[{ required: true, message: 'Please input number of leaves!' }]}>
-            <InputNumber min={0} />
+          <Form.Item
+            label="Number of Leaves"
+            name="numberOfLeaves"
+            rules={[{ required: true, message: 'Please enter number of leaves!' }]}
+          >
+            <InputNumber
+              onKeyPress={blockAlphabetInput}
+              onChange={(value) => form.setFieldsValue({ numberOfLeaves: value })}
+            />
           </Form.Item>
-          <Form.Item label="Leaf Size" name="leafSize" rules={[{ required: true, message: 'Please input leaf size!' }]}>
-            <Input />
+          <Form.Item
+            label="Leaf Size"
+            name="leafSize"
+            rules={[{ required: true, message: 'Please select leaf size!' }]}
+          >
+            <Select>
+              <Option value="Small">Small</Option>
+              <Option value="Medium">Medium</Option>
+              <Option value="Large">Large</Option>
+            </Select>
           </Form.Item>
-          <Form.Item label="Health Issues" name="healthIssues">
-            <Input />
+          <Form.Item
+            label="Health Issues"
+            name="healthIssues"
+            rules={[{ required: true, message: 'Please select health issues!' }]}
+          >
+            <Select>
+              <Option value="None">None</Option>
+              <Option value="Pests">Pests</Option>
+              {/* Add more options if necessary */}
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              {editingRecord ? "Update" : "Add"} Record
+            </Button>
           </Form.Item>
         </Form>
       </Modal>
