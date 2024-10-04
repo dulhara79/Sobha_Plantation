@@ -16,14 +16,12 @@ const DiseasesDashboard = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [loading, setLoading] = useState(true); 
 
-
   // Update the date and time every minute
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentDate(new Date());
     }, 60000); // Update every 60 seconds
 
-    // Simulate loading for 2 seconds before setting loading to false
     if (loading) {
       setTimeout(() => {
         setLoading(false); // Set loading to false after data is loaded
