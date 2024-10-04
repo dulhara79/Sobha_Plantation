@@ -59,7 +59,7 @@ const handleAlphanumericKeyPress = (e) => {
   useEffect(() => {
     const fetchRecord = async () => {
       try {
-        const response = await axios.get(`http://localhost:8090/api/cropDiseases/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/cropDiseases/${id}`);
         const data = response.data.diseaseRecord;
 
         // Set form values including DatePicker values
@@ -96,7 +96,7 @@ const handleAlphanumericKeyPress = (e) => {
         suggestedReInspectionDate: suggestedReInspectionDate ? suggestedReInspectionDate.toISOString() : null,
       };
 
-      await axios.put(`http://localhost:8090/api/cropDiseases/${id}`, payload);
+      await axios.put(`http://localhost:5000/api/cropDiseases/${id}`, payload);
 
       notification.success({
         message: "Record updated successfully",
