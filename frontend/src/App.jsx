@@ -162,10 +162,10 @@ import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
 
 // buyers
 // import Cart from "./pages/Buyer/Cart.jsx";
-import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
+import BuyerRegistrationForm from "./pages/BuyerRegistrationForm.jsx";
 import BuyerTable from "./pages/BuyerTable.jsx";
-import Profile from './components/Profile';
-import BuyerDashboard from './pages/Buyer/BuyerDashboard.jsx';
+import Profile from "./components/Profile";
+import BuyerDashboard from "./pages/Buyer/BuyerDashboard.jsx";
 
 import BuyerDelivery from "./pages/Buyer/BuyerDelivery.jsx";
 import BuyerDeliveryTable from "./pages/Buyer/BuyerDeliveryTable.jsx";
@@ -206,6 +206,7 @@ export default function App() {
           />
 
           <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
+          
           <Route
             path="/salesAndFinance/sales/addSalesRecord"
             element={<AddSalesRecordDashboard />}
