@@ -59,7 +59,6 @@ import EditRequestPaymentRecord from "./pages/Inventory/EditRequestPaymentRecord
 // employee
 import Edashboard from "./pages/employee/Edashboard.jsx";
 import Eregistration from "./pages/employee/Eregistration.jsx";
-import Esalary from "./pages/employee/Esalary";
 import EaddTask from "./pages/employee/EaddTask.jsx";
 import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
@@ -69,7 +68,6 @@ import EattendenceList from "./pages/employee/EattendenceList.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
-import ScheduleOptionsPage from "./pages/Harvest/ScheduleOptionsPage.jsx";
 import HarvestSchedule from "./pages/Harvest/HarvestSchedule";
 import YieldRecords from "./pages/Harvest/YieldRecords";
 import ComplianceCheckList from "./pages/Harvest/ComplianceCheckList";
