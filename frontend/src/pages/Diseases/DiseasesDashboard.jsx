@@ -4,6 +4,7 @@ import Sidebar from "../../components/Sidebar";
 import { HomeOutlined, LeftOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
 import { Link } from "react-router-dom";
+import LoadingDot from '../../components/LoadingDots';  
 
 // Import images
 import diseaseIdentificationImg from "../../assets/DiseasesImages/disease.jpg";
@@ -13,12 +14,21 @@ import trendAnalysisImg from "../../assets/DiseasesImages/trend.jpg";
 
 const DiseasesDashboard = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [loading, setLoading] = useState(true); 
+
 
   // Update the date and time every minute
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentDate(new Date());
     }, 60000); // Update every 60 seconds
+
+    // Simulate loading for 2 seconds before setting loading to false
+    if (loading) {
+      setTimeout(() => {
+        setLoading(false); // Set loading to false after data is loaded
+      }, 1000);
+    };
 
     return () => clearInterval(timer); // Clean up the interval on component unmount
   }, []);
@@ -31,6 +41,9 @@ const DiseasesDashboard = () => {
     day: "numeric",
   };
   const formattedDate = currentDate.toLocaleDateString(undefined, options);
+
+  if (loading) return <LoadingDot />; // Show loading screen if loading is true
+
 
   return (
     <div>
