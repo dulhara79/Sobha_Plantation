@@ -42,7 +42,6 @@ const DiseasesDashboard = () => {
 
   if (loading) return <LoadingDot />; // Show loading screen if loading is true
 
-
   return (
     <div>
       <Header />
