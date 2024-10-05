@@ -35,7 +35,7 @@ const IntercropTreatments = () => {
   // Fetch treatments from API
   const fetchTreatments = async () => {
     try {
-      const response = await axios.get("http://localhost:8090/api/cropTreatments");
+      const response = await axios.get("http://localhost:5000/api/cropTreatments");
         setTreatments(response.data.data);
         setFilteredTreatments(response.data.data);
     } catch (error) {
@@ -92,7 +92,7 @@ const IntercropTreatments = () => {
 const handleDelete = async (id) => {
   try {
     const response = await axios.delete(
-      `http://localhost:8090/api/cropTreatments/${id}`
+      `http://localhost:5000/api/cropTreatments/${id}`
     );
     if (response.status === 200) {
       notification.success({
