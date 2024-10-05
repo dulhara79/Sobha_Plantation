@@ -36,7 +36,7 @@ const IntercropInspections = () => {
     // Fetch inspections from API
     const fetchInspections = async () => {
       try {
-        const response = await axios.get("http://localhost:8090/api/cropDiseases");
+        const response = await axios.get("http://localhost:5000/api/cropDiseases");
         setInspections(response.data.data);
         setFilteredInspections(response.data.data);
       } catch (error) {
@@ -89,7 +89,7 @@ const IntercropInspections = () => {
   // Delete inspection
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:8090/api/cropDiseases/${id}`);
+      const response = await axios.delete(`http://localhost:5000/api/cropDiseases/${id}`);
       if (response.status === 200) {
         notification.success({
           message: "Success",
