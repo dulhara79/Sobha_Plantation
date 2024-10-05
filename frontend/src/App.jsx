@@ -329,10 +329,7 @@ export default function App() {
           <Route path="/employee/TaskListview" element={<ViewTaskList />} />
           <Route path="/employee/attendance" element={<GetAttendance />} />
           <Route path="/employee/employeelist" element={<EmployeeList />} />
-          <Route
-            path="/employee/attendanceList"
-            element={<EattendenceList />}
-          />
+          <Route path="/employee/attendanceList" element={<EattendenceList />} />
 
           {/* harvest */}
           <Route
