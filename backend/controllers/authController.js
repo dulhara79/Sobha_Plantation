@@ -73,9 +73,10 @@ exports.forgotPassword = async (req, res) => {
     const resetToken = user.getResetPasswordToken();
     await user.save();
 
-    const resetUrl = `${req.protocol}://${req.get(
-      "host"
-    )}/api/auth/reset-password/${resetToken}`;
+    // const resetUrl = `${req.protocol}://${req.get(
+    //   "host"
+    // )}/reset-password/${resetToken}`;
+    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
     const message = `You are receiving this email because you (or someone else) have requested the reset of a password. Click the link below to reset your password:\n\n${resetUrl}`;
 
     await sendEmail({
