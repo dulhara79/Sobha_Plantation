@@ -55,7 +55,7 @@ const RegularMaintenance = () => {
   const fetchRegularMaintenance = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8090/api/regularMaintenance"
+        "http://localhost:5000/api/regularMaintenance"
       );
       setRegularMaintenance(response.data.data);
       setFilteredRegularMaintenance(response.data.data);
@@ -112,7 +112,7 @@ const RegularMaintenance = () => {
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost:8090/api/regularMaintenance/${id}`
+        `http://localhost:5000/api/regularMaintenance/${id}`
       );
       if (response.status === 200) {
         notification.success({

@@ -117,7 +117,7 @@ const handleAlphanumericKeyPress = (e) => {
 
       const { dateOfMaintenance, task, managerInCharge, progress } = values;
 
-      await axios.post("http://localhost:8090/api/regularMaintenance", {
+      await axios.post("http://localhost:5000/api/regularMaintenance", {
         dateOfMaintenance,
         task,
         managerInCharge,
