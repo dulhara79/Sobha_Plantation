@@ -3,6 +3,8 @@ import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from "../../components/Sidebar";
+import Header from "../../components/Header";
 
 const { Option } = Select;
 
@@ -67,6 +69,10 @@ const AddEquipmentRecord = () => {
   };
 
   return (
+    <div className="flex h-screen">
+      <Sidebar />
+      <div className="flex flex-col flex-grow">
+        <Header />
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
         <h2 className="mb-6 text-2xl font-bold text-center">Add Equipment/Machine Records</h2>
@@ -178,6 +184,8 @@ const AddEquipmentRecord = () => {
           </Form.Item>
         </Form>
       </div>
+    </div>
+    </div>
     </div>
   );
 };
