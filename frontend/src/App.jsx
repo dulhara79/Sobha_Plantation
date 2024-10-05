@@ -18,7 +18,6 @@ import ForgotPassword from "./pages/ForgotPassword.jsx";
  */
 import SalesAndFinanceDashboard from "./pages/SalesAndFinance/SalesAndFinanceDashboard.jsx";
 
-// sales
 import SalesDashboard from "./pages/SalesAndFinance/Sales/SalesDashboard.jsx";
 
 import AddSalesRecordDashboard from "./pages/SalesAndFinance/Sales/AddSalesRecordDashboard.jsx";
@@ -148,9 +147,11 @@ import Gallery from "./pages/Products/Gallery.jsx";
 import AddPackage from "./pages/Products/AddPackage.jsx";
 import EditPackage from "./pages/Products/EditPackage.jsx";
 
-// field view
+/**
+ * field view
+ */
 import CultivationDashboard from "./pages/CropVarieties/CultivationDashboard.jsx";
-import VarietyCrop from "./pages/CropVarieties/varietyCrop.jsx";
+import VarietyCrop from "./pages/CropVarieties/VarietyCrop.jsx";
 import CropVarietyForm from "./pages/CropVarieties/CropVarietyForm.jsx";
 import Seedling from "./pages/CropVarieties/Seedling.jsx";
 import Schedules from "./pages/CropVarieties/Schedules.jsx";
@@ -328,10 +329,7 @@ export default function App() {
           <Route path="/employee/TaskListview" element={<ViewTaskList />} />
           <Route path="/employee/attendance" element={<GetAttendance />} />
           <Route path="/employee/employeelist" element={<EmployeeList />} />
-          <Route
-            path="/employee/attendanceList"
-            element={<EattendenceList />}
-          />
+          <Route path="/employee/attendanceList" element={<EattendenceList />} />
 
           {/* harvest */}
           <Route
@@ -455,7 +453,10 @@ export default function App() {
           <Route path="/products/editPackage/:id" element={<EditPackage />} />
 
           {/* field view  */}
-          <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
+          <Route
+            path="/cultivationDashboard"
+            element={<CultivationDashboard />}
+          />
           <Route path="/varietyCrop" element={<VarietyCrop />} />
           <Route path="/cvForm" element={<CropVarietyForm />} />
           <Route path="/seedlingDistribution" element={<Seedling />} />
