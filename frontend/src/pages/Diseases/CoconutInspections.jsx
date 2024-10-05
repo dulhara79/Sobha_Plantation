@@ -35,7 +35,7 @@ const CoconutInspections = () => {
   // Fetch inspections from API
   const fetchInspections = async () => {
     try {
-      const response = await axios.get("http://localhost:8090/api/diseases");
+      const response = await axios.get("http://localhost:5000/api/diseases");
       setInspections(response.data.data);
       setFilteredInspections(response.data.data);
     } catch (error) {
@@ -94,7 +94,7 @@ const CoconutInspections = () => {
   const handleDelete = async (id) => {
     try {
       const response = await axios.delete(
-        `http://localhost:8090/api/diseases/${id}`
+        `http://localhost:5000/api/diseases/${id}`
       );
       if (response.status === 200) {
         notification.success({
