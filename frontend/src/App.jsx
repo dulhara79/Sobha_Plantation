@@ -65,9 +65,7 @@ import ViewTaskDetails from "./pages/employee/ViewTaskDetails.jsx";
 import GetAttendance from "./pages/employee/GetAttendance.jsx";
 import EmployeeList from "./pages/employee/EmployeeList.jsx";
 import EattendenceList from "./pages/employee/EattendenceList.jsx";
-import ViewOneAttendance from "./pages/employee/ViewOneAttendance.jsx";
-import  EditEmployeePage from "./pages/employee/EditEmployeePage.jsx";
-import ViewOneEmployee from "./pages/employee/ViewOneEmployee.jsx";
+
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
 import HarvestSchedule from "./pages/Harvest/HarvestSchedule";
