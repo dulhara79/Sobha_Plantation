@@ -23,8 +23,6 @@ export default function EditTransaction() {
   const [products, setProducts] = useState([]);
   const [productTypes, setProductTypes] = useState([]);
 
-  const previousDate = "";
-
   const [validation, setValidation] = useState({
     amount: true,
   });
@@ -61,7 +59,6 @@ export default function EditTransaction() {
         setDescription(transaction.description);
         setPayerPayee(transaction.payer_payee);
         setMethod(transaction.method);
-        previousDate = moment(transaction.date);
       } catch (error) {
         console.error("Error fetching transaction:", error);
       }
