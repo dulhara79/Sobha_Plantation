@@ -166,10 +166,10 @@ import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
 
 // buyers
 // import Cart from "./pages/Buyer/Cart.jsx";
-import BuyerRegistrationForm from "./pages/BuyerRegistrationForm.jsx";
+import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
 import BuyerTable from "./pages/BuyerTable.jsx";
-import Profile from "./components/Profile";
-import BuyerDashboard from "./pages/Buyer/BuyerDashboard.jsx";
+import Profile from './components/Profile';
+import BuyerDashboard from './pages/Buyer/BuyerDashboard.jsx';
 
 import BuyerDelivery from "./pages/Buyer/BuyerDelivery.jsx";
 import BuyerDeliveryTable from "./pages/Buyer/BuyerDeliveryTable.jsx";
@@ -391,31 +391,19 @@ export default function App() {
           {/* crop care */}
           <Route path="/diseases" element={<DiseasesDashboard />} />
           <Route path="/coconutInspections" element={<CoconutInspections />} />
-          <Route
-            path="/intercropInspections"
-            element={<IntercropInspections />}
-          />
+          <Route path="/intercropInspections" element={<IntercropInspections />} />
           <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
           <Route path="/addCropDiseases" element={<AddCropsDiseases />} />
           <Route path="/coconutTreatments" element={<CoconutTreatments />} />
-          <Route
-            path="/intercropTreatments"
-            element={<IntercropTreatments />}
-          />
+          <Route path="/intercropTreatments" element={<IntercropTreatments />} />
           <Route path="/coconutPests" element={<CoconutPests />} />
           <Route path="/RegularMaintenance" element={<RegularMaintenance />} />
           <Route path="/intercropPests" element={<IntercropPests />} />
           <Route path="/UserProfile" element={<UserProfile />} />
           <Route path="/coconutLeafMiner" element={<CoconutLeafMiner />} />
           <Route path="/blackBeetle" element={<BlackBeetle />} />
-          <Route
-            path="/addCoconutTreatments"
-            element={<AddCoconutTreatments />}
-          />
-          <Route
-            path="/addIntercropTreatments"
-            element={<AddIntercropTreatments />}
-          />
+          <Route path="/addCoconutTreatments" element={<AddCoconutTreatments />} />
+          <Route path="/addIntercropTreatments" element={<AddIntercropTreatments />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/detailedOverview" element={<DetailedOverview />} />
           <Route path="/addMaintenance" element={<AddMaintenance />} />
@@ -442,26 +430,11 @@ export default function App() {
           <Route path="/papayaRingspot" element={<PapayaRingspot />} />
           <Route path="/fusariumWilt" element={<FusariumWilt />} />
           <Route path="/powderyMildew" element={<PowderyMildew />} />
-          <Route
-            path="/updateCoconutDiseases/:id"
-            element={<UpdateCoconutDiseases />}
-          />
-          <Route
-            path="/updateCropsDiseases/:id"
-            element={<UpdateCropsDiseases />}
-          />
-          <Route
-            path="/updateCoconutTreatments/:id"
-            element={<UpdateCoconutTreatments />}
-          />
-          <Route
-            path="/updateCropsTreatments/:id"
-            element={<UpdateCropsTreatments />}
-          />
-          <Route
-            path="/updateMaintenance/:id"
-            element={<UpdateMaintenance />}
-          />
+          <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />} />
+          <Route path="/updateCropsDiseases/:id" element={<UpdateCropsDiseases />} />
+          <Route path="/updateCoconutTreatments/:id" element={<UpdateCoconutTreatments />} />
+          <Route path="/updateCropsTreatments/:id" element={<UpdateCropsTreatments />} />
+          <Route path="/updateMaintenance/:id" element={<UpdateMaintenance />} />
 
           {/* product new */}
           <Route

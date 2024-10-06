@@ -104,7 +104,7 @@ const handleAlphanumericKeyPress = (e) => {
       //Extract values from form
       const { dateOfInspection, sectionOfLand, identifiedPest, identifiedDisease, inspectedBy, inspectionResult, suggestedReInspectionDate } = values;
 
-      await axios.post("http://localhost:8090/api/cropDiseases", {
+      await axios.post("http://localhost:5000/api/cropDiseases", {
         dateOfInspection,
         sectionOfLand,
         identifiedPest,

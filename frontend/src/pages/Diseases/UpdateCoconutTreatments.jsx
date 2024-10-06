@@ -54,7 +54,7 @@ const handleAlphanumericKeyPress = (e) => {
   useEffect(() => {
     const fetchRecord = async () => {
       try {
-        const response = await axios.get(`http://localhost:8090/api/treatments/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/treatments/${id}`);
         const data = response.data.treatmentRecord;
 
         // Set form values including DatePicker values
@@ -88,7 +88,7 @@ const handleAlphanumericKeyPress = (e) => {
         dateOfTreatment: dateOfTreatment ? dateOfTreatment.toISOString() : null,
       };
 
-      await axios.put(`http://localhost:8090/api/treatments/${id}`, payload);
+      await axios.put(`http://localhost:5000/api/treatments/${id}`, payload);
 
       notification.success({
         message: "Record updated successfully",
