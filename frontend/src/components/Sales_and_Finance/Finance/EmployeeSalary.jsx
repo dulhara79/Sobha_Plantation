@@ -7,39 +7,30 @@ import moment from "moment";
 import jsPDF from "jspdf";
 
 export default function SalaryProcessingSection() {
-  const [emp_name, setEmpName] = useState("");
-  const [nic, setNIC] = useState("");
+  const [emp_name, setEmpName] = useState(""); 
   const [payment_date, setPaymentDate] = useState("");
   const [type, setType] = useState("permanent");
-
-  const [salary_start_date, setSalaryStartDate] = useState(""); // Initialize with null
-  const [salary_end_date, setSalaryEndDate] = useState(""); // Initialize with null
-
   const [basic_days, setBasicDays] = useState(0);
   const [basic_rate, setBasicRate] = useState(0);
-  const [bonus_salary, setBonusSalary] = useState("0");
-  const [ot_hours, setOtHours] = useState("0");
-  const [ot_rate, setOtRate] = useState("0");
-  const [epf_etf, setEpfEtf] = useState("0");
+  const [bonus_salary, setBonusSalary] = useState(0);
+  const [saturday_hours, setSaturdayHours] = useState(0);
+  const [sunday_hours, setSundayHours] = useState(0);
+  const [after_hours, setAfterHours] = useState(0);
+  const [epf_etf, setEpfEtf] = useState(0);
   const [description, setDescription] = useState("");
-
-  const [date, setDate] = useState(null);
-
-  const [id, setID] = useState("");
-
+  const [salary_start_date, setSalaryStartDate] = useState(null);
+  const [salary_end_date, setSalaryEndDate] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Fetch employee data
   const [RegistrationRecords, setRegistrationRecords] = useState([]);
-
   useEffect(() => {
     setLoading(true);
-
     axios
       .get(`http://localhost:5000/api/employee`)
       .then((response) => {
         setRegistrationRecords(response.data || []);
-        console.log("Employee Records:", response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -48,39 +39,24 @@ export default function SalaryProcessingSection() {
       });
   }, []);
 
-  const [selectedID, setSelectedID] = useState(null);
-
   const handleRadioChange = (id) => {
-    setSelectedID(id);
-
-    // Find the selected employee from the RegistrationRecords array
-    const selectedEmployee = RegistrationRecords.find(
-      (person) => person._id === id
-    );
-
-    // Concatenate the first name and last name to set the employee's full name
+    const selectedEmployee = RegistrationRecords.find((person) => person._id === id);
     const fullName = selectedEmployee
       ? `${selectedEmployee.firstName} ${selectedEmployee.lastName}`
       : "";
 
-    // Update the state variables with the selected employee's data
     setEmpName(fullName);
-    setNIC(selectedEmployee ? selectedEmployee.nic : "");
     setType(selectedEmployee ? selectedEmployee.employeeType : "");
     setBasicRate(selectedEmployee ? selectedEmployee.hourlyRate : "");
   };
 
+  // Fetch EPF/ETF rates based on employee type
   useEffect(() => {
     setLoading(true);
     axios
       .get(`http://localhost:5000/api/employee/${id}`)
-      .then((response) => {
-        // Conditionally set EPF/ETF based on employee type
-        const defaultEpfEtf =
-          response.data.employeeType === `permanent` ? 6 : 3;
-        setEpfEtf(defaultEpfEtf);
-
-        setLoading(false);
+      .then((response) => 
+        
       })
       .catch((error) => {
         console.log(error);
@@ -88,145 +64,27 @@ export default function SalaryProcessingSection() {
       });
   }, []);
 
-  const [attendanceRecords, setAttendanceRecords] = useState([]);
-
-  useEffect(() => {
-    setLoading(true);
-    axios
-      .get(`http://localhost:5000/api/attendance`)
-      .then((response) => {
-        setAttendanceRecords(response.data || []);
-        console.log("Attendance Records:", response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      });
-  }, []);
-
-  useEffect(() => {
-    if (
-      attendanceRecords.length > 0 &&
-      emp_name &&
-      salary_start_date &&
-      salary_end_date
-    ) {
-      const filteredRecords = attendanceRecords.filter(
-        (record) =>
-          record.name === emp_name &&
-          moment(record.e_date).isBetween(
-            salary_start_date,
-            salary_end_date,
-            null,
-            "[]"
-          ) // Filter records between salary start date and end date
-      );
-      console.log("Filtered Records:", filteredRecords); // Log filtered records
-      let totalDays = 0;
-      filteredRecords.forEach((record) => {
-        if (record.att_status === "present") {
-          totalDays += 1;
-        } else if (record.att_status === "halfday") {
-          totalDays += 0.5;
-        }
-        // For "absent", don't add any days
-      });
-      console.log("Total Days:", totalDays); // Log total days
-      setBasicDays(totalDays);
-    }
-  }, [attendanceRecords, emp_name, salary_start_date, salary_end_date]);
-
+  // Calculate total salary
   const calculateTotalSalary = () => {
-    // Convert input values to numbers
-    const basicDaysValue = parseFloat(basic_days);
-    const basicRateValue = parseFloat(basic_rate);
-    const bonusSalaryValue = parseFloat(bonus_salary);
-    const otHoursValue = parseFloat(ot_hours);
-    const otRateValue = parseFloat(ot_rate);
-    const epfEtfValue = parseFloat(epf_etf);
+    const basicSalary = parseFloat(basic_days) * parseFloat(basic_rate);
+    const saturdayOT = parseFloat(saturday_hours) * parseFloat(basic_rate) * 1.5;
+    const sundayOT = parseFloat(sunday_hours) * parseFloat(basic_rate) * 2;
+    const afterHoursOT = parseFloat(after_hours) * parseFloat(basic_rate) * 1.5;
+    const totalOT = saturdayOT + sundayOT + afterHoursOT;
+    const totalSalary = basicSalary + parseFloat(bonus_salary) + totalOT;
 
-    // Check if any input value is NaN and replace it with 0
-    const validBasicDays = isNaN(basicDaysValue) ? 0 : basicDaysValue;
-    const validBasicRate = isNaN(basicRateValue) ? 0 : basicRateValue;
-    const validBonusSalary = isNaN(bonusSalaryValue) ? 0 : bonusSalaryValue;
-    const validOtHours = isNaN(otHoursValue) ? 0 : otHoursValue;
-    const validOtRate = isNaN(otRateValue) ? 0 : otRateValue;
-    const validEpfEtf = isNaN(epfEtfValue) ? 0 : epfEtfValue;
-
-    // Calculate basic salary
-    const basicSalary = validBasicDays * validBasicRate;
-
-    // Calculate OT salary
-    const otSalary = validOtHours * validOtRate;
-
-    // Calculate total salary
-    const totalSalary = basicSalary + validBonusSalary + otSalary;
-
-    // Calculate EPF/ETF deduction
-    const epfEtfDeduction = (totalSalary * validEpfEtf) / 100;
-
-    // Calculate net salary
+    const epfEtfDeduction = (totalSalary * parseFloat(epf_etf)) / 100;
     const netSalary = totalSalary - epfEtfDeduction;
 
     return netSalary;
   };
 
-  const [isInputFocused, setIsInputFocused] = useState(false);
-  const [autoSaveTransaction, setAutoSaveTransaction] = useState(true);
-
+  // Save salary record
   const handleSaveSalaryRecord = async (e) => {
     e.preventDefault();
 
-    // Validation for empty fields
-    if (
-      !payment_date ||
-      !emp_name ||
-      !salary_start_date ||
-      !salary_end_date ||
-      !nic ||
-      !type ||
-      !basic_days ||
-      !basic_rate ||
-      !bonus_salary ||
-      !ot_hours ||
-      !ot_rate ||
-      !epf_etf ||
-      !description
-    ) {
+    if (!payment_date || !emp_name || !type || !basic_days || !basic_rate || !bonus_salary || !description) {
       message.error("Please fill in all fields.");
-      return;
-    }
-
-    // Validation checks
-    if (
-      basic_days < 0 ||
-      basic_rate <= 0 ||
-      basic_rate < 0 ||
-      bonus_salary < 0 ||
-      ot_hours < 0 ||
-      ot_rate < 0 ||
-      epf_etf < 0 ||
-      isNaN(basic_days) ||
-      isNaN(basic_rate) ||
-      isNaN(bonus_salary) ||
-      isNaN(ot_hours) ||
-      isNaN(ot_rate) ||
-      isNaN(epf_etf)
-    ) {
-      message.error(
-        "Please enter valid positive values for days, rates, and amounts."
-      );
-      return;
-    }
-
-    if (new Date(payment_date) > new Date()) {
-      message.error("Payment date cannot be in the future.");
-      return;
-    }
-
-    if (description.length > 100) {
-      message.error("Description should be shorter than 100 characters.");
       return;
     }
 
@@ -235,36 +93,19 @@ export default function SalaryProcessingSection() {
       emp_name,
       salary_start_date,
       salary_end_date,
-      nic,
       type,
       basic_days,
       basic_rate,
       bonus_salary,
-      ot_hours,
-      ot_rate,
+      saturday_hours,
+      sunday_hours,
+      after_hours,
       epf_etf,
       description,
     };
 
-    const basicDaysValue = parseFloat(data.basic_days);
-    const basicRateValue = parseFloat(data.basic_rate);
-    const basicSalary = basicDaysValue * basicRateValue;
+    const netSalary = calculateTotalSalary();
 
-    // Calculate OT salary
-    const otHoursValue = parseFloat(data.ot_hours);
-    const otRateValue = parseFloat(data.ot_rate);
-    const otSalary = otHoursValue * otRateValue;
-
-    // Calculate total salary
-    const bonusSalaryValue = parseFloat(data.bonus_salary);
-    const totalSalary = basicSalary + bonusSalaryValue + otSalary;
-
-    // Calculate EPF/ETF deduction
-    const epfEtfValue = parseFloat(data.epf_etf);
-    const epfEtfDeduction = (totalSalary * epfEtfValue) / 100;
-
-    // Calculate net salary
-    const netSalary = totalSalary - epfEtfDeduction;
     setLoading(true);
     axios
       .post("http://localhost:5000/api/salesAndFinance/finance/salary", data)
@@ -272,49 +113,38 @@ export default function SalaryProcessingSection() {
         setLoading(false);
         message.success("Salary record has successfully saved.");
 
-        if (autoSaveTransaction) {
-          // Construct the transaction data based on the saved machine fee data
-          const transactionData = {
-            date: data.payment_date,
-            type: "expense",
-            subtype: "Salary payment",
-            amount: netSalary,
-            description: `Salary from ${data.salary_start_date} to ${data.salary_end_date}`,
-            payer_payee: data.emp_name,
-            method: "Automated Entry",
-          };
+        const transactionData = {
+          date: data.payment_date,
+          type: "expense",
+          subtype: "Salary payment",
+          amount: netSalary,
+          description: `Salary from ${data.salary_start_date} to ${data.salary_end_date}`,
+          payer_payee: data.emp_name,
+          method: "Automated Entry",
+        };
 
-          // Save the transaction record
-          handleSaveTransactionRecord(transactionData);
-        }
+        handleSaveTransactionRecord(transactionData);
         navigate("/salesAndFinance/finance/employeeSalary");
       })
       .catch((error) => {
         setLoading(false);
         message.error("Salary record saving failed.");
-        console.log(error);
         console.error("Error occurred while saving salary record:", error);
-        navigate("/salesAndFinance/finance/employeeSalary");
       });
   };
 
   const handleSaveTransactionRecord = (transactionData) => {
-    console.log("Transaction Data:" + transactionData);
     setLoading(true);
     axios
-      .post(
-        "http://localhost:5000/api/salesAndFinance/finance/transaction",
-        transactionData
-      )
+      .post("http://localhost:5000/api/salesAndFinance/finance/transaction", transactionData)
       .then(() => {
         setLoading(false);
         message.success("Transaction record has automatically saved.");
       })
       .catch((error) => {
         setLoading(false);
-        console.log("Transaction Data:" + transactionData);
         message.error("Automatic Transaction record saving failed.");
-        console.log("transaction auto save error: " + error);
+        console.error("Transaction auto save error:", error);
       });
   };
 
@@ -341,19 +171,7 @@ export default function SalaryProcessingSection() {
 
     // Validation checks
     if (
-      basic_days < 0 ||
-      basic_rate <= 0 ||
-      basic_rate < 0 ||
-      bonus_salary < 0 ||
-      ot_hours < 0 ||
-      ot_rate < 0 ||
-      epf_etf < 0 ||
-      isNaN(basic_days) ||
-      isNaN(basic_rate) ||
-      isNaN(bonus_salary) ||
-      isNaN(ot_hours) ||
-      isNaN(ot_rate) ||
-      isNaN(epf_etf)
+      basic_days < 0 ||basic_rate <= 0 ||basic_rate < 0 ||bonus_salary < 0 ||ot_hours < 0 ||ot_rate < 0 ||epf_etf < 0 ||isNaN(basic_days) ||isNaN(basic_rate) ||isNaN(bonus_salary) ||isNaN(ot_hours) ||isNaN(ot_rate) ||isNaN(epf_etf)
     ) {
       message.error(
         "Please enter valid positive values for days, rates, and amounts."
@@ -482,19 +300,19 @@ export default function SalaryProcessingSection() {
                       <p className="text-sm font-semibold leading-6 text-gray-900">
                         {person.firstName} {person.lastName}
                       </p>
-                      <p className="mt-1 text-xs leading-5 text-gray-500 truncate">
+                      {/* <p className="mt-1 text-xs leading-5 text-gray-500 truncate">
                         {person.nic}
-                      </p>
+                      </p> */}
                     </div>
                   </div>
-                  <div className="shrink-0 sm:flex sm:flex-col sm:items-end">
+                  {/* <div className="shrink-0 sm:flex sm:flex-col sm:items-end">
                     <p className="text-sm leading-6 text-gray-900">
                       {person.employeeType}
                     </p>
                     <p className="mt-1 text-xs leading-5 text-gray-500">
                       Rs.{person.hourlyRate.toLocaleString()}
                     </p>
-                  </div>
+                  </div> */}
                   <input
                     type="radio"
                     id={person._id}
@@ -510,63 +328,41 @@ export default function SalaryProcessingSection() {
           </ul>
         </div>
 
-        <div className={`w-full max-w-4xl p-6 mx-auto h-screen mb-96`}>
-          <form className="space-y-6">
-            {/* Row 1: Employee Name, NIC, Type */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <div>
-                <label
-                  htmlFor="emp_name"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  Employee Name
-                </label>
-                <input
-                  type="text"
-                  name="emp_name"
-                  value={emp_name}
-                  onChange={(e) => setEmpName(e.target.value)}
-                  disabled={true}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="nic"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  NIC
-                </label>
-                <input
-                  type="text"
-                  name="nic"
-                  value={nic}
-                  onChange={(e) => setNIC(e.target.value)}
-                  disabled={true}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="type"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  Type
-                </label>
-                <input
-                  type="text"
-                  name="type"
-                  value={type}
-                  onChange={(e) => setType(e.target.value)}
-                  disabled={true}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                />
-              </div>
-            </div>
+        <div className="w-full h-screen max-w-4xl p-6 mx-auto mb-96">
+      <form onSubmit={handleSaveSalaryRecord} className="space-y-6">
+        {/* Row 1: Employee Name, Type */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {/* Employee Name */}
+          <div>
+            <label htmlFor="emp_name" className="block mb-1 text-sm font-medium text-gray-700">
+              Employee Name
+            </label>
+            <input
+              type="text"
+              name="emp_name"
+              value={emp_name}
+              disabled
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+            />
+          </div>
+          {/* Type */}
+          <div>
+            <label htmlFor="type" className="block mb-1 text-sm font-medium text-gray-700">
+              Type
+            </label>
+            <input
+              type="text"
+              name="type"
+              value={type}
+              disabled
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+            />
+          </div>
+        </div>
 
             {/* Row 2: Date Range, Basic Days */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div>
+             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {/*<div>
                 <label
                   htmlFor="salary_range"
                   className="block mb-1 text-sm font-medium text-gray-700"
@@ -595,7 +391,7 @@ export default function SalaryProcessingSection() {
                   Please select the range of dates for which you wish to find
                   the present days and half-days of the selected employee.
                 </p>
-              </div>
+              </div> */}
               <div>
                 <label
                   htmlFor="basic_days"
@@ -737,23 +533,28 @@ export default function SalaryProcessingSection() {
           </form>
         </div>
 
-        <div className="relative flex " id="controlbar">
+        <div className="relative flex" id="controlbar">
           <div
             className="fixed bottom-0 right-0 z-0 w-full bg-gray-100 bg-opacity-50 border-t border-b h-14 backdrop-blur"
             id="savebar"
           >
-            <div className="z-30 flex items-center justify-end h-full gap-2 pr-8 text-sm font-semibold align-middle">
+            <div className="z-30 flex items-center justify-between h-full gap-2 pr-8 text-sm font-semibold align-middle">
               <div className="px-6 py-1 mx-8 text-base font-semibold border border-gray-500 rounded-full">
-                Total Salary:
-                {calculateTotalSalary() <= 0 ||
-                calculateTotalSalary() > 1000000 ? (
+                Total Salary:{" "}
+                {calculateTotalSalary() <= 0 || calculateTotalSalary() > 1000000 ? (
                   <span className="text-red-500">Invalid salary</span>
                 ) : (
-                  <span className="text-xl text-lime-600">
-                    Rs.{calculateTotalSalary()}
-                  </span>
+                  <span className="text-xl text-lime-600">{calculateTotalSalary().toFixed(2)}</span>
                 )}
               </div>
+              <button
+                type="submit"
+                className="px-6 py-2 font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400"
+              >
+                Save Salary Record
+              </button>
+            </div>
+          </div>
 
               <button
                 onClick={generatePayslipPDF}
@@ -788,7 +589,8 @@ export default function SalaryProcessingSection() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+    //   </div>
+    // </div>
+    // </div>
   );
 }
