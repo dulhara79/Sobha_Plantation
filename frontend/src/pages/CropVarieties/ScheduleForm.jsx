@@ -1,12 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const ScheduleForm = () => {
+  const [disableFields, setDisabledFields] = useState({
+    plantationDate: true, // Initially disabled
+    assignedTeam: true,
+    fieldName: true,
+    cropVariety: true,
+    scheduledDate: true,
+    seedsUsed: true,
+    status: true,
+  });
+
   const [formData, setFormData] = useState({
     plantationDate: "",
     assignedTeam: "",
-    fieldName: "Field A", // default value for field name
+    fieldName: "", // Initially empty
     cropVariety: "Coconut", // default value for crop variety
     scheduledDate: "",
     seedsUsed: "",
@@ -23,18 +33,69 @@ const ScheduleForm = () => {
   // Calculate the current date in YYYY-MM-DD format
   const today = new Date().toISOString().split("T")[0];
 
+  useEffect(() => {
+    // Check if today's date has been reached or passed
+    const currentDate = new Date().toISOString().split("T")[0];
+    if (currentDate >= today) {
+      setDisabledFields((prev) => ({
+        ...prev,
+        plantationDate: false, // Enable plantation date if it's today or later
+      }));
+    }
+  }, [today]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     let filteredValue = value;
 
-    // Validate and filter the input value
+    // Enable fields based on the plantationDate field
+    if (name === "plantationDate") {
+      setDisabledFields((prev) => ({
+        ...prev,
+        assignedTeam: false,
+      }));
+    }
+
+    // Enable the fieldName input to enable cropVariety
+    if (name === "fieldName") {
+      if (value.trim() !== "") {
+        setDisabledFields((prev) => ({
+          ...prev,
+          cropVariety: false, // Enable cropVariety if fieldName is filled
+        }));
+      } else {
+        setDisabledFields((prev) => ({
+          ...prev,
+          cropVariety: true, // Disable cropVariety if fieldName is empty
+        }));
+      }
+    }
+
+    // Enable other fields once assignedTeam is filled
     if (name === "assignedTeam") {
       filteredValue = value.replace(/[^a-zA-Z\s]/g, ''); // Remove non-alphabetic characters
       setErrors((prevErrors) => ({
         ...prevErrors,
         assignedTeam: filteredValue !== value ? "Assigned Team should contain only letters and spaces." : "",
       }));
+
+      if (filteredValue.trim() !== "") {
+        setDisabledFields((prev) => ({
+          ...prev,
+          fieldName: false,
+          scheduledDate: false,
+          seedsUsed: false,
+          status: false,
+        }));
+      } else {
+        setDisabledFields((prev) => ({
+          ...prev,
+          fieldName: true,
+          scheduledDate: true,
+          seedsUsed: true,
+          status: true,
+        }));
+      }
     }
 
     // Real-time validation for the "Seeds Used" field
@@ -80,7 +141,7 @@ const ScheduleForm = () => {
       navigate("/"); // Redirect after success
     } catch (error) {
       console.error("There was an error creating the schedule!", error);
-      alert(error.response.data.error || "Something went wrong");
+      alert(error.response?.data?.error || "Something went wrong");
     }
   };
 
@@ -152,9 +213,10 @@ const ScheduleForm = () => {
           name="plantationDate"
           value={formData.plantationDate}
           onChange={handleChange}
+          disabled={disableFields.plantationDate}
           required
           style={inputStyle}
-          min={today} // Set min attribute to today's date
+          min={today} // Set min attribute to today's date to disable past dates
         />
       </div>
 
@@ -165,6 +227,7 @@ const ScheduleForm = () => {
           name="assignedTeam"
           value={formData.assignedTeam}
           onChange={handleChange}
+          disabled={disableFields.assignedTeam}
           required
           style={inputStyle}
         />
@@ -177,9 +240,11 @@ const ScheduleForm = () => {
           name="fieldName"
           value={formData.fieldName}
           onChange={handleChange}
+          disabled={disableFields.fieldName}
           required
           style={selectStyle}
         >
+          <option value="">Select Field</option> {/* Add a default empty option */}
           <option value="Field A">Field A</option>
           <option value="Field B">Field B</option>
           <option value="Field C">Field C</option>
@@ -193,6 +258,7 @@ const ScheduleForm = () => {
           name="cropVariety"
           value={formData.cropVariety}
           onChange={handleChange}
+          disabled={disableFields.cropVariety}
           required
           style={selectStyle}
         >
@@ -211,11 +277,11 @@ const ScheduleForm = () => {
           name="scheduledDate"
           value={formData.scheduledDate}
           onChange={handleChange}
+          disabled={disableFields.scheduledDate}
           required
           style={inputStyle}
           max={today} // Set max attribute to today's date
         />
-        {errors.scheduledDate && <p style={errorStyle}>{errors.scheduledDate}</p>}
       </div>
 
       <div>
@@ -225,9 +291,9 @@ const ScheduleForm = () => {
           name="seedsUsed"
           value={formData.seedsUsed}
           onChange={handleChange}
+          disabled={disableFields.seedsUsed}
           required
           style={inputStyle}
-          min="1" // Prevent negative input
         />
         {errors.seedsUsed && <p style={errorStyle}>{errors.seedsUsed}</p>}
       </div>
@@ -238,16 +304,17 @@ const ScheduleForm = () => {
           name="status"
           value={formData.status}
           onChange={handleChange}
+          disabled={disableFields.status}
           required
           style={selectStyle}
         >
           <option value="Planned">Planned</option>
-          <option value="In Progress">In Progress</option>
+          <option value="Ongoing">Ongoing</option>
           <option value="Completed">Completed</option>
         </select>
       </div>
 
-      <div>
+      <div style={{ display: "flex", justifyContent: "center" }}>
         <button type="submit" style={buttonStyle}>
           Submit
         </button>

@@ -5,7 +5,7 @@ import { HomeOutlined, LeftOutlined } from "@ant-design/icons";
 import { Breadcrumb, Button, Input, Form, notification, Select } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import dayjs from "dayjs"; // Import dayjs for date validation
+import dayjs from "dayjs";  // Import dayjs for date validation
 
 const { Option } = Select;
 
@@ -111,7 +111,6 @@ const AddInfoRecords = () => {
         break;
     }
   };
-
   const restrictInputToNumbers = (e) => {
     const key = e.key;
     if (!/[0-9]/.test(key)) {
@@ -131,6 +130,7 @@ const AddInfoRecords = () => {
       e.preventDefault();
     }
   };
+ 
 
   return (
     <div>

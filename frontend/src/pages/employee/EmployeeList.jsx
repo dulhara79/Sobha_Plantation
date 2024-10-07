@@ -9,11 +9,10 @@ import {
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useSnackbar } from "notistack";
-import { Button, Table } from "antd";
-import { useNavigate } from "react-router-dom"; // for navigation
+import { Button, Table, Input } from "antd";
+import { useNavigate } from "react-router-dom";
 import html2canvas from "html2canvas";
 import dayjs from "dayjs";
-import { SearchOutlined } from "@ant-design/icons";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
@@ -25,7 +24,7 @@ const EmployeeList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate(); // for navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -41,6 +40,10 @@ const EmployeeList = () => {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    getFilteredEmployeeRecords(searchQuery);
+  }, [searchQuery, employeeRecords]);
 
   const handleDelete = (recordId) => {
     Swal.fire({
@@ -76,21 +79,65 @@ const EmployeeList = () => {
     });
   };
 
-  // Handle navigation to the employee registration page
   const handleViewEmployee = (id) => {
     navigate(`/employee/viewemployee/${id}`);
   };
+
   const handleAddNewEmployee = () => {
     navigate("/employee/registration");
   };
+
   const handleEditEmployee = (id) => {
     navigate(`/employee/editemployee/${id}`);
   };
 
-  // Generate PDF for all employee data
-  const generateReport = () => {
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  };
+
+  const generateReport = async () => {
     const currentDate = new Date().toLocaleString("en-GB");
-    const doc = new jsPDF("landscape"); // set landscape for a wider table
+    const doc = new jsPDF("landscape");
+
+    // Load the logo image
+    const logoUrl = '../src/assets/logo.png';
+    let logoDataURL;
+    try {
+      logoDataURL = await getImageDataURL(logoUrl);
+    } catch (error) {
+      console.error('Failed to load the logo image:', error);
+    }
+
+    // Function to draw header, footer, and horizontal line
+    const drawHeaderFooter = (data) => {
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+
+      // Header with logo
+      if (logoDataURL) {
+        doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 10);
+      }
+      doc.setFontSize(12);
+      doc.text("Employee Details", pageWidth - 15, 15, { align: 'right' });
+      doc.line(10, 25, pageWidth - 10, 25);
+
+      // Footer with page number
+      doc.setFontSize(10);
+      doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
+    };
 
     const columns = [
       { header: "First Name", dataKey: "firstName" },
@@ -123,23 +170,20 @@ const EmployeeList = () => {
     }));
 
     doc.setFontSize(16);
-    doc.text("Employee Details", 140, 10, null, null, "center");
+    doc.text("Employee Details", 140, 40, null, null, "center");
     doc.setFontSize(12);
-    doc.text(`As At: ${currentDate}`, 140, 20, null, null, "center");
-    doc.text(`Number of Employees: ${rows.length}`, 10, 40);
+    doc.text(`As At: ${currentDate}`, 140, 50, null, null, "center");
+    doc.text(`Number of Employees: ${rows.length}`, 15, 60);
 
     autoTable(doc, {
       columns,
       body: rows,
-      startY: 50,
+      startY: 70,
       theme: "grid",
+      didDrawPage: drawHeaderFooter,
     });
 
     doc.save(`Employee-details_${currentDate}.pdf`);
-  };
-
-  const handleSearch = () => {
-    getFilteredEmployeeRecords(searchQuery);
   };
 
   const getFilteredEmployeeRecords = (searchQuery) => {
@@ -148,7 +192,6 @@ const EmployeeList = () => {
         const fullName = `${record.firstName} ${record.lastName}`.toLowerCase();
         const search = searchQuery.toLowerCase();
 
-        // Check if the search query matches any of the fields
         return (
           fullName.includes(search) ||
           record.email.toLowerCase().includes(search) ||
@@ -264,19 +307,13 @@ const EmployeeList = () => {
 
               <div className="flex justify-between mb-4">
                 <div className="search-bar">
-                  <input
+                  <Input
                     type="text"
                     placeholder="Search by name, email, NIC, or contact number"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{ width: 300 }}
                   />
-                  <Button
-                    type="primary"
-                    icon={<SearchOutlined />}
-                    onClick={handleSearch}
-                  >
-                    Search
-                  </Button>
                 </div>
 
                 <div className="flex space-x-4">
@@ -290,7 +327,7 @@ const EmployeeList = () => {
               </div>
 
               <Table
-                id="employee-table" // Added ID for generating PDF
+                id="employee-table"
                 columns={columns}
                 dataSource={filteredEmployeeRecords}
                 loading={loading}

@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
-import { Bar } from 'react-chartjs-2';
-import 'chart.js/auto';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from "react";
+import axios from "axios";
+import { Bar } from "react-chartjs-2";
+import "chart.js/auto";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
-import ArrowBack from '@mui/icons-material/ArrowBack'; // Adjust the import based on your icon setup
+import ArrowBack from "@mui/icons-material/ArrowBack"; // Adjust the import based on your icon setup
 
 const YieldBarChartPage = () => {
   const [yieldData, setYieldData] = useState([]);
@@ -37,11 +37,11 @@ const YieldBarChartPage = () => {
   useEffect(() => {
     const fetchYieldData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/yield'); // Update the endpoint as needed
-        console.log('API response:', response.data);
+        const response = await axios.get("http://localhost:5000/api/yield"); // Update the endpoint as needed
+        console.log("API response:", response.data);
         setYieldData(response.data.data); // Ensure this matches your API response structure
       } catch (err) {
-        console.error('Error fetching yield data:', err);
+        console.error("Error fetching yield data:", err);
         setError(err);
       } finally {
         setIsLoading(false);
@@ -68,10 +68,10 @@ const YieldBarChartPage = () => {
     labels: yieldData.map((record) => record.cropType),
     datasets: [
       {
-        label: 'Yield Quantity',
+        label: "Yield Quantity",
         data: yieldData.map((record) => record.quantity),
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
+        borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
       },
     ],
@@ -81,7 +81,7 @@ const YieldBarChartPage = () => {
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Header />
       <div className="flex flex-1">
-        <Sidebar/>
+        <Sidebar />
         <div className="ml-[300px] pt-3 flex-1">
           <nav className="p-4 mb-5">
             {/* Navigation Buttons */}
@@ -126,10 +126,12 @@ const YieldBarChartPage = () => {
               </div>
             </div>
           </nav>
-            <h1 className="text-5xl font-bold mb-6 text-center">Yield Bar Chart</h1>
-            <div style={{ width: '1000px', height: '500px', margin: '0 auto' }}>
-              <Bar data={barData} />
-            </div>
+          <h1 className="text-5xl font-bold mb-6 text-center">
+            Yield Bar Chart
+          </h1>
+          <div style={{ width: "1000px", height: "500px", margin: "0 auto" }}>
+            <Bar data={barData} />
+          </div>
         </div>
       </div>
     </div>

@@ -55,7 +55,7 @@ const handleAlphabeticKeyPress = (e) => {
     useEffect(() => {
       const fetchRecord = async () => {
         try {
-          const response = await axios.get(`http://localhost:8090/api/regularMaintenance/${id}`);
+          const response = await axios.get(`http://localhost:5000/api/regularMaintenance/${id}`);
           const data = response.data.regularMaintenanceRecord;
     
           // Log response to check data
@@ -89,7 +89,7 @@ const handleAlphabeticKeyPress = (e) => {
             dateOfMaintenance: dateOfMaintenance ? dateOfMaintenance.toISOString() : null,
         };
     
-        await axios.put(`http://localhost:8090/api/regularMaintenance/${id}`, payload);
+        await axios.put(`http://localhost:5000/api/regularMaintenance/${id}`, payload);
     
         notification.success({
             message: "Record Updated",

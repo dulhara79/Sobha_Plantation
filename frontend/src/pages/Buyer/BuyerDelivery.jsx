@@ -72,7 +72,7 @@ const AddDeliveryRecords = () => {
       setLoading(true);
       const { firstName, lastName, email, address, city, country, postalCode, phone } = values;
 
-      await axios.post("http://localhost:8090/api/deliveryRecords", {
+      await axios.post("http://localhost:5000/api/deliveryRecords", {
         firstName,
         lastName,
         email,
@@ -368,7 +368,6 @@ const restrictInputToAlphanumeric = (e) => {
     Cancel
   </Button>
 </Form.Item>
-
             </Form>
           </div>
         </div>
