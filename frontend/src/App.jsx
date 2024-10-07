@@ -165,10 +165,10 @@ import AddSeedlingForm from "./pages/CropVarieties/AddSeedlingForm.jsx";
 import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
 
 // buyers
-// import Cart from "./pages/Buyer/Cart.jsx";
-import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
-import BuyerTable from "./pages/BuyerTable.jsx";
-import Profile from './components/Profile';
+
+// import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
+// import BuyerTable from "./pages/BuyerTable.jsx";
+// import Profile from './components/Profile';
 import BuyerDashboard from './pages/Buyer/BuyerDashboard.jsx';
 
 import BuyerDelivery from "./pages/Buyer/BuyerDelivery.jsx";
@@ -490,10 +490,25 @@ export default function App() {
           <Route path="/pGrowth" element={<PlantGrowth />} />
 
           {/* buyers */}
+          
           {/* <Route path="/buyer-registration" element={<BuyerRegistrationForm />} /> */}
-          <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
+          {/* <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
           <Route path="/buyert" element={<BuyerTable />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<Profile />} /> */}
+
+          <Route path="/Bdelivery" element={<BuyerDelivery />} />
+      <Route path="/Bdeliverytable" element={<BuyerDeliveryTable />} />
+      <Route path="/updateDelivery/:id" element={<UpdateDeliveryTable />} />
+
+      <Route path="/buyerinfo" element={<BuyerInfo />} />
+      <Route path="/buyerinfotable" element={<BuyerInfoTable />} />
+      <Route path="/updateBuyer/:id" element={<UpdateBuyerInfo />} /> 
+
+       {/* <Route path="/create-preorder" element={<BuyerPreOrderForm/> } />
+      <Route path="/preorders" element={<BuyerPreOrderTable/>} />
+      <Route path="/update-preorder/:id" element={<UpdateBuyerPreOrderRequests/>} />  */}
+
+      <Route path="/buyerdashboard" element={<BuyerDashboard />} />
 
           {/* page not found & error page */}
           {/* <Route path="/test" element={<Test />} /> */}
