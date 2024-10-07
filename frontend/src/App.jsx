@@ -321,7 +321,7 @@ export default function App() {
             element={<AddRequestPaymentRecord />}
           />
           <Route
-            path="/Inventory/EditRequestPaymentRecords/:id"
+            path="/Inventory/EditRequestPaymentRecord/:id"
             element={<EditRequestPaymentRecord />}
           />
 
