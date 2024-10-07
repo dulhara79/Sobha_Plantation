@@ -5,7 +5,7 @@ import { HomeOutlined, LeftOutlined } from "@ant-design/icons";
 import { Breadcrumb, Button, Input, Form, notification, Select } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import dayjs from "dayjs";  // Import dayjs for date validation
+import dayjs from "dayjs"; // Import dayjs for date validation
 
 const { Option } = Select;
 
@@ -111,31 +111,19 @@ const AddInfoRecords = () => {
         break;
     }
   };
-  
+
   const restrictInputToNumbers = (e) => {
     const key = e.key;
     if (!/[0-9]/.test(key)) {
       e.preventDefault();
     }
-};
 
-const restrictInputToLetters = (e) => {
-    const key = e.key;
-   
-    if (!/[a-zA-Z]/.test(key)) {
+    // Limit input to 10 digits
+    if (e.target.value.length >= 10) {
       e.preventDefault();
     }
-};
+  };
 
-const restrictInputToAlphanumeric = (e) => {
-    const key = e.key;
-     
-    if (!/^[a-zA-Z0-9]*$/.test(key)) {
-      e.preventDefault();
-    }
-};
-
-  
   // To prevent non-numeric values from being pasted into numeric fields
   const preventNonNumericPaste = (e) => {
     const clipboardData = e.clipboardData.getData("Text");
@@ -143,15 +131,6 @@ const restrictInputToAlphanumeric = (e) => {
       e.preventDefault();
     }
   };
-
-  // To prevent non-letter values from being pasted into letter-only fields
-  const preventNonAlphabeticPaste = (e) => {
-    const clipboardData = e.clipboardData.getData("Text");
-    if (!/^[a-zA-Z\s]*$/.test(clipboardData)) {
-      e.preventDefault();
-    }
-  };
- 
 
   return (
     <div>
@@ -194,22 +173,11 @@ const restrictInputToAlphanumeric = (e) => {
               onValuesChange={handleFieldChange}
             >
               <Form.Item label="First Name" name="firstName" rules={alphabeticRule}>
-                <Input placeholder="Enter first name" 
-                
-                onKeyPress={restrictInputToLetters} 
-              onPaste={preventNonAlphabeticPaste} 
-                
-                
-                />
+                <Input placeholder="Enter first name" />
               </Form.Item>
 
               <Form.Item label="Last Name" name="lastName" rules={alphabeticRule}>
-                <Input
-                  placeholder="Enter last name"
-                  disabled={isNextFieldDisabled.lastName}
-                  onKeyPress={restrictInputToLetters} 
-                  onPaste={preventNonAlphabeticPaste}
-                />
+                <Input placeholder="Enter last name" disabled={isNextFieldDisabled.lastName} />
               </Form.Item>
 
               <Form.Item
@@ -253,9 +221,9 @@ const restrictInputToAlphanumeric = (e) => {
               <Form.Item label="Phone Number" name="Number" rules={phoneRule}>
                 <Input
                   placeholder="Enter your phone number"
-                  onKeyPress={restrictInputToNumbers} 
+                  onKeyPress={restrictInputToNumbers}
                   onPaste={preventNonNumericPaste}
-                  
+                  maxLength={10} // Set maxLength to limit input to 10 digits
                   disabled={isNextFieldDisabled.number}
                 />
               </Form.Item>
