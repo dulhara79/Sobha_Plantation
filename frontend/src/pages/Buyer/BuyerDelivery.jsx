@@ -20,6 +20,7 @@ const AddDeliveryRecords = () => {
   const [isCountryEnabled, setIsCountryEnabled] = useState(false);
   const [isPostalCodeEnabled, setIsPostalCodeEnabled] = useState(false);
   const [isPhoneEnabled, setIsPhoneEnabled] = useState(false);
+  const [contactNumber, setContactNumber] = useState("");
 
   const alphabeticNumericRule = [
     {
@@ -135,9 +136,24 @@ const AddDeliveryRecords = () => {
   const restrictInputToNumbers = (e) => {
     const key = e.key;
     if (!/[0-9]/.test(key)) {
+      e.preventDefault(); // Prevent any non-numeric key
+    }
+    
+    // Prevent input if the value already has 10 digits
+    if (contactNumber.length >= 10 && /[0-9]/.test(key)) {
       e.preventDefault();
     }
-};
+  };
+  
+  const handlePhoneChange = (e) => {
+    const value = e.target.value;
+  
+    // Restrict to 10 digits only
+    if (value.length <= 10) {
+      setContactNumber(value);
+    }
+  };
+  
 
 const restrictInputToLetters = (e) => {
     const key = e.key;
@@ -320,17 +336,20 @@ const restrictInputToAlphanumeric = (e) => {
               </Form.Item>
 
               <Form.Item
-                label="Phone"
-                name="phone"
-                rules={phoneRule}
-              >
-                <Input
-                  placeholder="Enter your phone number"
-                  disabled={!isPhoneEnabled}
-                  onKeyPress={restrictInputToNumbers} 
-                  onPaste={preventNonNumericPaste} 
-                />
-              </Form.Item>
+  label="Phone"
+  name="phone"
+  rules={phoneRule}
+>
+  <Input
+    placeholder="Enter your phone number"
+    disabled={!isPhoneEnabled}
+    onKeyPress={restrictInputToNumbers} // Restrict to numbers only and prevent more than 10 digits
+    onPaste={preventNonNumericPaste}    // Prevent non-numeric paste
+    value={contactNumber}               // Controlled input for the phone number
+    onChange={handlePhoneChange}        // Update the state with valid input
+  />
+</Form.Item>
+
 
               <Form.Item>
   <Button
