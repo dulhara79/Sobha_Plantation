@@ -9,11 +9,10 @@ import {
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useSnackbar } from "notistack";
-import { Button, Table } from "antd";
+import { Button, Table, Input } from "antd";
 import { useNavigate } from "react-router-dom";
 import html2canvas from "html2canvas";
 import dayjs from "dayjs";
-import { SearchOutlined } from "@ant-design/icons";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
@@ -41,6 +40,10 @@ const EmployeeList = () => {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    getFilteredEmployeeRecords(searchQuery);
+  }, [searchQuery, employeeRecords]);
 
   const handleDelete = (recordId) => {
     Swal.fire({
@@ -79,9 +82,11 @@ const EmployeeList = () => {
   const handleViewEmployee = (id) => {
     navigate(`/employee/viewemployee/${id}`);
   };
+
   const handleAddNewEmployee = () => {
     navigate("/employee/registration");
   };
+
   const handleEditEmployee = (id) => {
     navigate(`/employee/editemployee/${id}`);
   };
@@ -179,10 +184,6 @@ const EmployeeList = () => {
     });
 
     doc.save(`Employee-details_${currentDate}.pdf`);
-  };
-
-  const handleSearch = () => {
-    getFilteredEmployeeRecords(searchQuery);
   };
 
   const getFilteredEmployeeRecords = (searchQuery) => {
@@ -306,19 +307,13 @@ const EmployeeList = () => {
 
               <div className="flex justify-between mb-4">
                 <div className="search-bar">
-                  <input
+                  <Input
                     type="text"
                     placeholder="Search by name, email, NIC, or contact number"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{ width: 300 }}
                   />
-                  <Button
-                    type="primary"
-                    icon={<SearchOutlined />}
-                    onClick={handleSearch}
-                  >
-                    Search
-                  </Button>
                 </div>
 
                 <div className="flex space-x-4">

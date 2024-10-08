@@ -61,9 +61,13 @@ import Eregistration from "./pages/employee/Eregistration.jsx";
 import EaddTask from "./pages/employee/EaddTask.jsx";
 import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
+import ViewTaskDetails from "./pages/employee/ViewTaskDetails.jsx";
 import GetAttendance from "./pages/employee/GetAttendance.jsx";
 import EmployeeList from "./pages/employee/EmployeeList.jsx";
 import EattendenceList from "./pages/employee/EattendenceList.jsx";
+import ViewOneAttendance from "./pages/employee/ViewOneAttendance.jsx";
+import EditEmployeePage from "./pages/employee/EditEmployeePage.jsx";
+import ViewOneEmployee from "./pages/employee/ViewOneEmployee.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
@@ -317,7 +321,7 @@ export default function App() {
             element={<AddRequestPaymentRecord />}
           />
           <Route
-            path="/Inventory/EditRequestPaymentRecords/:id"
+            path="/Inventory/EditRequestPaymentRecord/:id"
             element={<EditRequestPaymentRecord />}
           />
 
@@ -332,6 +336,22 @@ export default function App() {
           <Route
             path="/employee/attendanceList"
             element={<EattendenceList />}
+          />
+          <Route
+            path="/employee/taskdetails/:id"
+            element={<ViewTaskDetails />}
+          />
+          <Route
+            path="/employee/veiwattendence/:id"
+            element={<ViewOneAttendance />}
+          />
+          <Route
+            path="/employee/editemployee/:id"
+            element={<EditEmployeePage />}
+          />
+          <Route
+            path="/employee/viewemployee/:id"
+            element={<ViewOneEmployee />}
           />
 
           {/* harvest */}
@@ -371,31 +391,19 @@ export default function App() {
           {/* crop care */}
           <Route path="/diseases" element={<DiseasesDashboard />} />
           <Route path="/coconutInspections" element={<CoconutInspections />} />
-          <Route
-            path="/intercropInspections"
-            element={<IntercropInspections />}
-          />
+          <Route path="/intercropInspections" element={<IntercropInspections />} />
           <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
           <Route path="/addCropDiseases" element={<AddCropsDiseases />} />
           <Route path="/coconutTreatments" element={<CoconutTreatments />} />
-          <Route
-            path="/intercropTreatments"
-            element={<IntercropTreatments />}
-          />
+          <Route path="/intercropTreatments" element={<IntercropTreatments />} />
           <Route path="/coconutPests" element={<CoconutPests />} />
           <Route path="/RegularMaintenance" element={<RegularMaintenance />} />
           <Route path="/intercropPests" element={<IntercropPests />} />
           <Route path="/UserProfile" element={<UserProfile />} />
           <Route path="/coconutLeafMiner" element={<CoconutLeafMiner />} />
           <Route path="/blackBeetle" element={<BlackBeetle />} />
-          <Route
-            path="/addCoconutTreatments"
-            element={<AddCoconutTreatments />}
-          />
-          <Route
-            path="/addIntercropTreatments"
-            element={<AddIntercropTreatments />}
-          />
+          <Route path="/addCoconutTreatments" element={<AddCoconutTreatments />} />
+          <Route path="/addIntercropTreatments" element={<AddIntercropTreatments />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/detailedOverview" element={<DetailedOverview />} />
           <Route path="/addMaintenance" element={<AddMaintenance />} />
@@ -422,26 +430,11 @@ export default function App() {
           <Route path="/papayaRingspot" element={<PapayaRingspot />} />
           <Route path="/fusariumWilt" element={<FusariumWilt />} />
           <Route path="/powderyMildew" element={<PowderyMildew />} />
-          <Route
-            path="/updateCoconutDiseases/:id"
-            element={<UpdateCoconutDiseases />}
-          />
-          <Route
-            path="/updateCropsDiseases/:id"
-            element={<UpdateCropsDiseases />}
-          />
-          <Route
-            path="/updateCoconutTreatments/:id"
-            element={<UpdateCoconutTreatments />}
-          />
-          <Route
-            path="/updateCropsTreatments/:id"
-            element={<UpdateCropsTreatments />}
-          />
-          <Route
-            path="/updateMaintenance/:id"
-            element={<UpdateMaintenance />}
-          />
+          <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />} />
+          <Route path="/updateCropsDiseases/:id" element={<UpdateCropsDiseases />} />
+          <Route path="/updateCoconutTreatments/:id" element={<UpdateCoconutTreatments />} />
+          <Route path="/updateCropsTreatments/:id" element={<UpdateCropsTreatments />} />
+          <Route path="/updateMaintenance/:id" element={<UpdateMaintenance />} />
 
           {/* product new */}
           <Route

@@ -70,7 +70,7 @@ const UpdateBuyerDeliveryRecords = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:5000/api/deliveryRecords/${id}`);
+        const response = await axios.get(`http://localhost:8090/api/deliveryRecords/${id}`);
         const data = response.data.BuyerDeliveryRecord;
 
         form.setFieldsValue({

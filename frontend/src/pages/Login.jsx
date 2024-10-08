@@ -134,7 +134,7 @@ const Login = () => {
                 href="/signup"
                 className="font-medium text-indigo-600 hover:text-indigo-500 size-10"
               >
-                Haven't account? Sing up
+                Don't have an account? Sign up here!
               </a>
             </div>
           </div>

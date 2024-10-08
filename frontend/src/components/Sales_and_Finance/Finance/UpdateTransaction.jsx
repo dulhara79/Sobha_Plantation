@@ -23,7 +23,7 @@ export default function EditTransaction() {
   const [products, setProducts] = useState([]);
   const [productTypes, setProductTypes] = useState([]);
 
-  const today = new Date();
+  const previousDate = "";
 
   const [validation, setValidation] = useState({
     amount: true,
@@ -61,12 +61,29 @@ export default function EditTransaction() {
         setDescription(transaction.description);
         setPayerPayee(transaction.payer_payee);
         setMethod(transaction.method);
+        //previousDate = moment(transaction.date);
       } catch (error) {
         console.error("Error fetching transaction:", error);
       }
     };
     fetchTransaction();
   }, [id]);
+
+    // Calculate the date boundaries
+    const savedDate = transactionData ? moment(transactionData.date) : null;
+    const threeWeeksBefore = savedDate ? moment(savedDate).subtract(3, "weeks") : null;
+    const today = moment();
+
+  // Function to disable dates that are outside the allowed range
+  const disabledDate = (currentDate) => {
+    // Disable today, future dates, and dates outside the three-week window
+    if (!savedDate) return true; // Block all dates until the savedDate is loaded
+    return currentDate > savedDate || currentDate < threeWeeksBefore || currentDate >= today;
+  };
+
+  const handleDateChange = (date) => {
+    setDate(date ? date.toISOString() : "");
+  };
 
   const handleSaveTransactionRecord = async (e) => {
     e.preventDefault();
@@ -161,13 +178,13 @@ export default function EditTransaction() {
     // });
   };
 
-  const handleDateChange = (date) => {
-    setDate(date ? date.toISOString() : "");
-    // setFieldDisabled({
-    //   ...fieldDisabled,
-    //   amount: false, // Enable amount when date is selected
-    // });
-  };
+  // const handleDateChange = (date) => {
+  //   setDate(date ? date.toISOString() : "");
+  //   // setFieldDisabled({
+  //   //   ...fieldDisabled,
+  //   //   amount: false, // Enable amount when date is selected
+  //   // });
+  // };
 
   const validateAmount = (value) => {
     const regex = /^(?=.+)(?:[1-9]\d*|0)?(?: \d+)?$/;
@@ -372,7 +389,7 @@ export default function EditTransaction() {
                 value={date ? moment(date) : null}
                 onChange={(date) => handleDateChange(date)}
                 format="YYYY-MM-DD"
-                disabledDate={(current) => current > moment()}
+                disabledDate={disabledDate}
                 className="block w-full h-8 p-2 mt-2 text-black bg-white border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
                 disabled={fieldDisabled.date}
               />

@@ -19,56 +19,55 @@ import "../../index.css";
 
 const { Search } = Input;
 
-const BuyerInfoTable = () => {
-  const [InfoRecords, setInfoRecords] = useState([]);
-  const [filteredInfoRecords, setFilteredInfoRecords] = useState([]);
+const BuyerPreOrderTable = () => {
+  const [PreOrderRecords, setPreOrderRecords] = useState([]);
+  const [filteredPreOrderRecords, setFilteredPreOrderRecords] = useState([]);
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchInfoRecords();
+    fetchPreOrderRecords();
   }, []);
 
-  // Fetch Info records from API
-  const fetchInfoRecords = async () => {
+  // Fetch PreOrder records from API
+  const fetchPreOrderRecords = async () => {
     try {
-      const response = await axios.get("http://localhost:8090/api/buyerInfo");
-
-      setInfoRecords(response.data.data);
-      setFilteredInfoRecords(response.data.data);
+      const response = await axios.get("http://localhost:8090/api/buyerPreOrder");
+      setPreOrderRecords(response.data.data);
+      setFilteredPreOrderRecords(response.data.data);
     } catch (error) {
-      console.error("Error fetching Info: ", error.response ? error.response.data : error.message);
+      console.error("Error fetching PreOrder: ", error.response ? error.response.data : error.message);
     }
   };
 
-  // Search Info records
+  // Search PreOrder records
   const handleSearch = (value) => {
     setSearchText(value);
-    filterInfoRecords(value);
+    filterPreOrderRecords(value);
   };
 
-  // Filter Info records
-  const filterInfoRecords = (searchText) => {
-    let filteredData = InfoRecords;
+  // Filter PreOrder records
+  const filterPreOrderRecords = (searchText) => {
+    let filteredData = PreOrderRecords;
 
     if (searchText) {
       const lowercasedSearchText = searchText.toLowerCase();
-      filteredData = filteredData.filter((InfoRecord) =>
-        Object.values(InfoRecord).some((value) =>
+      filteredData = filteredData.filter((PreOrderRecord) =>
+        Object.values(PreOrderRecord).some((value) =>
           String(value).toLowerCase().includes(lowercasedSearchText)
         )
       );
     }
 
-    setFilteredInfoRecords(filteredData);
+    setFilteredPreOrderRecords(filteredData);
   };
 
-  // Handle update Info record
+  // Handle update PreOrder record
   const handleUpdate = (id) => {
     navigate(`/updateBuyer/${id}`);
   };
 
-  // Confirm before deleting an Info record
+  // Confirm before deleting an PreOrder record
   const confirmDelete = (id) => {
     Modal.confirm({
       title: "Are you sure you want to delete this record?",
@@ -79,20 +78,19 @@ const BuyerInfoTable = () => {
     });
   };
 
-  // Handle delete Info record
+  // Handle delete PreOrder record
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:8090/api/buyerInfo/${id}`);
-
+      await axios.delete(`http://localhost:8090/api/buyerPreOrder/${id}`);
       notification.success({
         message: "Record deleted successfully",
         description: "Record has been deleted successfully",
       });
-      fetchInfoRecords(); // Refresh records after deletion
+      fetchPreOrderRecords(); // Refresh records after deletion
     } catch (error) {
-      console.error("Error deleting Info record: ", error.response ? error.response.data : error.message);
+      console.error("Error deleting PreOrder record: ", error.response ? error.response.data : error.message);
       notification.error({
-        message: "Error deleting Info record",
+        message: "Error deleting PreOrder record",
         description: "An error occurred while deleting the record",
       });
     }
@@ -104,29 +102,30 @@ const BuyerInfoTable = () => {
 
     // Define the columns for the table
     const columns = [
-      { title: "First Name", dataKey: "firstName" },
-      { title: "Last Name", dataKey: "lastName" },
-      { title: "Gender", dataKey: "Gender" },
-      { title: "Date of Birth", dataKey: "DOB" },
-      { title: "Phone Number", dataKey: "Number" },
-      { title: "Email", dataKey: "email" },
+      { title: "Name", dataKey: "name" },
+      { title: "Phone Number", dataKey: "phoneNumber" },
+      { title: "Address", dataKey: "address" },
+      { title: "product Type", dataKey: "productType" },
+      { title: "product Quantity", dataKey: "productQuantity" },
+      { title: "Order Date", dataKey: "orderDate" },
     ];
 
-    // Get the data from the InfoRecords state
-    const rows = filteredInfoRecords.map((InfoRecord) => ({
-      firstName: InfoRecord.firstName,
-      lastName: InfoRecord.lastName,
-      Gender: InfoRecord.Gender,
-      DOB: moment(InfoRecord.DOB).format("YYYY-MM-DD"),
-      Number: InfoRecord.Number,
-      email: InfoRecord.email,
+    // Get the data from the PreOrderRecords state
+    const rows = filteredPreOrderRecords.map((PreOrderRecord) => ({
+      name: PreOrderRecord.name,
+      phoneNumber: PreOrderRecord.phoneNumber,
+      address: PreOrderRecord.address,
+      
+      productType: PreOrderRecord.productType,
+      productQuantity: PreOrderRecord.productQuantity,
+      orderDate: moment(PreOrderRecord.orderDate).format("YYYY-MM-DD"),
     }));
 
     // Add title
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
     const titleY = 24;
-    doc.text("Buyer Info Records", 70, titleY);
+    doc.text("Buyer PreOrder Records", 70, titleY);
 
     // Add table
     doc.autoTable({
@@ -162,41 +161,44 @@ const BuyerInfoTable = () => {
 
     doc.addImage(LogoImage, "PNG", xPosition, yPosition, logoWidth, logoHeight);
 
-    doc.save("Buyer_Info_Records.pdf");
+    doc.save("Buyer_PreOrder_Records.pdf");
   };
 
   const columns = [
     {
-      title: "First Name",
-      dataIndex: "firstName",
-      key: "firstName",
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    
+    {
+      title: "phone Number",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
+    },
+    
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
     },
     {
-      title: "Last Name",
-      dataIndex: "lastName",
-      key: "lastName",
+      title: "product Type",
+      dataIndex: "productType",
+      key: "productType",
     },
     {
-      title: "Gender",
-      dataIndex: "Gender",
-      key: "Gender",
+      title: "product Quantity",
+      dataIndex: "productQuantity",
+      key: "productQuantity",
     },
     {
-      title: "Date of Birth",
-      dataIndex: "DOB",
-      key: "DOB",
+      title: "order Date",
+      dataIndex: "orderDate",
+      key: "orderDate",
       render: (date) => moment(date).format("YYYY-MM-DD"),
     },
-    {
-      title: "Phone Number",
-      dataIndex: "Number",
-      key: "Number",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
+    
     {
       title: "Actions",
       key: "actions",
@@ -236,13 +238,18 @@ const BuyerInfoTable = () => {
               <Link
                 to="/preorders"
                 
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
+                
+                className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold"
               >
                 Pre Order 
               </Link>
+              
               <Link
                 to="/buyerinfotable"
-                className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold">
+                className="text-[#3CCD65] hover:text-[#2b8f57]"
+                >
+                
+              
                  Buyer Records
               </Link>
               <Link
@@ -263,7 +270,7 @@ const BuyerInfoTable = () => {
                 },
                 {
                   href: "",
-                  title: "Buyer Info Records",
+                  title: "PreOrder Records",
                 },
               ]}
             />
@@ -271,7 +278,7 @@ const BuyerInfoTable = () => {
           {/* Topic Heading */}
           <div className="flex items-center justify-center">
               <h1 className="text-5xl font-semibold">
-                Buyer Information Records
+              PreOrder Records
               </h1>
             </div>
 
@@ -300,7 +307,7 @@ const BuyerInfoTable = () => {
             </Button>
           </div>
 
-          <Table columns={columns} dataSource={filteredInfoRecords} rowKey="_id" />
+          <Table columns={columns} dataSource={filteredPreOrderRecords} rowKey="_id" />
 
           <div className="flex flex-col items-center pb-8 mt-8">
             <Button
@@ -309,7 +316,7 @@ const BuyerInfoTable = () => {
                 color: "#fff",
                 marginTop: "16px",
               }}
-              onClick={() => navigate("/BuyerInfo")}
+              onClick={() => navigate("/create-preorder")}
             >
               + Add New Buyer Record
             </Button>
@@ -320,4 +327,4 @@ const BuyerInfoTable = () => {
   );
 };
 
-export default BuyerInfoTable;
+export default BuyerPreOrderTable;
