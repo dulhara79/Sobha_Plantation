@@ -45,7 +45,7 @@ const AddHarvestSchedule = () => {
   // Function to disable past dates
   const disablePastAndFutureDates = (current) => {
     // Disable dates before today and after the end of the current year
-    return current && (current < moment().startOf('day') || current > moment().endOf('year'));
+    return current && (current < moment().startOf('nextday') || current > moment().endOf('year'));
   };
   // Confirm submission
   const handleSubmit = async (values) => {
@@ -193,61 +193,102 @@ const AddHarvestSchedule = () => {
               <Form.Item
                 label="Start Time"
                 name="startTime"
-                rules={[
-                  { required: true, message: "Please select the start time!" },
-                ]}
+                rules={[{ required: true, message: "Please select the start time!" }]}
               >
                 <TimePicker
                   format="HH:mm"
                   disabled={!formData.cropType || !formData.harvestDate} // Enable only when crop type and harvest date are selected
                   onChange={(time) => handleFieldChange("startTime", time)}
                   style={{ width: "100%" }}
-                  inputReadOnly // Prevent typing in the input field
+                  inputReadOnly
                   renderExtraFooter={() => (
                     <input
                       onPaste={(e) => e.preventDefault()} // Prevent pasting
                       style={{ display: "none" }} // Hide input, used only for handling the paste event
                     />
                   )}
+                  disabledHours={() => {
+                    // Disable hours outside 8 AM - 6 PM range
+                    const hours = [];
+                    for (let i = 0; i < 24; i++) {
+                      if (i < 8 || i > 18) {
+                        hours.push(i);
+                      }
+                    }
+                    return hours;
+                  }}
+                  disabledMinutes={(selectedHour) => {
+                    // Disable minutes if time is 6 PM (no time after 6 PM)
+                    if (selectedHour === 18) {
+                      return Array.from({ length: 60 }, (_, i) => i);
+                    }
+                    return [];
+                  }}
                 />
               </Form.Item>
 
-              {/* End Time */}
-              <Form.Item
-                label="End Time"
-                name="endTime"
-                rules={[
-                  { required: true, message: "Please select the end time!" },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      if (!value || value.isAfter(getFieldValue("startTime"))) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(
-                        new Error("End time must be after the start time!")
-                      );
-                    },
-                  }),
-                ]}
-              >
-                <TimePicker
-                  format="HH:mm"
-                  disabled={
-                    !formData.cropType ||
-                    !formData.harvestDate ||
-                    !formData.startTime
-                  }
-                  onChange={(time) => handleFieldChange("endTime", time)}
-                  style={{ width: "100%" }}
-                  renderExtraFooter={() => (
-                    <input
-                      onPaste={(e) => e.preventDefault()} // Prevent pasting
-                      style={{ display: "none" }} // Hide the input field, just to make the feature explicit in TimePicker
-                    />
-                  )}
-                  inputReadOnly // This will prevent direct typing in the input field
-                />
-              </Form.Item>
+            {/* End Time */}
+
+<Form.Item
+  label="End Time"
+  name="endTime"
+  rules={[
+    { required: true, message: "Please select the end time!" },
+    ({ getFieldValue }) => ({
+      validator(_, value) {
+        const startTime = getFieldValue("startTime");
+        if (!value || (startTime && value.isAfter(startTime.add(1, "hour")))) {
+          return Promise.resolve();
+        }
+        return Promise.reject(new Error("End time must be at least 1 hour after the start time!"));
+      },
+    }),
+  ]}
+>
+  <TimePicker
+    format="HH:mm"
+    disabled={!formData.cropType || !formData.harvestDate || !formData.startTime}
+    onChange={(time) => handleFieldChange("endTime", time)}
+    style={{ width: "100%" }}
+    renderExtraFooter={() => (
+      <input
+        onPaste={(e) => e.preventDefault()} // Prevent pasting
+        style={{ display: "none" }} // Hide the input field, just to make the feature explicit in TimePicker
+      />
+    )}
+    inputReadOnly
+    disabledHours={() => {
+      const startTime = formData.startTime;
+      const hours = [];
+      if (startTime) {
+        const startHour = startTime.hour();
+        for (let i = 0; i < 24; i++) {
+          // Disable all hours before one hour after start time and outside the allowed range (8 AM - 6 PM)
+          if (i <= startHour || i < 8 || i > 18) {
+            hours.push(i);
+          }
+        }
+      }
+      return hours;
+    }}
+    disabledMinutes={(selectedHour) => {
+      const startTime = formData.startTime;
+      if (startTime && selectedHour === startTime.add(1, "hour").hour()) {
+        const minutes = [];
+        for (let i = 0; i <= startTime.minute(); i++) {
+          minutes.push(i);
+        }
+        return minutes;
+      }
+      // Disable minutes if time is 6 PM
+      if (selectedHour === 18) {
+        return Array.from({ length: 60 }, (_, i) => i);
+      }
+      return [];
+    }}
+  />
+</Form.Item>
+
 
               {/* Field Number */}
               <Form.Item
@@ -274,54 +315,65 @@ const AddHarvestSchedule = () => {
                   <Option value="DD1">DD1</Option>
                 </Select>
               </Form.Item>
-
-              {/* Number of Workers */}
               <Form.Item
-                label="Number of Workers"
-                name="numberOfWorkers"
-                rules={[
-                  { required: true, message: "Number of workers is required!" },
-                  {
-                    pattern: /^\d+$/,
-                    message: "Number of workers must be numeric",
-                  },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      const parsedValue = parseInt(value, 10);
-                      if (!value || (parsedValue >= 1 && parsedValue <= 40)) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(
-                        new Error("Number of workers must be between 1 and 40!")
-                      );
-                    },
-                  }),
-                ]}
-              >
-                <Input
-                  placeholder="Enter Number of Workers"
-                  type="number"
-                  min={1}
-                  max={40}
-                  disabled={
-                    !formData.cropType ||
-                    !formData.harvestDate ||
-                    !formData.startTime ||
-                    !formData.endTime ||
-                    !formData.fieldNumber
-                  }
-                  onChange={(e) =>
-                    handleFieldChange("numberOfWorkers", e.target.value)
-                  }
-                  onPaste={(e) => e.preventDefault()} // Prevent pasting
-                  onKeyPress={(e) => {
-                    if (!/[0-9]/.test(e.key)) {
-                      e.preventDefault(); // Prevent non-numeric input
-                    }
-                  }}
-                  style={{ width: "100%" }}
-                />
-              </Form.Item>
+  label="Number of Workers"
+  name="numberOfWorkers"
+  rules={[
+    { required: true, message: "Number of workers is required!" },
+    {
+      pattern: /^[1-9][0-9]*$/,
+      message: "Number of workers must be numeric and greater than 0",
+    },
+    ({ getFieldValue }) => ({
+      validator(_, value) {
+        const parsedValue = parseInt(value, 10);
+        if (!value || (parsedValue >= 1 && parsedValue <= 40)) {
+          return Promise.resolve();
+        }
+        return Promise.reject(
+          new Error("Number of workers must be between 1 and 40!")
+        );
+      },
+    }),
+  ]}
+>
+  <Input
+    placeholder="Enter Number of Workers"
+    type="number"
+    min={1}
+    max={40}
+    value={formData.numberOfWorkers}
+    disabled={
+      !formData.cropType ||
+      !formData.harvestDate ||
+      !formData.startTime ||
+      !formData.endTime ||
+      !formData.fieldNumber
+    }
+    onChange={(e) => {
+      const value = e.target.value;
+      // Allow only values between 1 and 40
+      if (value === "" || (parseInt(value, 10) >= 1 && parseInt(value, 10) <= 40)) {
+        handleFieldChange("numberOfWorkers", value);
+      }
+    }}
+    onPaste={(e) => e.preventDefault()} // Prevent pasting
+    onKeyPress={(e) => {
+      const inputChar = String.fromCharCode(e.charCode);
+      const newValue = parseInt(e.target.value + inputChar, 10);
+      
+      // Prevent non-numeric input, 0, and input above 40
+      if (!/[1-9]/.test(inputChar) || newValue > 40) {
+        e.preventDefault(); // Prevent invalid input
+      }
+    }}
+    style={{ width: "100%" }}
+  />
+</Form.Item>
+
+
+
+
 
               {/* Submit Button */}
               <Form.Item>
