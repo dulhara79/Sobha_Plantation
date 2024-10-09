@@ -63,6 +63,7 @@ import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
 import ViewTaskDetails from "./pages/employee/ViewTaskDetails.jsx";
 import GetAttendance from "./pages/employee/GetAttendance.jsx";
+import EditAtendence from "./pages/employee/EditAtendence.jsx";
 import EmployeeList from "./pages/employee/EmployeeList.jsx";
 import EattendenceList from "./pages/employee/EattendenceList.jsx";
 import ViewOneAttendance from "./pages/employee/ViewOneAttendance.jsx";
@@ -353,6 +354,7 @@ export default function App() {
             path="/employee/viewemployee/:id"
             element={<ViewOneEmployee />}
           />
+          <Route path="/employee/editattendance" element = {<EditAtendence/>}/>
 
           {/* harvest */}
           <Route
