@@ -4,7 +4,8 @@ import Sidebar from "../../components/Sidebar";
 import { HomeOutlined, LeftOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
 import { Link } from "react-router-dom";
-import LoadingDot from '../../components/LoadingDots';  
+import LoadingDot from "../../components/LoadingDots";
+import DiseasesNavBar from "../../components/DiseasesComponents/DiseasesNavBar";
 
 // Import images
 import diseaseIdentificationImg from "../../assets/DiseasesImages/disease.jpg";
@@ -14,7 +15,7 @@ import trendAnalysisImg from "../../assets/DiseasesImages/trend.jpg";
 
 const DiseasesDashboard = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
   // Update the date and time every minute
   useEffect(() => {
@@ -26,7 +27,7 @@ const DiseasesDashboard = () => {
       setTimeout(() => {
         setLoading(false); // Set loading to false after data is loaded
       }, 1000);
-    };
+    }
 
     return () => clearInterval(timer); // Clean up the interval on component unmount
   }, []);
@@ -45,56 +46,9 @@ const DiseasesDashboard = () => {
   return (
     <div>
       <Header />
-      <Sidebar />
+      <Sidebar activePage="/diseases" />
 
-      {/* Navigation Bar */}
-      <nav className="flex items-center justify-between p-4 bg-transparent">
-        {/* Go Back Icon */}
-        <button
-          onClick={() => window.history.back()}
-          className="text-gray-600 hover:text-gray-800"
-        >
-          <LeftOutlined className="text-xl" />
-        </button>
-        {/* Navigation Items */}
-        <div className="flex space-x-4">
-          <Link to="/diseases" className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold">
-            Home
-          </Link>
-          <Link
-            to="/CoconutInspections"
-            className="text-[#3CCD65] hover:text-[#2b8f57]"
-          >
-            Inspections
-          </Link>
-          <Link
-            to="/CoconutTreatments"
-            className="text-[#3CCD65] hover:text-[#2b8f57]"
-          >
-            Treatments
-          </Link>
-          <Link
-            to="/CoconutPests"
-            className="text-[#3CCD65] hover:text-[#2b8f57]"
-          >
-            Pests and Diseases
-          </Link>
-          <Link
-            to="/RegularMaintenance"
-            className="text-[#3CCD65] hover:text-[#2b8f57]"
-          >
-            Maintenance
-          </Link>
-          {/* <Link
-            to="/UserProfile"
-            className="text-[#3CCD65] hover:text-[#2b8f57]"
-          >
-            My Profile
-          </Link> */}
-        </div>
-      </nav>
-
-      <div className={`ml-[300px]`}>
+      <div className={`ml-[300px] pt-5`}>
         <Breadcrumb
           items={[
             {
@@ -107,6 +61,8 @@ const DiseasesDashboard = () => {
             },
           ]}
         />
+        <DiseasesNavBar />
+
         {/* Welcome Message */}
         <div className="bg-white shadow-md rounded-lg p-4 my-4">
           {/* <h2 className="text-2xl font-semibold">Welcome Dewdu Sendanayake!</h2> */}
@@ -119,7 +75,7 @@ const DiseasesDashboard = () => {
             🤍🌴 Nurture Your Crops, Nourish Your Future! 🌴🤍
           </h2>
           <p className="text-xl text-white mt-2">
-            Discover the best practices for healthy coconut cultivation! 
+            Discover the best practices for healthy coconut cultivation!
           </p>
           <div className="mt-4">
             <span className="text-4xl animate-bounce">🕊️</span>
