@@ -5,11 +5,13 @@ import { Card, Row, Col } from "antd";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 // import Footer from "../../components/Footer";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import "../../index.css";
 import { HomeOutlined } from "@mui/icons-material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Breadcrumb } from 'antd';
-import { Link,useNavigate } from 'react-router-dom';
+import { Link,useNavigate,useLocation } from 'react-router-dom';
+import DateTimeDisplay from "../../components/Inventory/DateTimeDisplay";
 
 // Import image assets
 import Tools from '../../assets/Inventory/tools.jpg';
@@ -18,6 +20,15 @@ import Agrochemicals from '../../assets/Inventory/agrochemicalImg.jpg';
 import Maintenance from '../../assets/Inventory/maintenanceImg.png';
 
 ChartJS.register(ArcElement);
+
+const menuItems = [
+  { name: "Home", path: "/Inventory/InventoryDashboard" },
+  { name: "Fertilizers & Agrochemicals", path: "/Inventory/FertilizerRecords" },
+  { name: "Equipments & Machines", path: "/Inventory/EquipmentRecords" },
+  { name: "Maintenance Records", path: "/Inventory/MaintenanceRecords" },
+  { name: "Request Payment Details", path: "/Inventory/RequestPaymentRecords" }
+];
+
 
 const toolsData = {
   labels: ["In Stock", "Out of Stock","Maintenance"],
@@ -66,6 +77,9 @@ const maintenanceData = {
 
 const InventoryDashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const activePage = location.pathname;
+
 
   const onBackClick = useCallback(() => {
     navigate(-1);
@@ -73,29 +87,19 @@ const InventoryDashboard = () => {
 
  
 
-  const menuItems = [
-    { name: 'Home', path: '/Inventory/InventoryDashboard' },
-    { name: 'Fertilizers & Agrochemicals', path: '/Inventory/FertilizerRecords' },
-    { name: 'Equipments & Machines', path: '/Inventory/EquipmentRecords' },
-    { name: 'Maintenance Records', path: '/Inventory/MaintenanceRecords' },
-    { name: 'Request Payment Details', path: '/Inventory/RequestPaymentRecords' }
-  ];
 
-  const isActive = (path) => {
-    return window.location.pathname === path;
-  };
+  const isActive = (page) => activePage === page;
 
 
   return (
     <div>
-      <Header />
-      <Sidebar className="sidebar" />
-      <div className="ml-[300px] p-5">
-                {/* Navigation Bar */}
-                <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
+    <Header />
+    <Sidebar className="sidebar" />
+    <div className="ml-[300px] p-5">
+    <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
           <div className="flex items-center justify-center">
             <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
-              <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2 cursor-pointer" onClick={onBackClick} />
+              <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
               {menuItems.map((item) => (
                 <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
                   <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
@@ -104,21 +108,25 @@ const InventoryDashboard = () => {
             </ul>
           </div>
         </nav>
-
+        <div className="flex items-center justify-between mb-5">
         <Breadcrumb
-          items={[
-            {
-              href: '',
-              title: <HomeOutlined />,
-            },
-            {
-              title: "Inventory",
-            },
-            {
-              title: "Dashboard",
-            },
-          ]}
+             items={[
+              { href: '', title: <HomeOutlined /> },
+              { title: 'Inventory' },
+              { title: 'Dashboard' },
+            ]}
         />
+     </div>
+
+     <div className="mt-5">
+          <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
+            <div className="flex flex-row items-center justify-between">
+              <DateTimeDisplay />
+              <div className="flex items-center">
+                <NotificationsIcon className="text-3xl" />
+              </div>
+            </div>
+          </div>
 
         <div className="flex justify-center items-center mt-5">
           <div className="w-full max-w-[1200px]">
@@ -182,6 +190,7 @@ const InventoryDashboard = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };
