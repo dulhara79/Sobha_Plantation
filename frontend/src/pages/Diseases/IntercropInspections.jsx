@@ -13,12 +13,11 @@ import {
   EditOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
-import { Link } from "react-router-dom";
-import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import LogoImage from "../../assets/logo.png";
 import "../../index.css";
+import DiseasesNavBar from "../../components/DiseasesComponents/DiseasesNavBar";
 
 const { Search } = Input;
 
@@ -197,54 +196,8 @@ return (
           style={{ flex: 1, padding: "20px", marginLeft: "280px" }}
         >
           {" "}
-          {/* Adjust margin-left to push content right */}
-          {/* Navigation Bar */}
-          <nav className="flex items-center justify-between p-4 bg-transparent">
-            <button
-              onClick={() => window.history.back()}
-              className="text-gray-600 hover:text-gray-800"
-            >
-              <LeftOutlined className="text-xl" />
-            </button>
-            <div className="flex space-x-4">
-              <Link
-                to="/diseases"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Home
-              </Link>
-              <Link
-                to="/IntercropInspections"
-                className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold">
-                Inspections
-              </Link>
-              <Link
-                to="/IntercropTreatments"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Treatments
-              </Link>
-              <Link
-                to="/CoconutPests"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Pests and Diseases
-              </Link>
-              <Link
-                to="/RegularMaintenance"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Maintenance
-              </Link>
-              {/* <Link
-                to="/UserProfile"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                My Profile
-              </Link> */}
-            </div>
-          </nav>
-          <div className="mt-4">
+          
+          <div className="mt-1">
             {" "}
             {/* Adjusted margin */}
             {/* Breadcrumb */}
@@ -260,6 +213,12 @@ return (
                 },
               ]}
             />
+
+            {/* Diseases Navigation Bar */}
+            <div style={{ marginBottom: "22px" }}>
+              <DiseasesNavBar style={{ height: "80px" }} />{" "}
+            </div>
+          
             {/* Topic Heading */}
             <div className="flex justify-center items-center">
               <h1 className="text-5xl font-semibold">
@@ -280,13 +239,13 @@ return (
             <div className="flex justify-center space-x-8 mt-8 mb-8">
               <Button
                 style={{ backgroundColor: "rgba(196, 196, 196, 0)" }}
-                onClick={() => navigate("/coconutInspections")}
+                onClick={() => navigate("/CoconutInspections")}
               >
                 Coconuts
               </Button>
               <Button
                 style={{ backgroundColor: "rgba(196, 196, 196, 0.44)" }}
-                onClick={() => navigate("/intercropInspections")}
+                onClick={() => navigate("/IntercropInspections")}
               >
                 Inter Crops
               </Button>
