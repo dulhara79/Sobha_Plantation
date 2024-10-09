@@ -62,14 +62,22 @@ const DetailedOverview = () => {
 
   const handleFinish = async (values) => {
     try {
-      await post("/harvest", values);
-
-      // Navigate to Insights with the form data
+      // Get the existing treatments from localStorage
+      const existingTreatments = JSON.parse(localStorage.getItem("bestTreatments")) || [];
+  
+      // Add the new treatment data
+      const updatedTreatments = [...existingTreatments, values];
+  
+      // Save the updated data in localStorage
+      localStorage.setItem("bestTreatments", JSON.stringify(updatedTreatments));
+  
+      // Optionally, navigate to the insights page
       navigate("/insights", { state: values });
     } catch (error) {
-      console.error("Error creating detailed overview:", error);
+      console.error("Error saving treatment data:", error);
     }
   };
+  
 
   const handleCancel = () => {
     navigate("/CoconutTreatments");
