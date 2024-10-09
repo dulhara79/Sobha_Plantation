@@ -61,9 +61,13 @@ import Eregistration from "./pages/employee/Eregistration.jsx";
 import EaddTask from "./pages/employee/EaddTask.jsx";
 import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
+import ViewTaskDetails from "./pages/employee/ViewTaskDetails.jsx";
 import GetAttendance from "./pages/employee/GetAttendance.jsx";
 import EmployeeList from "./pages/employee/EmployeeList.jsx";
 import EattendenceList from "./pages/employee/EattendenceList.jsx";
+import ViewOneAttendance from "./pages/employee/ViewOneAttendance.jsx";
+import EditEmployeePage from "./pages/employee/EditEmployeePage.jsx";
+import ViewOneEmployee from "./pages/employee/ViewOneEmployee.jsx";
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
@@ -317,7 +321,7 @@ export default function App() {
             element={<AddRequestPaymentRecord />}
           />
           <Route
-            path="/Inventory/EditRequestPaymentRecords/:id"
+            path="/Inventory/EditRequestPaymentRecord/:id"
             element={<EditRequestPaymentRecord />}
           />
 
@@ -329,7 +333,26 @@ export default function App() {
           <Route path="/employee/TaskListview" element={<ViewTaskList />} />
           <Route path="/employee/attendance" element={<GetAttendance />} />
           <Route path="/employee/employeelist" element={<EmployeeList />} />
-          <Route path="/employee/attendanceList" element={<EattendenceList />} />
+          <Route
+            path="/employee/attendanceList"
+            element={<EattendenceList />}
+          />
+          <Route
+            path="/employee/taskdetails/:id"
+            element={<ViewTaskDetails />}
+          />
+          <Route
+            path="/employee/veiwattendence/:id"
+            element={<ViewOneAttendance />}
+          />
+          <Route
+            path="/employee/editemployee/:id"
+            element={<EditEmployeePage />}
+          />
+          <Route
+            path="/employee/viewemployee/:id"
+            element={<ViewOneEmployee />}
+          />
 
           {/* harvest */}
           <Route
