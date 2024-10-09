@@ -26,7 +26,7 @@ const DiseasesDashboard = () => {
     if (loading) {
       setTimeout(() => {
         setLoading(false); // Set loading to false after data is loaded
-      }, 1000);
+      }, 900);
     }
 
     return () => clearInterval(timer); // Clean up the interval on component unmount
