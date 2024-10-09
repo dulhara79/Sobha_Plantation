@@ -6,13 +6,16 @@ import { HomeOutlined } from "@ant-design/icons";
 import { Breadcrumb, Card } from "antd";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import DatePicker from "react-datepicker"; // Using a date picker library for better date management
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import moment from "moment"; // Import moment.js for date handling
+
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const Insights = () => {
   const [bestTreatments, setBestTreatments] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
   const location = useLocation();
   const navigate = useNavigate(); 
   const passedData = location.state || {}; 
@@ -79,6 +82,45 @@ const Insights = () => {
       setBestTreatments(updatedTreatments);
       localStorage.setItem("bestTreatments", JSON.stringify(updatedTreatments));
     };
+
+     // Input Validations
+  const handleAlphabeticKeyPress = (e) => {
+    const regex = /^[A-Za-z\s]*$/;
+    if (!regex.test(e.key)) {
+      e.preventDefault();
+      setErrorMessage("Only alphabetic characters are allowed.");
+    } else {
+      setErrorMessage("");
+    }
+  };
+
+  const handleNumericKeyPress = (e) => {
+    const regex = /^[0-9]*$/;
+    if (!regex.test(e.key)) {
+      e.preventDefault();
+      setErrorMessage("Only numeric characters are allowed.");
+    } else {
+      setErrorMessage("");
+    }
+  };
+
+  const handleAlphanumericKeyPress = (e) => {
+    const regex = /^[A-Za-z0-9\s%]*$/;
+    if (!regex.test(e.key)) {
+      e.preventDefault();
+      setErrorMessage("Only alphanumeric characters are allowed.");
+    } else {
+      setErrorMessage("");
+    }
+  };
+
+  // Validate progress values (0-100)
+  const validateProgress = (rule, value) => {
+    if (value < 0 || value > 100) {
+      return Promise.reject("Value must be between 0 and 100.");
+    }
+    return Promise.resolve();
+  };
 
     // Format Date to MM/DD/YYYY
   const formatDate = (date) => {
@@ -220,7 +262,7 @@ const Insights = () => {
                   <th className="py-3 px-6 text-left">Treatment Method</th>
                   <th className="py-3 px-6 text-left">Reduction in Symptoms (%)</th>
                   <th className="py-3 px-6 text-left">Improvement in Health (%)</th>
-                  <th className="py-3 px-6 text-left">Success Rate (%)</th>
+                  <th className="py-3 px-6 text-left">Success Rate</th>
                   <th className="py-3 px-6 text-left">Actions</th>
                 </tr>
               </thead>
@@ -244,6 +286,7 @@ const Insights = () => {
                         onChange={(e) =>
                           handleUpdate(index, "treatedPestOrDisease", e.target.value)
                         }
+                        onKeyPress={handleAlphabeticKeyPress} // Apply alphabetic validation
                         className="w-full p-1"
                       />
                     </td>
@@ -254,6 +297,7 @@ const Insights = () => {
                         onChange={(e) =>
                           handleUpdate(index, "treatmentMethodUsed", e.target.value)
                         }
+                        onKeyPress={handleAlphabeticKeyPress} // Apply alphabetic validation
                         className="w-full p-1"
                       />
                     </td>
@@ -264,6 +308,7 @@ const Insights = () => {
                         onChange={(e) =>
                           handleUpdate(index, "percentageReductionInSymptoms", e.target.value)
                         }
+                        onKeyPress={handleNumericKeyPress} // Apply numeric validation
                         className="w-full p-1"
                       />
                     </td>
@@ -274,6 +319,7 @@ const Insights = () => {
                         onChange={(e) =>
                           handleUpdate(index, "improvementInPlantHealth", e.target.value)
                         }
+                        onKeyPress={handleNumericKeyPress} // Apply numeric validation
                         className="w-full p-1"
                       />
                     </td>
