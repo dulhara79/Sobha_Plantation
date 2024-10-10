@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useSnackbar } from 'notistack';
 
 const GetEmpAttendance = () => {
-    const [employees, setEmployees] = useState([]);  // Added the missing employees state
+    const [employees, setEmployees] = useState([]);
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [attendanceData, setAttendanceData] = useState({});
     const { enqueueSnackbar } = useSnackbar();
@@ -17,10 +17,10 @@ const GetEmpAttendance = () => {
             .then((response) => {
                 const formattedEmployees = response.data.map((employee) => ({
                     id: employee._id,
-                    f_name: employee.firstName,  // Adjusted to fit your field names
-                    l_name: employee.lastName,   // Adjusted to fit your field names
+                    f_name: employee.firstName,
+                    l_name: employee.lastName,
                 }));
-                setEmployees(formattedEmployees);  // Using the setEmployees state
+                setEmployees(formattedEmployees);
             })
             .catch((error) => {
                 console.error("Error fetching employees:", error);
@@ -29,11 +29,9 @@ const GetEmpAttendance = () => {
     }, []);
 
     const handleAttendanceChange = async (employeeName, value) => {
-        // Map the value to match the backend enum ('Present', 'Absent', 'Late')
         const statusMap = {
             Attend: 'Attend',
             Leave: 'Leave',
-            //halfday: 'Half Day', // Adjust this as 'Late' or another value depending on your logic
         };
     
         const updatedAttendanceData = {
@@ -45,9 +43,9 @@ const GetEmpAttendance = () => {
     
         try {
             const attendanceRecord = {
-                name: employeeName,  // Map to 'name' for backend
-                date: selectedDate,  // Map to 'date' for backend
-                status: statusMap[value],  // Map the status correctly
+                name: employeeName,
+                date: selectedDate,
+                status: statusMap[value],
             };
     
             await axios.post('http://localhost:5000/api/attendance', attendanceRecord);
@@ -77,12 +75,12 @@ const GetEmpAttendance = () => {
     return (
         <div className="flex justify-center">
             <div className="w-1/4 bg-gray-100 p-4">
-                <h2 className="text-lg font-semibold mb-4">Select Date</h2>
+                <h2 className="text-lg font-semibold mb-4">Current Date</h2>
                 <input
                     type="date"
                     value={selectedDate}
-                    onChange={(event) => setSelectedDate(event.target.value)}
-                    className="cursor-pointer p-2 w-full border rounded"
+                    readOnly
+                    className="cursor-not-allowed p-2 w-full border rounded bg-gray-200"
                 />
             </div>
             <div className="w-3/4 p-4">
@@ -125,16 +123,6 @@ const GetEmpAttendance = () => {
                                                 />{' '}
                                                 Leave
                                             </label>
-                                         {/* <label className="text-yellow-500">
-                                                <input
-                                                    type="radio"
-                                                    name={`attendance-${employee.f_name}-${employee.l_name}`}
-                                                    value="halfday"
-                                                    checked={attendanceData[`${employee.f_name}-${employee.l_name}`] === 'halfday'}
-                                                    onChange={() => handleAttendanceChange(`${employee.f_name}-${employee.l_name}`, 'halfday')}
-                                                />{' '}
-                                                Half Day
-                                            </label> */}
                                         </div>
                                     </td>
                                 </tr>
