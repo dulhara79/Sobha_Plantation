@@ -30,12 +30,39 @@ const GetEmpAttendance = () => {
       });
   }, []);
 
-  const handleAttendanceChange = async (employeeName, value) => {
-    // Map the value to match the backend enum ('Present', 'Absent', 'Late')
-    const statusMap = {
-      present: "Present",
-      absent: "Absent",
-      halfday: "Half Day", // Adjust this as 'Late' or another value depending on your logic
+
+    const handleAttendanceChange = async (employeeName, value) => {
+        // Map the value to match the backend enum ('Present', 'Absent', 'Late')
+        const statusMap = {
+            Attend: 'Attend',
+            Leave: 'Leave',
+            //halfday: 'Half Day', // Adjust this as 'Late' or another value depending on your logic
+        };
+    
+        const updatedAttendanceData = {
+            ...attendanceData,
+            [employeeName]: value,
+        };
+    
+        setAttendanceData(updatedAttendanceData);
+    
+        try {
+            const attendanceRecord = {
+                name: employeeName,  // Map to 'name' for backend
+                date: selectedDate,  // Map to 'date' for backend
+                status: statusMap[value],  // Map the status correctly
+            };
+    
+            await axios.post('http://localhost:5000/api/attendance', attendanceRecord);
+            enqueueSnackbar('Attendance recorded successfully', { variant: 'success' });
+        } catch (error) {
+            enqueueSnackbar('Error recording attendance', { variant: 'error' });
+            console.error('Error updating attendance:', error);
+        }
+    };
+    
+    const handleSearch = (event) => {
+        setSearchQuery(event.target.value);
     };
 
     const updatedAttendanceData = {
@@ -76,9 +103,75 @@ const GetEmpAttendance = () => {
   const filteredRecords = employees.filter((employee) => {
     const fullName = `${employee.f_name} ${employee.l_name}`.toLowerCase();
     return (
-      fullName.includes(searchQuery.toLowerCase()) &&
-      (selectedTypeFilter === "All Types" ||
-        employee.emp_type === selectedTypeFilter)
+        <div className="flex justify-center">
+            <div className="w-1/4 bg-gray-100 p-4">
+                <h2 className="text-lg font-semibold mb-4">Select Date</h2>
+                <input
+                    type="date"
+                    value={selectedDate}
+                    onChange={(event) => setSelectedDate(event.target.value)}
+                    className="cursor-pointer p-2 w-full border rounded"
+                />
+            </div>
+            <div className="w-3/4 p-4">
+                <h2 className="text-lg font-semibold mb-4">Daily Attendance</h2>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Employee
+                                </th>
+                                <th scope="col" className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Attendance
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {filteredRecords.map((employee) => (
+                                <tr key={`${employee.f_name} ${employee.l_name}`}>
+                                    <td className="px-4 py-2 whitespace-nowrap">{`${employee.f_name} ${employee.l_name}`}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-center">
+                                        <div className="flex justify-center space-x-4">
+                                            <label className="text-green-500">
+                                                <input
+                                                    type="radio"
+                                                    name={`attendance-${employee.f_name} ${employee.l_name}`}
+                                                    value="Attend"
+                                                    checked={attendanceData[`${employee.f_name} ${employee.l_name}`] === 'Attend'}
+                                                    onChange={() => handleAttendanceChange(`${employee.f_name} ${employee.l_name}`, 'Attend')}
+                                                />{' '}
+                                                Attend
+                                            </label>
+                                            <label className="text-red-500">
+                                                <input
+                                                    type="radio"
+                                                    name={`attendance-${employee.f_name} ${employee.l_name}`}
+                                                    value="Leave"
+                                                    checked={attendanceData[`${employee.f_name} ${employee.l_name}`] === 'Leave'}
+                                                    onChange={() => handleAttendanceChange(`${employee.f_name} ${employee.l_name}`, 'Leave')}
+                                                />{' '}
+                                                Leave
+                                            </label>
+                                         {/* <label className="text-yellow-500">
+                                                <input
+                                                    type="radio"
+                                                    name={`attendance-${employee.f_name}-${employee.l_name}`}
+                                                    value="halfday"
+                                                    checked={attendanceData[`${employee.f_name}-${employee.l_name}`] === 'halfday'}
+                                                    onChange={() => handleAttendanceChange(`${employee.f_name}-${employee.l_name}`, 'halfday')}
+                                                />{' '}
+                                                Half Day
+                                            </label> */}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     );
   });
 

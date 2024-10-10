@@ -238,9 +238,7 @@ const BuyerDeliveryTable = () => {
               </Link>
               <Link
                 to="/Bdeliverytable"
-                
-                className="text-[#236A64] font-semibold"
-              >
+                className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold">
                  Delivery Records
               </Link>
               
