@@ -4,6 +4,7 @@ import Sidebar from "../../components/Sidebar";
 import { HomeOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { Breadcrumb, Button } from "antd";
 import { Link, useNavigate } from "react-router-dom";
+import DiseasesNavBar from "../../components/DiseasesComponents/DiseasesNavBar";
 
 const CoconutPests = () => {
   const navigate = useNavigate(); // Hook to navigate between pages
@@ -32,51 +33,7 @@ const CoconutPests = () => {
       <Header />
       <Sidebar />
 
-      {/* Navigation Bar */}
-      <nav className="flex items-center justify-between p-4 bg-transparent">
-        {/* Go Back Icon */}
-        <button
-          onClick={() => window.history.back()}
-          className="text-gray-600 hover:text-gray-800"
-        >
-          <LeftOutlined className="text-xl" />
-        </button>
-        {/* Navigation Items */}
-        <div className="flex space-x-4">
-          <Link to="/diseases" className="text-[#3CCD65] hover:text-[#2b8f57]">
-            Home
-          </Link>
-          <Link
-            to="/CoconutInspections"
-            className="text-[#3CCD65] hover:text-[#2b8f57]"
-          >
-            Inspections
-          </Link>
-          <Link
-            to="/CoconutTreatments"
-            className="text-[#3CCD65] hover:text-[#2b8f57]"
-          >
-            Treatments
-          </Link>
-          <Link to="/CoconutPests" className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold">
-            Pests and Diseases
-          </Link>
-          <Link
-            to="/RegularMaintenance"
-            className="text-[#3CCD65] hover:text-[#2b8f57]"
-          >
-            Maintenance
-          </Link>
-          {/* <Link
-            to="/UserProfile"
-            className="text-[#3CCD65] hover:text-[#2b8f57]"
-          >
-            My Profile
-          </Link> */}
-        </div>
-      </nav>
-
-      <div className={`ml-[300px] p-4`}>
+      <div className={`ml-[285px] mt-2 p-4`}>
         <Breadcrumb
           items={[
             {
@@ -89,6 +46,11 @@ const CoconutPests = () => {
             },
           ]}
         />
+
+        {/* Diseases Navigation Bar */}
+        <div style={{ marginBottom: "22px" }}>
+              <DiseasesNavBar style={{ height: "80px" }} />{" "}
+            </div>
 
         {/* Topic Heading */}
         <div className="flex justify-center items-center">
@@ -103,7 +65,7 @@ const CoconutPests = () => {
               width: "300px",
               height: "28px",
             }}
-            onClick={() => navigate("/coconutPests")}
+            onClick={() => navigate("/CoconutPests")}
           >
             Coconuts
           </Button>
@@ -113,7 +75,7 @@ const CoconutPests = () => {
               width: "300px",
               height: "28px",
             }}
-            onClick={() => navigate("/intercropPests")}
+            onClick={() => navigate("/IntercropPests")}
           >
             Inter Crops
           </Button>
@@ -134,7 +96,7 @@ const CoconutPests = () => {
                 className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
                 style={{
                   backgroundImage:
-                    "linear-gradient(135deg, #4CAF50 60%, #E3F2FD 100%)",
+                    "linear-gradient(135deg, #6dd400 30%, #fcb045 100%)",
                   border: "none",
                   transition: "transform 0.2s ease, box-shadow 0.2s ease",
                 }}
@@ -172,7 +134,7 @@ const CoconutPests = () => {
                   className="py-16 px-6 text-lg rounded-lg shadow-lg text-white font-bold"
                   style={{
                     backgroundImage:
-                      "linear-gradient(135deg, #4CAF50 60%, #E3F2FD 100%)",
+                      "linear-gradient(135deg, #6dd400 30%, #fcb045 100%)",
                     border: "none",
                     transition: "transform 0.2s ease, box-shadow 0.2s ease",
                   }}
