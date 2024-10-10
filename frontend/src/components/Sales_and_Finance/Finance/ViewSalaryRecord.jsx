@@ -262,7 +262,25 @@ const ViewSalaryRecord = () => {
                   direction={orderDirection}
                   onClick={() => handleSort("ot_hours")}
                 >
-                  OT Hours
+                  Week days OT Hours
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === "ot_hours"}
+                  direction={orderDirection}
+                  onClick={() => handleSort("ot_hours")}
+                >
+                  Saturday OT Hours
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === "ot_hours"}
+                  direction={orderDirection}
+                  onClick={() => handleSort("ot_hours")}
+                >
+                  Sunday OT Hours
                 </TableSortLabel>
               </TableCell>
               <TableCell>
@@ -316,7 +334,9 @@ const ViewSalaryRecord = () => {
                   <TableCell>{record.type}</TableCell>
                   <TableCell>{record.basic_days}</TableCell>
                   <TableCell>{record.bonus_salary.toFixed(2)}</TableCell>
-                  <TableCell>{record.ot_hours.toFixed(2)}</TableCell>
+                  <TableCell>{record.week_hours.toFixed(2)}</TableCell>
+                  <TableCell>{record.saturday_hours.toFixed(2)}</TableCell>
+                  <TableCell>{record.sunday_hours.toFixed(2)}</TableCell>
                   <TableCell>{record.ot_rate.toFixed(2)}</TableCell>
                   <TableCell>{record.epf_etf}</TableCell>
                   <TableCell>{record.description}</TableCell>
