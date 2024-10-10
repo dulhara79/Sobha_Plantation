@@ -16,4 +16,7 @@ router.put('/:id', EattendanceController.updateAttendance);
 // Route to delete an attendance record
 router.delete('/:id', EattendanceController.deleteAttendance);
 
+// Route to get attendance records by employee name
+router.get('/employee/:name', EattendanceController.getAttendanceByEmployeeName);
+
 module.exports = router;

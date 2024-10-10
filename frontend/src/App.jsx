@@ -39,6 +39,7 @@ import EditValuationPage from "./pages/SalesAndFinance/Finance/EditValuationPage
 
 import Esalary from "./pages/SalesAndFinance/Finance/Esalary.jsx";
 import ViewSalaryRecordPage from "./pages/SalesAndFinance/Finance/ViewSalaryRecordPage.jsx";
+import EditEmployeeSalaryRecords from "./pages/SalesAndFinance/Finance/EditEmployeeSalaryRecords.jsx";
 
 // inventory
 import FertilizerRecords from "./pages/Inventory/FertilizerRecords.jsx";
@@ -261,6 +262,11 @@ export default function App() {
           />
 
           <Route
+            path="/salesAndFinance/finance/EditEmployeeSalaryRecords/:id"
+            element={<EditEmployeeSalaryRecords />} 
+          />
+
+          <Route
             path="/salesAndFinance/finance/valuation-dashboard"
             element={<ValuationDashboardPage />}
           />
@@ -327,7 +333,7 @@ export default function App() {
             element={<EditRequestPaymentRecord />}
           />
 
-          {/* employee */}
+           {/* employee */}
           <Route path="/employee/dashboard" element={<Edashboard />} />
           <Route path="/employee/registration" element={<Eregistration />} />
           <Route path="/employee/task" element={<EaddTask />} />

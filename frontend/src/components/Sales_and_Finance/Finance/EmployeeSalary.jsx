@@ -1,45 +1,59 @@
+// payment working and save transactions
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import axios from "axios";
-import { message, DatePicker } from "antd";
+import { message, DatePicker, Button } from "antd";
 import moment from "moment";
 import jsPDF from "jspdf";
 
+const buttonStyle = {
+  padding: "10px 20px",
+  backgroundColor: "lime-600",
+  color: "white",
+  textDecoration: "none",
+  borderRadius: "5px",
+};
+
 export default function SalaryProcessingSection() {
   const [emp_name, setEmpName] = useState("");
-  const [nic, setNIC] = useState("");
-  const [payment_date, setPaymentDate] = useState("");
+  const [payment_date, setPaymentDate] = useState(
+    moment().format("YYYY-MM-DD")
+  );
   const [type, setType] = useState("permanent");
-
-  const [salary_start_date, setSalaryStartDate] = useState(""); // Initialize with null
-  const [salary_end_date, setSalaryEndDate] = useState(""); // Initialize with null
-
   const [basic_days, setBasicDays] = useState(0);
   const [basic_rate, setBasicRate] = useState(0);
-  const [bonus_salary, setBonusSalary] = useState("0");
-  const [ot_hours, setOtHours] = useState("0");
-  const [ot_rate, setOtRate] = useState("0");
-  const [epf_etf, setEpfEtf] = useState("0");
+  const [bonus_salary, setBonusSalary] = useState(0);
+  const [saturday_hours, setSaturdayHours] = useState(0);
+  const [sunday_hours, setSundayHours] = useState(0);
+  const [after_hours, setAfterHours] = useState(0);
+  const [epf_etf, setEpfEtf] = useState(8);
   const [description, setDescription] = useState("");
-
-  const [date, setDate] = useState(null);
-
-  const [id, setID] = useState("");
-
+  const [salary_start_date, setSalaryStartDate] = useState(null);
+  const [salary_end_date, setSalaryEndDate] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [RegistrationRecords, setRegistrationRecords] = useState([]);
+  const [selectedID, setSelectedID] = useState(null);
+  const [alreadyPaid, setAlreadyPaid] = useState(false);
+  const oneWeekBefore = moment().subtract(7, "days").format("YYYY-MM-DD");
+  const [autoSaveTransaction, setAutoSaveTransaction] = useState(false);
+  const [nic, setNic] = useState("");
+  const [ot_hours, setOtHours] = useState(0);
+  const calculateEpfEtf = (basicSalary) => {
+    const employeeEpf = (basicSalary * 8) / 100;
+    return { employeeEpf };
+  };
+  const { enqueueSnackbar } = useSnackbar();
+
   const navigate = useNavigate();
 
-  const [RegistrationRecords, setRegistrationRecords] = useState([]);
-
+  // Fetch Employee Data
   useEffect(() => {
     setLoading(true);
-
     axios
-      .get(`http://localhost:5000/api/employee`)
+      .get("http://localhost:5000/api/employee")
       .then((response) => {
         setRegistrationRecords(response.data || []);
-        console.log("Employee Records:", response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -48,258 +62,187 @@ export default function SalaryProcessingSection() {
       });
   }, []);
 
-  const [selectedID, setSelectedID] = useState(null);
-
+  // Select Employee
   const handleRadioChange = (id) => {
-    setSelectedID(id);
-
-    // Find the selected employee from the RegistrationRecords array
     const selectedEmployee = RegistrationRecords.find(
       (person) => person._id === id
     );
-
-    // Concatenate the first name and last name to set the employee's full name
     const fullName = selectedEmployee
       ? `${selectedEmployee.firstName} ${selectedEmployee.lastName}`
       : "";
-
-    // Update the state variables with the selected employee's data
+    setSelectedID(id);
     setEmpName(fullName);
-    setNIC(selectedEmployee ? selectedEmployee.nic : "");
     setType(selectedEmployee ? selectedEmployee.employeeType : "");
     setBasicRate(selectedEmployee ? selectedEmployee.hourlyRate : "");
+    setNic(selectedEmployee ? selectedEmployee.nic : "");
   };
 
   useEffect(() => {
-    setLoading(true);
-    axios
-      .get(`http://localhost:5000/api/employee/${id}`)
-      .then((response) => {
-        // Conditionally set EPF/ETF based on employee type
-        const defaultEpfEtf =
-          response.data.employeeType === `permanent` ? 6 : 3;
-        setEpfEtf(defaultEpfEtf);
+    if (emp_name && payment_date) {
+      const startOfMonth = moment(payment_date)
+        .startOf("month")
+        .format("YYYY-MM-DD");
+      const endOfMonth = moment(payment_date)
+        .endOf("month")
+        .format("YYYY-MM-DD");
 
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      });
-  }, []);
-
-  const [attendanceRecords, setAttendanceRecords] = useState([]);
-
-  useEffect(() => {
-    setLoading(true);
-    axios
-      .get(`http://localhost:5000/api/attendance`)
-      .then((response) => {
-        setAttendanceRecords(response.data || []);
-        console.log("Attendance Records:", response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      });
-  }, []);
-
-  useEffect(() => {
-    if (
-      attendanceRecords.length > 0 &&
-      emp_name &&
-      salary_start_date &&
-      salary_end_date
-    ) {
-      const filteredRecords = attendanceRecords.filter(
-        (record) =>
-          record.name === emp_name &&
-          moment(record.e_date).isBetween(
-            salary_start_date,
-            salary_end_date,
-            null,
-            "[]"
-          ) // Filter records between salary start date and end date
-      );
-      console.log("Filtered Records:", filteredRecords); // Log filtered records
-      let totalDays = 0;
-      filteredRecords.forEach((record) => {
-        if (record.att_status === "present") {
-          totalDays += 1;
-        } else if (record.att_status === "halfday") {
-          totalDays += 0.5;
-        }
-        // For "absent", don't add any days
-      });
-      console.log("Total Days:", totalDays); // Log total days
-      setBasicDays(totalDays);
+      axios
+        .get(
+          `http://localhost:5000/api/salesAndFinance/finance/salary/attendance/${emp_name}?startDate=${startOfMonth}&endDate=${endOfMonth}`
+        )
+        .then((response) => {
+          const { isPaid, message } = response.data;
+          console.log("isPaid", isPaid);
+          console.log("startOfMonth", startOfMonth);
+          console.log("endOfMonth", endOfMonth);
+          if (isPaid) {
+            setAlreadyPaid(true);
+            console.log("Salary status:", message);
+          } else {
+            setAlreadyPaid(false);
+          }
+        })
+        .catch((error) =>
+          console.error("Error fetching salary record:", error)
+        );
     }
-  }, [attendanceRecords, emp_name, salary_start_date, salary_end_date]);
+  }, [emp_name, payment_date]);
+
+  // Calculate Worked Dates and OT
+  useEffect(() => {
+    axios
+      .get(`http://localhost:5000/api/attendance/employee/${emp_name}`)
+      .then((response) => {
+        const attendanceData = response.data || [];
+        let workHours = 0,
+          saturdayOT = 0,
+          sundayOT = 0,
+          afterHoursOT = 0;
+        let daysPresentInMonth = 0;
+
+        attendanceData.forEach((entry) => {
+          const entryDate = new Date(entry.date);
+          const dayOfWeek = entryDate.getDay();
+          const inTime = new Date(entry.createdAt);
+          const outTime = new Date(entry.updatedAt);
+          const hoursWorked = (outTime - inTime) / (1000 * 60 * 60);
+
+          if (
+            entryDate.getMonth() + 1 === new Date().getMonth() + 1 &&
+            (entry.status === "Attend" || entry.status === "Leave")
+          ) {
+            daysPresentInMonth++;
+          }
+
+          if (
+            entryDate.getMonth() + 1 === new Date().getMonth() + 1 &&
+            entry.status === "Leave"
+          ) {
+            workHours += hoursWorked;
+            if (dayOfWeek === 6) {
+              saturdayOT += hoursWorked;
+            } else if (dayOfWeek === 0) {
+              sundayOT += hoursWorked;
+            } else if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+              if (hoursWorked > 8) afterHoursOT += hoursWorked - 8;
+            }
+          } else {
+            console.log("No attendance record found for this month.");
+          }
+        });
+
+        setBasicDays(daysPresentInMonth);
+        setAfterHours(afterHoursOT);
+        setSaturdayHours(saturdayOT);
+        setSundayHours(sundayOT);
+      })
+      .catch((error) => {
+        setBasicDays(0);
+        setAfterHours(0);
+        setSaturdayHours(0);
+        setSundayHours(0);
+
+        console.error(error);
+      });
+  }, [selectedID, payment_date]);
 
   const calculateTotalSalary = () => {
-    // Convert input values to numbers
-    const basicDaysValue = parseFloat(basic_days);
-    const basicRateValue = parseFloat(basic_rate);
-    const bonusSalaryValue = parseFloat(bonus_salary);
-    const otHoursValue = parseFloat(ot_hours);
-    const otRateValue = parseFloat(ot_rate);
-    const epfEtfValue = parseFloat(epf_etf);
-
-    // Check if any input value is NaN and replace it with 0
-    const validBasicDays = isNaN(basicDaysValue) ? 0 : basicDaysValue;
-    const validBasicRate = isNaN(basicRateValue) ? 0 : basicRateValue;
-    const validBonusSalary = isNaN(bonusSalaryValue) ? 0 : bonusSalaryValue;
-    const validOtHours = isNaN(otHoursValue) ? 0 : otHoursValue;
-    const validOtRate = isNaN(otRateValue) ? 0 : otRateValue;
-    const validEpfEtf = isNaN(epfEtfValue) ? 0 : epfEtfValue;
-
-    // Calculate basic salary
-    const basicSalary = validBasicDays * validBasicRate;
-
-    // Calculate OT salary
-    const otSalary = validOtHours * validOtRate;
-
-    // Calculate total salary
-    const totalSalary = basicSalary + validBonusSalary + otSalary;
-
-    // Calculate EPF/ETF deduction
-    const epfEtfDeduction = (totalSalary * validEpfEtf) / 100;
-
-    // Calculate net salary
-    const netSalary = totalSalary - epfEtfDeduction;
-
-    return netSalary;
+    const basicSalary = basic_rate;
+    const hourlyRate = basic_rate / 240;
+    const saturdayOT = saturday_hours * hourlyRate * 1.5;
+    const sundayOT = sunday_hours * hourlyRate * 2;
+    const afterHoursOT = after_hours * hourlyRate * 1.5;
+    const totalOT = saturdayOT + sundayOT + afterHoursOT;
+    const totalSalary = basicSalary + Number(bonus_salary) + totalOT;
+    const { employeeEpf } = calculateEpfEtf(basicSalary);
+    return totalSalary - employeeEpf;
   };
-
-  const [isInputFocused, setIsInputFocused] = useState(false);
-  const [autoSaveTransaction, setAutoSaveTransaction] = useState(true);
 
   const handleSaveSalaryRecord = async (e) => {
     e.preventDefault();
-
-    // Validation for empty fields
-    if (
-      !payment_date ||
-      !emp_name ||
-      !salary_start_date ||
-      !salary_end_date ||
-      !nic ||
-      !type ||
-      !basic_days ||
-      !basic_rate ||
-      !bonus_salary ||
-      !ot_hours ||
-      !ot_rate ||
-      !epf_etf ||
-      !description
-    ) {
+    if (alreadyPaid) {
+      enqueueSnackbar("Salary already paid for this period.", {
+        variant: "warning",
+      });
+      return;
+    }
+    if (!payment_date || !emp_name || !type || !basic_days || !basic_rate) {
       message.error("Please fill in all fields.");
-      return;
-    }
-
-    // Validation checks
-    if (
-      basic_days < 0 ||
-      basic_rate <= 0 ||
-      basic_rate < 0 ||
-      bonus_salary < 0 ||
-      ot_hours < 0 ||
-      ot_rate < 0 ||
-      epf_etf < 0 ||
-      isNaN(basic_days) ||
-      isNaN(basic_rate) ||
-      isNaN(bonus_salary) ||
-      isNaN(ot_hours) ||
-      isNaN(ot_rate) ||
-      isNaN(epf_etf)
-    ) {
-      message.error(
-        "Please enter valid positive values for days, rates, and amounts."
-      );
-      return;
-    }
-
-    if (new Date(payment_date) > new Date()) {
-      message.error("Payment date cannot be in the future.");
-      return;
-    }
-
-    if (description.length > 100) {
-      message.error("Description should be shorter than 100 characters.");
       return;
     }
 
     const data = {
       payment_date,
       emp_name,
-      salary_start_date,
-      salary_end_date,
+      salary_start_date: moment(payment_date)
+        .startOf("month")
+        .format("YYYY-MM-DD"),
+      salary_end_date: moment(payment_date).endOf("month").format("YYYY-MM-DD"),
       nic,
       type,
       basic_days,
       basic_rate,
       bonus_salary,
-      ot_hours,
-      ot_rate,
+      ot_hours: saturday_hours + sunday_hours + after_hours,
+      ot_rate: basic_rate / 240,
       epf_etf,
       description,
+      isPaid: true,
     };
 
-    const basicDaysValue = parseFloat(data.basic_days);
-    const basicRateValue = parseFloat(data.basic_rate);
-    const basicSalary = basicDaysValue * basicRateValue;
+    console.log("data", data);
 
-    // Calculate OT salary
-    const otHoursValue = parseFloat(data.ot_hours);
-    const otRateValue = parseFloat(data.ot_rate);
-    const otSalary = otHoursValue * otRateValue;
+    const netSalary = calculateTotalSalary();
 
-    // Calculate total salary
-    const bonusSalaryValue = parseFloat(data.bonus_salary);
-    const totalSalary = basicSalary + bonusSalaryValue + otSalary;
-
-    // Calculate EPF/ETF deduction
-    const epfEtfValue = parseFloat(data.epf_etf);
-    const epfEtfDeduction = (totalSalary * epfEtfValue) / 100;
-
-    // Calculate net salary
-    const netSalary = totalSalary - epfEtfDeduction;
     setLoading(true);
     axios
       .post("http://localhost:5000/api/salesAndFinance/finance/salary", data)
       .then(() => {
+        console.log("salary record saved data: ", data);
         setLoading(false);
         message.success("Salary record has successfully saved.");
+        const transactionData = {
+          date: data.payment_date,
+          type: "expense",
+          subtype: "Salary payment",
+          amount: netSalary,
+          description: `Salary from ${data.salary_start_date} to ${data.salary_end_date}`,
+          payer_payee: data.emp_name,
+          method: "Automated Entry",
+        };
 
-        if (autoSaveTransaction) {
-          // Construct the transaction data based on the saved machine fee data
-          const transactionData = {
-            date: data.payment_date,
-            type: "expense",
-            subtype: "Salary payment",
-            amount: netSalary,
-            description: `Salary from ${data.salary_start_date} to ${data.salary_end_date}`,
-            payer_payee: data.emp_name,
-            method: "Automated Entry",
-          };
-
-          // Save the transaction record
-          handleSaveTransactionRecord(transactionData);
-        }
+        handleSaveTransactionRecord(transactionData);
+        // generatePayslipPDF();
         navigate("/salesAndFinance/finance/employeeSalary");
       })
       .catch((error) => {
         setLoading(false);
         message.error("Salary record saving failed.");
-        console.log(error);
         console.error("Error occurred while saving salary record:", error);
-        navigate("/salesAndFinance/finance/employeeSalary");
       });
   };
 
   const handleSaveTransactionRecord = (transactionData) => {
-    console.log("Transaction Data:" + transactionData);
     setLoading(true);
     axios
       .post(
@@ -312,9 +255,8 @@ export default function SalaryProcessingSection() {
       })
       .catch((error) => {
         setLoading(false);
-        console.log("Transaction Data:" + transactionData);
         message.error("Automatic Transaction record saving failed.");
-        console.log("transaction auto save error: " + error);
+        console.error("Transaction auto save error:", error);
       });
   };
 
@@ -346,13 +288,13 @@ export default function SalaryProcessingSection() {
       basic_rate < 0 ||
       bonus_salary < 0 ||
       ot_hours < 0 ||
-      ot_rate < 0 ||
+      // ot_rate < 0 ||
       epf_etf < 0 ||
       isNaN(basic_days) ||
       isNaN(basic_rate) ||
       isNaN(bonus_salary) ||
       isNaN(ot_hours) ||
-      isNaN(ot_rate) ||
+      // isNaN(ot_rate) ||
       isNaN(epf_etf)
     ) {
       message.error(
@@ -376,7 +318,7 @@ export default function SalaryProcessingSection() {
     const basicRateValue = parseFloat(basic_rate);
     const bonusSalaryValue = parseFloat(bonus_salary);
     const otHoursValue = parseFloat(ot_hours);
-    const otRateValue = parseFloat(ot_rate);
+    // const otRateValue = parseFloat(ot_rate);
     const epfEtfValue = parseFloat(epf_etf);
 
     // Check if any input value is NaN and replace it with 0
@@ -384,7 +326,7 @@ export default function SalaryProcessingSection() {
     const validBasicRate = isNaN(basicRateValue) ? 0 : basicRateValue;
     const validBonusSalary = isNaN(bonusSalaryValue) ? 0 : bonusSalaryValue;
     const validOtHours = isNaN(otHoursValue) ? 0 : otHoursValue;
-    const validOtRate = isNaN(otRateValue) ? 0 : otRateValue;
+    // const validOtRate = isNaN(otRateValue) ? 0 : otRateValue;
     const validEpfEtf = isNaN(epfEtfValue) ? 0 : epfEtfValue;
 
     // Calculate basic salary
@@ -457,336 +399,306 @@ export default function SalaryProcessingSection() {
     message.success("Pay slip generated.");
   };
 
-  console.log("registration records", RegistrationRecords);
+  // console.log("registration records", RegistrationRecords);
 
   return (
-    <div className="border-t ">
-      <div className="flex flex-row">
-        <div
-          className="w-1/3 h-screen overflow-scroll border-r bg-gray-50 mb-14 overscroll-auto bottom-14"
-          id="employeelist"
-        >
-          <ul role="list" className="divide-y divide-gray-300">
-            {RegistrationRecords.map((person) => (
-              <li key={person._id} className={``}>
-                <label
-                  htmlFor={person._id}
-                  className={`py-3 px-4 flex hover:bg-lime-50 transition-all hover:shadow-xl duration-200  justify-between gap-x-4 ${
-                    selectedID === person._id
-                      ? "bg-lime-100 border-l-4 border-lime-600 shadow-xl"
-                      : ""
-                  }`}
-                >
-                  <div className="flex min-w-0 gap-x-4">
-                    <div className="flex-auto min-w-0">
-                      <p className="text-sm font-semibold leading-6 text-gray-900">
-                        {person.firstName} {person.lastName}
-                      </p>
-                      <p className="mt-1 text-xs leading-5 text-gray-500 truncate">
+    <div>
+      <div className="border-t ">
+        <div className="flex flex-row">
+          <div
+            className="w-1/3 h-screen overflow-scroll border-r bg-gray-50 mb-14 overscroll-auto bottom-14"
+            id="employeelist"
+          >
+            <ul role="list" className="divide-y divide-gray-300">
+              {RegistrationRecords.map((person) => (
+                <li key={person._id} className={``}>
+                  <label
+                    htmlFor={person._id}
+                    className={`py-3 px-4 flex hover:bg-lime-50 transition-all hover:shadow-xl duration-200  justify-between gap-x-4 ${
+                      selectedID === person._id
+                        ? "bg-lime-100 border-l-4 border-lime-600 shadow-xl"
+                        : ""
+                    }`}
+                  >
+                    <div className="flex min-w-0 gap-x-4">
+                      <div className="flex-auto min-w-0">
+                        <p className="text-sm font-semibold leading-6 text-gray-900">
+                          {person.firstName} {person.lastName}
+                        </p>
+                        {/* <p className="mt-1 text-xs leading-5 text-gray-500 truncate">
                         {person.nic}
-                      </p>
+                      </p> */}
+                      </div>
+                    </div>
+                    <input
+                      type="radio"
+                      id={person._id}
+                      name="employee"
+                      className="self-center border border-gray-400 size-4 focus:ring-white focus:ring-0 text-lime-600 checked:border-gray-500 checked:border checked::bg-lime-700"
+                      value={person.nic}
+                      checked={selectedID === person._id}
+                      onChange={() => handleRadioChange(person._id)}
+                    />
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </div>
+          {alreadyPaid ? (
+            <p className="text-lg text-red-600">
+              Salary already paid for this month
+            </p>
+          ) : (
+            <div className="w-full h-screen max-w-4xl p-6 mx-auto mb-96">
+              <form onSubmit={handleSaveSalaryRecord} className="space-y-6">
+                <h1 className="text-2xl font-semibold text-gray-900">
+                  Salary Processing Section
+                </h1>
+                <p className="text-sm text-gray-500">
+                  Fill in the details to process the salary for the selected
+                  employee.
+                </p>
+                <Link to="/salesAndFinance/finance/viewSalaryRecord">
+                  <Button className="float-right pl-8 pr-8 text-white rounded-lg bg-lime-600 text-md hover:bg-lime-400">
+                    View Salary Records
+                  </Button>
+                </Link>
+                <hr className="border-gray-300" />
+                {/* Row 1: Employee Name, Type */}
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  {/* Employee Name */}
+                  <div>
+                    <label
+                      htmlFor="emp_name"
+                      className="block mb-1 text-sm font-medium text-gray-700"
+                    >
+                      Employee Name
+                    </label>
+                    <input
+                      type="text"
+                      name="emp_name"
+                      value={emp_name}
+                      disabled
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                    />
+                  </div>
+                  {/* Type */}
+                  <div>
+                    <label
+                      htmlFor="type"
+                      className="block mb-1 text-sm font-medium text-gray-700"
+                    >
+                      Type
+                    </label>
+                    <input
+                      type="text"
+                      name="type"
+                      value={type}
+                      disabled
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Row 2: Date Range, Basic Days */}
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div>
+                    <label
+                      htmlFor="basic_days"
+                      className="block mb-1 text-sm font-medium text-gray-700"
+                    >
+                      Basic Days
+                    </label>
+                    <input
+                      type="number"
+                      name="basic_days"
+                      value={basic_days}
+                      onChange={(e) => setBasicDays(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                      readOnly
+                    />
+                    <p className="mt-1 text-xs text-orange-600">
+                      Calculated by analyzing attendance records. Do not change
+                      unless the employee failed to mark attendance on a present
+                      day.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Row 3: Basic Rate, Bonus Salary, OT Hours */}
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                  <div>
+                    <label
+                      htmlFor="basic_rate"
+                      className="block mb-1 text-sm font-medium text-gray-700"
+                    >
+                      Basic Salary
+                    </label>
+                    <input
+                      type="number"
+                      name="basic_rate"
+                      value={basic_rate.toFixed(2)}
+                      onChange={(e) => setBasicRate(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                      readOnly
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="bonus_salary"
+                      className="block mb-1 text-sm font-medium text-gray-700"
+                    >
+                      Bonus Salary
+                    </label>
+                    <input
+                      type="number"
+                      name="bonus_salary"
+                      value={bonus_salary}
+                      onChange={(e) => setBonusSalary(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="ot_hours"
+                      className="block mb-1 text-sm font-medium text-gray-700"
+                    >
+                      Week days OT Hours
+                    </label>
+                    <input
+                      type="number"
+                      name="ot_hours"
+                      value={after_hours.toFixed(2)}
+                      onChange={(e) => setOtHours(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                      readOnly
+                    />
+                  </div>
+                </div>
+
+                {/* Row 4: Saturday and Sunday OT Hours */}
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                  <div>
+                    <label
+                      htmlFor="saturday_hours"
+                      className="block mb-1 text-sm font-medium text-gray-700"
+                    >
+                      Saturday OT Hours
+                    </label>
+                    <input
+                      type="number"
+                      name="saturday_hours"
+                      value={saturday_hours.toFixed(2)}
+                      onChange={(e) => setSaturdayHours(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                      readOnly
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="sunday_hours"
+                      className="block mb-1 text-sm font-medium text-gray-700"
+                    >
+                      Sunday OT Hours
+                    </label>
+                    <input
+                      type="number"
+                      name="sunday_hours"
+                      value={sunday_hours.toFixed(2)}
+                      onChange={(e) => setSundayHours(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                      readOnly
+                    />
+                  </div>
+                </div>
+
+                {/* Row 5: EPF/ETF, Payment Date */}
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                  <div>
+                    <label
+                      htmlFor="epf_etf"
+                      className="block mb-1 text-sm font-medium text-gray-700"
+                    >
+                      EPF/ETF (%)
+                    </label>
+                    <input
+                      type="number"
+                      name="epf_etf"
+                      value={epf_etf}
+                      onChange={(e) => setEpfEtf(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                      readOnly
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="payment_date"
+                      className="block mb-1 text-sm font-medium text-gray-700"
+                    >
+                      Payment Date
+                    </label>
+                    <DatePicker
+                      value={payment_date ? moment(payment_date) : null}
+                      onChange={(date) => setPaymentDate(date)}
+                      format="YYYY-MM-DD"
+                      disabledDate={(current) =>
+                        current &&
+                        (current < moment(oneWeekBefore) || current > moment())
+                      }
+                      className="block w-full h-8 p-2 mt-2 text-black bg-white border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
+                    />
+                  </div>
+                </div>
+
+                {/* Row 6: Remarks */}
+                <div>
+                  <label
+                    htmlFor="description"
+                    className="block mb-1 text-sm font-medium text-gray-700"
+                  >
+                    Remarks
+                  </label>
+                  <input
+                    type="text"
+                    name="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                  />
+                </div>
+
+                {/* Control Bar */}
+                <div className={`relative flex ml-[300px]`} id="controlbar">
+                  <div
+                    className={`fixed bottom-0 right-0 z-0 w-full bg-gray-100 bg-opacity-50 border-t border-b h-14 backdrop-blur `}
+                    id="savebar"
+                  >
+                    <div
+                      className={`z-30 flex items-center justify-between h-full gap-2 pr-8 text-sm font-semibold align-middle ml-[300px]`}
+                    >
+                      <div className="px-6 py-1 mx-8 text-base font-semibold border border-gray-500 rounded-full">
+                        Total Salary:{" "}
+                        {calculateTotalSalary() <= 0 ||
+                        calculateTotalSalary() > 1000000 ? (
+                          <span className="text-red-500">Invalid salary</span>
+                        ) : (
+                          <span className="text-xl text-lime-600">
+                            {calculateTotalSalary().toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        type="submit"
+                        className="px-6 py-2 font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400"
+                      >
+                        Save Salary Record
+                      </button>
                     </div>
                   </div>
-                  <div className="shrink-0 sm:flex sm:flex-col sm:items-end">
-                    <p className="text-sm leading-6 text-gray-900">
-                      {person.employeeType}
-                    </p>
-                    <p className="mt-1 text-xs leading-5 text-gray-500">
-                      Rs.{person.hourlyRate.toLocaleString()}
-                    </p>
-                  </div>
-                  <input
-                    type="radio"
-                    id={person._id}
-                    name="employee"
-                    className="self-center border border-gray-400 size-4 focus:ring-white focus:ring-0 text-lime-600 checked:border-gray-500 checked:border checked::bg-lime-700"
-                    value={person.nic}
-                    checked={selectedID === person._id}
-                    onChange={() => handleRadioChange(person._id)}
-                  />
-                </label>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className={`w-full max-w-4xl p-6 mx-auto h-screen mb-96`}>
-          <form className="space-y-6">
-            {/* Row 1: Employee Name, NIC, Type */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <div>
-                <label
-                  htmlFor="emp_name"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  Employee Name
-                </label>
-                <input
-                  type="text"
-                  name="emp_name"
-                  value={emp_name}
-                  onChange={(e) => setEmpName(e.target.value)}
-                  disabled={true}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="nic"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  NIC
-                </label>
-                <input
-                  type="text"
-                  name="nic"
-                  value={nic}
-                  onChange={(e) => setNIC(e.target.value)}
-                  disabled={true}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="type"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  Type
-                </label>
-                <input
-                  type="text"
-                  name="type"
-                  value={type}
-                  onChange={(e) => setType(e.target.value)}
-                  disabled={true}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                />
-              </div>
+                </div>
+              </form>
             </div>
-
-            {/* Row 2: Date Range, Basic Days */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div>
-                <label
-                  htmlFor="salary_range"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  Date Range
-                </label>
-                <DatePicker.RangePicker
-                  value={
-                    salary_start_date && salary_end_date
-                      ? [moment(salary_start_date), moment(salary_end_date)]
-                      : null
-                  }
-                  onChange={(dates) => {
-                    if (dates && dates.length === 2) {
-                      setSalaryStartDate(dates[0].format("YYYY-MM-DD"));
-                      setSalaryEndDate(dates[1].format("YYYY-MM-DD"));
-                    } else {
-                      setSalaryStartDate(null);
-                      setSalaryEndDate(null);
-                    }
-                  }}
-                  disabledDate={(current) => current > moment()}
-                  className="w-full"
-                />
-                <p className="mt-1 text-xs text-green-600">
-                  Please select the range of dates for which you wish to find
-                  the present days and half-days of the selected employee.
-                </p>
-              </div>
-              <div>
-                <label
-                  htmlFor="basic_days"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  Basic Days
-                </label>
-                <input
-                  type="number"
-                  name="basic_days"
-                  value={basic_days}
-                  onChange={(e) => setBasicDays(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                />
-                <p className="mt-1 text-xs text-orange-600">
-                  Calculated by analyzing attendance records. Do not change
-                  unless the employee failed to mark attendance on a present
-                  day.
-                </p>
-              </div>
-            </div>
-
-            {/* Row 3: Basic Rate, Bonus Salary, OT Hours */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <div>
-                <label
-                  htmlFor="basic_rate"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  Basic Rate
-                </label>
-                <input
-                  type="number"
-                  name="basic_rate"
-                  value={basic_rate}
-                  onChange={(e) => setBasicRate(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                  readOnly
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="bonus_salary"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  Bonus Salary
-                </label>
-                <input
-                  type="number"
-                  name="bonus_salary"
-                  value={bonus_salary}
-                  onChange={(e) => setBonusSalary(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="ot_hours"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  OT Hours
-                </label>
-                <input
-                  type="number"
-                  name="ot_hours"
-                  value={ot_hours}
-                  onChange={(e) => setOtHours(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                />
-              </div>
-            </div>
-
-            {/* Row 4: OT Rate, EPF/ETF, Payment Date */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <div>
-                <label
-                  htmlFor="ot_rate"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  OT Rate
-                </label>
-                <input
-                  type="number"
-                  name="ot_rate"
-                  value={ot_rate}
-                  onChange={(e) => setOtRate(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="epf_etf"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  EPF/ETF (%)
-                </label>
-                <input
-                  type="number"
-                  name="epf_etf"
-                  value={epf_etf}
-                  onChange={(e) => setEpfEtf(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                  readOnly
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="payment_date"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
-                  Payment Date
-                </label>
-                <DatePicker
-                  value={payment_date}
-                  onChange={(date) => setPaymentDate(date)}
-                  format="YYYY-MM-DD"
-                  disabledDate={(current) => current > moment()}
-                  className="block w-full h-8 p-2 mt-2 text-black bg-white border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
-                />
-              </div>
-            </div>
-
-            {/* Row 5: Remarks */}
-            <div>
-              <label
-                htmlFor="description"
-                className="block mb-1 text-sm font-medium text-gray-700"
-              >
-                Remarks
-              </label>
-              <input
-                type="text"
-                name="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-              />
-            </div>
-          </form>
-        </div>
-
-        <div className="relative flex " id="controlbar">
-          <div
-            className="fixed bottom-0 right-0 z-0 w-full bg-gray-100 bg-opacity-50 border-t border-b h-14 backdrop-blur"
-            id="savebar"
-          >
-            <div className="z-30 flex items-center justify-end h-full gap-2 pr-8 text-sm font-semibold align-middle">
-              <div className="px-6 py-1 mx-8 text-base font-semibold border border-gray-500 rounded-full">
-                Total Salary:
-                {calculateTotalSalary() <= 0 ||
-                calculateTotalSalary() > 1000000 ? (
-                  <span className="text-red-500">Invalid salary</span>
-                ) : (
-                  <span className="text-xl text-lime-600">
-                    Rs.{calculateTotalSalary()}
-                  </span>
-                )}
-              </div>
-
-              <button
-                onClick={generatePayslipPDF}
-                className="px-4 py-1 rounded-full bg-amber-200 hover:bg-amber-300"
-              >
-                Generate Receipt
-              </button>
-              <Link
-                className="px-4 py-1 bg-gray-300 rounded-full hover:bg-gray-400"
-                to="/salesAndFinance/finance/"
-              >
-                Cancel
-              </Link>
-
-              <div className="flex items-center gap-4">
-                <label className="py-1 pl-4 bg-gray-200 rounded-full">
-                  Automatically save to transactions
-                  <input
-                    className="ml-4 mr-1 bg-white border-gray-300 rounded-full size-6 form-checkbox text-lime-600 focus:border-lime-500 focus:ring focus:ring-lime-500 focus:ring-opacity-50 hover:bg-lime-100 checked:bg-lime-500"
-                    type="checkbox"
-                    checked={autoSaveTransaction}
-                    onChange={(e) => setAutoSaveTransaction(e.target.checked)}
-                  />
-                </label>
-                <button
-                  className="px-4 py-1 rounded-full bg-lime-200 hover:bg-lime-400"
-                  onClick={handleSaveSalaryRecord}
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

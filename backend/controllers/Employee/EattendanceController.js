@@ -73,3 +73,18 @@ exports.deleteAttendance = async (req, res) => {
         res.status(500).json({ message: 'Error deleting attendance record', error });
     }
 };
+
+// Get attendance records by employee name
+exports.getAttendanceByEmployeeName = async (req, res) => {
+    const { name } = req.params;
+    console.log("backend name: ", name);
+    try {
+        const attendance = await Attendance.find({ name });
+        if (attendance.length === 0) {
+            return res.status(404).json({ message: 'Attendance records not found' });
+        }
+        res.status(200).json(attendance);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching attendance records', error });
+    }
+};
