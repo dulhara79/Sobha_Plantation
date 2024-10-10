@@ -142,6 +142,7 @@ app.use("/api/harvest", harvestRoutes);
 app.use("/api/yield", yieldRoutes);
 app.use("/api/compliance-checks", complianceCheckRoutes);
 app.use('/api/quality',quality);
+
 /**
  * crop care
  */
