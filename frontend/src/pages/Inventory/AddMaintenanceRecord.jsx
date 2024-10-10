@@ -164,7 +164,7 @@ const AddMaintenanceRecord = () => {
 
          {/* Received Date */}
 <Form.Item
-  label="Received Date"
+  label="Receive Date"
   name="receiveddate"
   rules={[{ required: true, message: 'Please select the received date!' }]}
 >

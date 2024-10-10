@@ -31,9 +31,9 @@ const GetEmpAttendance = () => {
     const handleAttendanceChange = async (employeeName, value) => {
         // Map the value to match the backend enum ('Present', 'Absent', 'Late')
         const statusMap = {
-            present: 'Present',
-            absent: 'Absent',
-            halfday: 'Half Day', // Adjust this as 'Late' or another value depending on your logic
+            Attend: 'Attend',
+            Leave: 'Leave',
+            //halfday: 'Half Day', // Adjust this as 'Late' or another value depending on your logic
         };
     
         const updatedAttendanceData = {
@@ -101,31 +101,31 @@ const GetEmpAttendance = () => {
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {filteredRecords.map((employee) => (
-                                <tr key={`${employee.f_name}-${employee.l_name}`}>
+                                <tr key={`${employee.f_name} ${employee.l_name}`}>
                                     <td className="px-4 py-2 whitespace-nowrap">{`${employee.f_name} ${employee.l_name}`}</td>
                                     <td className="px-4 py-2 whitespace-nowrap text-center">
                                         <div className="flex justify-center space-x-4">
                                             <label className="text-green-500">
                                                 <input
                                                     type="radio"
-                                                    name={`attendance-${employee.f_name}-${employee.l_name}`}
-                                                    value="present"
-                                                    checked={attendanceData[`${employee.f_name}-${employee.l_name}`] === 'present'}
-                                                    onChange={() => handleAttendanceChange(`${employee.f_name}-${employee.l_name}`, 'present')}
+                                                    name={`attendance-${employee.f_name} ${employee.l_name}`}
+                                                    value="Attend"
+                                                    checked={attendanceData[`${employee.f_name} ${employee.l_name}`] === 'Attend'}
+                                                    onChange={() => handleAttendanceChange(`${employee.f_name} ${employee.l_name}`, 'Attend')}
                                                 />{' '}
-                                                Present
+                                                Attend
                                             </label>
                                             <label className="text-red-500">
                                                 <input
                                                     type="radio"
-                                                    name={`attendance-${employee.f_name}-${employee.l_name}`}
-                                                    value="absent"
-                                                    checked={attendanceData[`${employee.f_name}-${employee.l_name}`] === 'absent'}
-                                                    onChange={() => handleAttendanceChange(`${employee.f_name}-${employee.l_name}`, 'absent')}
+                                                    name={`attendance-${employee.f_name} ${employee.l_name}`}
+                                                    value="Leave"
+                                                    checked={attendanceData[`${employee.f_name} ${employee.l_name}`] === 'Leave'}
+                                                    onChange={() => handleAttendanceChange(`${employee.f_name} ${employee.l_name}`, 'Leave')}
                                                 />{' '}
-                                                Absent
+                                                Leave
                                             </label>
-                                            <label className="text-yellow-500">
+                                         {/* <label className="text-yellow-500">
                                                 <input
                                                     type="radio"
                                                     name={`attendance-${employee.f_name}-${employee.l_name}`}
@@ -134,7 +134,7 @@ const GetEmpAttendance = () => {
                                                     onChange={() => handleAttendanceChange(`${employee.f_name}-${employee.l_name}`, 'halfday')}
                                                 />{' '}
                                                 Half Day
-                                            </label>
+                                            </label> */}
                                         </div>
                                     </td>
                                 </tr>

@@ -63,6 +63,7 @@ import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
 import ViewTaskDetails from "./pages/employee/ViewTaskDetails.jsx";
 import GetAttendance from "./pages/employee/GetAttendance.jsx";
+import EditAtendence from "./pages/employee/EditAtendence.jsx";
 import EmployeeList from "./pages/employee/EmployeeList.jsx";
 import EattendenceList from "./pages/employee/EattendenceList.jsx";
 import ViewOneAttendance from "./pages/employee/ViewOneAttendance.jsx";
@@ -165,10 +166,10 @@ import AddSeedlingForm from "./pages/CropVarieties/AddSeedlingForm.jsx";
 import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
 
 // buyers
-// import Cart from "./pages/Buyer/Cart.jsx";
-import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
-import BuyerTable from "./pages/BuyerTable.jsx";
-import Profile from './components/Profile';
+
+// import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
+// import BuyerTable from "./pages/BuyerTable.jsx";
+// import Profile from './components/Profile';
 import BuyerDashboard from './pages/Buyer/BuyerDashboard.jsx';
 
 import BuyerDelivery from "./pages/Buyer/BuyerDelivery.jsx";
@@ -182,6 +183,7 @@ import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
 // import BuyerPreOrderForm from './pages/Buyer/BuyerPreOrderForm';
 // import BuyerPreOrderTable from './pages/Buyer/BuyerPreOrderTable';
 // import UpdateBuyerPreOrderRequests from './pages/Buyer/UpdatePreOrderForm';
+
 
 import PageError from "./pages/PageError.jsx";
 
@@ -321,7 +323,7 @@ export default function App() {
             element={<AddRequestPaymentRecord />}
           />
           <Route
-            path="/Inventory/EditRequestPaymentRecord/:id"
+            path="/Inventory/EditRequestPaymentRecords/:id"
             element={<EditRequestPaymentRecord />}
           />
 
@@ -353,6 +355,8 @@ export default function App() {
             path="/employee/viewemployee/:id"
             element={<ViewOneEmployee />}
           />
+          <Route path="/employee/editattendance" element = {<EditAtendence/>}/>
+
 
           {/* harvest */}
           <Route
@@ -490,10 +494,26 @@ export default function App() {
           <Route path="/pGrowth" element={<PlantGrowth />} />
 
           {/* buyers */}
+          
           {/* <Route path="/buyer-registration" element={<BuyerRegistrationForm />} /> */}
-          <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
+          {/* <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
           <Route path="/buyert" element={<BuyerTable />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<Profile />} /> */}
+
+          <Route path="/Bdelivery" element={<BuyerDelivery />} />
+      <Route path="/Bdeliverytable" element={<BuyerDeliveryTable />} />
+      <Route path="/updateDelivery/:id" element={<UpdateDeliveryTable />} />
+
+      <Route path="/buyerinfo" element={<BuyerInfo />} />
+      <Route path="/buyerinfotable" element={<BuyerInfoTable />} />
+      <Route path="/updateBuyer/:id" element={<UpdateBuyerInfo />} /> 
+
+       {/* <Route path="/create-preorder" element={<BuyerPreOrderForm/> } />
+      <Route path="/preorders" element={<BuyerPreOrderTable/>} />
+      <Route path="/update-preorder/:id" element={<UpdateBuyerPreOrderRequests/>} />  */}
+
+      <Route path="/buyerdashboard" element={<BuyerDashboard />} />
+
 
           {/* page not found & error page */}
           {/* <Route path="/test" element={<Test />} /> */}
