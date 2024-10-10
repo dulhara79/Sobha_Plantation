@@ -346,7 +346,7 @@ const Eregistration = () => {
     }
   };
   
-  
+
   // Handle Date of Birth Change: Restrict DOB to match NIC (unchanged function)
   const handleDateOfBirthChange = (e) => {
     const inputDate = e.target.value;
