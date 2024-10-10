@@ -6,14 +6,7 @@ import axios from "axios";
 import { message, DatePicker, Button } from "antd";
 import moment from "moment";
 import jsPDF from "jspdf";
-
-const buttonStyle = {
-  padding: "10px 20px",
-  backgroundColor: "lime-600",
-  color: "white",
-  textDecoration: "none",
-  borderRadius: "5px",
-};
+import Swal from "sweetalert2";
 
 export default function SalaryProcessingSection() {
   const [emp_name, setEmpName] = useState("");
@@ -79,12 +72,8 @@ export default function SalaryProcessingSection() {
 
   useEffect(() => {
     if (emp_name && payment_date) {
-      const startOfMonth = moment(payment_date)
-        .startOf("month")
-        .format("YYYY-MM-DD");
-      const endOfMonth = moment(payment_date)
-        .endOf("month")
-        .format("YYYY-MM-DD");
+      const startOfMonth = moment().startOf("month").format("YYYY-MM-DD");
+      const endOfMonth = moment().endOf("month").format("YYYY-MM-DD");
 
       axios
         .get(
@@ -191,55 +180,76 @@ export default function SalaryProcessingSection() {
       return;
     }
 
-    const data = {
-      payment_date,
-      emp_name,
-      salary_start_date: moment(payment_date)
-        .startOf("month")
-        .format("YYYY-MM-DD"),
-      salary_end_date: moment(payment_date).endOf("month").format("YYYY-MM-DD"),
-      nic,
-      type,
-      basic_days,
-      basic_rate,
-      bonus_salary,
-      ot_hours: saturday_hours + sunday_hours + after_hours,
-      ot_rate: basic_rate / 240,
-      epf_etf,
-      description,
-      isPaid: true,
-    };
-
-    console.log("data", data);
-
-    const netSalary = calculateTotalSalary();
-
-    setLoading(true);
-    axios
-      .post("http://localhost:5000/api/salesAndFinance/finance/salary", data)
-      .then(() => {
-        console.log("salary record saved data: ", data);
-        setLoading(false);
-        message.success("Salary record has successfully saved.");
-        const transactionData = {
-          date: data.payment_date,
-          type: "expense",
-          subtype: "Salary payment",
-          amount: netSalary,
-          description: `Salary from ${data.salary_start_date} to ${data.salary_end_date}`,
-          payer_payee: data.emp_name,
-          method: "Automated Entry",
+    Swal.fire({
+      title: "Confirm Salary Payment",
+      text: "Are you sure you want to proceed with the salary payment?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, proceed!",
+      cancelButtonText: "No, cancel!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const data = {
+          payment_date,
+          emp_name,
+          salary_start_date: moment(payment_date)
+            .startOf("month")
+            .format("YYYY-MM-DD"),
+          salary_end_date: moment(payment_date)
+            .endOf("month")
+            .format("YYYY-MM-DD"),
+          nic,
+          type,
+          basic_days,
+          basic_rate,
+          bonus_salary: Number(bonus_salary),
+          after_hours,
+          saturday_hours: saturday_hours,
+          sunday_hours: sunday_hours,
+          ot_rate: basic_rate / 240,
+          epf_etf,
+          description,
+          isPaid: true,
         };
 
-        handleSaveTransactionRecord(transactionData);
-        // generatePayslipPDF();
-        navigate("/salesAndFinance/finance/employeeSalary");
-      })
-      .catch((error) => {
-        setLoading(false);
-        message.error("Salary record saving failed.");
-        console.error("Error occurred while saving salary record:", error);
-      });
+        const netSalary = calculateTotalSalary();
+
+        setLoading(true);
+        console.log("Salary record data:", data);
+        axios
+          .post(
+            "http://localhost:5000/api/salesAndFinance/finance/salary",
+            data
+          )
+          .then(() => {
+            setLoading(false);
+            Swal.fire(
+              "Success!",
+              "Salary record has been successfully saved.",
+              "success"
+            );
+            const transactionData = {
+              date: data.payment_date,
+              type: "expense",
+              subtype: "Salary payment",
+              amount: netSalary,
+              description: `Salary from ${data.salary_start_date} to ${data.salary_end_date}`,
+              payer_payee: data.emp_name,
+              method: "Automated Entry",
+            };
+            handleSaveTransactionRecord(transactionData);
+            navigate("/salesAndFinance/finance/employeeSalary");
+            setAlreadyPaid(true);
+          })
+          .catch((error) => {
+            setLoading(false);
+            Swal.fire("Error!", "Salary record saving failed.", "error");
+            console.error("Error occurred while saving salary record:", error);
+          });
+      } else {
+        Swal.fire("Cancelled", "Salary payment was not processed", "info");
+      }
+    });
   };
 
   const handleSaveTransactionRecord = (transactionData) => {
