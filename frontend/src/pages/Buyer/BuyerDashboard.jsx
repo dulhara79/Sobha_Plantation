@@ -31,13 +31,15 @@ const BuyerDashboard = () => {
         <div className="flex space-x-4">
           <Link
             to="/buyerdashboard"
-            className="text-[#3CCD65] hover:text-[#2b8f57]"
-          >
+            
+            className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold">
+          
             Home
           </Link>
           <Link
             to="/preorders"
             className="text-[#3CCD65] hover:text-[#2b8f57]"
+            
           >
             Pre Order
           </Link>
@@ -49,7 +51,7 @@ const BuyerDashboard = () => {
           </Link>
           <Link
             to="/Bdeliverytable"
-            className="text-[#236A64] font-semibold"
+            className="text-[#3CCD65] hover:text-[#2b8f57]"
           >
             Delivery Records
           </Link>

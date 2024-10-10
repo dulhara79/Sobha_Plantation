@@ -3,11 +3,11 @@ import { Card, Row, Col } from "antd";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import "../../index.css";
-import { ArrowBack } from "@mui/icons-material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { HomeOutlined } from "@mui/icons-material";
 import { Breadcrumb, Table, Button, Input, Modal, notification } from "antd";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link,useNavigate,useLocation } from "react-router-dom";
 import moment from "moment";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -17,6 +17,13 @@ import { Chart, ArcElement, Tooltip, Legend } from 'chart.js'; // Chart.js compo
 const { Search } = Input;
 Chart.register(ArcElement, Tooltip, Legend);
 
+const menuItems = [
+  { name: 'Home', path: '/Inventory/InventoryDashboard' },
+  { name: 'Fertilizers & Agrochemicals', path: '/Inventory/FertilizerRecords' },
+  { name: 'Equipments & Machines', path: '/Inventory/EquipmentRecords' },
+  { name: 'Maintenance Records', path: '/Inventory/MaintenanceRecords' },
+  { name: 'Request Payment Details', path: '/Inventory/RequestPaymentRecords' }
+];
 const MaintenanceRecords = () => {
   const [maintenance, setMaintenance] = useState([]);
   const [filteredMaintenance, setFilteredMaintenance] = useState([]);
@@ -24,10 +31,8 @@ const MaintenanceRecords = () => {
   const [filterStatus, setFilterStatus] = useState("All");
   const [sorter, setSorter] = useState({ field: null, order: null });
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchMaintenance();
-  }, []);
+  const location = useLocation();
+  const activePage = location.pathname;
 
   const fetchMaintenance = async () => {
     try {
@@ -39,34 +44,21 @@ const MaintenanceRecords = () => {
     }
   };
 
-   const onHomeClick = useCallback(() => {
-    navigate("/Inventory/InventoryDashboard");
-  }, [navigate]);
+  useEffect(() => {
+    fetchMaintenance();
+  }, []);
 
   const onBackClick = useCallback(() => {
     navigate(-1);
   }, [navigate]);
 
-  const onGroupContainerClick = useCallback(() => {
-    navigate("/Inventory/FertilizerRecords");
-  }, [navigate]);
 
-  const onGroupContainerClick1 = useCallback(() => {
-    navigate("/Inventory/MaintenanceRecords");
-  }, [navigate]);
-
-  const onGroupContainerClick2 = useCallback(() => {
-    navigate("/Inventory/EquipmentRecords");
-  }, [navigate]);
-
-  const onGroupContainerClick3 = useCallback(() => {
-    navigate("/Inventory/RequestPaymentRecords");
-  }, [navigate]);
 
   const onSearch = (value) => {
     setSearchText(value);
     filterMaintenance(value, filterStatus);
   };
+
 
   const filterMaintenance = (searchText, filterStatus) => {
     let filteredData = maintenance;
@@ -286,7 +278,7 @@ const MaintenanceRecords = () => {
   };
 
 
-
+  const isActive = (page) => activePage === page;
 
   return (
 
@@ -295,73 +287,52 @@ const MaintenanceRecords = () => {
     <div className="flex flex-1">
       <Sidebar />
       <div className="ml-[300px] pt-3 flex-1">
-<nav className="p-4 mb-5">
-          {/* Navigation Buttons */}
-          <div className="container flex items-center justify-between mx-auto space-x-4">
-            <div
-              className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform bg-gray-200 rounded-41xl hover:bg-gray-300"
-              onClick={onBackClick}
-            >
-              <ArrowBack className="text-gray-700" />
-            </div>
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-              onClick={onHomeClick}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Home
-              </a>
-            </div>
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-              onClick={onGroupContainerClick}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Fertilizers & Agrochemicals
-              </a>
-            </div>
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-              onClick={onGroupContainerClick1}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Maintenance Records
-              </a>
-            </div>
-            <div
-            className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-            onClick={onGroupContainerClick2}
-          >
-            <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-              Equipments & Machines
-            </a>
-          </div>
-          <div
-            className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-            onClick={onGroupContainerClick3}
-          >
-            <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-            Request Payment Details
-            </a>
-          </div>
+        {/* Navigation Bar */}
+        <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
+          <div className="flex items-center justify-center">
+            <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
+              <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
+              {menuItems.map((item) => (
+                <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
+                  <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </nav>
-
+               {/* Breadcrumb and Gallery Button */}
+  <div className="flex items-center justify-between mb-5">
           <Breadcrumb
             items={[
-              { title: 'Home', href: '/' },
-              { title: 'maintenance', href: '/Inventory/MaintenanceRecords' },
+              {
+                href: '',
+                title: <HomeOutlined />,
+              },
+              {
+                title: 'Inventory',
+              },
+              {
+                title: 'MaintenanceRecords',
+              },
             ]}
           />
+      </div>
+
 
                          {/* Pie chart for status visualization */}
-<div className="mt-6 mb-10" style={{ width: '270px', height: '260px' }}> {/* Adjust the width and height as needed */}
-  <h3>Status of Maintenance</h3>
+                         <div className="flex flex-col items-center justify-center w-full mt-6 mb-10"> {/* Adjust the width and height as needed */}
+                    <h3>Status of Maintenance</h3>
+  <div style={{ width: '400px', height: '300px' }}>
   <Pie data={pieData} options={pieOptions} />
 </div>
-          <div className="p-6 bg-white rounded-lg shadow-lg">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-4">
+</div>
+          {/* Page Header */}
+          <header className="flex items-center justify-between px-6 py-4 mb-6 bg-white shadow-md">
+            <h1 className="text-2xl font-bold"
+            style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>
+              Maintenance Overview</h1>
+            <div className="flex items-center space-x-4">
+
                 <Search
                   placeholder="Search by any field"
                   onChange={(e) => onSearch(e.target.value)}  // Trigger filter on input change
@@ -381,7 +352,7 @@ const MaintenanceRecords = () => {
                   Generate PDF Report
                 </Button>
               </div>
-            </div>
+            </header>
 
 
             <Table
@@ -417,7 +388,7 @@ const MaintenanceRecords = () => {
                   sortOrder: sorter.field === 'referredlocation' ? sorter.order : null,
                 },
                 {
-                  title: "Received Date",
+                  title: "Receive Date",
                   dataIndex: "receiveddate",
                   key: "receiveddate",
                   sorter: true,
@@ -461,7 +432,7 @@ const MaintenanceRecords = () => {
           </div>
         </div>
       </div>
-    </div>
+  
   );
 };
 
