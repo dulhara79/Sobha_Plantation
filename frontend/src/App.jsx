@@ -152,6 +152,7 @@ import EditLabeling from "./pages/Products/EditLabeling.jsx";
 import Gallery from "./pages/Products/Gallery.jsx";
 import AddPackage from "./pages/Products/AddPackage.jsx";
 import EditPackage from "./pages/Products/EditPackage.jsx";
+import DetailsPage from './components/Products/Packaging/DetailsPage.jsx';
 
 /**
  * field view
@@ -187,6 +188,7 @@ import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
 
 
 import PageError from "./pages/PageError.jsx";
+import { element } from "prop-types";
 
 export default function App() {
   return (
@@ -484,6 +486,7 @@ export default function App() {
           <Route path="/products/gallery" element={<Gallery />} />
           <Route path="/products/addPackage" element={<AddPackage />} />
           <Route path="/products/editPackage/:id" element={<EditPackage />} />
+          <Route path="/share/:encodedData" element={<DetailsPage />} />
 
           {/* field view  */}
           <Route

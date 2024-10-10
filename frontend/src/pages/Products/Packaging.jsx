@@ -19,6 +19,7 @@ const { Search } = Input;
 
 const Packaging = () => {
   const [packagingData, setPackagingData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentRecord, setCurrentRecord] = useState(null);
   const [performanceMetrics, setPerformanceMetrics] = useState({});
@@ -28,6 +29,7 @@ const Packaging = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState(''); 
   const [loading, setLoading] = useState(true);
+
 
   // Fetch packaging data from the backend
   const fetchPackagingData = async () => {
@@ -45,6 +47,25 @@ const Packaging = () => {
     }
   };
 
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchText(value);
+  
+    const filteredData = packagingData.filter((item) => {
+      return (
+        item.productName.toLowerCase().includes(value.toLowerCase()) ||
+        item.packagingMaterial.toLowerCase().includes(value.toLowerCase()) ||
+        item.packagingType.toLowerCase().includes(value.toLowerCase()) ||
+        item.status.toLowerCase().includes(value.toLowerCase()) ||
+        item.quantity.toString().includes(value) ||
+        moment(item.packagingDate).format('YYYY-MM-DD').includes(value)
+      );
+    });
+  
+    setFilteredData(filteredData);
+  };
+  
+
   // Calculate performance metrics
   const calculatePerformanceMetrics = (data) => {
     const totalPackages = data.length;
@@ -61,6 +82,8 @@ const Packaging = () => {
   useEffect(() => {
     fetchPackagingData();
   }, []);
+
+  
 
   const showModal = (id) => {
     navigate(`/products/editPackage/${id}`);
@@ -129,15 +152,6 @@ const Packaging = () => {
     }
   };
 
-  const showQrModal = (record) => {
-    setQrCodeData(`Product: ${record.productName}, Quantity: ${record.quantity}, Date: ${record.packagingDate}`);
-    setQrModalVisible(true);
-  };
-
-  const handleQrModalCancel = () => {
-    setQrModalVisible(false);
-    setQrCodeData('');
-  };
 
 // Function to get image data URL for the logo
 const getImageDataURL = (url) => {
@@ -175,12 +189,20 @@ const generatePDF = async () => {
     const pageHeight = doc.internal.pageSize.height;
 
     // Header
+    doc.setFontSize(14);
+    doc.text("Sobha Plantation", 10, 10); // Align left
+
+    doc.setFontSize(10);
+    doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+    doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+    doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+    doc.text("Contact: 0112 751 757", 10, 30); // Email address line
+
     if (logoDataURL) {
-      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 10);
+      doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
     }
-    doc.setFontSize(12);
-    doc.text("Sobha Plantation", 170, 15);
-    doc.line(10, 25, pageWidth - 10, 25); // Header line
+
+    doc.line(10, 35, pageWidth - 10, 35); // Header line
 
     // Footer
     doc.setFontSize(10);
@@ -189,7 +211,7 @@ const generatePDF = async () => {
 
   // Title
   doc.setFontSize(22);
-  doc.text("Packaging Schedule Report", 60, 35);
+  doc.text("Packaging Schedule Report", 60, 48);
 
   // Calculate total quantity
   const totalQuantity = packagingData.reduce((sum, item) => sum + item.quantity, 0);
@@ -197,15 +219,15 @@ const generatePDF = async () => {
   // Overview details
   const overviewHeaders = [['Detail', 'Value']];
   const overviewRows = [
-    ['Total Packages', `${packagingData.length}`], 
+    ['Total Packages', `${packagingData.length}`],
     ['Completed Packages', `${performanceMetrics.completedPackages}`],
     ['Pending Packages', `${performanceMetrics.pendingPackages}`],
-    ['Total Quantity', `${totalQuantity}`], 
+    ['Total Quantity', `${totalQuantity}`],
   ];
 
   // AutoTable for overview details
   doc.autoTable({
-    startY: 50,
+    startY: 60,
     head: overviewHeaders,
     body: overviewRows,
     margin: { top: 20, bottom: 20 },
@@ -241,6 +263,53 @@ const generatePDF = async () => {
   doc.save('packaging-schedule-report.pdf');
 };
 
+
+const showQrModal = (record) => {
+  setQrCodeData(
+    `Product: ${record.productName}\n` +
+    `Quantity: ${record.quantity}\n` +
+    `Date: ${moment(record.packagingDate).format('YYYY-MM-DD')}\n` + // Format date
+    `Status: ${record.status}\n` +
+    `Packaging Material: ${record.packagingMaterial}\n` +
+    `Packaging Type: ${record.packagingType}`
+  );
+  setQrModalVisible(true);
+};
+
+
+const handleQrModalCancel = () => {
+  setQrModalVisible(false);
+  setQrCodeData('');
+};
+
+const handleDownloadQrCode = () => {
+  const canvas = document.getElementById('qr-code-canvas');
+  const pngUrl = canvas
+    .toDataURL('image/png')
+    .replace('image/png', 'image/octet-stream');
+  
+  const link = document.createElement('a');
+  link.download = 'qr-code.png';
+  link.href = pngUrl;
+  link.click();
+};
+
+const handleCopyShareLink = () => {
+  // Encode the QR code data for URL compatibility
+  const encodedQrCodeData = encodeURIComponent(qrCodeData);
+  const shareLink = `${window.location.origin}/share/${encodedQrCodeData}`;
+
+  navigator.clipboard.writeText(shareLink)
+    .then(() => {
+      notification.success({ message: 'Share link copied to clipboard!' });
+    })
+    .catch(() => {
+      notification.error({ message: 'Failed to copy share link.' });
+    });
+
+};
+
+
 if (loading) return <LoadingDot />;
 
 return (
@@ -264,12 +333,12 @@ return (
         <div style={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
           {/* Search Input */}
           <Input
-            placeholder="Search by product name"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            style={{ width: 200, marginRight: 16 }} // Added marginRight for spacing
-            allowClear
-          />
+             placeholder="Search packaging..."
+             value={searchText}
+            onChange={handleSearch}
+             style={{ width: 200, marginRight: 16 }}
+             allowClear
+           />
 
           {/* Status Filter Dropdown */}
           <Select
@@ -350,22 +419,25 @@ return (
     {/* Packaging Instructions Section */}
     <PackagingInstructions />
 
-    {/* QR Code Modal */}
-    <Modal
-      title="QR Code"
-      visible={qrModalVisible}
-      onCancel={handleQrModalCancel}
-      footer={null}
-    >
-      <QRCodeCanvas
-        value={qrCodeData || ''}
-        size={256}
-        bgColor="#FFFFFF"
-        fgColor="#000000"
-        level="Q"
-        includeMargin
-      />
-    </Modal>
+     {/* Modal for QR Code */}
+     <Modal
+          title="QR Code"
+          visible={qrModalVisible}
+          onCancel={handleQrModalCancel}
+          footer={[
+            <Button key="download" type="primary" onClick={handleDownloadQrCode}>
+              Download QR Code
+            </Button>,
+            <Button key="copy" type="primary" onClick={handleCopyShareLink}>
+              Copy Share Link
+            </Button>,
+            <Button key="close" onClick={handleQrModalCancel}>
+              Close
+            </Button>,
+          ]}
+        >
+          <QRCodeCanvas id="qr-code-canvas" value={qrCodeData} size={256} />
+        </Modal>
 
     {/* Add/Edit Packaging Modal */}
     <Modal
