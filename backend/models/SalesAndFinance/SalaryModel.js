@@ -51,8 +51,11 @@ const FinanceSchema = mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
     },
+    isPaid: {
+      type: Boolean,
+      default: true,
+  },
   },
   {
     timestamps: true,

@@ -8,7 +8,7 @@ import {LeftOutlined, RightOutlined} from "@ant-design/icons";
 export default function WeatherComponent() {
     const [weatherData, setWeatherData] = useState(null);
     const [selectedDateIndex, setSelectedDateIndex] = useState(0);
-    const apiKey = '1c3aceb8ef0f8038b5a8f22944913ef0';
+    const apiKey = 'b1b15e88fa797225412429c1c50c122a1';
     const availableDates = weatherData ? weatherData.list.map(forecast => new Date(forecast.dt * 1000)) : [];
 
     useEffect(() => {
