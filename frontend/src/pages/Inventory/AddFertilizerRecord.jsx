@@ -3,6 +3,8 @@ import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from "../../components/Sidebar";
+import Header from "../../components/Header";
 
 const { Option } = Select;
 
@@ -63,6 +65,10 @@ const AddFertilizerRecord = () => {
   };
 
   return (
+    <div className="flex h-screen">
+    <Sidebar />
+    <div className="flex flex-col flex-grow">
+      <Header />
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
         <h2 className="mb-6 text-2xl font-bold text-center">Add Fertilizer/AgroChemical Records</h2>
@@ -134,10 +140,10 @@ const AddFertilizerRecord = () => {
               { pattern: /^\d+$/, message: 'Quantity must be numeric' },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || (parseInt(value) >= 1 && parseInt(value) <= 100)) {
+                  if (!value || (parseInt(value) >= 1 && parseInt(value) <= 1000)) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('Quantity must be between 1 and 100!'));
+                  return Promise.reject(new Error('Quantity must be between 1 and 1000!'));
                 },
               }),
             ]}
@@ -214,6 +220,8 @@ const AddFertilizerRecord = () => {
           </Form.Item>
         </Form>
       </div>
+    </div>
+    </div>
     </div>
   );
 };

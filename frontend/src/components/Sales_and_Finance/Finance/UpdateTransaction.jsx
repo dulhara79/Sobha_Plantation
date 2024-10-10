@@ -61,7 +61,7 @@ export default function EditTransaction() {
         setDescription(transaction.description);
         setPayerPayee(transaction.payer_payee);
         setMethod(transaction.method);
-        previousDate = moment(transaction.date);
+        //previousDate = moment(transaction.date);
       } catch (error) {
         console.error("Error fetching transaction:", error);
       }

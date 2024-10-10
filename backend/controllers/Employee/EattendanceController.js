@@ -3,13 +3,22 @@ const Attendance = require('../../models/Employee/AttendanceModel');
 // Get all attendance records
 exports.getAllAttendance = async (req, res) => {
     try {
-        const attendance = await Attendance.find();
+        const { date } = req.query; // Get date from query parameters
+        let attendance;
+
+        if (date) {
+            // Fetch attendance records for the specified date
+            attendance = await Attendance.find({ date: new Date(date) });
+        } else {
+            // Fetch all attendance records if no date is provided
+            attendance = await Attendance.find();
+        }
+
         res.status(200).json(attendance);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching attendance records', error });
     }
 };
-
 // Get a single attendance record by ID
 exports.getAttendanceById = async (req, res) => {
     const { id } = req.params;

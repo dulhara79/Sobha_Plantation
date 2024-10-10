@@ -37,6 +37,17 @@ export default function ViewOneAttendance() {
       });
   }, [id]);
 
+  const formatDateTime = (date) => {
+    if (!date) return '';
+    const newDate = new Date(date);
+    const year = newDate.getFullYear();
+    const month = String(newDate.getMonth() + 1).padStart(2, '0');
+    const day = String(newDate.getDate()).padStart(2, '0');
+    const hours = String(newDate.getHours()).padStart(2, '0');
+    const minutes = String(newDate.getMinutes()).padStart(2, '0');
+    const seconds = String(newDate.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
   const formatDate = (date) => {
     if (!date) return '';
     const newDate = new Date(date);
@@ -45,6 +56,7 @@ export default function ViewOneAttendance() {
     const day = String(newDate.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
+
 
   const handlePrint = () => {
     const input = document.getElementById("print-area");
@@ -126,7 +138,7 @@ export default function ViewOneAttendance() {
                     Record created at
                   </dt>
                   <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                    {formatDate(AttendanceRecords.createdAt)}
+                    {formatDateTime(AttendanceRecords.createdAt)}
                   </dd>
                 </div>
                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -134,7 +146,7 @@ export default function ViewOneAttendance() {
                     Record last updated at
                   </dt>
                   <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                    {formatDate(AttendanceRecords.updatedAt)}
+                    {formatDateTime(AttendanceRecords.updatedAt)}
                   </dd>
                 </div>
               </dl>
