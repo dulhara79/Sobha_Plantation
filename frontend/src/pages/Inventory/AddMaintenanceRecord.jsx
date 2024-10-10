@@ -3,6 +3,8 @@ import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from "../../components/Sidebar";
+import Header from "../../components/Header";
 
 const { Option } = Select;
 
@@ -64,6 +66,10 @@ const AddMaintenanceRecord = () => {
   };
 
   return (
+    <div className="flex h-screen">
+      <Sidebar />
+      <div className="flex flex-col flex-grow">
+        <Header />
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
         <h2 className="mb-6 text-2xl font-bold text-center">Add Maintenance Records</h2>
@@ -108,10 +114,16 @@ const AddMaintenanceRecord = () => {
           >
             <DatePicker
               format="YYYY-MM-DD"
+              disabledDate={(current) => {
+                const today = moment().startOf('day');
+                const fiveDaysAgo = moment().subtract(5, 'days').startOf('day');
+                return current && (current < fiveDaysAgo || current > today);
+              }}
               disabled={!eqnameComplete} // Enable only when eqname is selected
-              disabledDate={disablePastDates}
+              
             />
           </Form.Item>
+ 
 
           {/* Quantity */}
           <Form.Item
@@ -122,10 +134,10 @@ const AddMaintenanceRecord = () => {
               { pattern: /^\d+$/, message: 'Quantity must be numeric' },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || (parseInt(value) >= 1 && parseInt(value) <= 100)) {
+                  if (!value || (parseInt(value) >= 1 && parseInt(value) <= 50)) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('Quantity must be between 1 and 100!'));
+                  return Promise.reject(new Error('Quantity must be between 1 and 50!'));
                 },
               }),
             ]}
@@ -150,18 +162,23 @@ const AddMaintenanceRecord = () => {
 </Form.Item>
 
 
-          {/* Received Date */}
-          <Form.Item
-            label="Received Date"
-            name="receiveddate"
-            rules={[{ required: true, message: 'Please select the received date!' }]}
-          >
-            <DatePicker
-              format="YYYY-MM-DD"
-              disabled={!referredLocationComplete} // Enable only when referred location is completed
-              disabledDate={disablePastDates}
-            />
-          </Form.Item>
+         {/* Received Date */}
+<Form.Item
+  label="Received Date"
+  name="receiveddate"
+  rules={[{ required: true, message: 'Please select the received date!' }]}
+>
+  <DatePicker
+    format="YYYY-MM-DD"
+    disabled={!referredLocationComplete} // Enable only when referred location is completed
+    disabledDate={(current) => {
+      const today = moment().startOf('day');
+      const twoMonthsLater = moment().add(2, 'months').endOf('day');
+      return current < today || current > twoMonthsLater;
+    }}
+  />
+</Form.Item>
+
 
           {/* Status */}
           <Form.Item
@@ -184,6 +201,8 @@ const AddMaintenanceRecord = () => {
         </Form>
       </div>
     </div>
+      </div>
+      </div>
   );
 };
 

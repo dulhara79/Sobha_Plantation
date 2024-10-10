@@ -220,7 +220,7 @@ const confirmDelete = (qualityControlId) => {
 
   // Function to get image data URL
 const getImageDataURL = (url) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => { 
     const img = new Image();
     img.crossOrigin = 'Anonymous'; // Ensure cross-origin images are handled
     img.onload = () => {
