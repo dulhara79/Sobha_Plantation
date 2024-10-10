@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { DatePicker, message } from 'antd';
+import { DatePicker, message, Card } from 'antd';
 import moment from 'moment';
 
 const EditSalaryRecord = () => {
   const { id } = useParams();
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   const [record, setRecord] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -41,18 +41,21 @@ const EditSalaryRecord = () => {
     try {
       await axios.put(`http://localhost:5000/api/salesAndFinance/finance/salary/${id}`, record);
       message.success("Record updated successfully");
-      history.push("/salary-records"); // Redirect to the records list page
+      navigate("/salesAndFinance/finance/viewSalaryRecord"); // Redirect to the records list page
     } catch (error) {
       message.error("Error updating record");
       console.error(error);
     }
   };
 
+  console.log(record);
+
   if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className="container p-6 mx-auto">
       <h2 className="mb-4 text-xl font-semibold">Edit Salary Record</h2>
+      <Card className="justify-center w-2/3 p-4 mb-4">
       <form onSubmit={handleSubmit} className="space-y-4">
         
         {/* Employee Name (Display Only) */}
@@ -108,7 +111,7 @@ const EditSalaryRecord = () => {
             <input
               type="number"
               name="ot_hours"
-              value={(record.ot_hours != 0)?record.ot_hours : 0}
+              value={(record.week_hours != 0)?record.week_hours : 0}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded-md"
             />
@@ -173,11 +176,12 @@ const EditSalaryRecord = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="px-6 py-2 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700"
+          className="px-6 py-2 font-semibold text-white rounded-md bg-lime-600 hover:bg-lime-700"
         >
           Save Changes
         </button>
       </form>
+      </Card>
     </div>
   );
 };
