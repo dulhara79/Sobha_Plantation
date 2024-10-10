@@ -75,6 +75,12 @@ const Button = styled.button`
     cursor: not-allowed;
   }
 `;
+const BlackText = styled.input`
+  color: black !important;
+`;
+const BlackSelect = styled.select`
+  color: black !important;
+`;
 
 // Helper function for validations
 /*const validateField = (name, value, formData) => {
@@ -591,7 +597,7 @@ const Eregistration = () => {
 
           <FormGroup>
             <label htmlFor="dateOfBirth">Date of Birth</label>
-            <input
+            <BlackText
               type="date"
               name="dateOfBirth"
               placeholder="Date of Birth"
@@ -609,7 +615,7 @@ const Eregistration = () => {
         <FormRow>
           <FormGroup>
             <label htmlFor="gender">Gender</label>
-            <select
+            <BlackSelect
               name="gender"
               value={gender}
               onChange={handleGenderChange}
@@ -618,7 +624,7 @@ const Eregistration = () => {
               <option value="">Select Gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
-            </select>
+              </BlackSelect>
             {errors.gender && <p>{errors.gender}</p>}
           </FormGroup>
 
