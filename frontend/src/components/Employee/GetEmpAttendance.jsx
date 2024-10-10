@@ -32,6 +32,7 @@ const GetEmpAttendance = () => {
         const statusMap = {
             Attend: 'Attend',
             Leave: 'Leave',
+            //halfday: 'Half Day', // Adjust this as 'Late' or another value depending on your logic
         };
     
         const updatedAttendanceData = {
@@ -123,6 +124,16 @@ const GetEmpAttendance = () => {
                                                 />{' '}
                                                 Leave
                                             </label>
+                                         {/* <label className="text-yellow-500">
+                                                <input
+                                                    type="radio"
+                                                    name={`attendance-${employee.f_name}-${employee.l_name}`}
+                                                    value="halfday"
+                                                    checked={attendanceData[`${employee.f_name}-${employee.l_name}`] === 'halfday'}
+                                                    onChange={() => handleAttendanceChange(`${employee.f_name}-${employee.l_name}`, 'halfday')}
+                                                />{' '}
+                                                Half Day
+                                            </label> */}
                                         </div>
                                     </td>
                                 </tr>
