@@ -84,15 +84,15 @@ const GetEmpAttendance = () => {
                 />
             </div>
             <div className="w-3/4 p-4">
-                <h2 className="text-lg font-semibold mb-4">Daily Attendance</h2>
+                <h2 className="mb-4 text-lg font-semibold">Daily Attendance</h2>
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" className="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                     Employee
                                 </th>
-                                <th scope="col" className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" className="px-4 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase">
                                     Attendance
                                 </th>
                             </tr>
@@ -101,7 +101,7 @@ const GetEmpAttendance = () => {
                             {filteredRecords.map((employee) => (
                                 <tr key={`${employee.f_name} ${employee.l_name}`}>
                                     <td className="px-4 py-2 whitespace-nowrap">{`${employee.f_name} ${employee.l_name}`}</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-center">
+                                    <td className="px-4 py-2 text-center whitespace-nowrap">
                                         <div className="flex justify-center space-x-4">
                                             <label className="text-green-500">
                                                 <input
