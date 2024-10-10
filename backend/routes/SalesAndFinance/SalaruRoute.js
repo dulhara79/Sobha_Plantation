@@ -5,7 +5,8 @@ const {
     getSalaryRecords,
     getSalaryRecordById,
     updateSalaryRecord,
-    deleteSalaryRecord
+    deleteSalaryRecord,
+    getSalaryRecordsByEmpName,
 } = require( "../../controllers/SalesAndFinance/SalaryEmployeeDetails");
 
 const router = express.Router();
@@ -24,5 +25,8 @@ router.put("/:id", updateSalaryRecord);
 
 // Route for deleting a salary record by id
 router.delete("/:id", deleteSalaryRecord);
+
+// Route for getting salary records by employee name
+router.get("/attendance/:emp_name", getSalaryRecordsByEmpName);
 
 module.exports = router;

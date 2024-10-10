@@ -23,6 +23,7 @@ import {
   ArrowDownTrayIcon,
 } from "@heroicons/react/24/outline";
 import { DeleteFilled, EditFilled } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const ViewSalaryRecord = () => {
   const [loading, setLoading] = useState(false);
@@ -32,6 +33,7 @@ const ViewSalaryRecord = () => {
   const [orderDirection, setOrderDirection] = useState("asc");
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [selectedDates, setSelectedDates] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -67,6 +69,10 @@ const ViewSalaryRecord = () => {
           console.log(error);
         });
     }
+  };
+
+  const handleEdit = (id) => {
+    navigate(`/salesAndFinance/finance/EditEmployeeSalaryRecords/${id}`);
   };
 
   const handleSort = (property) => {
@@ -107,7 +113,7 @@ const ViewSalaryRecord = () => {
       record.basic_days,
       record.basic_rate.toFixed(2),
       record.bonus_salary.toFixed(2),
-      record.ot_hours,
+      record.ot_hours.toFixed(2),
       record.ot_rate.toFixed(2),
       record.epf_etf.toFixed(2),
       ((record.basic_days * record.basic_rate +
@@ -309,14 +315,15 @@ const ViewSalaryRecord = () => {
                   <TableCell>{record.salary_end_date}</TableCell>
                   <TableCell>{record.type}</TableCell>
                   <TableCell>{record.basic_days}</TableCell>
-                  <TableCell>{record.bonus_salary}</TableCell>
-                  <TableCell>{record.ot_hours}</TableCell>
-                  <TableCell>{record.ot_rate}</TableCell>
+                  <TableCell>{record.bonus_salary.toFixed(2)}</TableCell>
+                  <TableCell>{record.ot_hours.toFixed(2)}</TableCell>
+                  <TableCell>{record.ot_rate.toFixed(2)}</TableCell>
                   <TableCell>{record.epf_etf}</TableCell>
                   <TableCell>{record.description}</TableCell>
                   <TableCell align="center">
                     <Tooltip title="Edit">
-                      <IconButton size="small" className="">
+                      <IconButton size="small" className=""
+                      onClick={() => handleEdit(record._id)}>
                         <EditFilled />
                       </IconButton>
                     </Tooltip>
