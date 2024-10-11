@@ -6,7 +6,7 @@ const {
     getBuyerDeliveryRecordsById,
     updateBuyerDeliveryRecords,
     deleteBuyerDeliveryRecords,
-    } = require("../controllers/buyerDeliveryController"); // 2..
+    } = require("../controllers/buyerDeliveryController"); 
 
 // Routes for delivery Management
 router.get("/", getAllBuyerDeliveryRecords);
