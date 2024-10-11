@@ -141,7 +141,6 @@ const EditSalaryRecord = () => {
       }
     }
   };
-
   console.log(record);
 
   if (isLoading) return <div>Loading...</div>;
