@@ -76,6 +76,7 @@ const SalaryRoutes = require("./routes/SalesAndFinance/SalaruRoute.js");
 const employeeRoutes = require("./routes/Employee/employee.js");
 const attendanceRoute = require("./routes/Employee/AttendanceRoute.js");
 const ETaskRoutes = require("./routes/Employee/ETaskRoutes.js");
+const emailRoutes = require("./routes/Employee/emailRoutes.js")
 
 /**
  * Authentication Routes
@@ -184,6 +185,7 @@ app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
 app.use("/api/employee", employeeRoutes);
 app.use("/api/attendance", attendanceRoute);
 app.use("/api/taskRecords", ETaskRoutes);
+app.use("/api", emailRoutes);
 
 // Socket.IO setup
 io.on("connection", (socket) => {
