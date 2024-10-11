@@ -472,17 +472,26 @@ const Eregistration = () => {
       confirmButtonText: "Yes, submit it!",
       cancelButtonText: "No, cancel!",
     });
-
     if (result.isConfirmed) {
       try {
+        // Register the employee
         await axios.post("http://localhost:5000/api/employee", data);
+        
+        // Send confirmation email
+        await axios.post("http://localhost:5000/api/send-email", {
+          to: email,
+          subject: "Successfully Registered",
+          text: "Congratulations! You have successfully registered to the system.",
+        });
+
         console.log(data);
-        Swal.fire("Success", "Employee registered successfully!", "success");
+        Swal.fire("Success", "Employee registered successfully and confirmation email sent!", "success");
         navigate("/employee/employeelist");
       } catch (error) {
+        console.error("Error:", error);
         Swal.fire(
           "Error",
-          "Failed to register employee. Please try again.",
+          "Failed to register employee or send email. Please try again.",
           "error"
         );
       }
