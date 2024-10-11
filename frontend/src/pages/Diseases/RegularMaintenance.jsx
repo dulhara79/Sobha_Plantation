@@ -27,6 +27,7 @@ import {
   CategoryScale,
   LinearScale,
 } from "chart.js";
+import DiseasesNavBar from "../../components/DiseasesComponents/DiseasesNavBar";
 
 // Register Chart.js components
 ChartJS.register(
@@ -202,7 +203,7 @@ const RegularMaintenance = () => {
 
   // Data for the bar chart
   const [chartData, setChartData] = useState({
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
     datasets: [
       {
         label: "Maintenance Data",
@@ -267,53 +268,7 @@ const RegularMaintenance = () => {
       <Header />
       <Sidebar />
 
-      {/* Navigation Bar */}
-      <nav className="flex items-center justify-between p-4 bg-transparent">
-        {/* Go Back Icon */}
-        <button
-          onClick={() => window.history.back()}
-          className="text-gray-600 hover:text-gray-800"
-        >
-          <LeftOutlined className="text-xl" />
-        </button>
-        {/* Navigation Items */}
-        <div className="flex space-x-4">
-          <Link to="/diseases" className="text-[#3CCD65] hover:text-[#2b8f57]">
-            Home
-          </Link>
-          <Link
-            to="/CoconutInspections"
-            className="text-[#3CCD65] hover:text-[#2b8f57]"
-          >
-            Inspections
-          </Link>
-          <Link
-            to="/CoconutTreatments"
-            className="text-[#3CCD65] hover:text-[#2b8f57]"
-          >
-            Treatments
-          </Link>
-          <Link
-            to="/CoconutPests"
-            className="text-[#3CCD65] hover:text-[#2b8f57]"
-          >
-            Pests and Diseases
-          </Link>
-          <Link
-            to="/RegularMaintenance"
-            className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold">
-            Maintenance
-          </Link>
-          {/* <Link
-            to="/UserProfile"
-            className="text-[#3CCD65] hover:text-[#2b8f57]"
-          >
-            My Profile
-          </Link> */}
-        </div>
-      </nav>
-
-      <div className={`ml-[300px]`}>
+      <div className={`ml-[300px] mt-6`}>
         <Breadcrumb
           items={[
             {
@@ -326,6 +281,7 @@ const RegularMaintenance = () => {
             },
           ]}
         />
+        <DiseasesNavBar />
       </div>
 
       {/* Maintenance Schedule Section */}

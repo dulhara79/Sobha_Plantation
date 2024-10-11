@@ -29,7 +29,7 @@ const DetailedOverview = () => {
 
   const alphabeticNumericRule = [
     {
-      pattern: /^[a-zA-Z0-9\s]*$/,
+      pattern: /^[a-zA-Z0-9\s%]*$/,
       message: "Only alphabetic characters and numbers are allowed.",
     },
     {
@@ -60,16 +60,58 @@ const DetailedOverview = () => {
     },
   ];
 
+    // Alphabetic characters only (A-Z, a-z, space)
+const handleAlphabeticKeyPress = (e) => {
+  const regex = /^[A-Za-z\s]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-alphabetic characters
+    setErrorMessage("Only alphabetic characters are allowed."); // Set error message
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
+// Numeric characters only (0-9)
+const handleNumericKeyPress = (e) => {
+  const regex = /^[0-9]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-numeric characters
+    setErrorMessage("Only numeric characters are allowed.");
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
+// Alphanumeric characters only (A-Z, a-z, 0-9)
+const handleAlphanumericKeyPress = (e) => {
+  const regex = /^[A-Za-z0-9\s%]*$/;
+  if (!regex.test(e.key)) {
+    e.preventDefault(); // Prevent non-alphanumeric characters
+    setErrorMessage("Only alphanumeric characters are allowed.");
+  } else {
+    setErrorMessage(""); // Clear message when valid input is entered
+  }
+};
+
+
   const handleFinish = async (values) => {
     try {
-      await post("/harvest", values);
-
-      // Navigate to Insights with the form data
+      // Get the existing treatments from localStorage
+      const existingTreatments = JSON.parse(localStorage.getItem("bestTreatments")) || [];
+  
+      // Add the new treatment data
+      const updatedTreatments = [...existingTreatments, values];
+  
+      // Save the updated data in localStorage
+      localStorage.setItem("bestTreatments", JSON.stringify(updatedTreatments));
+  
+      // Optionally, navigate to the insights page
       navigate("/insights", { state: values });
     } catch (error) {
-      console.error("Error creating detailed overview:", error);
+      console.error("Error saving treatment data:", error);
     }
   };
+  
 
   const handleCancel = () => {
     navigate("/CoconutTreatments");
@@ -104,53 +146,7 @@ const DetailedOverview = () => {
       <div className="flex h-screen">
         <Sidebar />
         <div className="flex-1 ml-[300px] p-4 overflow-auto">
-          <nav className="flex items-center justify-between p-4 bg-transparent">
-            <button
-              onClick={() => window.history.back()}
-              className="text-gray-600 hover:text-gray-800"
-            >
-              <LeftOutlined className="text-xl" />
-            </button>
-            <div className="flex space-x-4">
-              <Link
-                to="/diseases"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Home
-              </Link>
-              <Link
-                to="/CoconutInspections"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Inspections
-              </Link>
-              <Link
-                to="/CoconutTreatments"
-                className="text-[#236A64] font-semibold"
-              >
-                Treatments
-              </Link>
-              <Link
-                to="/CoconutPests"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Pests and Diseases
-              </Link>
-              <Link
-                to="/RegularMaintenance"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Maintenance
-              </Link>
-              {/* <Link
-                to="/UserProfile"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                My Profile
-              </Link> */}
-            </div>
-          </nav>
-
+          
           <div className="mt-4">
             <Breadcrumb
               items={[
@@ -191,6 +187,7 @@ const DetailedOverview = () => {
                 <DatePicker
                   style={{ width: "100%" }}
                   disabledDate={disableFutureDates}
+                  onKeyPress={handleNumericKeyPress}
                   onChange={(date, dateString) => {
                     if (date && date > moment()) {
                       form.setFields([
@@ -214,6 +211,7 @@ const DetailedOverview = () => {
                 <Input
                   placeholder="Enter the pest or disease treated"
                   disabled={!fieldValidity.completionDateOfTreatment}
+                  onKeyPress={handleAlphabeticKeyPress}
                 />
               </Form.Item>
 
@@ -225,6 +223,7 @@ const DetailedOverview = () => {
                 <Input
                   placeholder="Enter the treatment method"
                   disabled={!fieldValidity.treatedPestOrDisease}
+                  onKeyPress={handleAlphanumericKeyPress}
                 />
               </Form.Item>
 
@@ -236,6 +235,7 @@ const DetailedOverview = () => {
                 <Input
                   placeholder="Enter the percentage reduction in disease symptoms"
                   disabled={!fieldValidity.treatmentMethodUsed}
+                  onKeyPress={handleNumericKeyPress}
                 />
               </Form.Item>
 
@@ -247,6 +247,7 @@ const DetailedOverview = () => {
                 <Input
                   placeholder="Enter the percentage improvement in plant health"
                   disabled={!fieldValidity.percentageReductionInSymptoms}
+                  onKeyPress={handleNumericKeyPress}
                 />
               </Form.Item>
 
