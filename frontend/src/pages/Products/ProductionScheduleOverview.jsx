@@ -258,13 +258,21 @@ const generatePDF = async () => {
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
 
-    // Header with logo
+    // Header
+    doc.setFontSize(14);
+    doc.text("Sobha Plantation", 10, 10); // Align left
+
+    doc.setFontSize(10);
+    doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+    doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+    doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+    doc.text("Contact: 0112 751 757", 10, 30); // Email address line
+
     if (logoDataURL) {
-      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 10); // Adjust position and size
+      doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
     }
-    doc.setFontSize(12);
-    doc.text("Sobha Plantation", 170, 15); // Adjust x, y position
-    doc.line(10, 25, pageWidth - 10, 25); // Line under header
+
+    doc.line(10, 35, pageWidth - 10, 35); // Header line
 
     // Footer with page number
     doc.setFontSize(10);
@@ -277,7 +285,7 @@ const generatePDF = async () => {
 
   // Title of the report
   doc.setFontSize(22);
-  doc.text("Production Schedule Report", 50 , 35); // Adjust y-coordinate to start below header
+  doc.text("Production Schedule Report", 50 , 48); // Adjust y-coordinate to start below header
 
   // Calculate status summary
   const statusSummary = filteredSchedules.reduce((summary, schedule) => {
@@ -305,7 +313,7 @@ const generatePDF = async () => {
   });
 
   doc.autoTable({
-    startY: marginTop + 20, // Start the first table below the header space
+    startY: 60, // Start the first table below the header space
     head: overviewHeaders,
     body: overviewRows,
     margin: { top: marginTop, bottom: marginBottom, horizontal: 10 },

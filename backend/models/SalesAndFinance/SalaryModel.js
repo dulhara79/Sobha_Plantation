@@ -36,8 +36,17 @@ const FinanceSchema = mongoose.Schema(
     bonus_salary: {
       type: Number,
       required: true,
+      default: 0,
     },
-    ot_hours: {
+    week_hours: {
+      type: Number,
+      required: true,
+    },
+    saturday_hours: {
+      type: Number,
+      required: true,
+    },
+    sunday_hours: {
       type: Number,
       required: true,
     },
@@ -51,8 +60,11 @@ const FinanceSchema = mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
     },
+    isPaid: {
+      type: Boolean,
+      default: false,
+  },
   },
   {
     timestamps: true,

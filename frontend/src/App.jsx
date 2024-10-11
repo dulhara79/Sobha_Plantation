@@ -39,6 +39,7 @@ import EditValuationPage from "./pages/SalesAndFinance/Finance/EditValuationPage
 
 import Esalary from "./pages/SalesAndFinance/Finance/Esalary.jsx";
 import ViewSalaryRecordPage from "./pages/SalesAndFinance/Finance/ViewSalaryRecordPage.jsx";
+import EditEmployeeSalaryRecords from "./pages/SalesAndFinance/Finance/EditEmployeeSalaryRecords.jsx";
 
 // inventory
 import FertilizerRecords from "./pages/Inventory/FertilizerRecords.jsx";
@@ -151,6 +152,7 @@ import EditLabeling from "./pages/Products/EditLabeling.jsx";
 import Gallery from "./pages/Products/Gallery.jsx";
 import AddPackage from "./pages/Products/AddPackage.jsx";
 import EditPackage from "./pages/Products/EditPackage.jsx";
+import DetailsPage from './components/Products/Packaging/DetailsPage.jsx';
 
 /**
  * field view
@@ -186,6 +188,7 @@ import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
 
 
 import PageError from "./pages/PageError.jsx";
+import { element } from "prop-types";
 
 export default function App() {
   return (
@@ -261,6 +264,11 @@ export default function App() {
           />
 
           <Route
+            path="/salesAndFinance/finance/EditEmployeeSalaryRecords/:id"
+            element={<EditEmployeeSalaryRecords />} 
+          />
+
+          <Route
             path="/salesAndFinance/finance/valuation-dashboard"
             element={<ValuationDashboardPage />}
           />
@@ -327,7 +335,7 @@ export default function App() {
             element={<EditRequestPaymentRecord />}
           />
 
-          {/* employee */}
+           {/* employee */}
           <Route path="/employee/dashboard" element={<Edashboard />} />
           <Route path="/employee/registration" element={<Eregistration />} />
           <Route path="/employee/task" element={<EaddTask />} />
@@ -478,6 +486,7 @@ export default function App() {
           <Route path="/products/gallery" element={<Gallery />} />
           <Route path="/products/addPackage" element={<AddPackage />} />
           <Route path="/products/editPackage/:id" element={<EditPackage />} />
+          <Route path="/share/:encodedData" element={<DetailsPage />} />
 
           {/* field view  */}
           <Route
