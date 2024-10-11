@@ -20,7 +20,7 @@ exports.createSalaryRecord = async (request, response) => {
             // 'sunday_hours',
             'ot_rate',
             'epf_etf',
-            'description',
+            // 'description',
             "isPaid"
         ];
 
