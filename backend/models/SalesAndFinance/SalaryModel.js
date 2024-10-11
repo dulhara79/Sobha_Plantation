@@ -36,6 +36,7 @@ const FinanceSchema = mongoose.Schema(
     bonus_salary: {
       type: Number,
       required: true,
+      default: 0,
     },
     week_hours: {
       type: Number,
