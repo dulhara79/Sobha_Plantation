@@ -226,46 +226,54 @@ const filteredRecords = attendanceRecords.filter((record) =>
                 <span className="sr-only">Info</span>
               </th>
               <th scope="col" className="py-3">
+                <span className="sr-only">Edit</span>
+              </th>
+              <th scope="col" className="py-3">
                 <span className="sr-only">Delete</span>
               </th>
             </tr>
           </thead>
 
           <tbody className="border-b border-green-400">
-            {filteredRecords.map((record, index) => (
-              <tr key={index} className="divide-y border-l-4">
-                <td></td>
-                <td className="px-6 py-4">{index + 1}</td>
-                <td className="px-6 py-4">{record.name}</td>
-                <td className="px-6 py-4">{record.date.split("T")[0]}</td>
-                <td className="px-6 py-4">{record.status}</td>
+  {filteredRecords.map((record, index) => (
+    <tr key={index} className="divide-y border-l-4">
+      <td></td>
+      <td className="px-6 py-4">{index + 1}</td>
+      
+      {/* Ensure that record.name exists */}
+      <td className="px-6 py-4">{record.name || "N/A"}</td>
+      
+      {/* Ensure that record.date exists before splitting */}
+      <td className="px-6 py-4">{record.date ? record.date.split("T")[0] : "N/A"}</td>
+      
+      <td className="px-6 py-4">{record.status || "N/A"}</td>
 
-                <td className=" py-4 text-right">
-                  <Link
-                    to={`/employee/veiwattendence/${record._id}`} // Corrected route
-                    className="font-medium text-blue-600  hover:underline"
-                  >
-                    <InformationCircleIcon
-                      className="h-6 w-6 flex-none bg-gray-300 p-1 rounded-full text-gray-800 hover:bg-gray-500"
-                      aria-hidden="true"
-                    />
-                  </Link>
-                </td>
+      <td className="py-4 text-right">
+        <Link
+          to={`/employee/veiwattendence/${record._id}`} // Corrected route
+          className="font-medium text-blue-600 hover:underline"
+        >
+          <InformationCircleIcon
+            className="h-6 w-6 flex-none bg-gray-300 p-1 rounded-full text-gray-800 hover:bg-gray-500"
+            aria-hidden="true"
+          />
+        </Link>
+      </td>
+      <td className="py-4 text-right">
+        <Link to={`/employee/editattendance`}>
+          <PencilSquareIcon className="w-5 h-5 text-blue-500 hover:text-blue-700" />
+        </Link>
+      </td>
 
-                <td className="py-4 text-right">
-                  <button
-                    className="flex items-center"
-                    onClick={() => handleDelete(record._id)}
-                  >
-                    <TrashIcon
-                      className="h-6 w-6 flex-none bg-red-200 p-1 rounded-full text-gray-800 hover:bg-red-500"
-                      aria-hidden="true"
-                    />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+      <td className="py-4 text-right">
+        <button className="flex items-center" onClick={() => handleDelete(record._id)}>
+          <TrashIcon className="h-6 w-6 flex-none bg-red-200 p-1 rounded-full text-gray-800 hover:bg-red-500" aria-hidden="true" />
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+
         </table>
       </div>
     </div>
