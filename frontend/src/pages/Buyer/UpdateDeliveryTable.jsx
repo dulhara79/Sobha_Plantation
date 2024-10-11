@@ -108,7 +108,7 @@ const UpdateBuyerDeliveryRecords = () => {
     try {
       setLoading(true);
 
-      await axios.put(`http://localhost:5000/api/deliveryRecords/${id}`, values);
+      await axios.put(`http://localhost:8090/api/deliveryRecords/${id}`, values);
 
       notification.success({
         message: "Record Updated",
