@@ -13,7 +13,7 @@ export default function SalaryProcessingSection() {
   const [payment_date, setPaymentDate] = useState(
     moment().format("YYYY-MM-DD")
   );
-  const [type, setType] = useState("permanent");
+  const [type, setType] = useState("");
   const [basic_days, setBasicDays] = useState(0);
   const [basic_rate, setBasicRate] = useState(0);
   const [bonus_salary, setBonusSalary] = useState(0);
@@ -37,6 +37,22 @@ export default function SalaryProcessingSection() {
     return { employeeEpf };
   };
   const { enqueueSnackbar } = useSnackbar();
+  const [displayError, setDisplayError] = useState(false);
+  const [bonusError, setBonusError] = useState("");
+  const [remarkError, setRemarkError] = useState("");
+  const [blockFields, setBlockFields] = useState({
+    emp_name: true,
+    payment_date: true,
+    type: true,
+    basic_days: true,
+    basic_rate: true,
+    bonus_salary: true,
+    saturday_hours: true,
+    sunday_hours: true,
+    after_hours: true,
+    epf_etf: true,
+    description: true,
+  });
 
   const navigate = useNavigate();
 
@@ -156,8 +172,8 @@ export default function SalaryProcessingSection() {
   }, [selectedID, payment_date]);
 
   const calculateTotalSalary = () => {
-    const basicSalary = basic_rate;
     const hourlyRate = basic_rate / 240;
+    const basicSalary = hourlyRate * basic_days;
     const saturdayOT = saturday_hours * hourlyRate * 1.5;
     const sundayOT = sunday_hours * hourlyRate * 2;
     const afterHoursOT = after_hours * hourlyRate * 1.5;
@@ -268,6 +284,56 @@ export default function SalaryProcessingSection() {
         message.error("Automatic Transaction record saving failed.");
         console.error("Transaction auto save error:", error);
       });
+  };
+
+  const handleBonusSalaryChange = (e) => {
+    const input = e.target.value;
+
+    console.log("input", input);
+
+    // Remove non-numeric and negative characters
+    const filteredValue = input.replace(/[^0-9.]/g, "");
+    const bonusValue = parseFloat(filteredValue);
+
+    // Check for invalid input and set errors
+    /* if (isNaN(bonusValue)) {
+      setDisplayError(true);
+      setBonusError("Please enter a valid number.");
+    } else */
+    if (bonusValue < 0) {
+      setDisplayError(true);
+      setBonusError("Bonus salary cannot be negative.");
+    } else if (bonusValue > 30000) {
+      setDisplayError(true);
+      setBonusError("Bonus salary cannot exceed 30,000.");
+    } else {
+      // Clear errors if the input is valid
+      setDisplayError(false);
+      setBonusError("");
+      setBonusSalary(bonusValue);
+    }
+  };
+
+  const handleRemarkChange = (e) => {
+    const input = e.target.value;
+    const regex = /^[a-zA-Z\s]*$/;
+    if (!regex.test(input)) {
+      setDisplayError(true);
+      setRemarkError("Remark will accept only letters.");
+    } else {
+      setDisplayError(false);
+      setRemarkError("");
+      let filteredValue = input.replace(/[^a-zA-Z\s]/g, "");
+      filteredValue = filteredValue.substring(0, 100);
+      if (filteredValue.length >= 100) {
+        setDisplayError(true);
+        setRemarkError("Remark should be shorter than 100 characters.");
+      } else {
+        setDisplayError(false);
+        setRemarkError("");
+        setDescription(filteredValue);
+      }
+    }
   };
 
   const generatePayslipPDF = () => {
@@ -416,23 +482,26 @@ export default function SalaryProcessingSection() {
       <div className="border-t ">
         <div className="flex flex-row">
           <div
-            className="w-1/3 h-screen overflow-scroll border-r bg-gray-50 mb-14 overscroll-auto bottom-14"
+            className="w-2/5 h-screen overflow-scroll bg-white border-r rounded-md mb-14 overscroll-auto bottom-14 scroll-smooth"
             id="employeelist"
           >
+            <h1 className="pl-8 mt-0 text-2xl font-semibold text-black">
+              Employee List
+            </h1>
             <ul role="list" className="divide-y divide-gray-300">
               {RegistrationRecords.map((person) => (
                 <li key={person._id} className={``}>
                   <label
                     htmlFor={person._id}
-                    className={`py-3 px-4 flex hover:bg-lime-50 transition-all hover:shadow-xl duration-200  justify-between gap-x-4 ${
+                    className={`py-1 px-4 flex hover:bg-lime-200 transition-all hover:shadow-xl duration-200 justify-between gap-x-4 gap-y-4 rounded-full ${
                       selectedID === person._id
-                        ? "bg-lime-100 border-l-4 border-lime-600 shadow-xl"
+                        ? "bg-lime-300 border-l-4 border-lime-600 shadow-xl rounded-full"
                         : ""
                     }`}
                   >
                     <div className="flex min-w-0 gap-x-4">
                       <div className="flex-auto min-w-0">
-                        <p className="text-sm font-semibold leading-6 text-gray-900">
+                        <p className="font-semibold leading-6 text-black text-md">
                           {person.firstName} {person.lastName}
                         </p>
                         {/* <p className="mt-1 text-xs leading-5 text-gray-500 truncate">
@@ -454,261 +523,275 @@ export default function SalaryProcessingSection() {
               ))}
             </ul>
           </div>
-          {alreadyPaid ? (
-            <p className="text-lg text-red-600">
-              Salary already paid for this month
-            </p>
-          ) : (
-            <div className="w-full h-screen max-w-4xl p-6 mx-auto mb-96">
-              <form onSubmit={handleSaveSalaryRecord} className="space-y-6">
-                <h1 className="text-2xl font-semibold text-gray-900">
-                  Salary Processing Section
-                </h1>
-                <p className="text-sm text-gray-500">
-                  Fill in the details to process the salary for the selected
-                  employee.
+
+          <div className="w-full h-screen max-w-4xl p-6 mx-auto mb-96">
+            <form onSubmit={handleSaveSalaryRecord} className="space-y-6">
+              <h1 className="font-semibold text-black ">
+                Salary Processing Section
+              </h1>
+              <p className="text-sm text-gray-500">
+                Fill in the details to process the salary for the selected
+                employee.
+              </p>
+              <Link to="/salesAndFinance/finance/viewSalaryRecord">
+                <button className="float-right pt-2 pb-2 pl-8 pr-8 text-white rounded-lg bg-lime-600 text-md hover:bg-lime-700">
+                  View Salary Records
+                </button>
+              </Link>
+              <hr className="border-gray-300" />
+
+              {alreadyPaid ? (
+                <p className="w-full ml-8 text-lg text-red-600">
+                  Salary already paid for this month
                 </p>
-                <Link to="/salesAndFinance/finance/viewSalaryRecord">
-                  <Button className="float-right pl-8 pr-8 text-white rounded-lg bg-lime-600 text-md hover:bg-lime-400">
-                    View Salary Records
-                  </Button>
-                </Link>
-                <hr className="border-gray-300" />
-                {/* Row 1: Employee Name, Type */}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                  {/* Employee Name */}
-                  <div>
-                    <label
-                      htmlFor="emp_name"
-                      className="block mb-1 text-sm font-medium text-gray-700"
-                    >
-                      Employee Name
-                    </label>
-                    <input
-                      type="text"
-                      name="emp_name"
-                      value={emp_name}
-                      disabled
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                    />
-                  </div>
-                  {/* Type */}
-                  <div>
-                    <label
-                      htmlFor="type"
-                      className="block mb-1 text-sm font-medium text-gray-700"
-                    >
-                      Type
-                    </label>
-                    <input
-                      type="text"
-                      name="type"
-                      value={type}
-                      disabled
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                    />
-                  </div>
-                </div>
-
-                {/* Row 2: Date Range, Basic Days */}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                  <div>
-                    <label
-                      htmlFor="basic_days"
-                      className="block mb-1 text-sm font-medium text-gray-700"
-                    >
-                      Basic Days
-                    </label>
-                    <input
-                      type="number"
-                      name="basic_days"
-                      value={basic_days}
-                      onChange={(e) => setBasicDays(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                      readOnly
-                    />
-                    <p className="mt-1 text-xs text-orange-600">
-                      Calculated by analyzing attendance records. Do not change
-                      unless the employee failed to mark attendance on a present
-                      day.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Row 3: Basic Rate, Bonus Salary, OT Hours */}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                  <div>
-                    <label
-                      htmlFor="basic_rate"
-                      className="block mb-1 text-sm font-medium text-gray-700"
-                    >
-                      Basic Salary
-                    </label>
-                    <input
-                      type="number"
-                      name="basic_rate"
-                      value={basic_rate.toFixed(2)}
-                      onChange={(e) => setBasicRate(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="bonus_salary"
-                      className="block mb-1 text-sm font-medium text-gray-700"
-                    >
-                      Bonus Salary
-                    </label>
-                    <input
-                      type="number"
-                      name="bonus_salary"
-                      value={bonus_salary}
-                      onChange={(e) => setBonusSalary(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="ot_hours"
-                      className="block mb-1 text-sm font-medium text-gray-700"
-                    >
-                      Week days OT Hours
-                    </label>
-                    <input
-                      type="number"
-                      name="ot_hours"
-                      value={after_hours.toFixed(2)}
-                      onChange={(e) => setOtHours(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                      readOnly
-                    />
-                  </div>
-                </div>
-
-                {/* Row 4: Saturday and Sunday OT Hours */}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                  <div>
-                    <label
-                      htmlFor="saturday_hours"
-                      className="block mb-1 text-sm font-medium text-gray-700"
-                    >
-                      Saturday OT Hours
-                    </label>
-                    <input
-                      type="number"
-                      name="saturday_hours"
-                      value={saturday_hours.toFixed(2)}
-                      onChange={(e) => setSaturdayHours(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="sunday_hours"
-                      className="block mb-1 text-sm font-medium text-gray-700"
-                    >
-                      Sunday OT Hours
-                    </label>
-                    <input
-                      type="number"
-                      name="sunday_hours"
-                      value={sunday_hours.toFixed(2)}
-                      onChange={(e) => setSundayHours(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                      readOnly
-                    />
-                  </div>
-                </div>
-
-                {/* Row 5: EPF/ETF, Payment Date */}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                  <div>
-                    <label
-                      htmlFor="epf_etf"
-                      className="block mb-1 text-sm font-medium text-gray-700"
-                    >
-                      EPF/ETF (%)
-                    </label>
-                    <input
-                      type="number"
-                      name="epf_etf"
-                      value={epf_etf}
-                      onChange={(e) => setEpfEtf(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="payment_date"
-                      className="block mb-1 text-sm font-medium text-gray-700"
-                    >
-                      Payment Date
-                    </label>
-                    <DatePicker
-                      value={payment_date ? moment(payment_date) : null}
-                      onChange={(date) => setPaymentDate(date)}
-                      format="YYYY-MM-DD"
-                      disabledDate={(current) =>
-                        current &&
-                        (current < moment(oneWeekBefore) || current > moment())
-                      }
-                      className="block w-full h-8 p-2 mt-2 text-black bg-white border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
-                    />
-                  </div>
-                </div>
-
-                {/* Row 6: Remarks */}
-                <div>
-                  <label
-                    htmlFor="description"
-                    className="block mb-1 text-sm font-medium text-gray-700"
-                  >
-                    Remarks
-                  </label>
-                  <input
-                    type="text"
-                    name="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
-                  />
-                </div>
-
-                {/* Control Bar */}
-                <div className={`relative flex ml-[300px]`} id="controlbar">
-                  <div
-                    className={`fixed bottom-0 right-0 z-0 w-full bg-gray-100 bg-opacity-50 border-t border-b h-14 backdrop-blur `}
-                    id="savebar"
-                  >
-                    <div
-                      className={`z-30 flex items-center justify-between h-full gap-2 pr-8 text-sm font-semibold align-middle ml-[300px]`}
-                    >
-                      <div className="px-6 py-1 mx-8 text-base font-semibold border border-gray-500 rounded-full">
-                        Total Salary:{" "}
-                        {calculateTotalSalary() <= 0 ||
-                        calculateTotalSalary() > 1000000 ? (
-                          <span className="text-red-500">Invalid salary</span>
-                        ) : (
-                          <span className="text-xl text-lime-600">
-                            {calculateTotalSalary().toFixed(2)}
-                          </span>
-                        )}
-                      </div>
-                      <button
-                        type="submit"
-                        className="px-6 py-2 font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400"
+              ) : (
+                <div className="grid w-full gap-6 gid-cols-1 md:grid-cols-2">
+                  {/* Row 1: Employee Name, Type */}
+                  <div className="grid grid-cols-2 gap-6 md:grid-cols-2">
+                    {/* Employee Name */}
+                    <div>
+                      <label
+                        htmlFor="emp_name"
+                        className="mb-1 text-sm font-medium text-gray-700"
                       >
-                        Save Salary Record
-                      </button>
+                        Employee Name
+                      </label>
+                      <input
+                        type="text"
+                        name="emp_name"
+                        value={emp_name}
+                        disabled
+                        className="w-full px-4 py-2 text-base text-black border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                      />
+                    </div>
+                    {/* Type */}
+                    <div>
+                      <label
+                        htmlFor="type"
+                        className="mb-1 text-sm font-medium text-gray-700"
+                      >
+                        Type
+                      </label>
+                      <input
+                        type="text"
+                        name="type"
+                        value={type}
+                        disabled
+                        className="w-full px-4 py-2 text-base text-black border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                      />
                     </div>
                   </div>
+
+                  {/* Row 2: Date Range, Basic Days */}
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div>
+                      <label
+                        htmlFor="basic_days"
+                        className="block mb-1 text-sm font-medium text-gray-700"
+                      >
+                        Basic Days
+                      </label>
+                      <input
+                        type="number"
+                        name="basic_days"
+                        value={basic_days}
+                        onChange={(e) => setBasicDays(e.target.value)}
+                        className="w-full px-3 py-2 text-base text-black border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                        disabled
+                      />
+                      <p className="mt-1 text-xs text-orange-600">
+                        Calculated by analyzing attendance records. Do not
+                        change unless the employee failed to mark attendance on
+                        a present day.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Row 3: Basic Rate, Bonus Salary */}
+                  <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+                    <div>
+                      <label
+                        htmlFor="basic_rate"
+                        className="block mb-1 text-sm font-medium text-gray-700"
+                      >
+                        Basic Salary
+                      </label>
+                      <input
+                        type="number"
+                        name="basic_rate"
+                        value={basic_rate.toFixed(2)}
+                        onChange={(e) => setBasicRate(e.target.value)}
+                        className="w-full px-3 py-2 text-base text-black border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                        disabled
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="bonus_salary"
+                        className="block mb-1 text-sm font-medium text-gray-700"
+                      >
+                        Bonus Salary
+                      </label>
+                      <input
+                        type="number"
+                        name="bonus_salary"
+                        value={bonus_salary}
+                        // onChange={(e) => setBonusSalary(e.target.value)}
+                        onChange={handleBonusSalaryChange}
+                        className="w-full px-3 py-2 text-base text-black border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                      />
+                      {displayError && (
+                        <p className="mt-1 text-xs text-red-600">
+                          {bonusError}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2 md:grid-cols-3">
+                    <div>
+                      <label
+                        htmlFor="ot_hours"
+                        className="block mb-1 text-sm font-medium text-gray-700"
+                      >
+                        Week days OT Hours
+                      </label>
+                      <input
+                        type="number"
+                        name="ot_hours"
+                        value={after_hours.toFixed(2)}
+                        onChange={(e) => setOtHours(e.target.value)}
+                        className="w-full px-3 py-2 text-base text-black border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                        disabled
+                      />
+                    </div>
+
+                    {/* Row 4: Saturday and Sunday OT Hours */}
+                    <div>
+                      <label
+                        htmlFor="saturday_hours"
+                        className="block mb-1 text-sm font-medium text-gray-700"
+                      >
+                        Saturday OT Hours
+                      </label>
+                      <input
+                        type="number"
+                        name="saturday_hours"
+                        value={saturday_hours.toFixed(2)}
+                        onChange={(e) => setSaturdayHours(e.target.value)}
+                        className="w-full px-3 py-2 text-base text-black border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                        disabled
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="sunday_hours"
+                        className="block mb-1 text-sm font-medium text-gray-700"
+                      >
+                        Sunday OT Hours
+                      </label>
+                      <input
+                        type="number"
+                        name="sunday_hours"
+                        value={sunday_hours.toFixed(2)}
+                        onChange={(e) => setSundayHours(e.target.value)}
+                        className="w-full px-3 py-2 text-base text-black border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                        disabled
+                      />
+                    </div>
+                  </div>
+
+                  {/* Row 5: EPF/ETF, Payment Date */}
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <div>
+                      <label
+                        htmlFor="epf_etf"
+                        className="block mb-1 text-sm font-medium text-gray-700"
+                      >
+                        EPF/ETF (%)
+                      </label>
+                      <input
+                        type="number"
+                        name="epf_etf"
+                        value={epf_etf}
+                        onChange={(e) => setEpfEtf(e.target.value)}
+                        className="w-full px-3 py-2 text-base text-black border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                        disabled
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="payment_date"
+                        className="block mb-1 text-sm font-medium text-gray-700"
+                      >
+                        Payment Date
+                      </label>
+                      <DatePicker
+                        value={payment_date ? moment(payment_date) : null}
+                        onChange={(date) => setPaymentDate(date)}
+                        format="YYYY-MM-DD"
+                        disabledDate={(current) =>
+                          current &&
+                          (current < moment(oneWeekBefore) ||
+                            current > moment())
+                        }
+                        className="block w-full h-8 p-2 mt-2 text-base text-black bg-white border-black border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Row 6: Remarks */}
+                  <div>
+                    <label
+                      htmlFor="description"
+                      className="block mb-1 text-sm font-medium text-gray-700"
+                    >
+                      Remarks
+                    </label>
+                    <input
+                      type="text"
+                      name="description"
+                      value={description}
+                      onChange={handleRemarkChange}
+                      className="w-full px-3 py-2 text-base text-black border border-gray-300 rounded-md shadow-sm focus:ring-lime-500 focus:border-lime-500"
+                    />
+                    {displayError && (
+                      <p className="mt-1 text-xs text-red-600">{remarkError}</p>
+                    )}
+                  </div>
                 </div>
-              </form>
-            </div>
-          )}
+              )}
+              {/* Control Bar */}
+              <div className={`relative flex ml-[300px]`} id="controlbar">
+                <div
+                  className={`fixed bottom-0 right-0 z-0 w-full bg-gray-100 bg-opacity-50 border-t border-b h-14 backdrop-blur `}
+                  id="savebar"
+                >
+                  <div
+                    className={`z-30 flex items-center justify-between h-full gap-2 pr-8 text-sm font-semibold align-middle ml-[300px]`}
+                  >
+                    <div className="px-6 py-1 mx-8 text-base font-semibold border border-gray-500 rounded-full">
+                      Total Salary:{" "}
+                      {calculateTotalSalary() <= 0 ||
+                      calculateTotalSalary() > 1000000 ? (
+                        <span className="text-red-500">Invalid salary</span>
+                      ) : (
+                        <span className="text-xl text-lime-600">
+                          {calculateTotalSalary().toFixed(2)}
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      type="submit"
+                      className="px-6 py-2 font-semibold text-white bg-green-500 rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400"
+                    >
+                      Save Salary Record
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
