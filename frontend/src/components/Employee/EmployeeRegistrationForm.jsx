@@ -435,7 +435,15 @@ const Eregistration = () => {
   const handleHourlyRateChange = (e) => {
     const value = e.target.value;
     const filteredValue = value.replace(/[^0-9.]/g, ""); // Allow only numbers
-    setHourlyRate(filteredValue);
+    const numericValue = parseFloat(filteredValue);
+    
+    // Check if the value is less than or equal to 200000
+    if (numericValue <= 200000) {
+      setHourlyRate(filteredValue);
+    } else {
+      setHourlyRate("200000"); // Set to maximum allowed value
+    }
+  
     setDisabledFields({
       ...disabledFields,
       submitted: false,
