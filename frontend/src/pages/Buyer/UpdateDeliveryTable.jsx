@@ -358,6 +358,7 @@ const restrictInputToAlphanumeric = (e) => {
                   disabled={!isPostalCodeEnabled}
                   onKeyPress={restrictInputToNumbers}
                   onPaste={preventNonNumericPaste}
+                  maxLength={5} 
                 />
               </Form.Item>
 
