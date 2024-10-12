@@ -41,29 +41,29 @@ const Packaging = () => {
         calculatePerformanceMetrics(response.data.data);
       }
       setLoading(false); // Stop loading after data fetch
-    }, 150); // Adjust the delay as needed
+    }, 150); // delay 
     } catch (error) {
       console.error("Error fetching packaging data:", error);
     }
   };
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    setSearchText(value);
-  
-    const filteredData = packagingData.filter((item) => {
-      return (
-        item.productName.toLowerCase().includes(value.toLowerCase()) ||
-        item.packagingMaterial.toLowerCase().includes(value.toLowerCase()) ||
-        item.packagingType.toLowerCase().includes(value.toLowerCase()) ||
-        item.status.toLowerCase().includes(value.toLowerCase()) ||
-        item.quantity.toString().includes(value) ||
-        moment(item.packagingDate).format('YYYY-MM-DD').includes(value)
+  const filterData = () => {
+    const filtered = packagingData.filter(item => {
+      const matchesSearch = Object.values(item).some(field =>
+        field?.toString().toLowerCase().includes(searchText.toLowerCase())
       );
+      const matchesStatus = selectedStatus ? item.status === selectedStatus : true;
+      return matchesSearch && matchesStatus;
     });
-  
-    setFilteredData(filteredData);
+    setFilteredData(filtered);
   };
+
+  // Apply filter whenever search text or status changes
+  useEffect(() => {
+    filterData();
+  }, [searchText, selectedStatus, packagingData]);
+
+  
   
 
   // Calculate performance metrics
@@ -82,7 +82,6 @@ const Packaging = () => {
   useEffect(() => {
     fetchPackagingData();
   }, []);
-
   
 
   const showModal = (id) => {
@@ -174,7 +173,7 @@ const getImageDataURL = (url) => {
 // Function to generate PDF
 const generatePDF = async () => {
   const doc = new jsPDF();
-  const logoUrl = '../src/assets/logo.png'; // Update with your actual logo path
+  const logoUrl = '../src/assets/logo.png'; 
 
   let logoDataURL;
   try {
@@ -333,24 +332,24 @@ return (
         <div style={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
           {/* Search Input */}
           <Input
-             placeholder="Search packaging..."
-             value={searchText}
-            onChange={handleSearch}
-             style={{ width: 200, marginRight: 16 }}
-             allowClear
-           />
+            placeholder="Search packaging..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            style={{ width: 200, marginRight: 16 }}
+            allowClear
+          />
 
           {/* Status Filter Dropdown */}
           <Select
-            defaultValue="All"
             value={selectedStatus}
-            onChange={(value) => setSelectedStatus(value)}
+            onChange={setSelectedStatus}
             style={{ width: 120 }}
           >
             <Option value="">All</Option>
             <Option value="Pending">Pending</Option>
             <Option value="Completed">Completed</Option>
           </Select>
+
         </div>
 
         {/* Action Buttons */}
@@ -376,45 +375,70 @@ return (
 
     {/* Packaging Data Table */}
     <Table
-      dataSource={packagingData
-        .filter((item) => item.productName.toLowerCase().includes(searchText.toLowerCase()))
-        .filter((item) => selectedStatus === '' || item.status === selectedStatus)}
-      rowKey="_id"
-      pagination={{ pageSize: 10 }}
-    >
-      <Table.Column title="Product Name" dataIndex="productName" key="productName" />
-      <Table.Column title="Quantity" dataIndex="quantity" key="quantity" />
-      <Table.Column title="Packaging Date" dataIndex="packagingDate" key="packagingDate" render={date => moment(date).format('YYYY-MM-DD')} />
-      <Table.Column title="Status" dataIndex="status" key="status" />
-      <Table.Column title="Packaging Material" dataIndex="packagingMaterial" key="packagingMaterial" />
-      <Table.Column title="Packaging Type" dataIndex="packagingType" key="packagingType" />
-      <Table.Column
-        title="Actions"
-        key="actions"
-        render={(text, record) => (
-          <Space>
-            <Button
-              type="default"
-              icon={<EditOutlined />}
-              onClick={() => showModal(record._id)}
-              style={{ marginRight: 8, backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff' }}
-            />
-            <Button
-              type="default"
-              icon={<DeleteOutlined />}
-              onClick={() => confirmDelete(record._id)}
-              style={{ backgroundColor: '#ff4d4f', borderColor: '#ff4d4f', color: '#fff' }}
-            />
-            <Button
-              type="default"
-              icon={<QrcodeOutlined />}
-              onClick={() => showQrModal(record)}
-              style={{ backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
-            />
-          </Space>
-        )}
-      />
-    </Table>
+      dataSource={filteredData}
+      columns={[
+        {
+          title: 'Product Name',
+          dataIndex: 'productName',
+          key: 'productName',
+        },
+        {
+          title: 'Quantity',
+          dataIndex: 'quantity',
+          key: 'quantity',
+        },
+        {
+          title: 'Packaging Date',
+          dataIndex: 'packagingDate',
+          key: 'packagingDate',
+          render: (text) => moment(text).format('YYYY-MM-DD'),
+        },
+        {
+          title: 'Status',
+          dataIndex: 'status',
+          key: 'status',
+        },
+        {
+          title: 'Packaging Material',
+          dataIndex: 'packagingMaterial',
+          key: 'packagingMaterial',
+        },
+        {
+          title: 'Packaging Type',
+          dataIndex: 'packagingType',
+          key: 'packagingType',
+        },
+        {
+          title: 'Actions',
+          key: 'actions',
+          render: (_, record) => (
+            <Space size="middle">
+                  <Button
+                  type="default"
+                  icon={<EditOutlined />}
+                  onClick={() => showModal(record._id)}
+                  style={{ marginRight: 8, backgroundColor: '#1890ff', borderColor: '#1890ff', color: '#fff' }}
+                />
+                <Button
+                  type="default"
+                  icon={<DeleteOutlined />}
+                  onClick={() => confirmDelete(record._id)}
+                  style={{ backgroundColor: '#ff4d4f', borderColor: '#ff4d4f', color: '#fff' }}
+                />
+                <Button
+                  type="default"
+                  icon={<QrcodeOutlined />}
+                  onClick={() => showQrModal(record)}
+                  style={{ backgroundColor: '#1D6660', borderColor: '#1D6660', color: '#fff' }}
+                />
+            </Space>
+          ),
+        },
+      ]}
+      rowKey={(record) => record._id}
+      pagination={{ pageSize: 6 }}
+    />
+
 
     {/* Packaging Instructions Section */}
     <PackagingInstructions />
@@ -506,7 +530,7 @@ return (
             <Option value="Box">Box</Option>
             <Option value="Bag">Bag</Option>
             <Option value="Pallet">Pallet</Option>
-            {/* Add more options as needed */}
+            
           </Select>
         </Form.Item>
         <Form.Item>
