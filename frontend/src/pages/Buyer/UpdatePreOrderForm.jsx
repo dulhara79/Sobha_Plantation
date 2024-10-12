@@ -11,18 +11,62 @@ const { Option } = Select;
 
 const updateBuyerPreOrderRecords = () => {
   const [form] = Form.useForm();
-  const [orderDate, setorderDate] = useState(null);
+  const [orderDate, setOrderDate] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams(); // Get ID from URL parameters
+  
+  // Validation rules
+  const alphabeticNumericRule = [
+    {
+      pattern: /^[a-zA-Z0-9/\s]*$/,
+      message: "Only alphabetic characters, numbers, spaces, and '/' are allowed.",
+    },
+    {
+      required: true,
+      message: "This field is required.",
+    },
+  ];
 
+  const alphabeticRule = [
+    {
+      pattern: /^[a-zA-Z\s]*$/,
+      message: "Only alphabetic characters are allowed.",
+    },
+    {
+      required: true,
+      message: "This field is required.",
+    },
+  ];
+
+  const numericRule = [
+    {
+      pattern: /^[0-9]*$/,
+      message: "Only numbers are allowed.",
+    },
+    {
+      required: true,
+      message: "This field is required.",
+    },
+  ];
+
+  const phoneRule = [
+    {
+      pattern: /^[0-9]{10}$/,
+      message: "Phone number must be exactly 10 digits.",
+    },
+    {
+      required: true,
+      message: "This field is required.",
+    },
+  ];
 
   // Fetch record by ID
   useEffect(() => {
     const fetchRecord = async () => {
       try {
         const response = await axios.get(`http://localhost:8090/api/buyerPreOrder/${id}`);
-        const data = response.data.PreOrderRecord;
-
+        const data = response.data.BuyerPreOrderRecord;        ;
+        console.log("Record data:", response);
         // Set form values including DatePicker values
         form.setFieldsValue({
           name: data.name || "",
@@ -33,11 +77,8 @@ const updateBuyerPreOrderRecords = () => {
           orderDate: data.orderDate ? moment(data.orderDate) : null,
         });
         
-
         // Update state with DatePicker values
-        orderDate(data.orderDate ? moment(data.orderDate
-          
-        ) : null);
+        setOrderDate(data.orderDate ? moment(data.orderDate) : null);
       } catch (error) {
         notification.error({
           message: "Fetch Error",
@@ -64,7 +105,7 @@ const updateBuyerPreOrderRecords = () => {
         description: "Record has been updated successfully",
       });
 
-      navigate("/BuyerPreOrderTable");
+      navigate("/preorders");
     } catch (error) {
       notification.error({
         message: "Update Error",
@@ -75,7 +116,60 @@ const updateBuyerPreOrderRecords = () => {
 
   // Cancel button handler
   const handleCancel = () => {
-    navigate("/BuyerPreOrderTable");
+    navigate("/preorders");
+  };
+
+  // Placeholder functions for input handlers
+  const handleNameChange = (e) => {
+    console.log("Name changed:", e.target.value);
+  };
+
+  const restrictInputToLetters = (e) => {
+    const char = String.fromCharCode(e.which);
+    if (!/[a-zA-Z]/.test(char)) {
+      e.preventDefault();
+    }
+  };
+
+  const preventNonAlphabeticPaste = (e) => {
+    const clipboardData = e.clipboardData.getData("text/plain");
+    if (!/^[a-zA-Z\s]*$/.test(clipboardData)) {
+      e.preventDefault();
+    }
+  };
+
+  const restrictInputToNumbers = (e) => {
+    const char = String.fromCharCode(e.which);
+    if (!/[0-9]/.test(char)) {
+      e.preventDefault();
+    }
+  };
+
+  const preventNonNumericPaste = (e) => {
+    const clipboardData = e.clipboardData.getData("text/plain");
+    if (!/^[0-9]*$/.test(clipboardData)) {
+      e.preventDefault();
+    }
+  };
+
+  // Address field input handler: allows letters, numbers, spaces, and "/"
+  const restrictInputForAddress = (e) => {
+    const char = String.fromCharCode(e.which);
+    if (!/[a-zA-Z0-9/\s]/.test(char)) {
+      e.preventDefault();
+    }
+  };
+
+  const preventInvalidAddressPaste = (e) => {
+    const clipboardData = e.clipboardData.getData("text/plain");
+    if (!/^[a-zA-Z0-9/\s]*$/.test(clipboardData)) {
+      e.preventDefault();
+    }
+  };
+
+  // Disable all past and today's dates for the date picker
+  const disablePastAndTodayDates = (current) => {
+    return current && current <= moment().endOf('day'); // Disable all past dates and today
   };
 
   return (
@@ -107,7 +201,6 @@ const updateBuyerPreOrderRecords = () => {
               ]}
             />
           </div>
-   
 
           <div className="p-6 mt-4 bg-white rounded-md shadow-md">
             <h1 className="text-2xl font-bold text-center">Update Pre Order Record </h1>
@@ -115,92 +208,92 @@ const updateBuyerPreOrderRecords = () => {
             <Form form={form} layout="vertical" className="mt-6" onFinish={handleSubmit}>
               
               <Form.Item
-                label="Date of Inspection"
-                name="dateOfInspection"
-                rules={[{ required: true, message: "Please select a date of inspection." }]}
+                label="Name"
+                name="name"
+                rules={alphabeticRule}
               >
-                <DatePicker
-                  style={{ width: "100%" }}
-                  disabledDate={disableFutureDates}
-                  value={dateOfInspection}
-                  onChange={(date) => setDateOfInspection(date)}
+                <Input 
+                  placeholder="Enter Name" 
+                  onChange={handleNameChange} 
+                  onKeyPress={restrictInputToLetters} 
+                  onPaste={preventNonAlphabeticPaste} 
                 />
               </Form.Item>
               
               <Form.Item
-                label="Section of Land"
-                name="sectionOfLand"
-                rules={[{ required: true, message: "This field is required." }]}
+                label="Phone"
+                name="phoneNumber"
+                rules={phoneRule}
               >
-                <Select placeholder="Select section of land">
-                  <Option value="A">A</Option>
-                  <Option value="B">B</Option>
-                  <Option value="C">C</Option>
-                  <Option value="D">D</Option>
+                <Input
+                  placeholder="Enter your phone number"
+                  onKeyPress={restrictInputToNumbers}
+                  onPaste={preventNonNumericPaste} 
+                  maxLength={10}
+                />
+              </Form.Item>  
+
+              <Form.Item
+                label="Address"
+                name="address"
+                rules={alphabeticNumericRule}
+              >
+                <Input
+                  placeholder="Enter address"
+                  onKeyPress={restrictInputForAddress} 
+                  onPaste={preventInvalidAddressPaste} 
+                />
+              </Form.Item>
+
+              <Form.Item
+                label="Product Type"
+                name="productType"
+                rules={[{ required: true, message: "Please select your product type" }]}
+              >
+                <Select placeholder="Select your product type">
+                  <Option value="Coconut">Coconut</Option>
+                  <Option value="Banana">Banana</Option>
+                  <Option value="Papaya">Papaya</Option>
+                  <Option value="Pineapple">Pineapple</Option>
+                  <Option value="BlackPepper">Black Pepper</Option>
                 </Select>
               </Form.Item>
-
+              
               <Form.Item
-                label="Identified Pest"
-                name="identifiedPest"
-                rules={[
-                  { pattern: /^[a-zA-Z\s]*$/, message: "Only alphabetic characters are allowed." },
-                  { required: true, message: "This field is required." }
-                ]}
+                label="Product Quantity (Kg)"
+                name="productQuantity"
+                rules={numericRule}
               >
-                <Input placeholder="Enter identified pest" />
+                <Input
+                  placeholder="Enter product quantity"
+                  onKeyPress={restrictInputToNumbers}
+                  onPaste={preventNonNumericPaste} 
+                />
               </Form.Item>
 
               <Form.Item
-                label="Identified Disease"
-                name="identifiedDisease"
+                label="Order Date"
+                name="orderDate"
                 rules={[
-                  { pattern: /^[a-zA-Z\s]*$/, message: "Only alphabetic characters are allowed." },
-                  { required: true, message: "This field is required." }
+                  {
+                    required: true,
+                    message: "Please select your order date",
+                  },
                 ]}
-              >
-                <Input placeholder="Enter identified PreOrder" />
-              </Form.Item>
-
-              <Form.Item
-                label="Inspected By"
-                name="inspectedBy"
-                rules={[
-                  { pattern: /^[a-zA-Z\s]*$/, message: "Only alphabetic characters are allowed." },
-                  { required: true, message: "This field is required." }
-                ]}
-              >
-                <Input placeholder="Enter name of inspector" />
-              </Form.Item>
-
-              <Form.Item
-                label="Inspection Result"
-                name="inspectionResult"
-                rules={[
-                  { pattern: /^[a-zA-Z\s]*$/, message: "Only alphabetic characters are allowed." },
-                  { required: true, message: "This field is required." }
-                ]}
-              >
-                <Input placeholder="Enter the inspection result" />
-              </Form.Item>
-
-              <Form.Item
-                label="Suggested Re-Inspection Date"
-                name="suggestedReInspectionDate"
-                rules={[{ required: true, message: "Please select a re-inspection date." }]}
               >
                 <DatePicker
-                  style={{ width: "100%" }}
-                  disabledDate={disablePastDates}
-                  value={suggestedReInspectionDate}
-                  onChange={(date) => setSuggestedReInspectionDate(date)}
+                  format="YYYY-MM-DD"
+                  disabledDate={disablePastAndTodayDates}
+                  onChange={(date) => setOrderDate(date)}
                 />
               </Form.Item>
 
               <div className="flex justify-center mt-4 space-x-4">
                 <Button type="primary" htmlType="submit" style={{ backgroundColor: "#236A64", color: "#fff" }}>Submit</Button>
-                <Button type="default" htmlType="button" onClick={handleCancel}>Cancel</Button>
+                
+                <Button type="default" onClick={handleCancel}>Cancel</Button>
               </div>
+
             </Form>
           </div>
         </div>

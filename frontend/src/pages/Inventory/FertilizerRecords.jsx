@@ -2,10 +2,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import "../../index.css";
+import { HomeOutlined } from '@mui/icons-material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Breadcrumb, Table, Button, Input, Modal, notification, Select } from "antd";
 import axios from "axios";
-import { Link,useNavigate } from "react-router-dom";
+import { Link,useNavigate,useLocation } from "react-router-dom";
 import moment from "moment";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -17,6 +18,15 @@ Chart.register(ArcElement, Tooltip, Legend);
 const { Search } = Input;
 const { Option } = Select;
 
+const menuItems = [
+  { name: 'Home', path: '/Inventory/InventoryDashboard' },
+  { name: 'Fertilizers & Agrochemicals', path: '/Inventory/FertilizerRecords' },
+  { name: 'Equipments & Machines', path: '/Inventory/EquipmentRecords' },
+  { name: 'Maintenance Records', path: '/Inventory/MaintenanceRecords' },
+  { name: 'Request Payment Details', path: '/Inventory/RequestPaymentRecords' }
+];
+
+
 const FertilizerRecords = () => {
   const [fertilizers, setFertilizers] = useState([]);
   const [filteredFertilizers, setFilteredFertilizers] = useState([]);
@@ -27,10 +37,10 @@ const FertilizerRecords = () => {
   const [totalQuantity, setTotalQuantity] = useState(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const activePage = location.pathname;
 
-  useEffect(() => {
-    fetchFertilizers();
-  }, []);
+  
 
   const fetchFertilizers = async () => {
     try {
@@ -42,23 +52,16 @@ const FertilizerRecords = () => {
     }
   };
 	
-	
+	useEffect(() => {
+    fetchFertilizers();
+  }, []);
 
   const onBackClick = useCallback(() => {
     navigate(-1);
   }, [navigate]);
-  const menuItems = [
-    { name: 'Home', path: '/Inventory/InventoryDashboard' },
-    { name: 'Fertilizers & Agrochemicals', path: '/Inventory/FertilizerRecords' },
-    { name: 'Equipments & Machines', path: '/Inventory/EquipmentRecords' },
-    { name: 'Maintenance Records', path: '/Inventory/MaintenanceRecords' },
-    { name: 'Request Payment Details', path: '/Inventory/RequestPaymentRecords' }
-  ];
 
-  const isActive = (path) => {
-    return window.location.pathname === path;
-  };
 
+  
 
  
 
@@ -320,28 +323,48 @@ const FertilizerRecords = () => {
     },
   };
 
+  const isActive = (page) => activePage === page;
+
   return (
    
-    <div>
-    <Header />
-    <Sidebar className="sidebar" />
-    <div className="ml-[300px] p-5">
-            {/* Navigation Bar */}
-        <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
-          <div className="flex items-center justify-center">
-            <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
-              <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2 cursor-pointer" onClick={onBackClick} />
-              {menuItems.map((item) => (
-                <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
-                  <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </nav>
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      <Header />
+      <div className="flex flex-1">
+     <Sidebar />
+        <div className="ml-[300px] pt-3 flex-1">
+          {/* Navigation Bar */}
+          <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
+            <div className="flex items-center justify-center">
+              <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
+                <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
+                {menuItems.map((item) => (
+                  <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
+                    <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </nav>
 
+          
 
-          <Breadcrumb items={[{ title: 'Home', href: '/' }, { title: 'Fertilizers', href: '/Inventory/FertilizerRecords' }]} />
+         {/* Breadcrumb and Gallery Button */}
+  <div className="flex items-center justify-between mb-5">
+          <Breadcrumb
+            items={[
+              {
+                href: '',
+                title: <HomeOutlined />,
+              },
+              {
+                title: 'Inventory',
+              },
+              {
+                title: 'FertilizerRecords',
+              },
+            ]}
+          />
+      </div>
           
                     {/* Pie chart for status visualization */}
                     <div className="flex flex-col items-center justify-center w-full mt-6 mb-10">
@@ -351,8 +374,11 @@ const FertilizerRecords = () => {
             </div>
           </div>
 
-          <div className="p-6 bg-white rounded-lg shadow-lg">
-          <div className="flex items-center justify-between mb-4">
+            {/* Page Header */}
+            <header className="flex items-center justify-between px-6 py-4 mb-6 bg-white shadow-md">
+            <h1 className="text-2xl font-bold"
+            style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>
+              Fertilizers & Agrochemicals Overview</h1>
             <div className="flex items-center space-x-4">
                 <Search
                   placeholder="Search by any field"
@@ -374,7 +400,8 @@ const FertilizerRecords = () => {
                 </Button>
 
             </div>
-            </div>
+            </header>
+            
           
             <Table
               dataSource={filteredFertilizers}

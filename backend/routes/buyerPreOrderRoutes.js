@@ -11,7 +11,7 @@ const {
 // Routes for PreOrder Management
 router.get("/", getAllBuyerPreOrderRecords);
 router.post("/", createBuyerPreOrderRecords);
-router.get("/:PreOrderId", getBuyerPreOrderRecordsById);
+router.get("/:PreOrderId", getBuyerPreOrderRecordsById); 
 router.put("/:PreOrderId", updateBuyerPreOrderRecords);
 router.delete("/:PreOrderId", deleteBuyerPreOrderRecords);
 

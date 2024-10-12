@@ -3,13 +3,22 @@ const Attendance = require('../../models/Employee/AttendanceModel');
 // Get all attendance records
 exports.getAllAttendance = async (req, res) => {
     try {
-        const attendance = await Attendance.find();
+        const { date } = req.query; // Get date from query parameters
+        let attendance;
+
+        if (date) {
+            // Fetch attendance records for the specified date
+            attendance = await Attendance.find({ date: new Date(date) });
+        } else {
+            // Fetch all attendance records if no date is provided
+            attendance = await Attendance.find();
+        }
+
         res.status(200).json(attendance);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching attendance records', error });
     }
 };
-
 // Get a single attendance record by ID
 exports.getAttendanceById = async (req, res) => {
     const { id } = req.params;
@@ -62,5 +71,20 @@ exports.deleteAttendance = async (req, res) => {
         res.status(200).json({ message: 'Attendance record deleted' });
     } catch (error) {
         res.status(500).json({ message: 'Error deleting attendance record', error });
+    }
+};
+
+// Get attendance records by employee name
+exports.getAttendanceByEmployeeName = async (req, res) => {
+    const { name } = req.params;
+    console.log("backend name: ", name);
+    try {
+        const attendance = await Attendance.find({ name });
+        if (attendance.length === 0) {
+            return res.status(404).json({ message: 'Attendance records not found' });
+        }
+        res.status(200).json(attendance);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching attendance records', error });
     }
 };

@@ -59,6 +59,7 @@ const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
 const buyerRoutes = require("./routes/buyerRoute");
 const buyerDeliveryRoute = require("./routes/buyerDeliveryRoute");
 const buyerInfoRoute = require("./routes/buyerInfoRoute");
+const buyerPreOrderRoute = require("./routes/buyerPreOrderRoutes");
 
 /**
  * Sales and Finance Routes
@@ -142,6 +143,7 @@ app.use("/api/harvest", harvestRoutes);
 app.use("/api/yield", yieldRoutes);
 app.use("/api/compliance-checks", complianceCheckRoutes);
 app.use('/api/quality',quality);
+
 /**
  * crop care
  */
@@ -164,8 +166,9 @@ app.use("/api/plant-growth", plantGrowthRoutes);
  * buyer
  */
 app.use("/api/broute", buyerRoutes);
-app.use("/api/buyerDelivery", buyerDeliveryRoute);
+app.use("/api/deliveryRecords", buyerDeliveryRoute);
 app.use("/api/buyerInfo", buyerInfoRoute);
+app.use('/api/buyerPreOrder', buyerPreOrderRoute);
 
 /**
  * Sales and Finance Routes

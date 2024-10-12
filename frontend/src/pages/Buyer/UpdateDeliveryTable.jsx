@@ -108,7 +108,7 @@ const UpdateBuyerDeliveryRecords = () => {
     try {
       setLoading(true);
 
-      await axios.put(`http://localhost:8090/api/deliveryRecords/${id}`, values);
+      await axios.put(`http://localhost:5000/api/deliveryRecords/${id}`, values);
 
       notification.success({
         message: "Record Updated",
@@ -194,6 +194,20 @@ const restrictInputToAlphanumeric = (e) => {
   const preventNonAlphabeticPaste = (e) => {
     const clipboardData = e.clipboardData.getData("Text");
     if (!/^[a-zA-Z\s]*$/.test(clipboardData)) {
+      e.preventDefault();
+    }
+  };
+  // Address field input handler: allows letters, numbers, spaces, and "/"
+  const restrictInputForAddress = (e) => {
+    const char = String.fromCharCode(e.which);
+    if (!/[a-zA-Z0-9/\s]/.test(char)) {
+      e.preventDefault();
+    }
+  };
+
+  const preventInvalidAddressPaste = (e) => {
+    const clipboardData = e.clipboardData.getData("text/plain");
+    if (!/^[a-zA-Z0-9/\s]*$/.test(clipboardData)) {
       e.preventDefault();
     }
   };
@@ -290,13 +304,19 @@ const restrictInputToAlphanumeric = (e) => {
               <Form.Item
                 label="Address"
                 name="address"
-                rules={alphabeticNumericRule}
+                rules={[
+                  { 
+                    required: true, 
+                    message: "Address is required." 
+                  },
+                ]}
               >
                 <Input
                   placeholder="Enter address"
                   onChange={handleAddressChange}
                   disabled={!isAddressEnabled}
-                  onKeyPress={restrictInputToAlphanumeric}
+                  onKeyPress={restrictInputForAddress} 
+                  onPaste={preventInvalidAddressPaste} 
                 />
               </Form.Item>
 
@@ -351,6 +371,7 @@ const restrictInputToAlphanumeric = (e) => {
                   disabled={!isPhoneEnabled}
                   onKeyPress={restrictInputToNumbers}
                   onPaste={preventNonNumericPaste}
+                  maxLength={10} // Limit input to 10 characters
                 />
               </Form.Item>
 

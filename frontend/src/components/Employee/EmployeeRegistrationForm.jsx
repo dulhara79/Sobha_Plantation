@@ -75,6 +75,12 @@ const Button = styled.button`
     cursor: not-allowed;
   }
 `;
+const BlackText = styled.input`
+  color: black !important;
+`;
+const BlackSelect = styled.select`
+  color: black !important;
+`;
 
 // Helper function for validations
 /*const validateField = (name, value, formData) => {
@@ -186,6 +192,7 @@ const Eregistration = () => {
   const [hiredDate, setHiredDate] = useState("");
   const [hourlyRate, setHourlyRate] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  let count = 0;
 
   //disabled Fields
   const [disabledFields, setDisabledFields] = useState({
@@ -235,7 +242,21 @@ const Eregistration = () => {
     let input = e.target.value;
   
     // Allow only numbers and 'V', 'v', 'X', 'x'
-    let filteredValue = input.replace(/[^0-9xXvV]/g, "");
+    let filteredValue = input.replace(/[^0-9vVxX]/g, "");
+  
+    // Restrict to allow only one occurrence of 'V', 'v', 'X', or 'x'
+    let letterCount = (filteredValue.match(/[vVxX]/g) || []).length;
+  
+    // If there's more than one 'V', 'v', 'X', or 'x', prevent further input
+    if (letterCount > 1) {
+      return; // Stop further input
+    }
+  
+    // If a letter is already entered, prevent any further numbers or letters
+    if (/[vVxX]/.test(filteredValue)) {
+      const index = filteredValue.search(/[vVxX]/); // Find where the letter is
+      filteredValue = filteredValue.substring(0, index + 1); // Keep only up to the letter
+    }
   
     // Regex patterns for old and new NIC numbers
     const oldNicRegex = /^[0-9]{9}[vVxX]?$/; // Old NIC: 9 digits followed by optional 'V', 'v', 'X', or 'x'
@@ -251,14 +272,15 @@ const Eregistration = () => {
       filteredValue = filteredValue.substring(0, 12);
     }
   
+    // Set the filtered value to NIC input
+    setNic(filteredValue);
+  
     // Current year for age restriction
-    const currentYear = new Date().getFullYear();
+    const currentYear = moment().year();
     const minAllowedYear = currentYear - 18; // Minimum allowed birth year (18 years ago)
   
     // Validate old NIC (9 digits + 'V', 'v', 'X', or 'x') or new NIC (12 digits)
     if (oldNicRegex.test(filteredValue) || newNicRegex.test(filteredValue)) {
-      setNic(filteredValue);
-  
       // For old NIC (9 digits + 'V', 'v', 'X', or 'x'), extract the year of birth and set date of birth and gender
       if (filteredValue.length === 10) {
         const yearOfBirth = parseInt(`19${filteredValue.substring(0, 2)}`, 10);
@@ -274,12 +296,10 @@ const Eregistration = () => {
         if (yearOfBirth <= minAllowedYear) {
           setAllowedYear(yearOfBirth);
   
-          // Calculate the full date of birth
-          const dob = new Date(yearOfBirth, 0); // Start with January 1st of that year
-          dob.setDate(dayOfYear); // Set the day of the year
+          // Use Moment.js to calculate the date based on the day of the year
+          const dob = moment(`${yearOfBirth}-01-01`).dayOfYear(dayOfYear); // Correctly handle day-of-year
+          const formattedDate = dob.format('YYYY-MM-DD');
           
-          // Format the date as YYYY-MM-DD
-          const formattedDate = dob.toISOString().split('T')[0];
           setDateOfBirth(formattedDate);
           setGender(gender); // Set gender based on the day of year
   
@@ -307,11 +327,10 @@ const Eregistration = () => {
         }
   
         if (yearOfBirth <= minAllowedYear) {
-          // Calculate the full date of birth
-          const dob = new Date(yearOfBirth, 0); // Start with January 1st of that year
-          dob.setDate(dayOfYear);
+          // Use Moment.js to calculate the date based on the day of the year
+          const dob = moment(`${yearOfBirth}-01-01`).dayOfYear(dayOfYear);
+          const formattedDate = dob.format('YYYY-MM-DD');
   
-          const formattedDate = dob.toISOString().split('T')[0];
           setDateOfBirth(formattedDate);
           setGender(gender); // Set gender
   
@@ -333,6 +352,7 @@ const Eregistration = () => {
     }
   };
   
+
   // Handle Date of Birth Change: Restrict DOB to match NIC (unchanged function)
   const handleDateOfBirthChange = (e) => {
     const inputDate = e.target.value;
@@ -577,7 +597,7 @@ const Eregistration = () => {
 
           <FormGroup>
             <label htmlFor="dateOfBirth">Date of Birth</label>
-            <input
+            <BlackText
               type="date"
               name="dateOfBirth"
               placeholder="Date of Birth"
@@ -595,7 +615,7 @@ const Eregistration = () => {
         <FormRow>
           <FormGroup>
             <label htmlFor="gender">Gender</label>
-            <select
+            <BlackSelect
               name="gender"
               value={gender}
               onChange={handleGenderChange}
@@ -604,7 +624,7 @@ const Eregistration = () => {
               <option value="">Select Gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
-            </select>
+              </BlackSelect>
             {errors.gender && <p>{errors.gender}</p>}
           </FormGroup>
 
@@ -706,11 +726,11 @@ const Eregistration = () => {
           </FormGroup>
 
           <FormGroup>
-            <label htmlFor="hourlyRate">Hourly Rate</label>
+            <label htmlFor="hourlyRate">Basic Salary</label>
             <input
               type="text"
               name="hourlyRate"
-              placeholder="Hourly Rate"
+              placeholder="Basic Salary"
               value={hourlyRate}
               onChange={handleHourlyRateChange}
               disabled={disabledFields.hourlyRate}

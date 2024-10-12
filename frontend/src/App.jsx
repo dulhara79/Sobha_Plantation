@@ -39,6 +39,7 @@ import EditValuationPage from "./pages/SalesAndFinance/Finance/EditValuationPage
 
 import Esalary from "./pages/SalesAndFinance/Finance/Esalary.jsx";
 import ViewSalaryRecordPage from "./pages/SalesAndFinance/Finance/ViewSalaryRecordPage.jsx";
+import EditEmployeeSalaryRecords from "./pages/SalesAndFinance/Finance/EditEmployeeSalaryRecords.jsx";
 
 // inventory
 import FertilizerRecords from "./pages/Inventory/FertilizerRecords.jsx";
@@ -63,6 +64,7 @@ import EditTaskPage from "./pages/employee/EditTaskPage.jsx";
 import ViewTaskList from "./pages/employee/ViewTaskList.jsx";
 import ViewTaskDetails from "./pages/employee/ViewTaskDetails.jsx";
 import GetAttendance from "./pages/employee/GetAttendance.jsx";
+import EditAtendence from "./pages/employee/EditAtendence.jsx";
 import EmployeeList from "./pages/employee/EmployeeList.jsx";
 import EattendenceList from "./pages/employee/EattendenceList.jsx";
 import ViewOneAttendance from "./pages/employee/ViewOneAttendance.jsx";
@@ -80,10 +82,10 @@ import EditHarvestSchedule from "./pages/Harvest/EditHarvestSchedule";
 import EditYieldRecords from "./pages/Harvest/EditYieldRecords.jsx";
 import AddComplianceCheck from "./pages/Harvest/AddComplianceCheck.jsx";
 import EditComplianceCheck from "./pages/Harvest/EditComplianceCheck.jsx";
+import YieldBarChart from "./pages/Harvest/YieldBarChart.jsx";
 import HarvestQuality from "./pages/Harvest/HarvestQuality";
 import AddInspection from "./pages/Harvest/AddInspection.jsx";
 import EditInspection from "./pages/Harvest/EditInspection.jsx";
-import HarvestCal from "./pages/Harvest/HarvestCal.jsx";
 
 // crop care (diseases)
 import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
@@ -150,6 +152,7 @@ import EditLabeling from "./pages/Products/EditLabeling.jsx";
 import Gallery from "./pages/Products/Gallery.jsx";
 import AddPackage from "./pages/Products/AddPackage.jsx";
 import EditPackage from "./pages/Products/EditPackage.jsx";
+import DetailsPage from './components/Products/Packaging/DetailsPage.jsx';
 
 /**
  * field view
@@ -165,10 +168,10 @@ import AddSeedlingForm from "./pages/CropVarieties/AddSeedlingForm.jsx";
 import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
 
 // buyers
-// import Cart from "./pages/Buyer/Cart.jsx";
-import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
-import BuyerTable from "./pages/BuyerTable.jsx";
-import Profile from './components/Profile';
+
+// import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
+// import BuyerTable from "./pages/BuyerTable.jsx";
+// import Profile from './components/Profile';
 import BuyerDashboard from './pages/Buyer/BuyerDashboard.jsx';
 
 import BuyerDelivery from "./pages/Buyer/BuyerDelivery.jsx";
@@ -183,7 +186,9 @@ import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
 // import BuyerPreOrderTable from './pages/Buyer/BuyerPreOrderTable';
 // import UpdateBuyerPreOrderRequests from './pages/Buyer/UpdatePreOrderForm';
 
+
 import PageError from "./pages/PageError.jsx";
+import { element } from "prop-types";
 
 export default function App() {
   return (
@@ -259,6 +264,11 @@ export default function App() {
           />
 
           <Route
+            path="/salesAndFinance/finance/EditEmployeeSalaryRecords/:id"
+            element={<EditEmployeeSalaryRecords />} 
+          />
+
+          <Route
             path="/salesAndFinance/finance/valuation-dashboard"
             element={<ValuationDashboardPage />}
           />
@@ -321,11 +331,11 @@ export default function App() {
             element={<AddRequestPaymentRecord />}
           />
           <Route
-            path="/Inventory/EditRequestPaymentRecord/:id"
+            path="/Inventory/EditRequestPaymentRecords/:id"
             element={<EditRequestPaymentRecord />}
           />
 
-          {/* employee */}
+           {/* employee */}
           <Route path="/employee/dashboard" element={<Edashboard />} />
           <Route path="/employee/registration" element={<Eregistration />} />
           <Route path="/employee/task" element={<EaddTask />} />
@@ -353,6 +363,8 @@ export default function App() {
             path="/employee/viewemployee/:id"
             element={<ViewOneEmployee />}
           />
+          <Route path="/employee/editattendance" element = {<EditAtendence/>}/>
+
 
           {/* harvest */}
           <Route
@@ -380,14 +392,13 @@ export default function App() {
             path="/compliance-checks/editrecords/:id"
             element={<EditComplianceCheck />}
           />
-          
+          <Route path="/yield-bar-chart" element={<YieldBarChart />} />
           <Route path="/harvest/quality" element={<HarvestQuality />} />
           <Route path="/quality/addinspection" element={<AddInspection />} />
           <Route
             path="/quality/editinspection/:id"
             element={<EditInspection />}
           />
-          <Route path ="/harvest/harvestCal" element={<HarvestCal />} />
 
           {/* crop care */}
           <Route path="/diseases" element={<DiseasesDashboard />} />
@@ -475,6 +486,7 @@ export default function App() {
           <Route path="/products/gallery" element={<Gallery />} />
           <Route path="/products/addPackage" element={<AddPackage />} />
           <Route path="/products/editPackage/:id" element={<EditPackage />} />
+          <Route path="/share/:encodedData" element={<DetailsPage />} />
 
           {/* field view  */}
           <Route
@@ -491,10 +503,26 @@ export default function App() {
           <Route path="/pGrowth" element={<PlantGrowth />} />
 
           {/* buyers */}
+          
           {/* <Route path="/buyer-registration" element={<BuyerRegistrationForm />} /> */}
-          <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
+          {/* <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
           <Route path="/buyert" element={<BuyerTable />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<Profile />} /> */}
+
+          <Route path="/Bdelivery" element={<BuyerDelivery />} />
+      <Route path="/Bdeliverytable" element={<BuyerDeliveryTable />} />
+      <Route path="/updateDelivery/:id" element={<UpdateDeliveryTable />} />
+
+      <Route path="/buyerinfo" element={<BuyerInfo />} />
+      <Route path="/buyerinfotable" element={<BuyerInfoTable />} />
+      <Route path="/updateBuyer/:id" element={<UpdateBuyerInfo />} /> 
+
+       {/* <Route path="/create-preorder" element={<BuyerPreOrderForm/> } />
+      <Route path="/preorders" element={<BuyerPreOrderTable/>} />
+      <Route path="/update-preorder/:id" element={<UpdateBuyerPreOrderRequests/>} />  */}
+
+      <Route path="/buyerdashboard" element={<BuyerDashboard />} />
+
 
           {/* page not found & error page */}
           {/* <Route path="/test" element={<Test />} /> */}
