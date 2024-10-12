@@ -301,6 +301,7 @@ const HarvestQuality = () => {
       { title: "Check Date", dataKey: "checkDate" },
       { title: "Quality Status", dataKey: "qualityStatus" },
       { title: "Quality Controller", dataKey: "qualityController" },
+      { title: "Parameters", dataKey: "parameters" },
     ];
 
     // Map the filteredQualityControls data to match the columns
@@ -309,6 +310,7 @@ const HarvestQuality = () => {
       checkDate: moment(qc.checkDate).format("YYYY-MM-DD"),
       qualityStatus: qc.qualityStatus,
       qualityController: qc.qualityController,
+      parameters:qc.parameters,
     }));
 
     let finalY = doc.lastAutoTable.finalY + 10; // Adjust space between tables
@@ -373,7 +375,7 @@ const HarvestQuality = () => {
             </div>
           </nav>
 
-          {/* Breadcrumb and Gallery Button */}
+          
           <div className="flex items-center justify-between mb-5">
             <Breadcrumb
               items={[
@@ -525,6 +527,23 @@ const HarvestQuality = () => {
                 key="qualityController"
                 sorter={true} // Enable sorting
               />
+              <Table.Column
+    title="Parameters"
+    key="parameters"
+    render={(text, record) => {
+        const ripeness = record.parameters?.ripeness || 'N/A';
+        const damage = record.parameters?.damage || 'N/A';
+
+        return (
+            <span>
+                 Ripeness: {ripeness}, Damage: {damage}
+            </span>
+        );
+    }}
+    sorter={true} // Enable sorting
+/>
+
+
               <Table.Column
                 title="Actions"
                 key="actions"

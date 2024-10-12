@@ -4,12 +4,12 @@ import { LeftOutlined } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
-  { name: "HOME", path: "/harvest/harvestdashboard/" },
-  { name: "SCHEDULE", path: "/harvest/harvest-schedule/" },
-  { name: "YIELD", path: "/harvest/yield/" },
-  { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist/" },
+  { name: "HOME", path: "/harvest/harvestdashboard" },
+  { name: "SCHEDULE", path: "/harvest/harvest-schedule" },
+  { name: "YIELD", path: "/harvest/yield" },
+  { name: "QUALITYCHECKING", path: "/harvest/quality" },
+  // { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist" },
 ];
-
 const NavigationButtons = () => {
   const location = useLocation();
   const navigate = useNavigate();

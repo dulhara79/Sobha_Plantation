@@ -17,6 +17,11 @@ const yieldSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    unit: {
+        type: String,
+        enum: ['Kg', 'MetricTon'],
+        required: true,
+      },
     treesPicked: {
         type: Number,
         required: true,

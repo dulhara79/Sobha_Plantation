@@ -157,6 +157,7 @@ const YieldRecords = () => {
       "Field Number",
       "Crop Type",
       "Quantity",
+      "Unit",
       "Trees Picked",
       "Storage Location",
     ];
@@ -164,7 +165,7 @@ const YieldRecords = () => {
       moment(schedule.harvestdate).format("YYYY-MM-DD"),
       schedule.fieldNumber,
       schedule.cropType,
-      schedule.quantity,
+      schedule.unit,
       schedule.treesPicked,
       schedule.storageLocation,
     ]);
@@ -340,6 +341,13 @@ const YieldRecords = () => {
               >
                 Generate PDF Report
               </Button>
+              <Button
+                style={{ backgroundColor: "#60DB19", color: "#fff" }}
+                onClick={() => navigate("/harvest/harvestCal")}  // Navigate on click
+              >
+                Estimate Harvest Calculator
+              </Button>
+
             </div>
           </div>
           <Table
@@ -374,6 +382,15 @@ const YieldRecords = () => {
                 sorter: (a, b) => a.quantity - b.quantity, // Sort numerically
                 sortOrder: sorter.field === "quantity" ? sorter.order : null,
               },
+              {
+                title: "Unit",
+                dataIndex: "unit",
+                key: "unit",
+                sorter: (a, b) => a.unit.localeCompare(b.unit), // Sort alphabetically
+                sortOrder: sorter.field === "unit" ? sorter.order : null,
+              },
+              
+              
               {
                 title: "Trees Picked",
                 dataIndex: "treesPicked",

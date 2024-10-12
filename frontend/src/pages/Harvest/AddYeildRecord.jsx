@@ -26,9 +26,11 @@ const AddSchedule = () => {
   ];
 
   const disableDateRange = (current) => {
-    // Disable future dates and allow only dates from today to 7 days ago
-    const oneWeekAgo = moment().subtract(7, "days").startOf("day");
-    return current && (current > moment().endOf("day") || current < oneWeekAgo);
+    const today = moment().startOf("day");
+    const pastWeek = moment().subtract(7, "days").startOf("day");
+  
+    // Disable dates that are before the past week or after today
+    return current && (current < pastWeek || current > today);
   };
 
   const validateQuantity = (_, value) => {
@@ -137,21 +139,13 @@ const AddSchedule = () => {
               layout="vertical"
               nFieldsChange={(_, allFields) => handleFieldsError(allFields)}
             >
-             <Form.Item
+              {/* Form Item for Harvest Date */}
+           
+<Form.Item
   label="Harvest Date"
   name="harvestdate"
   rules={[
     { required: true, message: "Please select a harvest date!" },
-    {
-      validator: (_, value) => {
-        if (value && value.isBefore(moment().startOf("day"))) {
-          return Promise.resolve();
-        }
-        return Promise.reject(
-          new Error("Harvest date must be within the last week!")
-        );
-      },
-    },
   ]}
 >
   <DatePicker
@@ -204,36 +198,64 @@ const AddSchedule = () => {
               </Form.Item>
 
               <Form.Item
-                label="Quantity"
-                name="quantity"
-                rules={[{ required: true, message: "Quantity is required!" }]}
-              >
-                <InputNumber
-                  placeholder="Quantity Picked"
-                  min={1} // Minimum value set to 1
-                  disabled={
-                    !formData.harvestdate ||
-                    !formData.fieldNumber ||
-                    !formData.cropType
-                  } // Disable based on other fields
-                  onChange={(value) => handleFieldChange("quantity", value)} // Update field value on change
-                  style={{ width: "100%" }} // Make input full width
-                  parser={(value) => value.replace(/\D/g, "")} // Ensure only numbers are entered
-                  onKeyPress={(e) => {
-                    if (!/[0-9]/.test(e.key)) {
-                      e.preventDefault(); // Prevent non-numeric input
-                    }
-                  }}
-                  onPaste={(e) => e.preventDefault()} // Prevent pasting
-                  onBlur={(e) => {
-                    const value = e.target.value;
-                    // Clear input if it's invalid on blur (less than 1)
-                    if (value && value < 1) {
-                      form.setFieldsValue({ quantity: undefined });
-                    }
-                  }}
-                />
-              </Form.Item>
+  label="Quantity"
+  required
+>
+  <Input.Group compact>
+    <Form.Item
+      name="quantity"
+      noStyle
+      rules={[{ required: true, message: "Quantity is required!" }]}
+    >
+      <InputNumber
+        placeholder="Quantity Picked"
+        min={1} // Minimum value set to 1
+        disabled={
+          !formData.harvestdate ||
+          !formData.fieldNumber ||
+          !formData.cropType
+        } // Disable based on other fields
+        onChange={(value) => handleFieldChange("quantity", value)} // Update field value on change
+        style={{ width: "70%" }} // Adjust width for InputNumber
+        parser={(value) => value.replace(/\D/g, "")} // Ensure only numbers are entered
+        onKeyPress={(e) => {
+          if (!/[0-9]/.test(e.key)) {
+            e.preventDefault(); // Prevent non-numeric input
+          }
+        }}
+        onPaste={(e) => e.preventDefault()} // Prevent pasting
+        onBlur={(e) => {
+          const value = e.target.value;
+          // Clear input if it's invalid on blur (less than 1)
+          if (value && value < 1) {
+            form.setFieldsValue({ quantity: undefined });
+          }
+        }}
+      />
+    </Form.Item>
+    
+    <Form.Item
+      name="unit"
+      noStyle
+      rules={[{ required: true, message: "Please select a unit!" }]}
+    >
+      <Select
+        placeholder="Unit"
+        style={{ width: "30%" }} // Adjust width for the Select
+        disabled={
+          !formData.harvestdate ||
+          !formData.fieldNumber ||
+          !formData.cropType ||
+          !formData.quantity         }
+        onChange={(value) => handleFieldChange("unit", value)} // Update field value on change
+      >
+        <Select.Option value="Kg">Kg</Select.Option>
+        <Select.Option value="MetricTon">Metric Ton</Select.Option>
+      </Select>
+    </Form.Item>
+  </Input.Group>
+</Form.Item>
+
 
               <Form.Item
                 label="Trees Picked"
@@ -253,8 +275,8 @@ const AddSchedule = () => {
                     !formData.harvestdate ||
                     !formData.fieldNumber ||
                     !formData.cropType ||
-                    !formData.quantity
-                  } // Disable based on other fields
+                    !formData.quantity ||
+                    !formData.unit  } // Disable based on other fields
                   onChange={(value) => handleFieldChange("treesPicked", value)} // Update field value on change
                   style={{ width: "100%" }} // Make input full width
                   parser={(value) => value.replace(/\D/g, "")} // Ensure only numbers are entered
@@ -288,6 +310,7 @@ const AddSchedule = () => {
                     !formData.fieldNumber ||
                     !formData.cropType ||
                     !formData.quantity ||
+                    !formData.unit||
                     !formData.treesPicked
                   }
                   onChange={(value) =>
@@ -312,6 +335,7 @@ const AddSchedule = () => {
                     !formData.fieldNumber ||
                     !formData.cropType ||
                     !formData.quantity ||
+                    !formData.unit||
                     !formData.treesPicked ||
                     !formData.storageLocation
                   }
