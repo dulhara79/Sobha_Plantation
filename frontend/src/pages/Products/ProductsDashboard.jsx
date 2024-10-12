@@ -94,6 +94,8 @@ const ProductsDashboard = () => {
     navigate(-1);
   }, [navigate]);
 
+
+  
   if (loading) return <LoadingDot />; // Show loading screen if loading is true
 
   return (
