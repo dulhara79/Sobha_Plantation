@@ -240,45 +240,45 @@ const Eregistration = () => {
 
   const handleNicChange = (e) => {
     let input = e.target.value;
-  
+
     // Allow only numbers and 'V', 'v', 'X', 'x'
     let filteredValue = input.replace(/[^0-9vVxX]/g, "");
-  
+
     // Restrict to allow only one occurrence of 'V', 'v', 'X', or 'x'
     let letterCount = (filteredValue.match(/[vVxX]/g) || []).length;
-  
+
     // If there's more than one 'V', 'v', 'X', or 'x', prevent further input
     if (letterCount > 1) {
       return; // Stop further input
     }
-  
+
     // If a letter is already entered, prevent any further numbers or letters
     if (/[vVxX]/.test(filteredValue)) {
       const index = filteredValue.search(/[vVxX]/); // Find where the letter is
       filteredValue = filteredValue.substring(0, index + 1); // Keep only up to the letter
     }
-  
+
     // Regex patterns for old and new NIC numbers
     const oldNicRegex = /^[0-9]{9}[vVxX]?$/; // Old NIC: 9 digits followed by optional 'V', 'v', 'X', or 'x'
     const newNicRegex = /^[0-9]{12}$/; // New NIC: Exactly 12 digits
-  
+
     // Restrict input to a maximum of 10 characters for old NIC
     if (filteredValue.length > 10 && /^[0-9]{9}[vVxX]?$/.test(filteredValue)) {
       filteredValue = filteredValue.substring(0, 10); // Restrict to 10 characters (9 digits + 'V'/'v'/'X'/'x')
     }
-  
+
     // Restrict input to a maximum of 12 characters for new NIC
     if (filteredValue.length > 12) {
       filteredValue = filteredValue.substring(0, 12);
     }
-  
+
     // Set the filtered value to NIC input
     setNic(filteredValue);
-  
+
     // Current year for age restriction
     const currentYear = moment().year();
     const minAllowedYear = currentYear - 18; // Minimum allowed birth year (18 years ago)
-  
+
     // Validate old NIC (9 digits + 'V', 'v', 'X', or 'x') or new NIC (12 digits)
     if (oldNicRegex.test(filteredValue) || newNicRegex.test(filteredValue)) {
       // For old NIC (9 digits + 'V', 'v', 'X', or 'x'), extract the year of birth and set date of birth and gender
@@ -286,23 +286,23 @@ const Eregistration = () => {
         const yearOfBirth = parseInt(`19${filteredValue.substring(0, 2)}`, 10);
         let dayOfYear = parseInt(filteredValue.substring(2, 5), 10);
         let gender = "Male";
-  
+
         // If day of year > 500, it's a female, and subtract 500 from the day
         if (dayOfYear > 500) {
           dayOfYear -= 500;
           gender = "Female";
         }
-  
+
         if (yearOfBirth <= minAllowedYear) {
           setAllowedYear(yearOfBirth);
-  
+
           // Use Moment.js to calculate the date based on the day of the year
           const dob = moment(`${yearOfBirth}-01-01`).dayOfYear(dayOfYear); // Correctly handle day-of-year
-          const formattedDate = dob.format('YYYY-MM-DD');
-          
+          const formattedDate = dob.format("YYYY-MM-DD");
+
           setDateOfBirth(formattedDate);
           setGender(gender); // Set gender based on the day of year
-  
+
           setDisabledFields({
             ...disabledFields,
             dateOfBirth: true, // Disable the date of birth field as it's set automatically
@@ -320,20 +320,20 @@ const Eregistration = () => {
         const yearOfBirth = parseInt(filteredValue.substring(0, 4), 10);
         let dayOfYear = parseInt(filteredValue.substring(4, 7), 10);
         let gender = "Male";
-  
+
         if (dayOfYear > 500) {
           dayOfYear -= 500;
           gender = "Female";
         }
-  
+
         if (yearOfBirth <= minAllowedYear) {
           // Use Moment.js to calculate the date based on the day of the year
           const dob = moment(`${yearOfBirth}-01-01`).dayOfYear(dayOfYear);
-          const formattedDate = dob.format('YYYY-MM-DD');
-  
+          const formattedDate = dob.format("YYYY-MM-DD");
+
           setDateOfBirth(formattedDate);
           setGender(gender); // Set gender
-  
+
           setDisabledFields({
             ...disabledFields,
             dateOfBirth: true, // Disable the date of birth field as it's set automatically
@@ -351,7 +351,6 @@ const Eregistration = () => {
       setNic(filteredValue);
     }
   };
-  
 
   // Handle Date of Birth Change: Restrict DOB to match NIC (unchanged function)
   const handleDateOfBirthChange = (e) => {
@@ -359,7 +358,7 @@ const Eregistration = () => {
     const birthYear = new Date(inputDate).getFullYear();
     const currentYear = new Date().getFullYear();
     const age = currentYear - birthYear;
-  
+
     if (birthYear === parseInt(allowedYear) && age >= 18) {
       setDateOfBirth(inputDate);
       setErrors((prevErrors) => ({ ...prevErrors, dateOfBirth: "" }));
@@ -369,13 +368,13 @@ const Eregistration = () => {
         dateOfBirth: "Invalid date of birth or age less than 18.",
       }));
     }
-  
+
     setDisabledFields({
       ...disabledFields,
       gender: false,
     });
   };
-  
+
   const handleGenderChange = (e) => {
     setGender(e.target.value);
     setDisabledFields({
@@ -397,7 +396,7 @@ const Eregistration = () => {
 
   const handleEmailChange = (e) => {
     const value = e.target.value;
-    const filteredValue = value.replace(/[^0-9a-zA-Z.@]/g, ""); // Remove spaces
+    const filteredValue = value.replace(/[^0-9a-z.@]/g, ""); // Remove spaces
     setEmail(filteredValue);
     setDisabledFields({
       ...disabledFields,
@@ -436,14 +435,14 @@ const Eregistration = () => {
     const value = e.target.value;
     const filteredValue = value.replace(/[^0-9.]/g, ""); // Allow only numbers
     const numericValue = parseFloat(filteredValue);
-    
+
     // Check if the value is less than or equal to 200000
     if (numericValue <= 200000) {
       setHourlyRate(filteredValue);
     } else {
       setHourlyRate("200000"); // Set to maximum allowed value
     }
-  
+
     setDisabledFields({
       ...disabledFields,
       submitted: false,
@@ -484,7 +483,7 @@ const Eregistration = () => {
       try {
         // Register the employee
         await axios.post("http://localhost:5000/api/employee", data);
-        
+
         // Send confirmation email
         await axios.post("http://localhost:5000/api/send-email", {
           to: email,
@@ -493,7 +492,11 @@ const Eregistration = () => {
         });
 
         console.log(data);
-        Swal.fire("Success", "Employee registered successfully and confirmation email sent!", "success");
+        Swal.fire(
+          "Success",
+          "Employee registered successfully and confirmation email sent!",
+          "success"
+        );
         navigate("/employee/employeelist");
       } catch (error) {
         console.error("Error:", error);
@@ -539,26 +542,56 @@ const Eregistration = () => {
     setErrors(newErrors);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
 
-    if (!isFormValidTillField(name)) return; // Block input if the previous fields are invalid
+  //   if (!isFormValidTillField(name)) return; // Block input if the previous fields are invalid
 
-    // Prevent typing invalid characters
-    if (validateField(name, value, formData)[name]) return;
+  //   // Prevent typing invalid characters
+  //   if (validateField(name, value, formData)[name]) return;
 
-    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+  //   setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
 
-    // Special handling for NIC field to dynamically set the year for DOB
-    if (name === "nic") {
-      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
-      handleNICChange(value); // Adjust year when NIC is valid
-      return; // Skip further validation until full NIC is entered
-    }
+  //   // Special handling for NIC field to dynamically set the year for DOB
+  //   if (name === "nic") {
+  //     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+  //     handleNICChange(value); // Adjust year when NIC is valid
+  //     return; // Skip further validation until full NIC is entered
+  //   }
 
-    // Validate the field as the user types
-    const fieldErrors = validateField(name, value, formData);
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: fieldErrors[name] }));
+  //   // Validate the field as the user types
+  //   const fieldErrors = validateField(name, value, formData);
+  //   setErrors((prevErrors) => ({ ...prevErrors, [name]: fieldErrors[name] }));
+  // };
+  const handleClearForm = () => {
+    setFirstName("");
+    setLastName("");
+    setDateOfBirth("");
+    setGender("");
+    setContactNumber("");
+    setEmail("");
+    setNic("");
+    setAddress("");
+    setEmployeeType("");
+    setDesignation("");
+    setHourlyRate("");
+    setErrors({});
+    setAllowedYear(null);
+    setDisabledFields({
+      firstName: false,
+      lastName: true,
+      dateOfBirth: true,
+      gender: true,
+      contactNumber: true,
+      email: true,
+      nic: true,
+      address: true,
+      employeeType: true,
+      designation: true,
+      hiredDate: true,
+      hourlyRate: true,
+      submitted: true,
+    });
   };
 
   return (
@@ -641,7 +674,7 @@ const Eregistration = () => {
               <option value="">Select Gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
-              </BlackSelect>
+            </BlackSelect>
             {errors.gender && <p>{errors.gender}</p>}
           </FormGroup>
 
@@ -714,7 +747,10 @@ const Eregistration = () => {
             >
               <option value="">Select Designation</option>
               <option value="Farmer">Farmer</option>
-              <option value="Pest and Disease Expert"> Pest and Disease Expert </option>
+              <option value="Pest and Disease Expert">
+                {" "}
+                Pest and Disease Expert{" "}
+              </option>
               <option value="Security">Security</option>
             </select>
             {errors.designation && <p>{errors.designation}</p>}
@@ -766,7 +802,7 @@ const Eregistration = () => {
           >
             Register
           </Button>
-          <Button type="button" onClick={() => console.log("Form cleared!")}>
+          <Button type="button" onClick={handleClearForm}>
             Clear Form
           </Button>
         </ButtonGroup>
