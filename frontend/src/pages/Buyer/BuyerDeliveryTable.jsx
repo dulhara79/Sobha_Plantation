@@ -116,7 +116,7 @@ const BuyerDeliveryTable = () => {
   //pdf generation
   const generatePDF = async () => {
     const doc = new jsPDF();
-
+    
     // Define the columns for the table
     const columns = [
       { title: "First Name", dataKey: "firstName" },
