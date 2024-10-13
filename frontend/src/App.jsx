@@ -182,9 +182,9 @@ import BuyerInfo from "./pages/Buyer/BuyerInfo.jsx";
 import BuyerInfoTable from "./pages/Buyer/BuyerInfoTable.jsx";
 import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
 
-// import BuyerPreOrderForm from './pages/Buyer/BuyerPreOrderForm';
-// import BuyerPreOrderTable from './pages/Buyer/BuyerPreOrderTable';
-// import UpdateBuyerPreOrderRequests from './pages/Buyer/UpdatePreOrderForm';
+import BuyerPreOrderForm from './pages/Buyer/BuyerPreOrderForm';
+import BuyerPreOrderTable from './pages/Buyer/BuyerPreOrderTable';
+import UpdateBuyerPreOrderRequests from './pages/Buyer/UpdatePreOrderForm';
 
 
 import PageError from "./pages/PageError.jsx";
@@ -517,9 +517,9 @@ export default function App() {
       <Route path="/buyerinfotable" element={<BuyerInfoTable />} />
       <Route path="/updateBuyer/:id" element={<UpdateBuyerInfo />} /> 
 
-       {/* <Route path="/create-preorder" element={<BuyerPreOrderForm/> } />
+        <Route path="/create-preorder" element={<BuyerPreOrderForm/> } />
       <Route path="/preorders" element={<BuyerPreOrderTable/>} />
-      <Route path="/update-preorder/:id" element={<UpdateBuyerPreOrderRequests/>} />  */}
+      <Route path="/update-preorder/:id" element={<UpdateBuyerPreOrderRequests/>} />  
 
       <Route path="/buyerdashboard" element={<BuyerDashboard />} />
 

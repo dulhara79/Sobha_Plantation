@@ -221,8 +221,10 @@ const BuyerPreOrderTable = () => {
       <Header />
       <div className="flex h-screen">
         <Sidebar />
-        <div className="flex-1 ml-[300px] p-4 overflow-auto">
-          <BuyerNavbar />
+         <div className="flex-1 ml-[300px] p-4 ">
+         
+         {/* <div className="ml-[300px] max-w-full"> */}
+        <BuyerNavbar />
 
           <Breadcrumb
           items={[
@@ -240,6 +242,7 @@ const BuyerPreOrderTable = () => {
           {/* <div className="flex items-center justify-between mt-4"> */}
           <div className="flex mt-4 space-x-4">
             
+
             <Search
               placeholder="Search Buyer Records"
               enterButton={<SearchOutlined />}

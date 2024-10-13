@@ -23,7 +23,7 @@ const menuItems = [
         };
     
         return (
-            <div className="sticky w-screen bg-gray-100 bg-opacity-50 border-b backdrop-blur top-12">
+            <div className="sticky w-full bg-gray-100 bg-opacity-50 border-b backdrop-blur top-12">
                 <header className="">
                     <nav aria-label="Top" className="">
                         <div className="border-gray-200 ">
