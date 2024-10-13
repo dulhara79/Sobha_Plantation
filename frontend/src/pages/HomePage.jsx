@@ -4,7 +4,9 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 // Import your product images
 import product_1 from '../assets/Buyer/product_1.jpg';
@@ -43,7 +45,7 @@ const HomePage = () => {
     const numericValue = value.replace(/\D/g, '');
 
     if (numericValue > 250) {
-      setError({ [productName]: 'You have reached the\nmaximum quantity.' });
+      setError({ [productName]: 'You have reached the maximum quantity.' });
     } else {
       setError({});
     }
@@ -68,19 +70,30 @@ const HomePage = () => {
     }
   };
 
-  const calculateTotalCost = (product) => {
-    return product.price * (quantities[product.name] || 0);
-  };
-
   const calculateOverallTotal = () => {
     return products.reduce((sum, product) => {
-      return sum + calculateTotalCost(product);
+      return sum + product.price * (quantities[product.name] || 0);
     }, 0);
   };
 
   const handleBuyNow = () => {
-    const totalAmount = calculateOverallTotal(); // Calculate total amount here
-    navigate('/payment', { state: { totalAmount, quantities } }); // Pass quantities along with total amount
+    const totalAmount = calculateOverallTotal();
+    navigate('/payment', { state: { totalAmount, quantities } });
+  };
+
+  const handleAddToCart = (product) => {
+    Swal.fire({
+      icon: 'success',
+      title: 'Added to Cart',
+      text: `${product.name} has been added to your cart successfully!`,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  };
+
+  const handleCartClick = () => {
+    const totalAmount = calculateOverallTotal();
+    navigate('/cart', { state: { quantities, totalAmount } });
   };
 
   return (
@@ -94,9 +107,15 @@ const HomePage = () => {
         border: '1px solid #ddd',
       }}
     >
-      <Typography variant="h4" component="h1" align="center" gutterBottom>
-        Our Products
-      </Typography>
+      <Box display="flex" justifyContent="space-between" mb={4}>
+        <Typography variant="h4" component="h1">
+          Our Products
+        </Typography>
+        <IconButton onClick={handleCartClick} sx={{ backgroundColor: '#ffeb3b' }}>
+          <ShoppingCartIcon />
+        </IconButton>
+      </Box>
+
       <Grid container spacing={4}>
         {products.map((product, index) => (
           <Grid item xs={12} sm={6} md={4} key={index}>
@@ -142,7 +161,7 @@ const HomePage = () => {
                       handleQuantityChange(product.name, e.target.value)
                     }
                     inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                    sx={{ width: '190px', textAlign: 'center' }} 
+                    sx={{ width: '190px', textAlign: 'center' }}
                     placeholder="Enter Quantity"
                     error={!!error[product.name]}
                     helperText={error[product.name] || ''}
@@ -151,10 +170,6 @@ const HomePage = () => {
                     <AddIcon />
                   </IconButton>
                 </Box>
-
-                <Typography variant="body2" color="text.secondary" mt={2}>
-                  Total: LKR {calculateTotalCost(product)}
-                </Typography>
 
                 <Box
                   sx={{
@@ -175,7 +190,7 @@ const HomePage = () => {
                     variant="contained"
                     sx={{ backgroundColor: 'green', color: 'white' }}
                     startIcon={<ShoppingCartCheckoutIcon />}
-                    onClick={() => handleBuyNow()}
+                    onClick={handleBuyNow}
                   >
                     Buy Now
                   </Button>
