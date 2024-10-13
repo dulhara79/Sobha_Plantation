@@ -20,6 +20,7 @@
     "http": "^0.0.1-security",
     "joi": "^17.13.3",
     "mongoose": "^8.5.3",
+    "nodemailer": "^6.9.15",
     "recharts": "^2.12.7",
     "socket.io": "^4.7.5"
   },
