@@ -14,7 +14,7 @@ exports.createValuationRecord = async (request, response) => {
         } = request.body;
 
         // Check for all required fields
-        if (!date || !type || !subtype || !quantity || !price || !description || !payer_payee || !appreciationOrDepreciation) {
+        if (!date || !type || !subtype  || !price || !description || !payer_payee ) {
             return response.status(400).send({
                 message: 'Send all required fields',
                 fields: {
@@ -131,3 +131,21 @@ exports.deleteValuationRecord = async (request, response) => {
         response.status(500).send({ message: error.message });
     }
 };
+
+exports.getBalanceSheet = async (req, res) => {
+    try {
+      const assets = await ValuationsRecord.find({ type: 'asset' });
+      const liabilities = await ValuationsRecord.find({ type: 'liability' });
+  
+      // Calculate total values
+      const totalAssets = assets.reduce((sum, asset) => sum + (asset.price || 0), 0);
+      const totalLiabilities = liabilities.reduce((sum, liability) => sum + (liability.price || 0), 0);
+  
+      // Compute equity
+      const equity = totalAssets - totalLiabilities;
+  
+      res.json({ assets, liabilities, equity });
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching valuation data', error });
+    }
+  };
