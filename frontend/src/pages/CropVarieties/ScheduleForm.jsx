@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const ScheduleForm = () => {
   const [disableFields, setDisabledFields] = useState({
-    plantationDate: true, // Initially disabled
+    plantationDate: true,
     assignedTeam: true,
     fieldName: true,
     cropVariety: true,
-    scheduledDate: true,
     seedsUsed: true,
     status: true,
   });
 
+  const today = new Date().toISOString().split("T")[0];
+
   const [formData, setFormData] = useState({
     plantationDate: "",
     assignedTeam: "",
-    fieldName: "", // Initially empty
-    cropVariety: "Coconut", // default value for crop variety
-    scheduledDate: "",
+    fieldName: "",
+    cropVariety: "Coconut",
+    scheduledDate: today,
     seedsUsed: "",
-    status: "Planned", // default value for status
+    status: "Planned",
   });
 
   const [errors, setErrors] = useState({
@@ -30,16 +32,16 @@ const ScheduleForm = () => {
 
   const navigate = useNavigate();
 
-  // Calculate the current date in YYYY-MM-DD format
-  const today = new Date().toISOString().split("T")[0];
+  const oneYearFromToday = new Date();
+  oneYearFromToday.setFullYear(oneYearFromToday.getFullYear() + 1);
+  const maxDate = oneYearFromToday.toISOString().split("T")[0];
 
   useEffect(() => {
-    // Check if today's date has been reached or passed
     const currentDate = new Date().toISOString().split("T")[0];
     if (currentDate >= today) {
       setDisabledFields((prev) => ({
         ...prev,
-        plantationDate: false, // Enable plantation date if it's today or later
+        plantationDate: false,
       }));
     }
   }, [today]);
@@ -48,7 +50,6 @@ const ScheduleForm = () => {
     const { name, value } = e.target;
     let filteredValue = value;
 
-    // Enable fields based on the plantationDate field
     if (name === "plantationDate") {
       setDisabledFields((prev) => ({
         ...prev,
@@ -56,24 +57,22 @@ const ScheduleForm = () => {
       }));
     }
 
-    // Enable the fieldName input to enable cropVariety
     if (name === "fieldName") {
       if (value.trim() !== "") {
         setDisabledFields((prev) => ({
           ...prev,
-          cropVariety: false, // Enable cropVariety if fieldName is filled
+          cropVariety: false,
         }));
       } else {
         setDisabledFields((prev) => ({
           ...prev,
-          cropVariety: true, // Disable cropVariety if fieldName is empty
+          cropVariety: true,
         }));
       }
     }
 
-    // Enable other fields once assignedTeam is filled
     if (name === "assignedTeam") {
-      filteredValue = value.replace(/[^a-zA-Z\s]/g, ''); // Remove non-alphabetic characters
+      filteredValue = value.replace(/[^a-zA-Z\s]/g, ''); 
       setErrors((prevErrors) => ({
         ...prevErrors,
         assignedTeam: filteredValue !== value ? "Assigned Team should contain only letters and spaces." : "",
@@ -83,7 +82,6 @@ const ScheduleForm = () => {
         setDisabledFields((prev) => ({
           ...prev,
           fieldName: false,
-          scheduledDate: false,
           seedsUsed: false,
           status: false,
         }));
@@ -91,27 +89,24 @@ const ScheduleForm = () => {
         setDisabledFields((prev) => ({
           ...prev,
           fieldName: true,
-          scheduledDate: true,
           seedsUsed: true,
           status: true,
         }));
       }
     }
 
-    // Real-time validation for the "Seeds Used" field
     if (name === "seedsUsed") {
       if (value === "" || value <= 0) {
         setErrors((prevErrors) => ({
           ...prevErrors,
           seedsUsed: "Seeds Used must be a positive number.",
         }));
-        filteredValue = ""; // Clear the value if invalid
+        filteredValue = "";
       } else {
         setErrors((prevErrors) => ({ ...prevErrors, seedsUsed: "" }));
       }
     }
 
-    // Update the form data
     setFormData({
       ...formData,
       [name]: filteredValue,
@@ -120,8 +115,7 @@ const ScheduleForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Final validation before submission
+  
     if (formData.seedsUsed === "" || formData.seedsUsed <= 0) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -129,27 +123,48 @@ const ScheduleForm = () => {
       }));
       return;
     }
-
+  
     if (errors.assignedTeam || errors.seedsUsed) {
-      alert("Please correct the errors before submitting.");
+      Swal.fire("Error", "Please correct the errors before submitting.", "error");
       return;
     }
-
+  
     try {
+      // Submit the schedule data
       await axios.post("http://localhost:5000/api/schedules", formData);
-      alert("Schedule created successfully!");
-      navigate("/"); // Redirect after success
+  
+      // Send the email
+      await axios.post("http://localhost:5000/api/send-email", { formData });
+  
+      Swal.fire({
+        title: "Success!",
+        text: "Schedule created successfully and email sent!",
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        navigate(-1);
+      });
     } catch (error) {
-      console.error("There was an error creating the schedule!", error);
-      alert(error.response?.data?.error || "Something went wrong");
+      Swal.fire("Error", error.response?.data?.error || "Something went wrong", "error");
     }
   };
+  
 
   const handleCancel = () => {
-    navigate(-1); // Go back to the previous page
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You will lose any unsaved data.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, cancel",
+      cancelButtonText: "No, stay",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate(-1);
+      }
+    });
   };
 
-  // Internal CSS for styling the form
   const formStyle = {
     width: "300px",
     margin: "20px auto",
@@ -175,10 +190,9 @@ const ScheduleForm = () => {
     fontSize: "14px",
   };
 
-  // Button styles with same size for both
   const buttonStyle = {
     padding: "10px 20px",
-    width: "120px", // Same width for both buttons
+    width: "120px",
     backgroundColor: "#4CAF50",
     color: "white",
     border: "none",
@@ -191,12 +205,12 @@ const ScheduleForm = () => {
 
   const cancelButtonStyle = {
     ...buttonStyle,
-    backgroundColor: "#f44336", // Red color for cancel button
+    backgroundColor: "#f44336",
   };
 
   const selectStyle = {
     ...inputStyle,
-    appearance: "none", // Hide the default arrow of the dropdown
+    appearance: "none",
   };
 
   const errorStyle = {
@@ -216,7 +230,8 @@ const ScheduleForm = () => {
           disabled={disableFields.plantationDate}
           required
           style={inputStyle}
-          min={today} // Set min attribute to today's date to disable past dates
+          min={today}
+          max={maxDate}
         />
       </div>
 
@@ -244,7 +259,7 @@ const ScheduleForm = () => {
           required
           style={selectStyle}
         >
-          <option value="">Select Field</option> {/* Add a default empty option */}
+          <option value="">Select Field</option>
           <option value="Field A">Field A</option>
           <option value="Field B">Field B</option>
           <option value="Field C">Field C</option>
@@ -276,11 +291,9 @@ const ScheduleForm = () => {
           type="date"
           name="scheduledDate"
           value={formData.scheduledDate}
-          onChange={handleChange}
-          disabled={disableFields.scheduledDate}
+          disabled
           required
           style={inputStyle}
-          max={today} // Set max attribute to today's date
         />
       </div>
 
@@ -294,6 +307,7 @@ const ScheduleForm = () => {
           disabled={disableFields.seedsUsed}
           required
           style={inputStyle}
+          min="1"
         />
         {errors.seedsUsed && <p style={errorStyle}>{errors.seedsUsed}</p>}
       </div>
@@ -314,11 +328,11 @@ const ScheduleForm = () => {
         </select>
       </div>
 
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div style={{ textAlign: "center" }}>
         <button type="submit" style={buttonStyle}>
           Submit
         </button>
-        <button type="button" onClick={handleCancel} style={cancelButtonStyle}>
+        <button type="button" style={cancelButtonStyle} onClick={handleCancel}>
           Cancel
         </button>
       </div>
