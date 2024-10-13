@@ -14,11 +14,13 @@ exports.createSalaryRecord = async (request, response) => {
             'type',
             'basic_days',
             'basic_rate',
-            'bonus_salary',
-            'ot_hours',
+            // 'bonus_salary',
+            // 'after_hours',
+            // 'saturday_hours',
+            // 'sunday_hours',
             'ot_rate',
             'epf_etf',
-            'description',
+            // 'description',
             "isPaid"
         ];
 
@@ -40,7 +42,9 @@ exports.createSalaryRecord = async (request, response) => {
             basic_days: request.body.basic_days,
             basic_rate: request.body.basic_rate,
             bonus_salary: request.body.bonus_salary,
-            ot_hours: request.body.ot_hours,
+            week_hours: request.body.after_hours,
+            saturday_hours: request.body.saturday_hours,
+            sunday_hours: request.body.sunday_hours,
             ot_rate: request.body.ot_rate,
             epf_etf: request.body.epf_etf,
             description: request.body.description,
@@ -157,38 +161,49 @@ exports.deleteSalaryRecord = async (request, response) => {
 //     }
 //   };
 
-exports.getSalaryRecordsByEmpName = async (req, res) => { 
-  try {
-    const { emp_name } = req.params;
-    const { startDate, endDate } = req.query;
+exports.getSalaryRecordsByEmpName = async (req, res) => {
+    try {
+        const { emp_name } = req.params;
+        const { startDate, endDate } = req.query;
 
-    if (!emp_name || !startDate || !endDate) {
-      return res.status(400).json({ error: "Missing required parameters" });
+        if (!emp_name || !startDate || !endDate) {
+            return res.status(400).json({ error: "Missing required parameters" });
+        }
+
+        // const startOfMonth = moment(startDate).startOf("month").toDate();
+        // const endOfMonth = moment(endDate).endOf("month").toDate();
+
+        const startOfMonth = moment(startDate).startOf("month").format("YYYY-MM-DD");
+const endOfMonth = moment(endDate).endOf("month").format("YYYY-MM-DD");
+
+
+        console.log("startOfMonth: ", startOfMonth);
+        console.log("endOfMonth: ", endOfMonth);
+
+        const recordExists = await SalariesRecord.findOne({
+            emp_name,
+            payment_date: { $gte: startOfMonth, $lte: endOfMonth },
+        });
+
+        console.log("recordExists: ", recordExists);
+
+        if (recordExists) {
+            return res.status(200).json({ 
+                success: false, 
+                message: "Salary already paid for this period.",
+                data: recordExists,
+                isPaid: recordExists.isPaid,
+            });
+        } else {
+            return res.status(200).json({ 
+                success: true, 
+                message: "Salary not paid yet.",
+                isPaid: false,
+            });
+        }
+    } catch (error) {
+        console.error("Internal server error:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
-
-    const startOfMonth = moment(startDate).startOf("month").toDate();
-    const endOfMonth = moment(endDate).endOf("month").toDate();
-
-    const recordExists = await SalariesRecord.findOne({
-      emp_name: emp_name,
-      payment_date: { $gte: startOfMonth, $lte: endOfMonth },
-    });
-
-    if (recordExists) {
-      return res.status(200).json({ 
-        success: false, 
-        message: "Salary already paid for this period.",
-        data: recordExists,
-        isPaid: recordExists.isPaid
-      });
-    } else {
-      return res.status(200).json({ 
-        success: true, 
-        message: "Salary not paid yet.",
-        isPaid: false
-      });
-    }
-  } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
-  }
 };
+

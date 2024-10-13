@@ -240,6 +240,7 @@ const restrictInputToAlphanumeric = (e) => {
                 <Input placeholder="Enter your phone number" 
                 onKeyPress={restrictInputToNumbers} 
                 onPaste={preventNonNumericPaste}
+                maxLength={10}
                 />
               </Form.Item>
               

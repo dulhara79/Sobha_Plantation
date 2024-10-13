@@ -5,7 +5,7 @@ import NavigationButtons from "../../../components/Sales_and_Finance/NavigationB
 
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
-import DisplayEmployeeSalary from "../../../components/Sales_and_Finance/Finance/EditEmployeeSalary";
+import EditEmployeeSalary from "../../../components/Sales_and_Finance/Finance/EditEmployeeSalary";
 
 import NewLoadingScreen from '../../../components/LoadingDots'
 
@@ -57,7 +57,7 @@ const Esalary = () => {
         />
         <div className="grid sm:grid-cols-6">
         <NavigationButtons />
-        <DisplayEmployeeSalary />
+        <EditEmployeeSalary />
         </div>
       </div>
     </div>
