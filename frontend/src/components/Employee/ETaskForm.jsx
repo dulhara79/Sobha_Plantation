@@ -126,6 +126,18 @@ const ETaskForm = () => {
     return today.toISOString().split("T")[0]; // Returns date in 'YYYY-MM-DD' format
   };
 
+  // Helper function to get the first day of the current year
+  const getFirstDayOfYear = () => {
+    const currentYear = new Date().getFullYear();
+    return `${currentYear}-01-01`;
+  };
+
+  // Helper function to get the last day of the current year
+  const getLastDayOfYear = () => {
+    const currentYear = new Date().getFullYear();
+    return `${currentYear}-12-31`;
+  };
+
   return (
     <div className="pt-2">
       <div className="flex items-center justify-between mt-6 ml-80">
@@ -156,7 +168,6 @@ const ETaskForm = () => {
                     value={emp_id}
                     onChange={handleEmployeeChange}
                     className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-
                     required
                   >
                     <option value="">Select an employee</option>
@@ -179,11 +190,10 @@ const ETaskForm = () => {
                     value={task}
                     onChange={(e) => setTask(e.target.value)}
                     className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
-
                       errors.task ? "border-red-500" : ""
                     }`}
                     required
-                        disabled={!emp_id}
+                    disabled={!emp_id}
                   />
                   {errors.task && (
                     <p className="text-sm text-red-500">{errors.task}</p>
@@ -192,7 +202,6 @@ const ETaskForm = () => {
               </div>
               <div className="col-span-full">
                 <label className="block text-sm font-medium leading-6 text-black">
-
                   Assign Date
                 </label>
                 <div className="mt-2">
@@ -200,10 +209,10 @@ const ETaskForm = () => {
                     type="date"
                     name="assign_date"
                     value={assign_date}
-                    min={getTodayDate()} // Set minimum date to today
+                    min={getFirstDayOfYear()}
+                    max={getLastDayOfYear()}
                     onChange={(e) => setAssign_date(e.target.value)}
                     className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
-
                       errors.assign_date ? "border-red-500" : ""
                     }`}
                     required
@@ -213,7 +222,6 @@ const ETaskForm = () => {
               </div>
               <div className="col-span-full">
                 <label className="block text-sm font-medium leading-6 text-black">
-
                   Due Date
                 </label>
                 <div className="mt-2">
@@ -221,10 +229,10 @@ const ETaskForm = () => {
                     type="date"
                     name="due_date"
                     value={due_date}
-                    min={assign_date || getTodayDate()} // Set minimum date to assign_date or today
+                    min={assign_date || getFirstDayOfYear()}
+                    max={getLastDayOfYear()}
                     onChange={(e) => setDue_date(e.target.value)}
                     className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
-
                       errors.due_date ? "border-red-500" : ""
                     }`}
                     required
