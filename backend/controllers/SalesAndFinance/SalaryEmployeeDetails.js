@@ -12,7 +12,7 @@ exports.createSalaryRecord = async (request, response) => {
             'salary_end_date',
             'nic',
             'type',
-            'basic_days',
+            // 'basic_days',
             'basic_rate',
             // 'bonus_salary',
             // 'after_hours',
@@ -21,7 +21,8 @@ exports.createSalaryRecord = async (request, response) => {
             'ot_rate',
             'epf_etf',
             // 'description',
-            "isPaid"
+            // "isPaid",
+            "partialPayment"
         ];
 
         const missingFields = requiredFields.filter(field => !request.body[field]);
@@ -49,12 +50,14 @@ exports.createSalaryRecord = async (request, response) => {
             epf_etf: request.body.epf_etf,
             description: request.body.description,
             isPaid: request.body.isPaid,
+            partialPayment: request.body.partialPayment,
+            netSalary: request.body.netSalary,
         };
 
         console.log(NewSalaryRecord);
 
         const SalaryRecord = await SalariesRecord.create(NewSalaryRecord);
-        return response.status(201).send(SalaryRecord);
+        return response.status(201).send({SalaryRecord, id: SalaryRecord._id});
 
     } catch (error) {
         console.log(error.message);
