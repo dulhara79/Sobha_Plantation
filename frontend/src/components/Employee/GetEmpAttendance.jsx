@@ -74,13 +74,13 @@ const GetEmpAttendance = () => {
 
     return (
         <div className="flex justify-center">
-            <div className="w-1/4 p-4 bg-gray-100">
-                <h2 className="mb-4 text-lg font-semibold">Current Date</h2>
+            <div className="w-1/4 bg-gray-100 p-4">
+                <h2 className="text-lg font-semibold mb-4">Current Date</h2>
                 <input
                     type="date"
                     value={selectedDate}
                     readOnly
-                    className="w-full p-2 bg-gray-200 border rounded cursor-not-allowed"
+                    className="cursor-not-allowed p-2 w-full border rounded bg-gray-200"
                 />
             </div>
             <div className="w-3/4 p-4">
