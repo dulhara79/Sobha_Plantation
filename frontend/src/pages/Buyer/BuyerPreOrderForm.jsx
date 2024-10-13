@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import { HomeOutlined, LeftOutlined } from "@ant-design/icons";
-import { Breadcrumb, Button, Input, Form, notification, Select } from "antd"; // Added Select here
+import { Breadcrumb, Button, Input, Form, notification, Select } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import dayjs from "dayjs"; // Added dayjs import
+import dayjs from "dayjs";
 
-const { Option } = Select; // Destructured Option from Select
+const { Option } = Select;
 
 const AddPreOrderRecords = () => {
   const [form] = Form.useForm();
@@ -96,7 +96,6 @@ const AddPreOrderRecords = () => {
     }
   };
 
-  // Update enabling/disabling logic
   const handleNameChange = (e) => {
     setIsPhoneNumberEnabled(!!e.target.value);
   };
@@ -109,20 +108,18 @@ const AddPreOrderRecords = () => {
     setIsProductTypeEnabled(!!e.target.value);
   };
 
-  const handleProductTypeChange = (e) => {
-    setIsProductQuantityEnabled(!!e.target.value);
+  const handleProductTypeChange = (value) => {
+    setIsProductQuantityEnabled(!!value);
   };
 
   const handleProductQuantityChange = (e) => {
     setIsorderDateEnabled(!!e.target.value);
   };
-  
 
   const handleCancel = () => {
     navigate("/preorders");
   };
 
-  // Helper functions to lock key presses for specific fields
   const restrictInputToNumbers = (e) => {
     const key = e.key;
     if (!/[0-9]/.test(key)) {
@@ -154,6 +151,21 @@ const AddPreOrderRecords = () => {
   const preventNonAlphabeticPaste = (e) => {
     const clipboardData = e.clipboardData.getData("Text");
     if (!/^[a-zA-Z\s]*$/.test(clipboardData)) {
+      e.preventDefault();
+    }
+  };
+
+  // Address field input handler: allows letters, numbers, spaces, and "/"
+  const restrictInputForAddress = (e) => {
+    const char = String.fromCharCode(e.which);
+    if (!/[a-zA-Z0-9/\s]/.test(char)) {
+      e.preventDefault();
+    }
+  };
+
+  const preventInvalidAddressPaste = (e) => {
+    const clipboardData = e.clipboardData.getData("text/plain");
+    if (!/^[a-zA-Z0-9/\s]*$/.test(clipboardData)) {
       e.preventDefault();
     }
   };
@@ -226,19 +238,27 @@ const AddPreOrderRecords = () => {
                   onChange={handlePhoneNumberChange}
                   onKeyPress={restrictInputToNumbers}
                   onPaste={preventNonNumericPaste} 
+                  maxLength={10}
                 />
               </Form.Item>  
 
               <Form.Item
                 label="Address"
                 name="address"
-                rules={alphabeticNumericRule}
+                rules={[
+                  { 
+                    required: true, 
+                    message: "Address is required." 
+                  },
+                ]}
               >
                 <Input
                   placeholder="Enter address"
                   disabled={!isAddressEnabled}
                   onChange={handleAddressChange}
-                  onKeyPress={restrictInputToAlphanumeric} 
+                  onKeyPress={restrictInputForAddress} 
+                  onPaste={preventInvalidAddressPaste} 
+                  
                 />
               </Form.Item>
 
@@ -267,8 +287,8 @@ const AddPreOrderRecords = () => {
               >
                 <Input
                   placeholder="Enter product quantity"
-                  // disabled={!isProductQuantityEnabled}
-                  // onChange={handleProductQuantityChange}
+                  disabled={!isProductQuantityEnabled}
+                  onChange={handleProductQuantityChange}
                   onKeyPress={restrictInputToNumbers}
                   onPaste={preventNonNumericPaste} 
                 />
@@ -284,17 +304,16 @@ const AddPreOrderRecords = () => {
                   },
                   {
                     validator: (_, value) =>
-                      value && dayjs(value).isBefore(dayjs(), "day")
-                        ? Promise.reject(new Error("Past dates are not allowed"))
+                      value && dayjs(value).isBefore(dayjs().add(1, "day"), "day")
+                        ? Promise.reject(new Error("Past dates and today's date are not allowed"))
                         : Promise.resolve(),
                   },
                 ]}
               >
                 <Input
                   type="date"
-                  // disabled={!isorderDateEnabled}
-                  // onChange={handleorderDateChange}
-                  min={dayjs().format("YYYY-MM-DD")} // Disable past dates
+                  disabled={!isorderDateEnabled}
+                  min={dayjs().add(1, "day").format("YYYY-MM-DD")}
                 />
               </Form.Item>
 
@@ -303,16 +322,13 @@ const AddPreOrderRecords = () => {
                   type="primary"
                   htmlType="submit"
                   loading={loading}
-                  style={{ backgroundColor: "#236A64", color: "#fff", padding: "0 24px" }}
+                  disabled={loading}
                 >
                   Submit
                 </Button>
                 <Button
-                  type="default"
-                  htmlType="button"
                   onClick={handleCancel}
-                  className="ml-2"
-                  style={{ backgroundColor: "#FB4444", color: "#fff", padding: "0 24px" }}
+                  className="ml-4"
                 >
                   Cancel
                 </Button>

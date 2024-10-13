@@ -482,6 +482,7 @@ const Eregistration = () => {
     if (result.isConfirmed) {
       try {
         // Register the employee
+        // Register the employee
         await axios.post("http://localhost:5000/api/employee", data);
   
         // Show success message immediately after registration
@@ -510,9 +511,10 @@ const Eregistration = () => {
   
       } catch (error) {
         console.error("Error:", error);
+        console.error("Error:", error);
         Swal.fire(
           "Error",
-          "Failed to register employee. Please try again.",
+          "Failed to register employee or send email. Please try again.",
           "error"
         );
       }

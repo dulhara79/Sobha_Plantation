@@ -95,7 +95,7 @@ const UpdateBuyerInfoRecords = () => {
       console.log("Updating with values: ", updatedValues);
 
       // Make a PUT request to update the record
-      await axios.put(`http://localhost:5000/api/buyerInfo/${id}`, updatedValues);
+      await axios.put(`http://localhost:8090/api/buyerInfo/${id}`, updatedValues);
 
 
       notification.success({
@@ -240,6 +240,7 @@ const restrictInputToAlphanumeric = (e) => {
                 <Input placeholder="Enter your phone number" 
                 onKeyPress={restrictInputToNumbers} 
                 onPaste={preventNonNumericPaste}
+                maxLength={10}
                 />
               </Form.Item>
               

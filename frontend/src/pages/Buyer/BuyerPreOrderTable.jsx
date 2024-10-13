@@ -1,3 +1,4 @@
+///
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Breadcrumb, Table, Button, Input, Modal, notification } from "antd";
@@ -16,7 +17,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import LogoImage from "../../assets/Logo.png";
 import "../../index.css";
-
+import BuyerNavbar from "../../components/Buyer/Header/BuyerNavbar";
 const { Search } = Input;
 
 const BuyerPreOrderTable = () => {
@@ -64,7 +65,7 @@ const BuyerPreOrderTable = () => {
 
   // Handle update PreOrder record
   const handleUpdate = (id) => {
-    navigate(`/updateBuyer/${id}`);
+    navigate(`/update-preorder/${id}`);
   };
 
   // Confirm before deleting an PreOrder record
@@ -220,61 +221,17 @@ const BuyerPreOrderTable = () => {
       <Header />
       <div className="flex h-screen">
         <Sidebar />
-        <div className="flex-1 ml-[300px] p-4 overflow-auto">
-          <nav className="flex items-center justify-between p-4 bg-transparent">
-            <button
-              onClick={() => window.history.back()}
-              className="text-gray-600 hover:text-gray-800"
-            >
-              <LeftOutlined className="text-xl" />
-            </button>
-            <div className="flex space-x-4">
-            <Link
-                to="/buyerdashboard"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Home
-              </Link>
-              <Link
-                to="/preorders"
-                
-                
-                className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold"
-              >
-                Pre Order 
-              </Link>
-              
-              <Link
-                to="/buyerinfotable"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-                >
-                
-              
-                 Buyer Records
-              </Link>
-              <Link
-                to="/Bdeliverytable"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                 Delivery Records
-              </Link>
-            </div>
-          </nav>
+         <div className="flex-1 ml-[300px] p-4 ">
+         
+         {/* <div className="ml-[300px] max-w-full"> */}
+        <BuyerNavbar />
 
-          <div className="mt-4">
-            <Breadcrumb
-              items={[
-                {
-                  href: "",
-                  title: <HomeOutlined />,
-                },
-                {
-                  href: "",
-                  title: "PreOrder Records",
-                },
-              ]}
-            />
-          </div>
+          <Breadcrumb
+          items={[
+            { href: '', title: <HomeOutlined /> },
+            { href: '', title: 'Manage Pre Orders' },
+          ]}
+        />
           {/* Topic Heading */}
           <div className="flex items-center justify-center">
               <h1 className="text-5xl font-semibold">
@@ -285,6 +242,7 @@ const BuyerPreOrderTable = () => {
           {/* <div className="flex items-center justify-between mt-4"> */}
           <div className="flex mt-4 space-x-4">
             
+
             <Search
               placeholder="Search Buyer Records"
               enterButton={<SearchOutlined />}
@@ -318,7 +276,7 @@ const BuyerPreOrderTable = () => {
               }}
               onClick={() => navigate("/create-preorder")}
             >
-              + Add New Buyer Record
+              + Add New Pre Order Record
             </Button>
           </div>
         </div>

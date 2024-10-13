@@ -72,7 +72,7 @@ const AddDeliveryRecords = () => {
       setLoading(true);
       const { firstName, lastName, email, address, city, country, postalCode, phone } = values;
 
-      await axios.post("http://localhost:5000/api/deliveryRecords", {
+      await axios.post("http://localhost:8090/api/deliveryRecords", {
         firstName,
         lastName,
         email,
@@ -187,6 +187,20 @@ const restrictInputToAlphanumeric = (e) => {
       e.preventDefault();
     }
   };
+  // Address field input handler: allows letters, numbers, spaces, and "/"
+  const restrictInputForAddress = (e) => {
+    const char = String.fromCharCode(e.which);
+    if (!/[a-zA-Z0-9/\s]/.test(char)) {
+      e.preventDefault();
+    }
+  };
+
+  const preventInvalidAddressPaste = (e) => {
+    const clipboardData = e.clipboardData.getData("text/plain");
+    if (!/^[a-zA-Z0-9/\s]*$/.test(clipboardData)) {
+      e.preventDefault();
+    }
+  };
 
   return (
     <div>
@@ -284,13 +298,19 @@ const restrictInputToAlphanumeric = (e) => {
               <Form.Item
                 label="Address"
                 name="address"
-                rules={alphabeticNumericRule}
+                rules={[
+                  { 
+                    required: true, 
+                    message: "Address is required." 
+                  },
+                ]}
               >
                 <Input
                   placeholder="Enter address"
                   onChange={handleAddressChange}
                   disabled={!isAddressEnabled}
-                  onKeyPress={restrictInputToAlphanumeric} 
+                  onKeyPress={restrictInputForAddress} 
+                  onPaste={preventInvalidAddressPaste} 
                 />
               </Form.Item>
 
@@ -332,6 +352,7 @@ const restrictInputToAlphanumeric = (e) => {
                   disabled={!isPostalCodeEnabled}
                   onKeyPress={restrictInputToNumbers} // Only allow numbers
                   onPaste={preventNonNumericPaste} // Prevent non-numeric paste
+                  maxLength={5} 
                 />
               </Form.Item>
 
@@ -344,6 +365,7 @@ const restrictInputToAlphanumeric = (e) => {
     placeholder="Enter your phone number"
     disabled={!isPhoneEnabled}
     onKeyPress={restrictInputToNumbers} // Restrict to numbers only and prevent more than 10 digits
+    maxLength={10} // Limit to 10 digits
     onPaste={preventNonNumericPaste}    // Prevent non-numeric paste
     value={contactNumber}               // Controlled input for the phone number
     onChange={handlePhoneChange}        // Update the state with valid input

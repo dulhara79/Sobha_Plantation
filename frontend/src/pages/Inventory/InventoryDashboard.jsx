@@ -1,3 +1,4 @@
+
 import React, { useCallback } from "react";
 import { Chart as ChartJS, ArcElement } from "chart.js";
 import { Pie } from "react-chartjs-2";
@@ -92,22 +93,26 @@ const InventoryDashboard = () => {
 
 
   return (
-    <div>
-    <Header />
-    <Sidebar className="sidebar" />
-    <div className="ml-[300px] p-5">
-    <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
-          <div className="flex items-center justify-center">
-            <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
-              <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
-              {menuItems.map((item) => (
-                <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
-                  <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </nav>
+     
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      <Header />
+      <div className="flex flex-1">
+     <Sidebar />
+        <div className="ml-[300px] pt-3 flex-1">
+          {/* Navigation Bar */}
+          <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
+            <div className="flex items-center justify-center">
+              <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
+                <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
+                {menuItems.map((item) => (
+                  <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
+                    <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </nav>
+
         <div className="flex items-center justify-between mb-5">
         <Breadcrumb
              items={[
@@ -190,6 +195,7 @@ const InventoryDashboard = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
     </div>
   );

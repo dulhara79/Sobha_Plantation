@@ -24,6 +24,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { DeleteFilled, EditFilled } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+
 
 const ViewSalaryRecord = () => {
   const [loading, setLoading] = useState(false);
@@ -49,26 +51,52 @@ const ViewSalaryRecord = () => {
       });
   }, []);
 
+  // const handleDeleteSalaryRecord = (id) => {
+  //   if (window.confirm("Are you sure you want to delete this salary record?")) {
+  //     setLoading(true);
+  //     axios
+  //       .delete(
+  //         `http://localhost:5000/api/salesAndFinance/finance/salary/${id}`
+  //       )
+  //       .then(() => {
+  //         setSalaryRecords((prev) =>
+  //           prev.filter((record) => record._id !== id)
+  //         );
+  //         message.success("Salary record deleted.");
+  //         setLoading(false);
+  //       })
+  //       .catch((error) => {
+  //         setLoading(false);
+  //         message.error("Failed to delete salary record.");
+  //         console.log(error);
+  //       });
+  //   }
+  // };
+
   const handleDeleteSalaryRecord = (id) => {
-    if (window.confirm("Are you sure you want to delete this salary record?")) {
-      setLoading(true);
-      axios
-        .delete(
-          `http://localhost:5000/api/salesAndFinance/finance/salary/${id}`
-        )
-        .then(() => {
-          setSalaryRecords((prev) =>
-            prev.filter((record) => record._id !== id)
-          );
-          message.success("Salary record deleted.");
-          setLoading(false);
-        })
-        .catch((error) => {
-          setLoading(false);
-          message.error("Failed to delete salary record.");
-          console.log(error);
-        });
-    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'This action will delete the salary record permanently!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setLoading(true);
+        axios
+          .delete(`http://localhost:5000/api/salesAndFinance/finance/salary/${id}`)
+          .then(() => {
+            setSalaryRecords((prev) => prev.filter((record) => record._id !== id));
+            Swal.fire('Deleted!', 'The salary record has been deleted.', 'success');
+            setLoading(false);
+          })
+          .catch((error) => {
+            setLoading(false);
+            Swal.fire('Failed!', 'Failed to delete salary record.', 'error');
+            console.log(error);
+          });
+      }
+    });
   };
 
   const handleEdit = (id) => {
@@ -128,7 +156,7 @@ const ViewSalaryRecord = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between pb-4 border-b">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">
+          <h1 className="mt-0 mb-2 font-semibold text-gray-800">
             Salary Payments
           </h1>
           <p className="text-sm text-gray-500">
@@ -247,6 +275,15 @@ const ViewSalaryRecord = () => {
                   Basic Days
                 </TableSortLabel>
               </TableCell>
+              {/* <TableCell hidden>
+                <TableSortLabel
+                  active={orderBy === "basic_rate"}
+                  direction={orderDirection}
+                  onClick={() => handleSort("basic_rate")}
+                >
+                  Basic Rate
+                </TableSortLabel>
+              </TableCell> */}
               <TableCell>
                 <TableSortLabel
                   active={orderBy === "bonus_salary"}
@@ -257,13 +294,34 @@ const ViewSalaryRecord = () => {
                 </TableSortLabel>
               </TableCell>
               <TableCell>
+                OT Hours
+              <TableCell>
                 <TableSortLabel
                   active={orderBy === "ot_hours"}
                   direction={orderDirection}
                   onClick={() => handleSort("ot_hours")}
                 >
-                  OT Hours
+                  Week days OT Hours
                 </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === "ot_hours"}
+                  direction={orderDirection}
+                  onClick={() => handleSort("ot_hours")}
+                >
+                  Saturday OT Hours
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={orderBy === "ot_hours"}
+                  direction={orderDirection}
+                  onClick={() => handleSort("ot_hours")}
+                >
+                  Sunday OT Hours
+                </TableSortLabel>
+              </TableCell>
               </TableCell>
               <TableCell>
                 <TableSortLabel
@@ -309,14 +367,19 @@ const ViewSalaryRecord = () => {
                     <TrashIcon className="w-5 h-5" /> 
                   </IconButton>*/}
                   </TableCell>
-                  <TableCell>{record.payment_date}</TableCell>
+                  <TableCell>{record.payment_date.split("T")[0]}</TableCell>
                   <TableCell>{record.emp_name}</TableCell>
                   <TableCell>{record.salary_start_date}</TableCell>
                   <TableCell>{record.salary_end_date}</TableCell>
                   <TableCell>{record.type}</TableCell>
                   <TableCell>{record.basic_days}</TableCell>
+                  {/* <TableCell hidden>{record.basic_rate.toFixed(2)}</TableCell> */}
                   <TableCell>{record.bonus_salary.toFixed(2)}</TableCell>
-                  <TableCell>{record.ot_hours.toFixed(2)}</TableCell>
+                  <TableCell>
+                  <TableCell>{record.week_hours.toFixed(2)}</TableCell>
+                  <TableCell>{record.saturday_hours.toFixed(2)}</TableCell>
+                  <TableCell>{record.sunday_hours.toFixed(2)}</TableCell>
+                  </TableCell>
                   <TableCell>{record.ot_rate.toFixed(2)}</TableCell>
                   <TableCell>{record.epf_etf}</TableCell>
                   <TableCell>{record.description}</TableCell>

@@ -152,6 +152,7 @@ import EditLabeling from "./pages/Products/EditLabeling.jsx";
 import Gallery from "./pages/Products/Gallery.jsx";
 import AddPackage from "./pages/Products/AddPackage.jsx";
 import EditPackage from "./pages/Products/EditPackage.jsx";
+import DetailsPage from './components/Products/Packaging/DetailsPage.jsx';
 
 /**
  * field view
@@ -181,12 +182,13 @@ import BuyerInfo from "./pages/Buyer/BuyerInfo.jsx";
 import BuyerInfoTable from "./pages/Buyer/BuyerInfoTable.jsx";
 import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
 
-// import BuyerPreOrderForm from './pages/Buyer/BuyerPreOrderForm';
-// import BuyerPreOrderTable from './pages/Buyer/BuyerPreOrderTable';
-// import UpdateBuyerPreOrderRequests from './pages/Buyer/UpdatePreOrderForm';
+import BuyerPreOrderForm from './pages/Buyer/BuyerPreOrderForm';
+import BuyerPreOrderTable from './pages/Buyer/BuyerPreOrderTable';
+import UpdateBuyerPreOrderRequests from './pages/Buyer/UpdatePreOrderForm';
 
 
 import PageError from "./pages/PageError.jsx";
+import { element } from "prop-types";
 
 export default function App() {
   return (
@@ -484,6 +486,7 @@ export default function App() {
           <Route path="/products/gallery" element={<Gallery />} />
           <Route path="/products/addPackage" element={<AddPackage />} />
           <Route path="/products/editPackage/:id" element={<EditPackage />} />
+          <Route path="/share/:encodedData" element={<DetailsPage />} />
 
           {/* field view  */}
           <Route
@@ -514,9 +517,9 @@ export default function App() {
       <Route path="/buyerinfotable" element={<BuyerInfoTable />} />
       <Route path="/updateBuyer/:id" element={<UpdateBuyerInfo />} /> 
 
-       {/* <Route path="/create-preorder" element={<BuyerPreOrderForm/> } />
+        <Route path="/create-preorder" element={<BuyerPreOrderForm/> } />
       <Route path="/preorders" element={<BuyerPreOrderTable/>} />
-      <Route path="/update-preorder/:id" element={<UpdateBuyerPreOrderRequests/>} />  */}
+      <Route path="/update-preorder/:id" element={<UpdateBuyerPreOrderRequests/>} />  
 
       <Route path="/buyerdashboard" element={<BuyerDashboard />} />
 
