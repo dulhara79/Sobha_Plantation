@@ -46,7 +46,7 @@ const seedlingRoutes = require("./routes/seedlingRoutes");
 const scheduleRoutes = require("./routes/scheduleRoutes");
 const soilTestingRoutes = require("./routes/soilTestingRoutes");
 const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
-
+const emailRoutes = require('./routes/emailRoutes');
 /**
  * buyer
  */
@@ -128,7 +128,7 @@ app.use("/api/seedlings", seedlingRoutes);
 app.use("/api/schedules", scheduleRoutes);
 app.use("/api/soil-tests", soilTestingRoutes);
 app.use("/api/plant-growth", plantGrowthRoutes);
-
+app.use('/api', emailRoutes);
 /**
  * buyer
  */
