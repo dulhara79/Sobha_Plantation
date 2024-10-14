@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Grid, Card, CardContent, CardMedia, Button, Typography, Box, TextField, IconButton } from '@mui/material';
+import { Grid, Card, CardContent, CardMedia, Button, Typography, Box, TextField, IconButton, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import BuyerHeader from '../components/BuyerHeader';
@@ -40,6 +41,8 @@ const products = [
 const HomePage = () => {
   const [quantities, setQuantities] = useState({});
   const [error, setError] = useState({});
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
   const navigate = useNavigate();
 
   const handleQuantityChange = (productName, value) => {
@@ -97,115 +100,162 @@ const HomePage = () => {
     navigate('/cart', { state: { quantities, totalAmount } });
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSortChange = (event) => {
+    setSortOrder(event.target.value);
+  };
+
+  const filteredProducts = products
+    .filter((product) =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortOrder === 'lowToHigh') {
+        return a.price - b.price;
+      } else if (sortOrder === 'highToLow') {
+        return b.price - a.price;
+      }
+      return 0;
+    });
+
   return (
     <>
+      <BuyerHeader />
 
-    <BuyerHeader />
+      <Box
+        sx={{
+          padding: '20px',
+          maxWidth: '1200px',
+          margin: '0 auto',
+          backgroundColor: '#f9f9f9',
+          borderRadius: '10px',
+          border: '1px solid #ddd',
+        }}
+      >
+        <Box display="flex" justifyContent="space-between" mb={4} alignItems="center">
+          <Typography variant="h4" component="h1">
+            Our Products
+          </Typography>
 
-    <Box
-      sx={{
-        padding: '20px',
-        maxWidth: '1200px',
-        margin: '0 auto',
-        backgroundColor: '#f9f9f9',
-        borderRadius: '10px',
-        border: '1px solid #ddd',
-      }}
-    >
-      <Box display="flex" justifyContent="space-between" mb={4}>
-        <Typography variant="h4" component="h1">
-          Our Products
-        </Typography>
-        <IconButton onClick={handleCartClick} sx={{ backgroundColor: '#ffeb3b' }}>
-          <ShoppingCartIcon />
-        </IconButton>
-      </Box>
-
-      <Grid container spacing={4}>
-        {products.map((product, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
-            <Card
-              sx={{
-                transition: 'transform 0.3s, box-shadow 0.3s',
-                '&:hover': {
-                  transform: 'scale(1.05)',
-                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
-                },
+          <Box display="flex" alignItems="center">
+            <TextField
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              variant="outlined"
+              sx={{ marginRight: '16px' }}
+              InputProps={{
+                startAdornment: <SearchIcon />,
               }}
-            >
-              <CardMedia
-                component="img"
-                height="200"
-                image={product.img}
-                alt={product.name}
-              />
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  {product.name}
-                </Typography>
-                <Typography variant="h6" color="text.secondary">
-                  {product.description}
-                </Typography>
+            />
 
-                <Box
+            <FormControl variant="outlined" sx={{ minWidth: 150, marginRight: '16px' }}>
+              <InputLabel>Sort by Price</InputLabel>
+              <Select
+                value={sortOrder}
+                onChange={handleSortChange}
+                label="Sort by Price"
+              >
+                <MenuItem value="lowToHigh">Price: Low to High</MenuItem>
+                <MenuItem value="highToLow">Price: High to Low</MenuItem>
+              </Select>
+            </FormControl>
+
+            <IconButton onClick={handleCartClick} sx={{ backgroundColor: '#ffeb3b' }}>
+              <ShoppingCartIcon />
+            </IconButton>
+          </Box>
+        </Box>
+
+        <Grid container spacing={4}>
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((product, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <Card
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginTop: '10px',
-                    border: '1px solid #ddd',
-                    borderRadius: '5px',
+                    transition: 'transform 0.3s, box-shadow 0.3s',
+                    '&:hover': {
+                      transform: 'scale(1.05)',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+                    },
                   }}
                 >
-                  <IconButton onClick={() => decrementQuantity(product.name)}>
-                    <RemoveIcon />
-                  </IconButton>
-                  <TextField
-                    type="text"
-                    value={quantities[product.name] || ''}
-                    onChange={(e) =>
-                      handleQuantityChange(product.name, e.target.value)
-                    }
-                    inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                    sx={{ width: '190px', textAlign: 'center' }}
-                    placeholder="Enter Quantity"
-                    error={!!error[product.name]}
-                    helperText={error[product.name] || ''}
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={product.img}
+                    alt={product.name}
                   />
-                  <IconButton onClick={() => incrementQuantity(product.name)}>
-                    <AddIcon />
-                  </IconButton>
-                </Box>
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      {product.name}
+                    </Typography>
+                    <Typography variant="h6" color="text.secondary">
+                      {product.description}
+                    </Typography>
 
-                <Box
-                  sx={{
-                    marginTop: '10px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    sx={{ backgroundColor: 'yellow', color: 'black' }}
-                    startIcon={<AddShoppingCartIcon />}
-                    onClick={() => handleAddToCart(product)}
-                  >
-                    Add to Cart
-                  </Button>
-                  <Button
-                    variant="contained"
-                    sx={{ backgroundColor: 'green', color: 'white' }}
-                    startIcon={<ShoppingCartCheckoutIcon />}
-                    onClick={handleBuyNow}
-                  >
-                    Buy Now
-                  </Button>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </Box>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        marginTop: '10px',
+                        border: '1px solid #ddd',
+                        borderRadius: '5px',
+                      }}
+                    >
+                      <IconButton onClick={() => decrementQuantity(product.name)}>
+                        <RemoveIcon />
+                      </IconButton>
+                      <TextField
+                        type="text"
+                        value={quantities[product.name] || ''}
+                        onChange={(e) => handleQuantityChange(product.name, e.target.value)}
+                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                        sx={{ width: '190px', textAlign: 'center' }}
+                        placeholder="Enter Quantity"
+                        error={!!error[product.name]}
+                        helperText={error[product.name]}
+                      />
+                      <IconButton onClick={() => incrementQuantity(product.name)}>
+                        <AddIcon />
+                      </IconButton>
+                    </Box>
+
+                    <Box
+                      sx={{
+                        marginTop: '10px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleBuyNow(product)}
+                      >
+                        Buy Now
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        startIcon={<AddShoppingCartIcon />}
+                        onClick={() => handleAddToCart(product)}
+                      >
+                        Add to Cart
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))
+          ) : (
+            <Typography variant="h6">No products found.</Typography>
+          )}
+        </Grid>
+      </Box>
     </>
   );
 };
