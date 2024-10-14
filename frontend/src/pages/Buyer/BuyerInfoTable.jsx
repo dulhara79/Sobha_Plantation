@@ -32,7 +32,8 @@ const BuyerInfoTable = () => {
   // Fetch Info records from API
   const fetchInfoRecords = async () => {
     try {
-      const response = await axios.get("http://localhost:8090/api/buyerInfo");
+      const response = await axios.get("http://localhost:5000/api/buyerInfo");
+
       setInfoRecords(response.data.data);
       setFilteredInfoRecords(response.data.data);
     } catch (error) {
@@ -81,7 +82,8 @@ const BuyerInfoTable = () => {
   // Handle delete Info record
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:8090/api/buyerInfo/${id}`);
+      await axios.delete(`http://localhost:5000/api/buyerInfo/${id}`);
+
       notification.success({
         message: "Record deleted successfully",
         description: "Record has been deleted successfully",
@@ -240,9 +242,7 @@ const BuyerInfoTable = () => {
               </Link>
               <Link
                 to="/buyerinfotable"
-                className="text-[#236A64] font-semibold"
-                
-              >
+                className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold">
                  Buyer Records
               </Link>
               <Link

@@ -61,7 +61,7 @@ const AddInfoRecords = () => {
 
       const { firstName, lastName, Gender, DOB, Number, email } = values;
 
-      await axios.post("http://localhost:8090/api/buyerInfo", {
+      await axios.post("http://localhost:5000/api/buyerInfo", {
         firstName,
         lastName,
         Gender,
@@ -255,7 +255,7 @@ const restrictInputToAlphanumeric = (e) => {
                   placeholder="Enter your phone number"
                   onKeyPress={restrictInputToNumbers} 
                   onPaste={preventNonNumericPaste}
-                  
+                  maxLength={10}
                   disabled={isNextFieldDisabled.number}
                 />
               </Form.Item>

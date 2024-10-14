@@ -1,23 +1,32 @@
+
+
 import React, { useCallback, useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import "../../index.css";
-import { ArrowBack } from "@mui/icons-material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Breadcrumb, Table, Button, Input, Modal, notification, Select } from "antd";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link,useNavigate, useLocation } from "react-router-dom";
 import moment from "moment";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { Pie } from 'react-chartjs-2';  // Import Pie from react-chartjs-2
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js'; // Chart.js components
+import { HomeOutlined } from '@mui/icons-material';
 
 Chart.register(ArcElement, Tooltip, Legend);
 
 const { Search } = Input;
 const { Option } = Select;
 
-//const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']; // Colors for pie chart slices
+const menuItems = [
+  { name: 'Home', path: '/Inventory/InventoryDashboard' },
+  { name: 'Fertilizers & Agrochemicals', path: '/Inventory/FertilizerRecords' },
+  { name: 'Equipments & Machines', path: '/Inventory/EquipmentRecords' },
+  { name: 'Maintenance Records', path: '/Inventory/MaintenanceRecords' },
+  { name: 'Request Payment Details', path: '/Inventory/RequestPaymentRecords' }
+];
 
 const EquipmentRecords = () => {
   const [equipments, setEquipments] = useState([]);
@@ -29,10 +38,10 @@ const EquipmentRecords = () => {
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [statusData, setStatusData] = useState([]); // State for pie chart data
   const navigate = useNavigate();
+  const location = useLocation();
+  const activePage = location.pathname;
 
-  useEffect(() => {
-    fetchEquipments();
-  }, []);
+  
 
   const fetchEquipments = async () => {
     try {
@@ -45,29 +54,13 @@ const EquipmentRecords = () => {
     }
   };
 
-
- const onHomeClick = useCallback(() => {
-    navigate("/Inventory/InventoryDashboard");
-  }, [navigate]);
+  useEffect(() => {
+    fetchEquipments();
+  }, []);
+ 
 
   const onBackClick = useCallback(() => {
     navigate(-1);
-  }, [navigate]);
-
-  const onGroupContainerClick = useCallback(() => {
-    navigate("/Inventory/FertilizerRecords");
-  }, [navigate]);
-
-  const onGroupContainerClick1 = useCallback(() => {
-    navigate("/Inventory/MaintenanceRecords");
-  }, [navigate]);
-
-  const onGroupContainerClick2 = useCallback(() => {
-    navigate("/Inventory/EquipmentRecords");
-  }, [navigate]);
-
-  const onGroupContainerClick3 = useCallback(() => {
-    navigate("/Inventory/RequestPaymentRecords");
   }, [navigate]);
 
 
@@ -107,23 +100,51 @@ const EquipmentRecords = () => {
 
   const generatePDF = async () => {
     const doc = new jsPDF();
-    const logoUrl = '../src/assets/logo.png'; // Path to your logo image
-  
+
+    // Load the logo image
+    const logoUrl = "../src/assets/logo.png";
+    let logoDataURL;
     try {
-      // Fetch and convert the image to a Data URL
-      const logoDataURL = await getImageDataURL(logoUrl);
-  
-      // Add the logo image to the PDF
-      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
+      logoDataURL = await getImageDataURL(logoUrl);
     } catch (error) {
-      console.error('Failed to load the logo image:', error);
+      console.error("Failed to load the logo image:", error);
     }
-  
-    // Add the title after the logo
+
+    // Function to draw header and footer
+    const drawHeaderFooter = (data) => {
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+
+   
+      // Header
+    doc.setFontSize(14);
+    doc.text("Sobha Plantation", 10, 10); // Align left
+
+    doc.setFontSize(10);
+    doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+    doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+    doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+    doc.text("Contact: 0112 751 757", 10, 30); // Email address line
+
+    if (logoDataURL) {
+      doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
+    }
+
+    doc.line(10, 35, pageWidth - 10, 35); // Header line
+      
+      // Footer
+      doc.setFontSize(10);
+      const currentPage = `Page ${
+        data.pageNumber
+      } of ${doc.internal.getNumberOfPages()}`;
+      doc.text(currentPage, pageWidth - 30, pageHeight - 10); // Page number in footer
+    };
+
+    // Title for the report
     doc.setFontSize(22);
-    doc.text("Equipment Records Report", 50, 40); // Adjust y-coordinate to fit below the logo
-  
-    // Define the table columns
+    doc.text("Equipment Records Report", 50, 48); // Adjusted for placement below header
+
+   // Define the table columns
     const columns = [
       { title: "Added Date", dataKey: "addedDate" },
       { title: "Equipment/Machine Name", dataKey: "equipmentName" },
@@ -140,12 +161,12 @@ const EquipmentRecords = () => {
       storageLocation: equipment.storagelocation,
       status: equipment.status,
     }));
-  
+
     // Add table with column and row data
     doc.autoTable({
       columns: columns,
       body: rows,
-      startY: 50, // Set the table to start below the title and logo
+      startY: 60, // Set the table to start below the title and logo
       margin: { horizontal: 10 },
       styles: {
         fontSize: 10,
@@ -155,40 +176,32 @@ const EquipmentRecords = () => {
         textColor: [255, 255, 255], // Table header text color
         fontSize: 12,
       },
-      theme: 'striped', // Table theme
-      didDrawPage: (data) => {
-        // Add page number to footer
-        const pageNumber = doc.internal.getNumberOfPages();
-        const pageWidth = doc.internal.pageSize.width;
-        const pageHeight = doc.internal.pageSize.height;
-  
-        doc.setFontSize(10);
-        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10); // Adjust footer positioning
-      },
+      theme: "striped",
+      didDrawPage: drawHeaderFooter, // Draw header and footer on each page
     });
-  
+
     // Save the PDF
     doc.save("equipment_records_report.pdf");
   };
-  
-  // Utility function to convert the image to a Data URL
+
   const getImageDataURL = (url) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      img.crossOrigin = 'anonymous';
       img.src = url;
       img.onload = () => {
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         canvas.width = img.width;
         canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0);
-        resolve(canvas.toDataURL('image/png'));
+        resolve(canvas.toDataURL("image/png"));
       };
-      img.onerror = reject;
+      img.onerror = (error) => {
+        reject(error);
+      };
     });
   };
-  
+
   
     const handleSort = (field, order) => {
       setSorter({ field, order });
@@ -326,81 +339,60 @@ const EquipmentRecords = () => {
       },
     },
   };
+
+  const isActive = (page) => activePage === page;
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
-    <Header />
-    <div className="flex flex-1">
-      <Sidebar />
-      <div className="ml-[300px] pt-3 flex-1">
-<nav className="p-4 mb-5">
-          {/* Navigation Buttons */}
-          <div className="container flex items-center justify-between mx-auto space-x-4">
-            <div
-              className="flex items-center justify-center pt-px px-2 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform bg-gray-200 rounded-41xl hover:bg-gray-300"
-              onClick={onBackClick}
-            >
-              <ArrowBack className="text-gray-700" />
+      <Header />
+      <div className="flex flex-1">
+     <Sidebar />
+        <div className="ml-[300px] pt-3 flex-1">
+          {/* Navigation Bar */}
+          <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
+            <div className="flex items-center justify-center">
+              <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
+                <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
+                {menuItems.map((item) => (
+                  <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
+                    <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-              onClick={onHomeClick}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Home
-              </a>
-            </div>
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-              onClick={onGroupContainerClick}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Fertilizers & Agrochemicals
-              </a>
-            </div>
-            <div
-              className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer transition-transform duration-300 ease-in-out transform hover:bg-[#1D6660] hover:text-white"
-              onClick={onGroupContainerClick1}
-            >
-              <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-                Maintenance Records
-              </a>
-            </div>
-            <div
-            className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-[#40857e] flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-            onClick={onGroupContainerClick2}
-          >
-            <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-              Equipments & Machines
-            </a>
-          </div>
-          <div
-            className="flex-1 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] rounded-41xl bg-mediumspringgreen flex items-center justify-center pt-px px-5 pb-0.5 cursor-pointer"
-            onClick={onGroupContainerClick3}
-          >
-            <a className="[text-decoration:none] relative font-bold text-[inherit] inline-block w-full text-center z-[1] mq1025:text-lgi">
-            Request Payment Details
-            </a>
-          </div>
-          </div>
-        </nav>
+          </nav>
 
 
+        <div className="flex items-center justify-between mb-5">
           <Breadcrumb
             items={[
-              { title: 'Home', href: '/' },
+              {
+                href: '',
+                title: <HomeOutlined />,
+              },
+              {
+                title: 'Inventory',
+              },
               { title: 'equipments', href: '/Inventory/EquipmentRecords' },
             ]}
           />
+          </div>
 
              {/* Pie chart for status visualization */}
-<div className="mt-6 mb-10" style={{ width: '400px', height: '300px' }}> {/* Adjust the width and height as needed */}
-  <h3>Status of Equipment & Machines</h3>
+<div className="flex flex-col items-center justify-center w-full mt-6 mb-10">
+<h3>Status of Equipment & Machines</h3>
+<div style={{ width: '400px', height: '300px' }}> {/* Adjust the width and height as needed */}
+
   <Pie data={pieData} options={pieOptions} />
 </div>
+</div>
+                  {/* Page Header */}
+                  <header className="flex items-center justify-between px-6 py-4 mb-6 bg-white shadow-md">
+            <h1 className="text-2xl font-bold"
+            style={{ marginBottom: '24px', fontWeight: 'bold', color: '#1D6660' }}>
+              Equipment & Machines Overview</h1>
+            <div className="flex items-center space-x-4">
 
-          <div className="p-6 bg-white rounded-lg shadow-lg">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-4">
                      <Search
                   placeholder="Search by any field"
                   onChange={(e) => onSearch(e.target.value)}  // Trigger filter on input change
@@ -420,8 +412,9 @@ const EquipmentRecords = () => {
                   Generate PDF Report
                 </Button>
               </div>
-            </div>
-
+        
+            </header>
+           
                  <Table
           columns={[
             {
@@ -491,8 +484,8 @@ const EquipmentRecords = () => {
               }}
               pagination={{ pageSize: 10 }}
             />
-      
-
+    
+            
                         {/* Dropdown to select equipment */}
   <div className="mb-4">
 
@@ -520,11 +513,11 @@ const EquipmentRecords = () => {
                 </div>
               )}
             </div>
-                  
+            </div>     
           </div>
         </div>
-      </div>
-    </div>
+    
+
   );
 };
 

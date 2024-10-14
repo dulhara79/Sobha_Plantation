@@ -29,7 +29,7 @@ const ValuationDashboard = () => {
     <div>
     <Header />
     <Sidebar activePage="/salesAndFinance/"/>
-      <div className={`ml-[300px] pt-3 w-full`}>
+      <div className={`ml-[300px] pt-3 max-w-full`}>
     <Breadcrumb
     style={{ margin: "10px 0" }}
         items={[
@@ -60,7 +60,7 @@ const ValuationDashboard = () => {
       />
       <NavigationButtons />
       </div>
-      <div className={`ml-[300px] pt-3 w-[100px]`}>
+      <div className={`ml-[300px] pt-3`}>
       <Valuation/>
       </div>
     </div>

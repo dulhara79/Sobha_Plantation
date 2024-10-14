@@ -4,16 +4,14 @@ import Header from "../../components/Header";
 import "../../index.css";
 import { Breadcrumb, Table, Button, Input, Modal, notification } from "antd";
 import axios from "axios";
-import { useNavigate,useLocation,Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import moment from "moment";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { HomeOutlined } from '@ant-design/icons';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import Swal from 'sweetalert2';
-
-
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { HomeOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import Swal from "sweetalert2";
 
 const { Search } = Input;
 
@@ -22,7 +20,7 @@ const menuItems = [
   { name: "SCHEDULE", path: "/harvest/harvest-schedule" },
   { name: "YIELD", path: "/harvest/yield" },
   { name: "QUALITYCHECKING", path: "/harvest/quality" },
-  { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist" },
+  // { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist" },
 ];
 const YieldRecords = () => {
   const [schedules, setSchedules] = useState([]);
@@ -41,16 +39,15 @@ const YieldRecords = () => {
 
   const fetchSchedules = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/yield');
-      console.log('API Response:', response.data);
+      const response = await axios.get("http://localhost:5000/api/yield");
+      console.log("API Response:", response.data);
       setSchedules(response.data.data);
       setFilteredSchedules(response.data.data);
       calculateCropQuantities(response.data.data);
     } catch (error) {
-      console.error('Error fetching yield records:', error);
+      console.error("Error fetching yield records:", error);
     }
   };
-
 
   const onBackClick = useCallback(() => {
     navigate(-1); // Navigate back to the previous page
@@ -63,42 +60,42 @@ const YieldRecords = () => {
 
   const filterSchedules = (searchText) => {
     let filteredData = schedules;
-  
+
     if (searchText) {
       const lowercasedSearchText = searchText.toLowerCase();
-  
+
       filteredData = filteredData.filter((schedule) => {
         return Object.keys(schedule).some((key) => {
           const value = schedule[key];
-  
+
           // Debugging
           console.log(`Key: ${key}, Value: ${value}`);
-  
+
           // Check if the value is a date using moment
           if (moment(value, moment.ISO_8601, true).isValid()) {
             // Format the date and filter it
             const formattedDate = moment(value).format("YYYY-MM-DD");
             return formattedDate.includes(lowercasedSearchText);
           }
-  
+
           // Check if the value is a string
-          if (typeof value === 'string') {
+          if (typeof value === "string") {
             return value.toLowerCase().includes(lowercasedSearchText);
           }
-  
+
           // Check if the value is a number
-          if (typeof value === 'number') {
+          if (typeof value === "number") {
             return value.toString().includes(searchText);
           }
-  
+
           return false;
         });
       });
     }
-  
+
     setFilteredSchedules(filteredData);
   };
-  
+
   const calculateCropQuantities = (schedules) => {
     const quantities = schedules.reduce((acc, schedule) => {
       const { cropType, quantity } = schedule;
@@ -111,49 +108,58 @@ const YieldRecords = () => {
     }, {});
     setCropQuantities(quantities);
   };
-  
-
 
   const generatePDF = async () => {
     const doc = new jsPDF();
-  
+
     // Load the logo image
-    const logoUrl = '../src/assets/logo.png';
+    const logoUrl = "../src/assets/logo.png";
     let logoDataURL;
     try {
       logoDataURL = await getImageDataURL(logoUrl);
     } catch (error) {
-      console.error('Failed to load the logo image:', error);
+      console.error("Failed to load the logo image:", error);
     }
-  
+
     // Function to draw header, footer, and horizontal line
     const drawHeaderFooter = (data) => {
       const pageWidth = doc.internal.pageSize.width;
       const pageHeight = doc.internal.pageSize.height;
-  
+
       // Header with logo
       if (logoDataURL) {
-        doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 15); // Adjust position and size of the logo
+        doc.addImage(logoDataURL, "PNG", 10, 10, 40, 15); // Adjust position and size of the logo
       }
       doc.setFontSize(12);
       doc.text("Sobha Plantation", 170, 20); // Adjust text position
       doc.line(10, 25, pageWidth - 10, 25); // Line under header
-  
+
       // Footer with page number
       doc.setFontSize(10);
-      doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
+      doc.text(
+        `Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`,
+        pageWidth - 30,
+        pageHeight - 10
+      );
     };
-  
+
     // Set the margins for header and footer space
     const marginTop = 30; // space reserved for header
     const marginBottom = 20; // space reserved for footer
-  
+
     // Title for the report
     doc.setFontSize(22);
     doc.text("Yield Records Report", 70, 35); // Adjust y-coordinate to fit under the header
-  
+
     // Define the table columns and rows
-    const tableColumn = ["Harvest Date", "Field Number", "Crop Type", "Quantity", "Trees Picked", "Storage Location"];
+    const tableColumn = [
+      "Harvest Date",
+      "Field Number",
+      "Crop Type",
+      "Quantity",
+      "Trees Picked",
+      "Storage Location",
+    ];
     const tableRows = filteredSchedules.map((schedule) => [
       moment(schedule.harvestdate).format("YYYY-MM-DD"),
       schedule.fieldNumber,
@@ -162,7 +168,7 @@ const YieldRecords = () => {
       schedule.treesPicked,
       schedule.storageLocation,
     ]);
-  
+
     // Add table to the PDF
     doc.autoTable({
       head: [tableColumn],
@@ -177,34 +183,32 @@ const YieldRecords = () => {
         textColor: [255, 255, 255],
         fontSize: 12,
       },
-      theme: 'striped',
+      theme: "striped",
       didDrawPage: drawHeaderFooter, // Add header and footer to each page
     });
-  
+
     // Save the PDF
     doc.save("yield_records_report.pdf");
   };
-  
+
   const getImageDataURL = (url) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.src = url;
       img.onload = () => {
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         canvas.width = img.width;
         canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0);
-        resolve(canvas.toDataURL('image/png'));
+        resolve(canvas.toDataURL("image/png"));
       };
       img.onerror = (error) => {
         reject(error);
       };
     });
   };
-  
-  
-  
+
   const handleSort = (field, order) => {
     setSorter({ field, order });
     filterSchedules(searchText, filterStatus);
@@ -244,12 +248,16 @@ const YieldRecords = () => {
 
   const handleDelete = async (scheduleId) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/yield/${scheduleId}`);
-      fetchSchedules()
+      const response = await axios.delete(
+        `http://localhost:5000/api/yield/${scheduleId}`
+      );
+      fetchSchedules();
     } catch (error) {
       Swal.fire({
         title: "Error!",
-        text: `Failed to delete the inspection. ${error.response?.data?.message || 'Please try again.'}`,
+        text: `Failed to delete the inspection. ${
+          error.response?.data?.message || "Please try again."
+        }`,
         icon: "error",
       });
     }
@@ -258,141 +266,165 @@ const YieldRecords = () => {
   return (
     <div>
       <Header />
-        <Sidebar className="sidebar" />
-        <div className="ml-[300px] p-5">
+      <Sidebar className="sidebar" />
+      <div className="ml-[300px] p-5">
         <nav className="sticky z-10 bg-gray-100 bg-opacity-50 border-b top-16 backdrop-blur">
-                 <div className="flex items-center justify-center">
-                    <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
-                       <ArrowBackIcon className="rounded-full hover:bg-[#abadab] p-2" onClick={onBackClick} />
-                        {menuItems.map((item) => (
-                          <li key={item.name} className={`flex ${isActive(item.path) ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full" : "hover:bg-lime-200 rounded-full"}`}>
-                        <Link to={item.path} className="flex items-center px-2">{item.name}</Link>
-                         </li>
-                        ))}
-                  </ul>
-             </div>
-          </nav>
-
-          <div className="flex items-center justify-between mb-5">
-                    <Breadcrumb
-                        items={[
-                            {href: '', title: <HomeOutlined />},
-                            {title: "Harvest"},
-                            {title: "Yield"},
-                             ]}
-                       />
-                    </div>
-         <div className="p-6 bg-white rounded-lg shadow-lg">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-4">
-                <Search
-                  placeholder="Search by any field"
-                  onChange={(e) => onSearch(e.target.value)}  // Trigger filter on input change
-                  style={{ width: 200 }}
-                  value={searchText}  // Keep the input controlled
-                />
-                 <Button 
-                  style={{ backgroundColor: "#60DB19", color: "#fff" }} 
-                  onClick={() => navigate("/yield/addrecords")}
+          <div className="flex items-center justify-center">
+            <ul className="flex flex-row items-center w-full h-8 gap-2 text-xs font-medium text-gray-800">
+              <ArrowBackIcon
+                className="rounded-full hover:bg-[#abadab] p-2"
+                onClick={onBackClick}
+              />
+              {menuItems.map((item) => (
+                <li
+                  key={item.name}
+                  className={`flex ${
+                    isActive(item.path)
+                      ? "text-gray-100 bg-gradient-to-tr from-emerald-500 to-lime-400 rounded-full"
+                      : "hover:bg-lime-200 rounded-full"
+                  }`}
                 >
-                  Add Records
-                </Button>
-                <Button 
-                  style={{ backgroundColor: "#60DB19", color: "#fff" }} 
-                  onClick={generatePDF}
-                >
-                  Generate PDF Report
-                </Button>
-              </div>
-            </div>
-               {/* Display crop quantities */}
-                    <div className="grid grid-cols-3 gap-6 mb-6">
-                       {Object.keys(cropQuantities).map((crop) => (
-                        <div 
-                          key={crop} 
-                          className="bg-white p-4 rounded-lg shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
-                        >
-                        <h3 className="text-lg font-bold text-gray-700 text-center">{crop}</h3>
-                    <p className="text-xl font-semibold text-indigo-600 mt-2 text-center">{cropQuantities[crop]}</p>
-                  </div>
-                       ))}
-                 </div>
-            <Table
-              columns={[
-                {
-                  title: "Harvest Date",
-                  dataIndex: "harvestdate",
-                  key: "harvestdate",
-                  sorter: true,
-                  sortOrder: sorter.field === 'harvestdate' ? sorter.order : null,
-                  render: (text) => moment(text).format("YYYY-MM-DD"),
-                },
-                {
-                  title: "Field Number",
-                  dataIndex: "fieldNumber",
-                  key: "fieldNumber",
-                  sorter: true,
-                  sortOrder: sorter.field === 'fieldNumber' ? sorter.order : null,
-                },
-                {
-                  title: "Crop Type",
-                  dataIndex: "cropType",
-                  key: "cropType",
-                  sorter: true,
-                  sortOrder: sorter.field === 'cropType' ? sorter.order : null,
-                },
-                {
-                  title: "Quantity",
-                  dataIndex: "quantity",
-                  key: "quantity",
-                  sorter: true,
-                  sortOrder: sorter.field === 'quantity' ? sorter.order : null,
-                },
-                {
-                  title: "Trees Picked",
-                  dataIndex: "treesPicked",
-                  key: "treesPicked",
-                  sorter: true,
-                  sortOrder: sorter.field === 'treesPicked' ? sorter.order : null,
-                },
-                {
-                  title: "Storage Location",
-                  dataIndex: "storageLocation",
-                  key: "storageLocation",
-                  sorter: true,
-                  sortOrder: sorter.field === 'storageLocation' ? sorter.order : null,
-                },
-                {
-                  title: "Actions",
-                  key: "actions",
-                  render: (text, record) => (
-                    <span>
-                      <Button type="link" icon={<EditOutlined />} onClick={() => handleUpdate(record._id) } >
-                        Edit
-                      </Button>
-                      <Button type="link" danger   icon={<DeleteOutlined />} onClick={() => confirmDelete(record._id)}>
-                        Delete
-                      </Button>
-                    </span>
-                  ),
-                },
-              ]}
-              dataSource={filteredSchedules}
-              rowKey="_id"
-              pagination={false}  // Disable pagination
-              scroll={{ y: 400 }} // Optional: Add vertical scroll if there are many rows
-              onChange={(sorter) => {
-                if (sorter && sorter.order) {
-                  handleSort(sorter.field, sorter.order);
-                } else {
-                  cancelSorting();
-                }
-              }}
-            />
+                  <Link to={item.path} className="flex items-center px-2">
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
+        </nav>
+
+        <div className="flex items-center justify-between mb-5">
+          <Breadcrumb
+            items={[
+              { href: "", title: <HomeOutlined /> },
+              { title: "Harvest" },
+              { title: "Yield" },
+            ]}
+          />
+        </div>
+
+        {/* Display crop quantities */}
+        <div className="grid grid-cols-3 gap-6 mb-6">
+          {Object.keys(cropQuantities).map((crop) => (
+            <div
+              key={crop}
+              className="bg-white p-4 rounded-lg shadow-lg transform hover:scale-105 transition duration-300 ease-in-out"
+            >
+              <h3 className="text-lg font-bold text-gray-700 text-center">
+                {crop}
+              </h3>
+              <p className="text-xl font-semibold text-indigo-600 mt-2 text-center">
+                {cropQuantities[crop]}
+              </p>
+            </div>
+          ))}
+        </div>
+        <div className="p-6 bg-white rounded-lg shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-4">
+              <Search
+                placeholder="Search by any field"
+                onChange={(e) => onSearch(e.target.value)} // Trigger filter on input change
+                style={{ width: 200 }}
+                value={searchText} // Keep the input controlled
+              />
+              <Button
+                style={{ backgroundColor: "#60DB19", color: "#fff" }}
+                onClick={() => navigate("/yield/addrecords")}
+              >
+                Add Records
+              </Button>
+              <Button
+                style={{ backgroundColor: "#60DB19", color: "#fff" }}
+                onClick={generatePDF}
+              >
+                Generate PDF Report
+              </Button>
+            </div>
+          </div>
+          <Table
+            columns={[
+              {
+                title: "Harvest Date",
+                dataIndex: "harvestdate",
+                key: "harvestdate",
+                sorter: (a, b) =>
+                  moment(a.harvestdate).unix() - moment(b.harvestdate).unix(), // Sort by date
+                sortOrder: sorter.field === "harvestdate" ? sorter.order : null,
+                render: (text) => moment(text).format("YYYY-MM-DD"),
+              },
+              {
+                title: "Field Number",
+                dataIndex: "fieldNumber",
+                key: "fieldNumber",
+                sorter: (a, b) => a.fieldNumber.localeCompare(b.fieldNumber), // Sort alphabetically
+                sortOrder: sorter.field === "fieldNumber" ? sorter.order : null,
+              },
+              {
+                title: "Crop Type",
+                dataIndex: "cropType",
+                key: "cropType",
+                sorter: (a, b) => a.cropType.localeCompare(b.cropType), // Sort alphabetically
+                sortOrder: sorter.field === "cropType" ? sorter.order : null,
+              },
+              {
+                title: "Quantity",
+                dataIndex: "quantity",
+                key: "quantity",
+                sorter: (a, b) => a.quantity - b.quantity, // Sort numerically
+                sortOrder: sorter.field === "quantity" ? sorter.order : null,
+              },
+              {
+                title: "Trees Picked",
+                dataIndex: "treesPicked",
+                key: "treesPicked",
+                sorter: (a, b) => a.treesPicked - b.treesPicked, // Sort numerically
+                sortOrder: sorter.field === "treesPicked" ? sorter.order : null,
+              },
+              {
+                title: "Storage Location",
+                dataIndex: "storageLocation",
+                key: "storageLocation",
+                sorter: (a, b) =>
+                  a.storageLocation.localeCompare(b.storageLocation), // Sort alphabetically
+                sortOrder:
+                  sorter.field === "storageLocation" ? sorter.order : null,
+              },
+              {
+                title: "Actions",
+                key: "actions",
+                render: (text, record) => (
+                  <span>
+                    <Button
+                      type="link"
+                      icon={<EditOutlined />}
+                      onClick={() => handleUpdate(record._id)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      type="link"
+                      danger
+                      icon={<DeleteOutlined />}
+                      onClick={() => confirmDelete(record._id)}
+                    >
+                      Delete
+                    </Button>
+                  </span>
+                ),
+              },
+            ]}
+            dataSource={filteredSchedules}
+            rowKey="_id"
+            pagination={false} // Disable pagination
+            scroll={{ y: 400 }} // Optional: Add vertical scroll if there are many rows
+            onChange={(pagination, filters, sorter) => {
+              handleSort(sorter.field, sorter.order);
+            }}
+          />
         </div>
       </div>
-    
+    </div>
   );
 };
 

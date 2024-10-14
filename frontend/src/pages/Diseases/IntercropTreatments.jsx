@@ -18,6 +18,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import LogoImage from "../../assets/logo.png";
 import "../../index.css";
+import DiseasesNavBar from "../../components/DiseasesComponents/DiseasesNavBar";
 
 const { Search } = Input;
 
@@ -35,7 +36,7 @@ const IntercropTreatments = () => {
   // Fetch treatments from API
   const fetchTreatments = async () => {
     try {
-      const response = await axios.get("http://localhost:8090/api/cropTreatments");
+      const response = await axios.get("http://localhost:5000/api/cropTreatments");
         setTreatments(response.data.data);
         setFilteredTreatments(response.data.data);
     } catch (error) {
@@ -92,7 +93,7 @@ const IntercropTreatments = () => {
 const handleDelete = async (id) => {
   try {
     const response = await axios.delete(
-      `http://localhost:8090/api/cropTreatments/${id}`
+      `http://localhost:5000/api/cropTreatments/${id}`
     );
     if (response.status === 200) {
       notification.success({
@@ -161,16 +162,6 @@ const generatePDF = async () => {
       fontSize: 12,
     },
     theme: 'striped',
-  //   didDrawPage: (data) => {
-  //     // Add page number to footer
-  //     const pageNumber = doc.internal.getNumberOfPages();
-  //     const pageWidth = doc.internal.pageSize.width;
-  //     const pageHeight = doc.internal.pageSize.height;
-
-  //     doc.setFontSize(10);
-  //     doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10); // Adjust position as needed
-  //   },
-  // }
   });
 
     // Add footer with a horizontal line and logo
@@ -197,57 +188,10 @@ const generatePDF = async () => {
       <Header />
       <div className="flex h-screen">
         <Sidebar />
-        <div className="flex-1 ml-[300px] p-4 overflow-auto">
-          {/* Navigation Bar */}
-          <nav className="flex items-center justify-between p-4 bg-transparent">
-            {/* Go Back Icon */}
-            <button
-              onClick={() => window.history.back()}
-              className="text-gray-600 hover:text-gray-800"
-            >
-              <LeftOutlined className="text-xl" />
-            </button>
-            {/* Navigation Items */}
-            <div className="flex space-x-4">
-              <Link
-                to="/diseases"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Home
-              </Link>
-              <Link
-                to="/CoconutInspections"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Inspections
-              </Link>
-              <Link
-                to="/CoconutTreatments"
-                className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold">
-                Treatments
-              </Link>
-              <Link
-                to="/CoconutPests"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Pests and Diseases
-              </Link>
-              <Link
-                to="/RegularMaintenance"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Maintenance
-              </Link>
-              {/* <Link
-                to="/UserProfile"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                My Profile
-              </Link> */}
-            </div>
-          </nav>
+        <div className="flex-1 ml-[285px] p-4 overflow-auto">
+          
 
-          <div className="ml-[30px] mt-4">
+          <div className="mt-2">
             <Breadcrumb
               items={[
                 {
@@ -260,6 +204,11 @@ const generatePDF = async () => {
                 },
               ]}
             />
+
+            {/* Diseases Navigation Bar */}
+            <div style={{ marginBottom: "22px" }}>
+              <DiseasesNavBar style={{ height: "80px" }} />{" "}
+            </div>
           </div>
 
           {/* Topic Section */}
@@ -284,13 +233,13 @@ const generatePDF = async () => {
             <div className="flex justify-center space-x-8 mt-8 mb-8">
               <Button
                 style={{ backgroundColor: "rgba(196, 196, 196, 0)" }}
-                onClick={() => navigate("/coconutTreatments")}
+                onClick={() => navigate("/CoconutTreatments")}
               >
                 Coconuts
               </Button>
               <Button
                 style={{ backgroundColor: "rgba(196, 196, 196, 0.44)" }}
-                onClick={() => navigate("/intercropTreatments")}
+                onClick={() => navigate("/IntercropTreatments")}
               >
                 Inter Crops
               </Button>

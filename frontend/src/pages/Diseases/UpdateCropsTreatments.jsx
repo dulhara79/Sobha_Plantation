@@ -53,7 +53,7 @@ const handleAlphanumericKeyPress = (e) => {
   useEffect(() => {
     const fetchRecord = async () => {
       try {
-        const response = await axios.get(`http://localhost:8090/api/cropTreatments/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/cropTreatments/${id}`);
         const data = response.data.treatmentRecord;
 
         // Set form values including DatePicker values
@@ -87,7 +87,7 @@ const handleAlphanumericKeyPress = (e) => {
         dateOfTreatment: dateOfTreatment ? dateOfTreatment.toISOString() : null,
       };
 
-      await axios.put(`http://localhost:8090/api/cropTreatments/${id}`, payload);
+      await axios.put(`http://localhost:5000/api/cropTreatments/${id}`, payload);
 
       notification.success({
         message: "Record updated successfully",
@@ -114,26 +114,13 @@ const handleAlphanumericKeyPress = (e) => {
       <div className="flex h-screen">
         <Sidebar />
         <div className="flex-1 ml-[300px] p-4 overflow-auto">
-          <nav className="flex items-center justify-between p-4 bg-transparent">
-            <button onClick={() => window.history.back()} className="text-gray-600 hover:text-gray-800">
-              <LeftOutlined className="text-xl" />
-            </button>
-            <div className="flex space-x-4">
-              <Link to="/diseases" className="text-[#3CCD65] hover:text-[#2b8f57]">Home</Link>
-              <Link to="/CoconutInspections" className="text-[#3CCD65] hover:text-[#2b8f57]">Inspections</Link>
-              <Link to="/CoconutTreatments" className="text-[#236A64] font-semibold">Treatments</Link>
-              <Link to="/CoconutPests" className="text-[#3CCD65] hover:text-[#2b8f57]">Pests and Diseases</Link>
-              <Link to="/RegularMaintenance" className="text-[#3CCD65] hover:text-[#2b8f57]">Maintenance</Link>
-              {/* <Link to="/UserProfile" className="text-[#3CCD65] hover:text-[#2b8f57]">My Profile</Link> */}
-            </div>
-          </nav>
 
           <div className="mt-4">
-            <Breadcrumb items={[{ href: "/diseases", title: <HomeOutlined /> }, { href: "", title: "Update current record for Coconut Diseases" }]} />
+            <Breadcrumb items={[{ href: "/diseases", title: <HomeOutlined /> }, { href: "", title: "Update current record for Inter Crops Diseases" }]} />
           </div>
 
           <div className="mt-4 p-6 bg-white shadow-md rounded-md">
-            <h1 className="text-2xl font-bold text-center">Treatment Records - Coconuts</h1>
+            <h1 className="text-2xl font-bold text-center">Treatment Records - Inter Crops</h1>
 
             <Form form={form} layout="vertical" className="mt-6" onFinish={handleSubmit}>
               <Form.Item

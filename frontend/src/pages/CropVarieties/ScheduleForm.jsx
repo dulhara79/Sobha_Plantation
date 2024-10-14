@@ -46,6 +46,17 @@ const ScheduleForm = () => {
     }
   }, [today]);
 
+  useEffect(() => {
+    // Check if today's date has been reached or passed
+    const currentDate = new Date().toISOString().split("T")[0];
+    if (currentDate >= today) {
+      setDisabledFields((prev) => ({
+        ...prev,
+        plantationDate: false, // Enable plantation date if it's today or later
+      }));
+    }
+  }, [today]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     let filteredValue = value;
@@ -62,6 +73,7 @@ const ScheduleForm = () => {
         setDisabledFields((prev) => ({
           ...prev,
           cropVariety: false,
+
         }));
       } else {
         setDisabledFields((prev) => ({

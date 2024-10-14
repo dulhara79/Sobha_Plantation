@@ -113,3 +113,17 @@ exports.deleteBuyerInfoRecords = async (req, res) => {
       res.status(500).json({ message: "Server error", error: error.message || error });
   }
 }; 
+// Function to get the total number of buyers
+exports.getBuyerCount = async (req, res) => {
+    try {
+      // Fetch the total number of buyer records from the database
+      const buyerCount = await BuyerInfoRecords.countDocuments();
+  
+      // Return the count to the client
+      return res.status(200).json({ totalBuyers: buyerCount });
+    } catch (error) {
+      console.error("Error fetching buyer count:", error.message || error);
+      // Return an error response in case of failure
+      res.status(500).json({ message: "Server error", error: error.message || error });
+    }
+  };

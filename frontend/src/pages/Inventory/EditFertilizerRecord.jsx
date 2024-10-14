@@ -3,6 +3,8 @@ import { Button, Form, Input, DatePicker, Select, notification } from 'antd';
 import axios from 'axios';
 import moment from 'moment';
 import { useNavigate, useParams } from 'react-router-dom';
+import Sidebar from "../../components/Sidebar";
+import Header from "../../components/Header";
 
 const { Option } = Select;
 
@@ -72,6 +74,10 @@ const EditFertilizerRecord = () => {
   };
 
   return (
+    <div className="flex h-screen">
+    <Sidebar />
+    <div className="flex flex-col flex-grow">
+      <Header />
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
         <h2 className="mb-6 text-2xl font-bold text-center">Edit Fertilizer/AgroChemical Record</h2>
@@ -80,16 +86,20 @@ const EditFertilizerRecord = () => {
           onFinish={handleSubmit}
           layout="vertical"
         >
-          <Form.Item
-            label="Added Date"
-            name="addeddate"
-            rules={[{ required: true, message: 'Please select the added date!' }]}
-          >
-            <DatePicker
-              format="YYYY-MM-DD"
-              disabledDate={disablePastDates}
-            />
-          </Form.Item>
+                <Form.Item
+  label="Added Date"
+  name="addeddate"
+  rules={[{ required: true, message: 'Please select the added date!' }]}
+>
+  <DatePicker
+    format="YYYY-MM-DD"
+    disabledDate={(current) => {
+      const today = moment().startOf('day');
+      const fiveDaysAgo = moment().subtract(5, 'days').startOf('day');
+      return current && (current < fiveDaysAgo || current > today);
+    }}
+  />
+</Form.Item>
 
           <Form.Item
             label="Fertilizer/Agrochemical Name"
@@ -122,15 +132,15 @@ const EditFertilizerRecord = () => {
     { required: true, message: 'Please enter the quantity!' },
     {
       validator(_, value) {
-        if (!value || /^[1-9]\d*$/.test(value)) {
+        if (!value || (/^[1-9]\d*$/.test(value) && value <= 1000)) {
           return Promise.resolve();
         }
-        return Promise.reject(new Error('Quantity must be a whole number greater than 0!'));
+        return Promise.reject(new Error('Quantity must be a whole number between 1 and 1000!'));
       },
     },
   ]}
 >
-  <Input placeholder="Enter quantity" type="number" min={1} step={1} />
+  <Input placeholder="Enter quantity" type="number" min={1} max={1000} step={1} />
 </Form.Item>
 
           <Form.Item
@@ -159,15 +169,20 @@ const EditFertilizerRecord = () => {
           </Form.Item>
 
           <Form.Item
-            label="Expired Date"
-            name="expireddate"
-            rules={[{ required: true, message: 'Please select the expired date!' }]}
-          >
-            <DatePicker
-              format="YYYY-MM-DD"
-              disabledDate={disablePastDates}
-            />
-          </Form.Item>
+  label="Expired Date"
+  name="expireddate"
+  rules={[{ required: true, message: 'Please select the expired date!' }]}
+>
+  <DatePicker
+    format="YYYY-MM-DD"
+    disabledDate={(current) => {
+      const today = moment().startOf('day');
+      const threeYearsFromToday = moment().add(3, 'years').endOf('day');
+      return current && (current < today || current > threeYearsFromToday);
+    }}
+  />
+</Form.Item>
+
 
           <Form.Item
             label="Status"
@@ -189,6 +204,8 @@ const EditFertilizerRecord = () => {
         </Form>
       </div>
     </div>
+       </div>
+       </div>
   );
 };
 

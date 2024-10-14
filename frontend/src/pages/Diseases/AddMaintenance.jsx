@@ -117,7 +117,7 @@ const handleAlphanumericKeyPress = (e) => {
 
       const { dateOfMaintenance, task, managerInCharge, progress } = values;
 
-      await axios.post("http://localhost:8090/api/regularMaintenance", {
+      await axios.post("http://localhost:5000/api/regularMaintenance", {
         dateOfMaintenance,
         task,
         managerInCharge,
@@ -152,52 +152,6 @@ const handleAlphanumericKeyPress = (e) => {
       <div className="flex h-screen">
         <Sidebar />
         <div className="flex-1 ml-[300px] p-4 overflow-auto">
-          <nav className="flex items-center justify-between p-4 bg-transparent">
-            <button
-              onClick={() => window.history.back()}
-              className="text-gray-600 hover:text-gray-800"
-            >
-              <LeftOutlined className="text-xl" />
-            </button>
-            <div className="flex space-x-4">
-              <Link
-                to="/diseases"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Home
-              </Link>
-              <Link
-                to="/CoconutInspections"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Inspections
-              </Link>
-              <Link
-                to="/CoconutTreatments"
-                className="text-[#236A64] font-semibold"
-              >
-                Treatments
-              </Link>
-              <Link
-                to="/CoconutPests"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Pests and Diseases
-              </Link>
-              <Link
-                to="/RegularMaintenance"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Maintenance
-              </Link>
-              {/* <Link
-                to="/UserProfile"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                My Profile
-              </Link> */}
-            </div>
-          </nav>
 
           <div className="mt-4">
             <Breadcrumb

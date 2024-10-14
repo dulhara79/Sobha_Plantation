@@ -71,33 +71,62 @@ const ErrorMsg = styled.p`
   margin: 0;
 `;
 
-// Helper function for NIC validation
-const validateNIC = (nic, dob) => {
-  let birthYear;
-  const currentYear = new Date().getFullYear();
+// Helper function for NIC validation and extraction
+const validateAndExtractNIC = (nic) => {
+  let birthYear, birthMonth, birthDate, gender;
 
   if (/^\d{9}[vVxX]$/.test(nic)) {
     // Old NIC format (9 digits followed by 'v' or 'x')
-    birthYear = "19" + nic.substr(0, 2);
+    birthYear = parseInt("19" + nic.substr(0, 2));
+    let daysInYear = parseInt(nic.substr(2, 3));
+    gender = daysInYear > 500 ? "Female" : "Male";
+    daysInYear = gender === "Female" ? daysInYear - 500 : daysInYear;
+
+    // Calculate month and date
+    for (let month = 0; month < 12; month++) {
+      let daysInMonth = new Date(birthYear, month + 1, 0).getDate();
+      if (daysInYear <= daysInMonth) {
+        birthMonth = month + 1;
+        birthDate = daysInYear;
+        break;
+      }
+      daysInYear -= daysInMonth;
+    }
   } else if (/^\d{12}$/.test(nic)) {
     // New NIC format (12 digits)
-    birthYear = nic.substr(0, 4);
+    birthYear = parseInt(nic.substr(0, 4));
+    let daysInYear = parseInt(nic.substr(4, 3));
+    gender = daysInYear > 500 ? "Female" : "Male";
+    daysInYear = gender === "Female" ? daysInYear - 500 : daysInYear;
+
+    // Calculate month and date
+    for (let month = 0; month < 12; month++) {
+      let daysInMonth = new Date(birthYear, month + 1, 0).getDate();
+      if (daysInYear <= daysInMonth) {
+        birthMonth = month + 1;
+        birthDate = daysInYear;
+        break;
+      }
+      daysInYear -= daysInMonth;
+    }
   } else {
     return { valid: false, message: "NIC format is invalid." };
   }
 
-  const enteredYear = new Date(dob).getFullYear();
-  const age = currentYear - birthYear;
+  // Format date as YYYY-MM-DD
+  const formattedDate = `${birthYear}-${birthMonth.toString().padStart(2, '0')}-${birthDate.toString().padStart(2, '0')}`;
 
-  if (enteredYear !== parseInt(birthYear)) {
-    return { valid: false, message: "Birth year does not match NIC." };
-  }
+  return { 
+    valid: true, 
+    dateOfBirth: formattedDate, 
+    gender: gender
+  };
+};
 
-  if (age < 18) {
-    return { valid: false, message: "Age must be 18 or older." };
-  }
-
-  return { valid: true };
+const formatDateToLocal = (date) => {
+  const d = new Date(date);
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); // Adjust to local timezone
+  return d.toISOString().split('T')[0]; // Return in YYYY-MM-DD format
 };
 
 const EditEmployee = () => {
@@ -136,7 +165,7 @@ const EditEmployee = () => {
           address: data.address,
           employeeType: data.employeeType,
           designation: data.designation,
-          hiredDate: data.hiredDate.split("T")[0],
+          hiredDate: formatDateToLocal(data.hiredDate),
           hourlyRate: data.hourlyRate,
         });
       })
@@ -155,8 +184,12 @@ const EditEmployee = () => {
     else if (!/^[A-Za-z]+$/.test(formData.lastName)) newErrors.lastName = "Last name must only contain letters.";
 
     // NIC validation
-    const nicValidation = validateNIC(formData.nic, formData.dateOfBirth);
-    if (!nicValidation.valid) newErrors.nic = nicValidation.message;
+    if (!formData.nic) {
+      newErrors.nic = "NIC is required.";
+    } else {
+      const nicValidation = validateAndExtractNIC(formData.nic);
+      if (!nicValidation.valid) newErrors.nic = nicValidation.message;
+    }
 
     // Date of Birth validation
     if (!formData.dateOfBirth) newErrors.dateOfBirth = "Date of Birth is required.";
@@ -170,11 +203,11 @@ const EditEmployee = () => {
 
     // Email validation (contains @ and uses only lowercase letters)
     if (!formData.email) newErrors.email = "Email is required.";
-    else if (!/^[a-z]+@[a-z]+\.[a-z]+$/.test(formData.email)) newErrors.email = "Email format is invalid.";
+    else if (!/^[0-9a-z]+@[a-z]+\.[a-z]+$/.test(formData.email)) newErrors.email = "Email format is invalid.";
 
     // Address validation (letters, spaces, ',', '.', '/')
     if (!formData.address) newErrors.address = "Address is required.";
-    else if (!/^[A-Za-z\s,./]+$/.test(formData.address)) newErrors.address = "Address contains invalid characters.";
+    else if (!/^[A-Za-z\s,./0-9]+$/.test(formData.address)) newErrors.address = "Address contains invalid characters.";
 
     // Employee Type validation
     if (!formData.employeeType) newErrors.employeeType = "Employee type is required.";
@@ -183,7 +216,14 @@ const EditEmployee = () => {
     if (!formData.designation) newErrors.designation = "Designation is required.";
 
     // Hourly Rate validation (number only)
-    if (!formData.hourlyRate || isNaN(formData.hourlyRate)) newErrors.hourlyRate = "Hourly rate must be a valid number.";
+    if (
+      !formData.hourlyRate ||                   // Check if the field is empty
+      !/^\d+$/.test(formData.hourlyRate) ||     // Ensure only numbers (no letters, symbols, or decimals)
+      Number(formData.hourlyRate) <= 0 ||       // Check if the value is positive
+      Number(formData.hourlyRate) > 200000      // Ensure the value is ≤ 200000
+    ) {
+      newErrors.hourlyRate = "Hourly rate must be a positive number up to 200000.";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -191,10 +231,24 @@ const EditEmployee = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
+    if (name === 'nic') {
+      // Handle NIC input
+      if (/^\d{0,12}$/.test(value) || /^\d{0,9}[vVxX]?$/.test(value)) {
+        setFormData(prevFormData => ({ ...prevFormData, [name]: value }));
+        
+        // Extract date of birth and gender from NIC
+        const nicInfo = validateAndExtractNIC(value);
+        if (nicInfo.valid) {
+          setFormData(prevFormData => ({
+            ...prevFormData,
+            dateOfBirth: nicInfo.dateOfBirth,
+            gender: nicInfo.gender
+          }));
+        }
+      }
+    } else {
+      setFormData(prevFormData => ({ ...prevFormData, [name]: value }));
+    }
     setNextFieldBlocked(!validateForm());
   };
 
@@ -237,7 +291,7 @@ const EditEmployee = () => {
           </FormGroup>
           <FormGroup>
             <label htmlFor="dateOfBirth">Date of Birth</label>
-            <input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} />
+            <input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} readOnly />
             {errors.dateOfBirth && <ErrorMsg>{errors.dateOfBirth}</ErrorMsg>}
           </FormGroup>
         </FormRow>
@@ -245,7 +299,7 @@ const EditEmployee = () => {
         <FormRow>
           <FormGroup>
             <label htmlFor="gender">Gender</label>
-            <select name="gender" value={formData.gender} onChange={handleChange}>
+            <select name="gender" value={formData.gender} onChange={handleChange} disabled>
               <option value="">Select Gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
