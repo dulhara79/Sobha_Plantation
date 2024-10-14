@@ -33,7 +33,7 @@ const BuyerPreOrderTable = () => {
   // Fetch PreOrder records from API
   const fetchPreOrderRecords = async () => {
     try {
-      const response = await axios.get("http://localhost:8090/api/buyerPreOrder");
+      const response = await axios.get("http://localhost:5000/api/buyerPreOrder");
       setPreOrderRecords(response.data.data);
       setFilteredPreOrderRecords(response.data.data);
     } catch (error) {
@@ -82,7 +82,7 @@ const BuyerPreOrderTable = () => {
   // Handle delete PreOrder record
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:8090/api/buyerPreOrder/${id}`);
+      await axios.delete(`http://localhost:5000/api/buyerPreOrder/${id}`);
       notification.success({
         message: "Record deleted successfully",
         description: "Record has been deleted successfully",
