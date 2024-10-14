@@ -143,7 +143,6 @@ const FinancialAnalyticsPage = () => {
         <ValuationPieChart />
         <FinancialPrediction />
         {/* </div> */}
-        
       </div>
     </div>
   );

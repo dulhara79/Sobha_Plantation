@@ -92,6 +92,17 @@ const AddPackage = () => {
     navigate('/products/packaging-labeling');
   };
 
+  const handlePaste = (e, validationFn) => {
+    const pasteData = e.clipboardData.getData('text');
+    if (!validationFn(pasteData)) {
+      e.preventDefault();
+      notification.error({
+        message: 'Invalid Paste',
+        description: 'The pasted value is invalid for this field.',
+      });
+    }
+  };
+
   return (
     <div style={{ padding: '24px', backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '24px', color: '#1D6660' }}>Add New Packaging</h2>
@@ -179,7 +190,7 @@ const AddPackage = () => {
                     form.setFieldsValue({ quantity: 1 });
                   }
                 }}
-                onPaste={handlePreventPaste} // Prevent paste
+                onPaste={(e) => handlePaste(e, value => !isNaN(value) && value >= 1 && value <= 100)}
               />
           </Form.Item>
         <Form.Item

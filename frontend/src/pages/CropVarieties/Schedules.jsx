@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Breadcrumb, Button, Table, notification, Popconfirm, Input, Select, Modal, Form, DatePicker } from 'antd';
-import { HomeOutlined, EditOutlined, DeleteOutlined, LeftCircleOutlined } from '@ant-design/icons';
+import { Breadcrumb, Button, Table, notification, Input, Select, Modal, Form, DatePicker } from 'antd';
+import { HomeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Sidebar from '../../components/Sidebar';
@@ -9,7 +9,8 @@ import moment from 'moment';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import FieldViewNavbar from '../../components/FieldView/FieldViewNavbar';
-const { Content } = Layout;
+import Swal from 'sweetalert2'; // Import SweetAlert2
+
 const { Option } = Select;
 
 const VarietySchedule = () => {
@@ -42,36 +43,38 @@ const VarietySchedule = () => {
     }
   };
 
+  // Function to fetch schedules
+  const fetchSchedules = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/schedules');
+      const schedules = response.data;
+
+      const formattedData = schedules.map(schedule => ({
+        key: schedule._id,
+        date: new Date(schedule.plantationDate).toLocaleDateString('en-US'),
+        team: schedule.assignedTeam,
+        fieldName: schedule.fieldName,
+        varieties: schedule.cropVariety,
+        dateComparison: new Date(schedule.scheduledDate) > new Date() ? 'To date' : 'Overdue',
+        scheduledDate: new Date(schedule.scheduledDate).toLocaleDateString('en-US'),
+        status: schedule.status,
+        seedsUsed: schedule.seedsUsed,
+      }));
+
+      setData(formattedData);
+      setFilteredData(formattedData);
+    } catch (error) {
+      notification.error({ message: 'Error fetching schedules', description: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchSchedules = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/schedules');
-        const schedules = response.data;
-
-        const formattedData = schedules.map(schedule => ({
-          key: schedule._id,
-          date: new Date(schedule.plantationDate).toLocaleDateString('en-US'),
-          team: schedule.assignedTeam,
-          fieldName: schedule.fieldName,
-          varieties: schedule.cropVariety,
-          dateComparison: new Date(schedule.scheduledDate) > new Date() ? 'To date' : 'Overdue',
-          scheduledDate: new Date(schedule.scheduledDate).toLocaleDateString('en-US'),
-          status: schedule.status,
-          seedsUsed: schedule.seedsUsed,
-        }));
-
-        setData(formattedData);
-        setFilteredData(formattedData);
-      } catch (error) {
-        notification.error({ message: 'Error fetching schedules', description: error.message });
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchSchedules();
   }, []);
 
+  // Filter data based on search text and status
   useEffect(() => {
     const filtered = data.filter(item => {
       const matchesSearch = searchText ? 
@@ -95,121 +98,193 @@ const VarietySchedule = () => {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/api/schedules/${id}`);
-      setData(data.filter(item => item.key !== id));
-      notification.success({ message: 'Schedule deleted successfully' });
-    } catch (error) {
-      notification.error({ message: 'Error deleting schedule', description: error.message });
+    // SweetAlert2 confirmation dialog
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'This will permanently delete the schedule!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel!',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:5000/api/schedules/${id}`);
+        setData(data.filter(item => item.key !== id));
+        notification.success({ message: 'Schedule deleted successfully' });
+      } catch (error) {
+        notification.error({ message: 'Error deleting schedule', description: error.message });
+      }
     }
   };
 
   const handleUpdate = async () => {
-    try {
-      const updatedValues = form.getFieldsValue();
-      const formattedValues = {
-        ...updatedValues,
-        date: updatedValues.date.format('MM/DD/YYYY'),
-        scheduledDate: updatedValues.scheduledDate.format('MM/DD/YYYY'),
-      };
-
-      await axios.put(`http://localhost:5000/api/schedules/${currentRecord.key}`, formattedValues);
-      setData(data.map(item => (item.key === currentRecord.key ? { ...item, ...formattedValues } : item)));
-      notification.success({ message: 'Schedule updated successfully' });
-      setIsModalVisible(false);
-    } catch (error) {
-      notification.error({ message: 'Error updating schedule', description: error.message });
-    }
-  };
-
-  const generateReport = () => {
-    const doc = new jsPDF();
-
-    doc.text('Variety Schedule Report', 10, 10);
-
-    const tableHeaders = [
-      ['Date', 'Assigned Team', 'Field Name', 'Varieties', 'Scheduled Date', 'Status', 'Seeds Used'],
-    ];
-
-    const tableRows = filteredData.map(item => [
-      item.date,
-      item.team,
-      item.fieldName,
-      item.varieties,
-      item.scheduledDate,
-      item.status,
-      item.seedsUsed || 'N/A',
-    ]);
-
-    doc.autoTable({
-      head: tableHeaders,
-      body: tableRows,
-      startY: 20,
+    const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to update this schedule?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, update it!',
+        cancelButtonText: 'No, cancel!',
     });
 
-    doc.save('VarietyScheduleReport.pdf');
+    if (result.isConfirmed) {
+        try {
+            const updatedValues = form.getFieldsValue();
+            const formattedValues = {
+                ...updatedValues,
+                date: updatedValues.date.format('MM/DD/YYYY'),
+                scheduledDate: updatedValues.scheduledDate.format('MM/DD/YYYY'),
+            };
+
+            // Update the schedule in the backend
+            await axios.put(`http://localhost:5000/api/schedules/${currentRecord.key}`, formattedValues);
+
+            // Log current record and formatted values for debugging
+            console.log('Current Record:', currentRecord);
+            console.log('Formatted Values:', formattedValues);
+
+            // Update the local state
+            setData((prevData) =>
+                prevData.map((item) =>
+                    item.key === currentRecord.key ? { ...item, ...formattedValues } : item
+                )
+            );
+
+            notification.success({ message: 'Schedule updated successfully' });
+            setIsModalVisible(false);
+        } catch (error) {
+            notification.error({ message: 'Error updating schedule', description: error.message });
+        }
+    }
+};
+
+  
+
+  const generateReport = async () => {
+    const doc = new jsPDF();
+
+    // Load the logo image
+    const logoUrl = '../src/assets/logo.png'; // Adjust the path to your logo as necessary
+    let logoDataURL = null;
+    try {
+        logoDataURL = await getImageDataURL(logoUrl);
+    } catch (error) {
+        console.error('Failed to load the logo image:', error);
+    }
+
+    // Header
+    const pageWidth = doc.internal.pageSize.width;
+    doc.setFontSize(14);
+    doc.text("Sobha Plantation", 10, 10); // Align left
+    doc.setFontSize(10);
+    doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+    doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+    doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address
+    doc.text("Contact: 0112 751 757", 10, 30); // Contact
+
+    // Add logo if it exists
+    if (logoDataURL) {
+        doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right
+    }
+    doc.line(10, 35, pageWidth - 10, 35); // Header line
+
+    // Define the table columns
+    const columns = [
+        { title: "Date", dataKey: "date" },
+        { title: "Assigned Team", dataKey: "team" },
+        { title: "Field Name", dataKey: "fieldName" },
+        { title: "Varieties", dataKey: "varieties" },
+        { title: "Scheduled Date", dataKey: "scheduledDate" },
+        { title: "Status", dataKey: "status" },
+        { title: "Seeds Used", dataKey: "seedsUsed" }
+    ];
+
+    // Map the filtered data to match the columns
+    const rows = filteredData.map((item) => ({
+        date: item.date,
+        team: item.team,
+        fieldName: item.fieldName,
+        varieties: item.varieties,
+        scheduledDate: item.scheduledDate,
+        status: item.status,
+        seedsUsed: item.seedsUsed || 'N/A',
+    }));
+
+    // Add title and table to PDF
+    doc.setFontSize(22);
+    doc.text("Variety Schedule Report", 60, 50);
+
+    doc.autoTable({
+        columns: columns,
+        body: rows,
+        startY: 60,
+        margin: { horizontal: 10 },
+        styles: {
+            fontSize: 10,
+        },
+        headStyles: {
+            fillColor: [64, 133, 126],
+            textColor: [255, 255, 255],
+            fontSize: 12,
+        },
+        theme: 'striped',
+        didDrawPage: (data) => {
+            const pageNumber = doc.internal.getNumberOfPages();
+            const pageWidth = doc.internal.pageSize.width;
+            const pageHeight = doc.internal.pageSize.height;
+
+            doc.setFontSize(10);
+            doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10);
+        },
+    });
+
+    // Save the PDF
+    doc.save("VarietyScheduleReport.pdf");
+    notification.success({ message: 'PDF report generated and downloaded!' });
   };
+
+  const getImageDataURL = (url) => {
+      return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = url;
+          img.onload = () => {
+              const canvas = document.createElement('canvas');
+              canvas.width = img.width;
+              canvas.height = img.height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0);
+              const dataURL = canvas.toDataURL('image/png');
+              resolve(dataURL);
+          };
+          img.onerror = (err) => {
+              reject(err);
+          };
+      });
+  };
+
 
   const columns = [
     {
       title: 'Date',
       dataIndex: 'date',
       key: 'date',
-      filterDropdown: () => (
-        <div style={{ padding: 8 }}>
-          <Input
-            placeholder="Search Date"
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-            onPressEnter={() => setSearchText(searchText)}
-          />
-        </div>
-      ),
     },
     {
       title: 'Assigned Team',
       dataIndex: 'team',
       key: 'team',
-      filterDropdown: () => (
-        <div style={{ padding: 8 }}>
-          <Input
-            placeholder="Search Team"
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-            onPressEnter={() => setSearchText(searchText)}
-          />
-        </div>
-      ),
     },
     {
       title: 'Field Name',
       dataIndex: 'fieldName',
       key: 'fieldName',
-      filterDropdown: () => (
-        <div style={{ padding: 8 }}>
-          <Input
-            placeholder="Search Field Name"
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-            onPressEnter={() => setSearchText(searchText)}
-          />
-        </div>
-      ),
     },
     {
       title: 'Varieties',
       dataIndex: 'varieties',
       key: 'varieties',
-      filterDropdown: () => (
-        <div style={{ padding: 8 }}>
-          <Input
-            placeholder="Search Varieties"
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-            onPressEnter={() => setSearchText(searchText)}
-          />
-        </div>
-      ),
     },
     {
       title: 'Date Comparison',
@@ -220,16 +295,6 @@ const VarietySchedule = () => {
       title: 'Scheduled Date',
       dataIndex: 'scheduledDate',
       key: 'scheduledDate',
-      filterDropdown: () => (
-        <div style={{ padding: 8 }}>
-          <Input
-            placeholder="Search Scheduled Date"
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-            onPressEnter={() => setSearchText(searchText)}
-          />
-        </div>
-      ),
     },
     {
       title: 'Status',
@@ -257,133 +322,208 @@ const VarietySchedule = () => {
             onClick={() => handleEdit(record)}
             style={{ marginRight: 8 }}
           />
-          <Popconfirm
-            title="Are you sure you want to delete this schedule?"
-            onConfirm={() => handleDelete(record.key)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button icon={<DeleteOutlined />} />
-          </Popconfirm>
+          <Button icon={<DeleteOutlined />} onClick={() => handleDelete(record.key)} />
         </div>
       ),
     },
   ];
 
+  // Function to restrict the plantation date to today's date and up to one year in the future
+  const disabledDate = (current) => {
+    const today = moment();
+    const oneYearFromNow = moment().add(1, 'year');
+    
+    // Disable past dates and dates after one year from today
+    return current < today.startOf('day') || current > oneYearFromNow.endOf('day');
+  };
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh' }}>
       <Sidebar />
       <Header />
-      <Layout className="site-layout" style={{ marginLeft: 300 }}>
-        
-        <Content style={{ margin: '24px 16px', padding: 24, background: '#fff' }}>
-          <Breadcrumb style={{ marginBottom: '16px' }}>
-            <Breadcrumb.Item href="">
-              <HomeOutlined />
+      <div className="site-layout" style={{ marginLeft: 300 }}>
+        <div style={{ margin: '24px 16px 0', padding: 24, background: '#fff', minHeight: 360 }}>
+          <Breadcrumb>
+            <Breadcrumb.Item>
+              <HomeOutlined onClick={() => navigate('/')} />
             </Breadcrumb.Item>
-            <Breadcrumb.Item>Field View</Breadcrumb.Item>
-            <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
-            <Breadcrumb.Item>Schedule</Breadcrumb.Item>
+            <Breadcrumb.Item>Variety Schedules</Breadcrumb.Item>
           </Breadcrumb>
-          <FieldViewNavbar/>
+          <FieldViewNavbar />
 
-          <div className="mb-4">
-            <LeftCircleOutlined onClick={() => navigate(-1)} />
-          </div>
-
+          {/* Page Header */}
           <div className="bg-white shadow-md rounded-lg p-4 my-4">
-            <h2 className="text-xl font-semibold">Schedule</h2>
-            <p>Today is {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <h2 className="text-xl font-semibold">Planting Schedule</h2>
           </div>
-
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex space-x-4">
-              <Input.Search
-                placeholder="Search..."
-                onSearch={value => setSearchText(value)}
-                onChange={e => setSearchText(e.target.value)}
-                style={{ width: 200 }}
-              />
+          
+          {/* Flexbox container for search/filter and buttons */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
               <Select
-                placeholder="Select Status"
-                allowClear
-                style={{ width: 200 }}
+                placeholder="Filter by Status"
+                style={{ marginRight: 8, width: 200 }}
                 onChange={value => setStatusFilter(value)}
+                allowClear
               >
                 <Option value="Planned">Planned</Option>
                 <Option value="In Progress">In Progress</Option>
                 <Option value="Completed">Completed</Option>
               </Select>
+              <Input
+                placeholder="Search"
+                value={searchText}
+                onChange={e => setSearchText(e.target.value)}
+              />
             </div>
-
-            <div className="flex space-x-4">
-              <Button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={() => navigate('/scheduleForm')}>
-                + Add New Activity
+           {/* Button container for alignment */}
+           <div style={{ display: 'flex', gap: '8px' }}>
+              <Button type="primary" onClick={() => navigate('/scheduleForm')}>
+                Add Schedule
               </Button>
-              <Button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={generateReport}>
-                Generate Reports
+              <Button
+                type="primary"
+                onClick={generateReport}
+                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+              >
+                Generate Report
               </Button>
-            </div>
+          </div>
           </div>
 
-          <Table columns={columns} dataSource={filteredData} pagination={false} loading={loading} />
+          <Table
+            columns={columns}
+            dataSource={filteredData}
+            loading={loading}
+            pagination={{ pageSize: 10 }}
+            rowKey="key"
+          />
 
+          {/* Modal for editing schedule */}
           <Modal
             title="Edit Schedule"
             visible={isModalVisible}
             onOk={handleUpdate}
-            onCancel={() => setIsModalVisible(false)}
+            onCancel={async () => {
+              // SweetAlert2 confirmation dialog
+              const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: 'Unsaved changes will be lost. Do you want to cancel?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, cancel it!',
+                cancelButtonText: 'No, stay here!',
+              });
+
+              if (result.isConfirmed) {
+                setIsModalVisible(false);
+              }
+            }}
+            okText="Update"
+            cancelText="Cancel"
           >
             <Form form={form} layout="vertical">
             <Form.Item
-              name="team"
-              label="Assigned Team"
-              rules={[{ required: true, message: 'Please input the team!' }]}
-            >
-              <Input
-                onKeyPress={restrictInputToLetters} // Only allow letters
-                onPaste={preventNonAlphabeticPaste} // Prevent non-letter paste
-              />
-            </Form.Item>
-              <Form.Item name="fieldName" label="Field Name" rules={[{ required: true, message: 'Please select the field name!' }]}>
-              <Select placeholder="Select Field Name">
-                <Option value="Field A">Field A</Option>
-                <Option value="Field B">Field B</Option>
-                <Option value="Field C">Field C</Option>
-                <Option value="Field D">Field D</Option>
-                <Option value="Field E">Field E</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item name="varieties" label="Varieties" rules={[{ required: true, message: 'Please select the crop variety!' }]}>
-              <Select placeholder="Select Variety">
-                <Option value="Coconut">Coconut</Option>
-                <Option value="Papaya">Papaya</Option>
-                <Option value="Banana">Banana</Option>
-                <Option value="Pepper">Pepper</Option>
-                <Option value="Pineapple">Pineapple</Option>
-              </Select>
-            </Form.Item>
-              <Form.Item name="date" label="Date" rules={[{ required: true, message: 'Please select the date!' }]}>
-                <DatePicker format="MM/DD/YYYY" />
+                name="date"
+                label="Plantation Date"
+                rules={[{ required: true, message: 'Please select a date' }]}
+              >
+                <DatePicker
+                  style={{ width: '100%' }}
+                  format="MM/DD/YYYY"
+                  disabledDate={disabledDate} // Restrict the date selection
+                  onKeyPress={restrictInputToLetters}
+                  onPaste={preventNonAlphabeticPaste}
+                />
               </Form.Item>
-              <Form.Item name="scheduledDate" label="Scheduled Date" rules={[{ required: true, message: 'Please select the scheduled date!' }]}>
-                <DatePicker format="MM/DD/YYYY" />
+              <Form.Item
+                name="assignedTeam"
+                label="Assigned Team"
+                rules={[{ required: true, message: 'Please enter a team name' }]}
+              >
+                <Input
+                  onKeyPress={restrictInputToLetters}
+                  onPaste={preventNonAlphabeticPaste}
+                />
               </Form.Item>
-              <Form.Item name="status" label="Status" rules={[{ required: true, message: 'Please select the status!' }]}>
-                <Select>
+              <Form.Item
+                name="fieldName"
+                label="fieldName"
+                rules={[{ required: true, message: 'Please select a Field Name' }]}
+              >
+                <Select placeholder="Select Field Name" allowClear>
+                  <Option value="Field A">Field A</Option>
+                  <Option value="Field B">Field B</Option>
+                  <Option value="Field C">Field C</Option>
+                  <Option value="Field C">Field C</Option>
+                  
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name="varieties"
+                label="Varieties"
+                rules={[{ required: true, message: 'Please select a variety' }]}
+              >
+                <Select placeholder="Select Variety" allowClear>
+                  <Option value="Coconut">Coconut</Option>
+                  <Option value="Papaya">Papaya</Option>
+                  <Option value="Banana">Banana</Option>
+                  <Option value="Pepper">Pepper</Option>
+                  <Option value="Pineapple">Pineapple</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+      name="scheduledDate"
+      label="Scheduled Date"
+    >
+      <DatePicker
+        style={{ width: '100%' }}
+        format="MM/DD/YYYY"
+        value={moment(currentRecord?.scheduledDate, 'MM/DD/YYYY')} // Display the current scheduled date
+        disabled // Make this field read-only
+      />
+    </Form.Item>
+              <Form.Item
+                name="status"
+                label="Status"
+                rules={[{ required: true, message: 'Please select a status' }]}
+              >
+                <Select placeholder="Select Status" allowClear>
                   <Option value="Planned">Planned</Option>
                   <Option value="In Progress">In Progress</Option>
                   <Option value="Completed">Completed</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name="seedsUsed" label="Seeds Used">
-                <Input />
-              </Form.Item>
+              <Form.Item
+  name="seedsUsed"
+  label="Seeds Used"
+  rules={[
+    { required: true, message: 'Please enter the number of seeds used' },
+    { type: 'number', message: 'Must be a number' },
+  ]}
+>
+  <Input
+    type="number" // Set type to number
+    min={0} // Optional: Prevent negative numbers
+    onKeyPress={(e) => {
+      // Allow only numbers and control keys (e.g., backspace)
+      if (!/[0-9]/.test(e.key) && e.key !== 'Backspace') {
+        e.preventDefault();
+      }
+    }}
+    onPaste={(e) => {
+      // Prevent pasting non-numeric values
+      const pasteData = (e.clipboardData || window.clipboardData).getData('text');
+      if (!/^[0-9]+$/.test(pasteData)) {
+        e.preventDefault();
+      }
+    }}
+  />
+</Form.Item>
             </Form>
           </Modal>
-        </Content>
-      </Layout>
-    </Layout>
+        </div>
+      </div>
+    </div>
+    
   );
 };
 

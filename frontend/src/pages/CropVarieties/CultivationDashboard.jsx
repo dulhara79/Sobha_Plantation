@@ -22,42 +22,7 @@ const CultivationDashboard = () => {
     return () => clearInterval(timer); // Clean up the interval on component unmount
   }, []);
 
-  // Fetch schedule data for the pie chart
-  useEffect(() => {
-    const fetchScheduleData = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/production'); // Adjust API endpoint as necessary
-        if (response.data.success) {
-          setScheduleData(response.data.data);
-        } else {
-          console.error('Error fetching schedule data');
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchScheduleData();
-  }, []);
-
-  // Format the schedule data for the pie chart
-  const formatPieChartData = () => {
-    const statusCounts = { 'Planned': 0, 'In Progress': 0, 'Completed': 0 };
-
-    scheduleData.forEach((schedule) => {
-      if (schedule.status === 'Planned') statusCounts['Planned'] += 1;
-      else if (schedule.status === 'In Progress') statusCounts['In Progress'] += 1;
-      else if (schedule.status === 'Completed') statusCounts['Completed'] += 1;
-    });
-
-    return [
-      { name: 'Planned', value: statusCounts['Planned'] },
-      { name: 'In Progress', value: statusCounts['In Progress'] },
-      { name: 'Completed', value: statusCounts['Completed'] },
-    ];
-  };
+ 
 
   // Format the date
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -93,10 +58,7 @@ const CultivationDashboard = () => {
           <p className="text-gray-600">Today is {formattedDate}</p>
         </div>
 
-        {/* Pie Chart Section */}
-        <div className="flex justify-center">
-          <PieChartComponent title="Production Schedule Status" data={formatPieChartData()} loading={loading} />
-        </div>
+
 
         {/* Summary Section */}
         <div className="grid grid-cols-2 gap-6">
