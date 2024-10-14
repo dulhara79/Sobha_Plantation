@@ -30,6 +30,11 @@ const EmployeeList = () => {
   const navigate = useNavigate();
   const [isModalVisible, setIsModalVisible] = useState(false);
 const [selectedEmployee, setSelectedEmployee] = useState(null);
+const getQRLink = (id) => {
+  return `${window.location.origin}/employee/qr/${id}`;
+};
+
+
 
   useEffect(() => {
     setLoading(true);
@@ -326,7 +331,6 @@ const [selectedEmployee, setSelectedEmployee] = useState(null);
         />
       ),
     },
- 
   ];
   
 
@@ -366,12 +370,12 @@ const [selectedEmployee, setSelectedEmployee] = useState(null);
 
                 <div className="flex space-x-4">
                   <button type="primary" onClick={handleAddNewEmployee}
-                   className="bg-green-500 text-white px-4 py-2 rounded hover:bg-gray-700"
+                   className="px-4 py-2 text-white bg-green-500 rounded hover:bg-gray-700"
                   >
                     Add New Employee
                   </button>
                   <button type="primary" onClick={generateReport}
-                   className="bg-green-500 text-white px-4 py-2 rounded hover:bg-gray-700">
+                   className="px-4 py-2 text-white bg-green-500 rounded hover:bg-gray-700">
                     Generate Report
                   </button>
                 </div>
@@ -390,34 +394,30 @@ const [selectedEmployee, setSelectedEmployee] = useState(null);
         </div>
       </div>
       <Modal
-  title="Employee QR Code"
-  visible={isModalVisible}
-  onCancel={handleModalCancel}
-  footer={null}
->
-  {selectedEmployee && (
-    <div className="flex flex-col items-center">
-      <QRCodeSVG
-        value={`http://localhost:5173/employee/viewemployee/${selectedEmployee._id}`}
-        size={200}
-        level={"L"}
-        includeMargin={true}
-      />
-      <p className="mt-4">Scan this QR code to view employee details</p>
-      <Button
-        type="primary"
-        onClick={() =>
-          copyToClipboard(
-            `http://localhost:5173/employee/viewemployee/${selectedEmployee._id}`
-          )
-        }
-        className="mt-4"
+        title="Employee QR Code"
+        visible={isModalVisible}
+        onCancel={handleModalCancel}
+        footer={null}
       >
-        Copy Link
-      </Button>
-    </div>
-  )}
-</Modal>
+        {selectedEmployee && (
+          <div className="flex flex-col items-center">
+            <QRCodeSVG
+              value={getQRLink(selectedEmployee._id)}
+              size={200}
+              level={"L"}
+              includeMargin={true}
+            />
+            <p className="mt-4">Scan this QR code to view employee details</p>
+            <Button
+              type="primary"
+              onClick={() => copyToClipboard(getQRLink(selectedEmployee._id))}
+              className="mt-4"
+            >
+              Copy Link
+            </Button>
+          </div>
+        )}
+      </Modal>
     </>
   );
 };
