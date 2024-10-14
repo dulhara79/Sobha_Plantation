@@ -35,8 +35,6 @@ const BuyerDashboard = () => {
     }, 1000); // Adjust the delay as needed
   }, []);
 
-  if (loading) return <NewLoadingScreen />;
-
 
   // Update the date and time every minute
   useEffect(() => {
@@ -69,6 +67,8 @@ const BuyerDashboard = () => {
   // Format the date
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = currentDate.toLocaleDateString(undefined, options);
+
+  if (loading) return <NewLoadingScreen />;
 
   return (
     <div>
