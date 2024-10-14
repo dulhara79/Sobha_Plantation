@@ -512,7 +512,6 @@ export default function App() {
           {/* <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
           <Route path="/buyert" element={<BuyerTable />} />
           <Route path="/profile" element={<Profile />} /> */}
-
       <Route path="/HomePage" element={<HomePage />} /> 
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/cart" element={<CartPage />} /> 
