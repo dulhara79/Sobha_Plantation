@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Header from "../../components/Header";
+import Sidebar from "../../components/Sidebar";
 import Swal from "sweetalert2";
 
 const ScheduleForm = () => {
@@ -231,6 +233,9 @@ const ScheduleForm = () => {
   };
 
   return (
+    <div>
+      <Header />
+      <Sidebar />
     <form onSubmit={handleSubmit} style={formStyle}>
       <div>
         <label style={labelStyle}>Plantation Date:</label>
@@ -349,6 +354,7 @@ const ScheduleForm = () => {
         </button>
       </div>
     </form>
+    </div>
   );
 };
 
