@@ -53,7 +53,6 @@ const scheduleRoutes = require("./routes/scheduleRoutes");
 const soilTestingRoutes = require("./routes/soilTestingRoutes");
 const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
 const emailRoutes1 = require('./routes/emailRoutes1.js');
-const emailRoutes1 = require('./routes/emailRoutes1.js');
 
 /**
  * buyer
