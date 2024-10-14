@@ -111,31 +111,28 @@ const AddInfoRecords = () => {
         break;
     }
   };
-  
+
   const restrictInputToNumbers = (e) => {
     const key = e.key;
     if (!/[0-9]/.test(key)) {
       e.preventDefault();
     }
-};
+  };
 
-const restrictInputToLetters = (e) => {
+  const restrictInputToLetters = (e) => {
     const key = e.key;
-   
     if (!/[a-zA-Z]/.test(key)) {
       e.preventDefault();
     }
-};
+  };
 
-const restrictInputToAlphanumeric = (e) => {
+  const restrictInputToAlphanumeric = (e) => {
     const key = e.key;
-     
     if (!/^[a-zA-Z0-9]*$/.test(key)) {
       e.preventDefault();
     }
-};
+  };
 
-  
   // To prevent non-numeric values from being pasted into numeric fields
   const preventNonNumericPaste = (e) => {
     const clipboardData = e.clipboardData.getData("Text");
@@ -151,7 +148,11 @@ const restrictInputToAlphanumeric = (e) => {
       e.preventDefault();
     }
   };
- 
+
+  // Calculate the minimum allowed date for 16+ years of age
+  const getMinDOB = () => {
+    return dayjs().subtract(16, "year").format("YYYY-MM-DD");
+  };
 
   return (
     <div>
@@ -194,12 +195,10 @@ const restrictInputToAlphanumeric = (e) => {
               onValuesChange={handleFieldChange}
             >
               <Form.Item label="First Name" name="firstName" rules={alphabeticRule}>
-                <Input placeholder="Enter first name" 
-                
-                onKeyPress={restrictInputToLetters} 
-              onPaste={preventNonAlphabeticPaste} 
-                
-                
+                <Input
+                  placeholder="Enter first name"
+                  onKeyPress={restrictInputToLetters}
+                  onPaste={preventNonAlphabeticPaste}
                 />
               </Form.Item>
 
@@ -207,7 +206,7 @@ const restrictInputToAlphanumeric = (e) => {
                 <Input
                   placeholder="Enter last name"
                   disabled={isNextFieldDisabled.lastName}
-                  onKeyPress={restrictInputToLetters} 
+                  onKeyPress={restrictInputToLetters}
                   onPaste={preventNonAlphabeticPaste}
                 />
               </Form.Item>
@@ -237,8 +236,8 @@ const restrictInputToAlphanumeric = (e) => {
                   },
                   {
                     validator: (_, value) =>
-                      value && dayjs(value).isAfter(dayjs())
-                        ? Promise.reject(new Error("Future dates are not allowed"))
+                      value && dayjs(value).isAfter(getMinDOB())
+                        ? Promise.reject(new Error("You must be at least 16 years old"))
                         : Promise.resolve(),
                   },
                 ]}
@@ -246,14 +245,14 @@ const restrictInputToAlphanumeric = (e) => {
                 <Input
                   type="date"
                   disabled={isNextFieldDisabled.dob}
-                  max={dayjs().format("YYYY-MM-DD")} // Disable future dates
+                  max={getMinDOB()}
                 />
               </Form.Item>
 
               <Form.Item label="Phone Number" name="Number" rules={phoneRule}>
                 <Input
                   placeholder="Enter your phone number"
-                  onKeyPress={restrictInputToNumbers} 
+                  onKeyPress={restrictInputToNumbers}
                   onPaste={preventNonNumericPaste}
                   maxLength={10}
                   disabled={isNextFieldDisabled.number}

@@ -160,7 +160,7 @@ import EditLabeling from "./pages/Products/EditLabeling.jsx";
 import Gallery from "./pages/Products/Gallery.jsx";
 import AddPackage from "./pages/Products/AddPackage.jsx";
 import EditPackage from "./pages/Products/EditPackage.jsx";
-import DetailsPage from './components/Products/Packaging/DetailsPage.jsx';
+import DetailsPage from "./components/Products/Packaging/DetailsPage.jsx";
 
 /**
  * field view
@@ -183,11 +183,11 @@ import PlantGrowthForm from "./pages/CropVarieties/PlantGrowthForm.jsx";
 // import BuyerTable from "./pages/BuyerTable.jsx";
 // import Profile from './components/Profile';
 
-import BuyerDashboard from './pages/Buyer/BuyerDashboard.jsx';
-import PaymentPage from './pages/PaymentPage'; 
-import HomePage from './pages/HomePage';
-import CartPage from './pages/Cart.jsx';
-import MyOrders from './pages/MyOrders';
+import BuyerDashboard from "./pages/Buyer/BuyerDashboard.jsx";
+import PaymentPage from "./pages/PaymentPage";
+import HomePage from "./pages/HomePage";
+import CartPage from "./pages/Cart.jsx";
+import MyOrders from "./pages/MyOrders";
 
 import BuyerDelivery from "./pages/Buyer/BuyerDelivery.jsx";
 import BuyerDeliveryTable from "./pages/Buyer/BuyerDeliveryTable.jsx";
@@ -196,357 +196,311 @@ import UpdateDeliveryTable from "./pages/Buyer/UpdateDeliveryTable.jsx";
 import BuyerInfo from "./pages/Buyer/BuyerInfo.jsx";
 import BuyerInfoTable from "./pages/Buyer/BuyerInfoTable.jsx";
 import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
-import BuyerPreOrderForm from './pages/Buyer/BuyerPreOrderForm';
-import BuyerPreOrderTable from './pages/Buyer/BuyerPreOrderTable';
-import UpdateBuyerPreOrderRequests from './pages/Buyer/UpdatePreOrderForm';
-
+import BuyerPreOrderForm from "./pages/Buyer/BuyerPreOrderForm";
+import BuyerPreOrderTable from "./pages/Buyer/BuyerPreOrderTable";
+import UpdateBuyerPreOrderRequests from "./pages/Buyer/UpdatePreOrderForm";
 
 import PageError from "./pages/PageError.jsx";
 import { element } from "prop-types";
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        {/* authentication */}
-        <Route path="/login" element={<Login />} />
-        {/* <Route path="/logout" element={<Logout />} /> */}
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
+    // <AuthProvider>
+    <Routes>
+      {/* authentication */}
+      <Route path="/login" element={<Login />} />
+      {/* <Route path="/logout" element={<Logout />} /> */}
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-        {/* landing page and dashboard */}
-        <Route path="/" element={<Home />} />
-        <Route path="/learn-more" element={<LearnMore />} />
+      {/* landing page and dashboard */}
+      <Route path="/" element={<Home />} />
+      <Route path="/learn-more" element={<LearnMore />} />
 
-        <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+      {/* <Route element={<ProtectedRoute />}> */}
+      <Route path="/dashboard" element={<Dashboard />} />
 
-          {/* sales and finance */}
-          <Route
-            path="/salesAndFinance/"
-            element={<SalesAndFinanceDashboard />}
-          />
-          <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
-          <Route
-            path="/salesAndFinance/sales/addSalesRecord"
-            element={<AddSalesRecordDashboard />}
-          />
-          <Route
-            path="/salesAndFinance/sales/viewSalesRecord"
-            element={<ViewSalesRecordDashboard />}
-          />
-          <Route
-            path="/salesAndFinance/sales/editSalesRecord/:id"
-            element={<EditSalesDataPage />}
-          />
-          <Route
-            path="/salesAndFinance/sales/analytics"
-            element={<SalesAnalyticsPage />}
-          />
-          <Route
-            path="/salesAndFinance/finance/"
-            element={<FinanceDashboard />}
-          />
-          <Route
-            path="/salesAndFinance/finance/add-transaction"
-            element={<AddTransactionPage />}
-          />
-          <Route
-            path="/salesAndFinance/finance/transaction-update/:id"
-            element={<UpdateTransactionPage />}
-          />
-          <Route
-            path="/salesAndFinance/finance/transaction-display"
-            element={<TransactionDisplay />}
-          />
-          <Route
-            path="/salesAndFinance/finance/add-minortransaction"
-            element={<AddMinorTransactionPage />}
-          />
-          <Route
-            path="/salesAndFinance/finance/minortransaction-update/:id"
-            element={<UpdateMinorTransactionPage />}
-          />
-          <Route
-            path="/salesAndFinance/finance/minortransaction-display"
-            element={<MinorTransactionDisplay />}
-          />
-          <Route
-            path="/salesAndFinance/finance/analytics"
-            element={<FinancialAnalyticsPage />}
-          />
-          <Route
-            path="/salesAndFinance/finance/employeeSalary"
-            element={<Esalary />}
-          />
-          <Route
-            path="/salesAndFinance/finance/viewSalaryRecord"
-            element={<ViewSalaryRecordPage />}
-          />
-          <Route
-            path="/salesAndFinance/finance/EditEmployeeSalaryRecords/:id"
-            element={<EditEmployeeSalaryRecords />}
-          />
-          <Route
-            path="/salesAndFinance/finance/valuation-dashboard"
-            element={<ValuationDashboardPage />}
-          />
-          <Route
-            path="/salesAndFinance/finance/add-new-valuation"
-            element={<AddNewValuationPage />}
-          />
-          <Route
-            path="/salesAndFinance/finance/edit-valuation/:id"
-            element={<EditValuationPage />}
-          />
-          <Route
-            path="/salesAndFinance/finance/cashbook"
-            element={<CashBook />}
-          />
-          <Route
-            path="/salesAndFinance/finance/balance-sheet"
-            element={<BalanceSheet />}
-          />
-          <Route
-            path="/salesAndFinance/finance/petty-cash"
-            element={<PettyCash />}
-          />
+      {/* sales and finance */}
+      <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
+      <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
+      <Route
+        path="/salesAndFinance/sales/addSalesRecord"
+        element={<AddSalesRecordDashboard />}
+      />
+      <Route
+        path="/salesAndFinance/sales/viewSalesRecord"
+        element={<ViewSalesRecordDashboard />}
+      />
+      <Route
+        path="/salesAndFinance/sales/editSalesRecord/:id"
+        element={<EditSalesDataPage />}
+      />
+      <Route
+        path="/salesAndFinance/sales/analytics"
+        element={<SalesAnalyticsPage />}
+      />
+      <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
+      <Route
+        path="/salesAndFinance/finance/add-transaction"
+        element={<AddTransactionPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/transaction-update/:id"
+        element={<UpdateTransactionPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/transaction-display"
+        element={<TransactionDisplay />}
+      />
+      <Route
+        path="/salesAndFinance/finance/add-minortransaction"
+        element={<AddMinorTransactionPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/minortransaction-update/:id"
+        element={<UpdateMinorTransactionPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/minortransaction-display"
+        element={<MinorTransactionDisplay />}
+      />
+      <Route
+        path="/salesAndFinance/finance/analytics"
+        element={<FinancialAnalyticsPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/employeeSalary"
+        element={<Esalary />}
+      />
+      <Route
+        path="/salesAndFinance/finance/viewSalaryRecord"
+        element={<ViewSalaryRecordPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/EditEmployeeSalaryRecords/:id"
+        element={<EditEmployeeSalaryRecords />}
+      />
+      <Route
+        path="/salesAndFinance/finance/valuation-dashboard"
+        element={<ValuationDashboardPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/add-new-valuation"
+        element={<AddNewValuationPage />}
+      />
+      <Route
+        path="/salesAndFinance/finance/edit-valuation/:id"
+        element={<EditValuationPage />}
+      />
+      <Route path="/salesAndFinance/finance/cashbook" element={<CashBook />} />
+      <Route
+        path="/salesAndFinance/finance/balance-sheet"
+        element={<BalanceSheet />}
+      />
+      <Route
+        path="/salesAndFinance/finance/petty-cash"
+        element={<PettyCash />}
+      />
 
-          {/* inventory */}
-          <Route
-            path="/Inventory/FertilizerRecords"
-            element={<FertilizerRecords />}
-          />
-          <Route
-            path="/Inventory/EditFertilizerRecords/:id"
-            element={<EditFertilizerRecord />}
-          />
-          <Route
-            path="/Inventory/AddFertilizerRecord"
-            element={<AddFertilizerRecord />}
-          />
-          <Route
-            path="/Inventory/InventoryDashboard"
-            element={<InventoryDashboard />}
-          />
-          <Route
-            path="/Inventory/MaintenanceRecords"
-            element={<MaintenanceRecords />}
-          />
-          <Route
-            path="/Inventory/EditMaintenanceRecord/:id"
-            element={<EditMaintenanceRecord />}
-          />
-          <Route
-            path="/Inventory/AddMaintenanceRecord"
-            element={<AddMaintenanceRecord />}
-          />
-          <Route
-            path="/Inventory/EquipmentRecords"
-            element={<EquipmentRecords />}
-          />
-          <Route
-            path="/Inventory/EditEquipmentRecords/:id"
-            element={<EditEquipmentRecord />}
-          />
-          <Route
-            path="/Inventory/AddEquipmentRecord"
-            element={<AddEquipmentRecord />}
-          />
-          <Route
-            path="/Inventory/RequestPaymentRecords"
-            element={<RequestPaymentRecords />}
-          />
-          <Route
-            path="/Inventory/AddRequestPaymentRecord"
-            element={<AddRequestPaymentRecord />}
-          />
-          <Route
-            path="/Inventory/EditRequestPaymentRecord/:id"
-            element={<EditRequestPaymentRecord />}
-          />
+      {/* inventory */}
+      <Route
+        path="/Inventory/FertilizerRecords"
+        element={<FertilizerRecords />}
+      />
+      <Route
+        path="/Inventory/EditFertilizerRecords/:id"
+        element={<EditFertilizerRecord />}
+      />
+      <Route
+        path="/Inventory/AddFertilizerRecord"
+        element={<AddFertilizerRecord />}
+      />
+      <Route
+        path="/Inventory/InventoryDashboard"
+        element={<InventoryDashboard />}
+      />
+      <Route
+        path="/Inventory/MaintenanceRecords"
+        element={<MaintenanceRecords />}
+      />
+      <Route
+        path="/Inventory/EditMaintenanceRecord/:id"
+        element={<EditMaintenanceRecord />}
+      />
+      <Route
+        path="/Inventory/AddMaintenanceRecord"
+        element={<AddMaintenanceRecord />}
+      />
+      <Route
+        path="/Inventory/EquipmentRecords"
+        element={<EquipmentRecords />}
+      />
+      <Route
+        path="/Inventory/EditEquipmentRecords/:id"
+        element={<EditEquipmentRecord />}
+      />
+      <Route
+        path="/Inventory/AddEquipmentRecord"
+        element={<AddEquipmentRecord />}
+      />
+      <Route
+        path="/Inventory/RequestPaymentRecords"
+        element={<RequestPaymentRecords />}
+      />
+      <Route
+        path="/Inventory/AddRequestPaymentRecord"
+        element={<AddRequestPaymentRecord />}
+      />
+      <Route
+        path="/Inventory/EditRequestPaymentRecord/:id"
+        element={<EditRequestPaymentRecord />}
+      />
 
-          {/* employee */}
-          <Route path="/employee/dashboard" element={<Edashboard />} />
-          <Route path="/employee/registration" element={<Eregistration />} />
-          <Route path="/employee/task" element={<EaddTask />} />
-          <Route path="/employee/taskedit/:id" element={<EditTaskPage />} />
-          <Route path="/employee/TaskListview" element={<ViewTaskList />} />
-          <Route path="/employee/attendance" element={<GetAttendance />} />
-          <Route path="/employee/employeelist" element={<EmployeeList />} />
-          <Route
-            path="/employee/attendanceList"
-            element={<EattendenceList />}
-          />
-          <Route
-            path="/employee/taskdetails/:id"
-            element={<ViewTaskDetails />}
-          />
-          <Route
-            path="/employee/veiwattendence/:id"
-            element={<ViewOneAttendance />}
-          />
-          <Route
-            path="/employee/editemployee/:id"
-            element={<EditEmployeePage />}
-          />
-          <Route
-            path="/employee/viewemployee/:id"
-            element={<ViewOneEmployee />}
-          />
-          <Route path="/employee/editattendance" element={<EditAtendence />} />
+      {/* employee */}
+      <Route path="/employee/dashboard" element={<Edashboard />} />
+      <Route path="/employee/registration" element={<Eregistration />} />
+      <Route path="/employee/task" element={<EaddTask />} />
+      <Route path="/employee/taskedit/:id" element={<EditTaskPage />} />
+      <Route path="/employee/TaskListview" element={<ViewTaskList />} />
+      <Route path="/employee/attendance" element={<GetAttendance />} />
+      <Route path="/employee/employeelist" element={<EmployeeList />} />
+      <Route path="/employee/attendanceList" element={<EattendenceList />} />
+      <Route path="/employee/taskdetails/:id" element={<ViewTaskDetails />} />
+      <Route
+        path="/employee/veiwattendence/:id"
+        element={<ViewOneAttendance />}
+      />
+      <Route path="/employee/editemployee/:id" element={<EditEmployeePage />} />
+      <Route path="/employee/viewemployee/:id" element={<ViewOneEmployee />} />
+      <Route path="/employee/editattendance" element={<EditAtendence />} />
 
-          {/* harvest */}
-          <Route
-            path="/harvest/harvestdashboard"
-            element={<HarvestDashboard />}
-          />
-          <Route
-            path="/harvest/harvest-schedule"
-            element={<HarvestSchedule />}
-          />
-          <Route path="/harvest/yield" element={<YieldRecords />} />
-          <Route
-            path="/harvest/compliancechecklist"
-            element={<ComplianceCheckList />}
-          />
-          <Route path="/yield/addrecords" element={<AddYieldRecord />} />
-          <Route path="/harvest/addschedule" element={<AddHarvestSchedule />} />
-          <Route path="/harvest/edit/:id" element={<EditHarvestSchedule />} />
-          <Route path="/yield/editrecords/:id" element={<EditYieldRecords />} />
-          <Route
-            path="/compliance-checks/addrecords"
-            element={<AddComplianceCheck />}
-          />
-          <Route
-            path="/compliance-checks/editrecords/:id"
-            element={<EditComplianceCheck />}
-          />
-          <Route path="/harvest/quality" element={<HarvestQuality />} />
-          <Route path="/quality/addinspection" element={<AddInspection />} />
-          <Route
-            path="/quality/editinspection/:id"
-            element={<EditInspection />}
-          />
-          <Route path ="/harvest/harvestCal" element={<HarvestCal />} />
+      {/* harvest */}
+      <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
+      <Route path="/harvest/harvest-schedule" element={<HarvestSchedule />} />
+      <Route path="/harvest/yield" element={<YieldRecords />} />
+      <Route
+        path="/harvest/compliancechecklist"
+        element={<ComplianceCheckList />}
+      />
+      <Route path="/yield/addrecords" element={<AddYieldRecord />} />
+      <Route path="/harvest/addschedule" element={<AddHarvestSchedule />} />
+      <Route path="/harvest/edit/:id" element={<EditHarvestSchedule />} />
+      <Route path="/yield/editrecords/:id" element={<EditYieldRecords />} />
+      <Route
+        path="/compliance-checks/addrecords"
+        element={<AddComplianceCheck />}
+      />
+      <Route
+        path="/compliance-checks/editrecords/:id"
+        element={<EditComplianceCheck />}
+      />
+      <Route path="/harvest/quality" element={<HarvestQuality />} />
+      <Route path="/quality/addinspection" element={<AddInspection />} />
+      <Route path="/quality/editinspection/:id" element={<EditInspection />} />
+      <Route path="/harvest/harvestCal" element={<HarvestCal />} />
 
-          {/* crop care */}
-          <Route path="/diseases" element={<DiseasesDashboard />} />
-          <Route path="/coconutInspections" element={<CoconutInspections />} />
-          <Route
-            path="/intercropInspections"
-            element={<IntercropInspections />}
-          />
-          <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
-          <Route path="/addCropDiseases" element={<AddCropsDiseases />} />
-          <Route path="/coconutTreatments" element={<CoconutTreatments />} />
-          <Route
-            path="/intercropTreatments"
-            element={<IntercropTreatments />}
-          />
-          <Route path="/coconutPests" element={<CoconutPests />} />
-          <Route path="/RegularMaintenance" element={<RegularMaintenance />} />
-          <Route path="/intercropPests" element={<IntercropPests />} />
-          <Route path="/UserProfile" element={<UserProfile />} />
-          <Route path="/coconutLeafMiner" element={<CoconutLeafMiner />} />
-          <Route path="/blackBeetle" element={<BlackBeetle />} />
-          <Route
-            path="/addCoconutTreatments"
-            element={<AddCoconutTreatments />}
-          />
-          <Route
-            path="/addIntercropTreatments"
-            element={<AddIntercropTreatments />}
-          />
-          <Route path="/insights" element={<Insights />} />
-          <Route path="/detailedOverview" element={<DetailedOverview />} />
-          <Route path="/addMaintenance" element={<AddMaintenance />} />
-          <Route path="/addProfile" element={<AddProfile />} />
-          <Route path="/coconutMite" element={<CoconutMite />} />
-          <Route path="/termite" element={<Termite />} />
-          <Route path="/redWeevil" element={<RedWeevil />} />
-          <Route path="/mammalianPests" element={<MammalianPests />} />
-          <Route path="/budRot" element={<BudRot />} />
-          <Route path="/leafSpot" element={<LeafSpot />} />
-          <Route path="/stemBleeding" element={<StemBleeding />} />
-          <Route path="/rootWilt" element={<RootWilt />} />
-          <Route path="/lethalYellowing" element={<LethalYellowing />} />
-          <Route path="/ganoderma" element={<Ganoderma />} />
-          <Route path="/fruitFlies" element={<FruitFlies />} />
-          <Route path="/bananaWeevil" element={<BananaWeevil />} />
-          <Route path="/pineappleMealybug" element={<PineappleMealybug />} />
-          <Route path="/papayaMealybug" element={<PapayaMealybug />} />
-          <Route path="/thrips" element={<Thrips />} />
-          <Route path="/aphids" element={<Aphids />} />
-          <Route path="/anthracnose" element={<Anthracnose />} />
-          <Route path="/bacterialWilt" element={<BacterialWilt />} />
-          <Route path="/blackSigatoka" element={<BlackSigatoka />} />
-          <Route path="/papayaRingspot" element={<PapayaRingspot />} />
-          <Route path="/fusariumWilt" element={<FusariumWilt />} />
-          <Route path="/powderyMildew" element={<PowderyMildew />} />
-          <Route
-            path="/updateCoconutDiseases/:id"
-            element={<UpdateCoconutDiseases />}
-          />
-          <Route
-            path="/updateCropsDiseases/:id"
-            element={<UpdateCropsDiseases />}
-          />
-          <Route
-            path="/updateCoconutTreatments/:id"
-            element={<UpdateCoconutTreatments />}
-          />
-          <Route
-            path="/updateCropsTreatments/:id"
-            element={<UpdateCropsTreatments />}
-          />
-          <Route
-            path="/updateMaintenance/:id"
-            element={<UpdateMaintenance />}
-          />
+      {/* crop care */}
+      <Route path="/diseases" element={<DiseasesDashboard />} />
+      <Route path="/coconutInspections" element={<CoconutInspections />} />
+      <Route path="/intercropInspections" element={<IntercropInspections />} />
+      <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
+      <Route path="/addCropDiseases" element={<AddCropsDiseases />} />
+      <Route path="/coconutTreatments" element={<CoconutTreatments />} />
+      <Route path="/intercropTreatments" element={<IntercropTreatments />} />
+      <Route path="/coconutPests" element={<CoconutPests />} />
+      <Route path="/RegularMaintenance" element={<RegularMaintenance />} />
+      <Route path="/intercropPests" element={<IntercropPests />} />
+      <Route path="/UserProfile" element={<UserProfile />} />
+      <Route path="/coconutLeafMiner" element={<CoconutLeafMiner />} />
+      <Route path="/blackBeetle" element={<BlackBeetle />} />
+      <Route path="/addCoconutTreatments" element={<AddCoconutTreatments />} />
+      <Route
+        path="/addIntercropTreatments"
+        element={<AddIntercropTreatments />}
+      />
+      <Route path="/insights" element={<Insights />} />
+      <Route path="/detailedOverview" element={<DetailedOverview />} />
+      <Route path="/addMaintenance" element={<AddMaintenance />} />
+      <Route path="/addProfile" element={<AddProfile />} />
+      <Route path="/coconutMite" element={<CoconutMite />} />
+      <Route path="/termite" element={<Termite />} />
+      <Route path="/redWeevil" element={<RedWeevil />} />
+      <Route path="/mammalianPests" element={<MammalianPests />} />
+      <Route path="/budRot" element={<BudRot />} />
+      <Route path="/leafSpot" element={<LeafSpot />} />
+      <Route path="/stemBleeding" element={<StemBleeding />} />
+      <Route path="/rootWilt" element={<RootWilt />} />
+      <Route path="/lethalYellowing" element={<LethalYellowing />} />
+      <Route path="/ganoderma" element={<Ganoderma />} />
+      <Route path="/fruitFlies" element={<FruitFlies />} />
+      <Route path="/bananaWeevil" element={<BananaWeevil />} />
+      <Route path="/pineappleMealybug" element={<PineappleMealybug />} />
+      <Route path="/papayaMealybug" element={<PapayaMealybug />} />
+      <Route path="/thrips" element={<Thrips />} />
+      <Route path="/aphids" element={<Aphids />} />
+      <Route path="/anthracnose" element={<Anthracnose />} />
+      <Route path="/bacterialWilt" element={<BacterialWilt />} />
+      <Route path="/blackSigatoka" element={<BlackSigatoka />} />
+      <Route path="/papayaRingspot" element={<PapayaRingspot />} />
+      <Route path="/fusariumWilt" element={<FusariumWilt />} />
+      <Route path="/powderyMildew" element={<PowderyMildew />} />
+      <Route
+        path="/updateCoconutDiseases/:id"
+        element={<UpdateCoconutDiseases />}
+      />
+      <Route
+        path="/updateCropsDiseases/:id"
+        element={<UpdateCropsDiseases />}
+      />
+      <Route
+        path="/updateCoconutTreatments/:id"
+        element={<UpdateCoconutTreatments />}
+      />
+      <Route
+        path="/updateCropsTreatments/:id"
+        element={<UpdateCropsTreatments />}
+      />
+      <Route path="/updateMaintenance/:id" element={<UpdateMaintenance />} />
 
-          {/* product new */}
-          <Route
-            path="/products/productdashboard"
-            element={<ProductsDashboard />}
-          />
-          <Route
-            path="/products/production-overview"
-            element={<ProductionScheduleOverview />}
-          />
-          <Route
-            path="/products/quality-control"
-            element={<QualityControl />}
-          />
-          <Route path="/products/addschedule" element={<AddSchedule />} />
-          <Route path="/products/editschedule/:id" element={<EditSchedule />} />
-          <Route
-            path="/products/addInspectionReport"
-            element={<AddInspectionReport />}
-          />
-          <Route
-            path="/products/editInspectionReport/:id"
-            element={<EditInspectionReport />}
-          />
-          <Route
-            path="/products/packaging-labeling"
-            element={<PackagingLabeling />}
-          />
-          <Route path="/products/packaging" element={<Packaging />} />
-          <Route
-            path="/products/packaging-labeling/labeling"
-            element={<Labeling />}
-          />
-          <Route path="/products/editPrice/:id" element={<EditPrice />} />
-          <Route path="/products/addLabeling" element={<AddLabeling />} />
-          <Route path="/products/editLabeling/:id" element={<EditLabeling />} />
-          <Route path="/products/gallery" element={<Gallery />} />
-          <Route path="/products/addPackage" element={<AddPackage />} />
-          <Route path="/products/editPackage/:id" element={<EditPackage />} />
-          <Route path="/share/:encodedData" element={<DetailsPage />} />
+      {/* product new */}
+      <Route
+        path="/products/productdashboard"
+        element={<ProductsDashboard />}
+      />
+      <Route
+        path="/products/production-overview"
+        element={<ProductionScheduleOverview />}
+      />
+      <Route path="/products/quality-control" element={<QualityControl />} />
+      <Route path="/products/addschedule" element={<AddSchedule />} />
+      <Route path="/products/editschedule/:id" element={<EditSchedule />} />
+      <Route
+        path="/products/addInspectionReport"
+        element={<AddInspectionReport />}
+      />
+      <Route
+        path="/products/editInspectionReport/:id"
+        element={<EditInspectionReport />}
+      />
+      <Route
+        path="/products/packaging-labeling"
+        element={<PackagingLabeling />}
+      />
+      <Route path="/products/packaging" element={<Packaging />} />
+      <Route
+        path="/products/packaging-labeling/labeling"
+        element={<Labeling />}
+      />
+      <Route path="/products/editPrice/:id" element={<EditPrice />} />
+      <Route path="/products/addLabeling" element={<AddLabeling />} />
+      <Route path="/products/editLabeling/:id" element={<EditLabeling />} />
+      <Route path="/products/gallery" element={<Gallery />} />
+      <Route path="/products/addPackage" element={<AddPackage />} />
+      <Route path="/products/editPackage/:id" element={<EditPackage />} />
+      <Route path="/share/:encodedData" element={<DetailsPage />} />
 
-          {/* field view  */}
+      {/* field view  */}
       <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
       <Route path="/varietyCrop" element={<VarietyCrop />} />
       <Route path="/cvForm" element={<CropVarietyForm />} />
@@ -558,34 +512,37 @@ export default function App() {
       <Route path="/pGrowth" element={<PlantGrowth />} />
       <Route path="/pGrowthForm" element={<PlantGrowthForm />} />
 
-          {/* buyers */}
-          {/* <Route path="/buyer-registration" element={<BuyerRegistrationForm />} /> */}
-          {/* <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
+      {/* buyers */}
+      {/* <Route path="/buyer-registration" element={<BuyerRegistrationForm />} /> */}
+      {/* <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
           <Route path="/buyert" element={<BuyerTable />} />
           <Route path="/profile" element={<Profile />} /> */}
-      <Route path="/HomePage" element={<HomePage />} /> 
+      <Route path="/HomePage" element={<HomePage />} />
       <Route path="/payment" element={<PaymentPage />} />
-      <Route path="/cart" element={<CartPage />} /> 
-      <Route path="/MyOrders" element={<MyOrders />} /> 
+      <Route path="/cart" element={<CartPage />} />
+      <Route path="/MyOrders" element={<MyOrders />} />
       <Route path="/Bdelivery" element={<BuyerDelivery />} />
       <Route path="/Bdeliverytable" element={<BuyerDeliveryTable />} />
       <Route path="/updateDelivery/:id" element={<UpdateDeliveryTable />} />
 
-          <Route path="/buyerinfo" element={<BuyerInfo />} />
-          <Route path="/buyerinfotable" element={<BuyerInfoTable />} />
-          <Route path="/updateBuyer/:id" element={<UpdateBuyerInfo />} />
+      <Route path="/buyerinfo" element={<BuyerInfo />} />
+      <Route path="/buyerinfotable" element={<BuyerInfoTable />} />
+      <Route path="/updateBuyer/:id" element={<UpdateBuyerInfo />} />
 
-        <Route path="/create-preorder" element={<BuyerPreOrderForm/> } />
-      <Route path="/preorders" element={<BuyerPreOrderTable/>} />
-      <Route path="/update-preorder/:id" element={<UpdateBuyerPreOrderRequests/>} />  
+      <Route path="/create-preorder" element={<BuyerPreOrderForm />} />
+      <Route path="/preorders" element={<BuyerPreOrderTable />} />
+      <Route
+        path="/update-preorder/:id"
+        element={<UpdateBuyerPreOrderRequests />}
+      />
 
-          <Route path="/buyerdashboard" element={<BuyerDashboard />} />
+      <Route path="/buyerdashboard" element={<BuyerDashboard />} />
 
-          {/* page not found & error page */}
-          {/* <Route path="/test" element={<Test />} /> */}
-        </Route>
-        <Route path="*" element={<PageError />} />
-      </Routes>
-    </AuthProvider>
+      {/* page not found & error page */}
+      {/* <Route path="/test" element={<Test />} /> */}
+      {/* </Route> */}
+      <Route path="*" element={<PageError />} />
+    </Routes>
+    // </AuthProvider>
   );
 }
