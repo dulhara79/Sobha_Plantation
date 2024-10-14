@@ -225,7 +225,7 @@ const BuyerPreOrderTable = () => {
     },
     
     {
-      title: "phone Number",
+      title: "Phone Number",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
     },
@@ -236,17 +236,17 @@ const BuyerPreOrderTable = () => {
       key: "address",
     },
     {
-      title: "product Type",
+      title: "Product Type",
       dataIndex: "productType",
       key: "productType",
     },
     {
-      title: "product Quantity",
+      title: "Product Quantity",
       dataIndex: "productQuantity",
       key: "productQuantity",
     },
     {
-      title: "order Date",
+      title: "Order Date",
       dataIndex: "orderDate",
       key: "orderDate",
       render: (date) => moment(date).format("YYYY-MM-DD"),
