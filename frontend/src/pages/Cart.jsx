@@ -2,6 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { Box, Typography, Button, List, ListItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import BuyerHeader from '../components/BuyerHeader';
 
 const CartPage = () => {
   const location = useLocation();
@@ -9,6 +10,8 @@ const CartPage = () => {
   const { quantities = {}, totalAmount = 0 } = location.state || {};
 
   return (
+    <>
+      <BuyerHeader />
     <Box
       sx={{
         display: 'flex',
@@ -154,6 +157,7 @@ const CartPage = () => {
         </Button>
       </Box>
     </Box>
+    </>
   );
 };
 
