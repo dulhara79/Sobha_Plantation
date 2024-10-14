@@ -168,7 +168,11 @@ import AddSeedlingForm from "./pages/CropVarieties/AddSeedlingForm.jsx";
 import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
 
 // buyers
-
+import BuyerDashboard from './pages/Buyer/BuyerDashboard.jsx';
+import PaymentPage from './pages/PaymentPage'; 
+import HomePage from './pages/HomePage';
+import CartPage from './pages/Cart.jsx';
+import MyOrders from './pages/MyOrders';
 
 
 import BuyerDelivery from "./pages/Buyer/BuyerDelivery.jsx";
