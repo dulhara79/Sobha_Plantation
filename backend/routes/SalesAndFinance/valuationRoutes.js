@@ -4,7 +4,8 @@ const {
     getAllValuationRecords,
     getValuationRecordById,
     updateValuationRecord,
-    deleteValuationRecord
+    deleteValuationRecord,
+    getBalanceSheet
 } = require ("../../controllers/SalesAndFinance/ValuationController");
 
 const router = express.Router();
@@ -23,5 +24,8 @@ router.put('/:id', updateValuationRecord);
 
 // Route to delete a valuation record
 router.delete('/:id', deleteValuationRecord);
+
+// get all valuation records n balance sheet
+router.get('/valuation/balancesheet', getBalanceSheet);
 
 module.exports = router;
