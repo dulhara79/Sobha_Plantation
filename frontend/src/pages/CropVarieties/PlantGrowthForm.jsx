@@ -1,16 +1,28 @@
 import React, { useEffect } from 'react';
 import { Form, Select, InputNumber, Button, message } from 'antd';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';  // Import useNavigate
+import { useNavigate } from 'react-router-dom';
+import Header from "../../components/Header";
+import Sidebar from "../../components/Sidebar";
+
 
 const { Option } = Select;
 
 const PlantGrowthForm = ({ editingRecord, onFormSubmitSuccess }) => {
   const [form] = Form.useForm();
-  const navigate = useNavigate();  // Initialize navigate
+  const navigate = useNavigate();
 
-  const blockAlphabetInput = (e) => {
-    if (e.key.match(/[a-zA-Z]/)) {
+  // Block all non-numeric inputs
+  const blockNonNumericInput = (e) => {
+    // Allow control keys like backspace, delete, arrow keys, and tab
+    if (
+      e.key !== 'Backspace' &&
+      e.key !== 'Tab' &&
+      e.key !== 'ArrowLeft' &&
+      e.key !== 'ArrowRight' &&
+      e.key !== 'Delete' &&
+      !/^\d$/.test(e.key) // Block anything that is not a number
+    ) {
       e.preventDefault();
     }
   };
@@ -22,7 +34,6 @@ const PlantGrowthForm = ({ editingRecord, onFormSubmitSuccess }) => {
       if (editingRecord) {
         // Update plant growth record
         response = await axios.put(`http://localhost:5000/api/plant-growth/${editingRecord._id}`, values);
-        console.log('Response from PUT:', response);  // Log the response for debugging
         if (response.status === 200) {
           message.success('Plant growth record updated successfully!');
         } else {
@@ -31,28 +42,20 @@ const PlantGrowthForm = ({ editingRecord, onFormSubmitSuccess }) => {
       } else {
         // Create new plant growth record
         response = await axios.post('http://localhost:5000/api/plant-growth', values);
-        console.log('Response from POST:', response);  // Log the response for debugging
         if (response.status === 201) {
           message.success('Plant growth record created successfully!');
         } else {
           throw new Error('Unexpected status code: ' + response.status);
         }
       }
-  
-      onFormSubmitSuccess();  
-        // Navigate back to the previous page after successful submission
-  
+
+      onFormSubmitSuccess();
     } catch (error) {
-      // Log the error details
-      console.error('Error submitting the form:', error);
-  
-      // Use a more specific message in case the error object contains useful information
       const errorMessage = error.response?.data?.error || error.message || 'Failed to save data';
       message.error(`Error: ${errorMessage}`);
     }
     navigate(-1);
   };
-  
 
   // Load existing data into form when editingRecord is present
   useEffect(() => {
@@ -63,7 +66,7 @@ const PlantGrowthForm = ({ editingRecord, onFormSubmitSuccess }) => {
 
   // Cancel button handler to navigate back to the previous page
   const handleCancel = () => {
-    navigate(-1);  // Navigate back to the previous page
+    navigate(-1);
   };
 
   const formContainerStyle = {
@@ -83,6 +86,9 @@ const PlantGrowthForm = ({ editingRecord, onFormSubmitSuccess }) => {
   };
 
   return (
+    <div>
+         <Header />
+         <Sidebar />
     <div style={formContainerStyle}>
       <Form
         form={form}
@@ -125,7 +131,7 @@ const PlantGrowthForm = ({ editingRecord, onFormSubmitSuccess }) => {
           <InputNumber
             min={0}
             onChange={(value) => form.setFieldsValue({ height: value })}
-            onKeyDown={blockAlphabetInput}
+            onKeyDown={blockNonNumericInput}  // Block all non-numeric inputs
           />
         </Form.Item>
 
@@ -137,7 +143,7 @@ const PlantGrowthForm = ({ editingRecord, onFormSubmitSuccess }) => {
           <InputNumber
             min={0}
             onChange={(value) => form.setFieldsValue({ numberOfLeaves: value })}
-            onKeyDown={blockAlphabetInput}
+            onKeyDown={blockNonNumericInput}  // Block all non-numeric inputs
           />
         </Form.Item>
 
@@ -173,6 +179,7 @@ const PlantGrowthForm = ({ editingRecord, onFormSubmitSuccess }) => {
           </Button>
         </Form.Item>
       </Form>
+      </div>
     </div>
   );
 };

@@ -274,9 +274,9 @@ const LandPreparation = () => {
         </div>
 
         <div className="bg-white shadow-md rounded-lg p-4 my-4">
-          <Button type="primary" icon={<FilePdfOutlined />} onClick={generatePDF}>
+          <button type="primary" icon={<FilePdfOutlined />} className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={generatePDF}>
             Generate PDF Report
-          </Button>
+          </button>
         </div>
 
         <div className="bg-white shadow-md rounded-lg p-4 my-4" id="report-content">
