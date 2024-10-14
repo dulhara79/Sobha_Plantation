@@ -173,6 +173,10 @@ import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
 // import BuyerTable from "./pages/BuyerTable.jsx";
 // import Profile from './components/Profile';
 import BuyerDashboard from './pages/Buyer/BuyerDashboard.jsx';
+import PaymentPage from './pages/PaymentPage'; 
+import HomePage from './pages/HomePage';
+import CartPage from './pages/Cart.jsx';
+import MyOrders from './pages/MyOrders';
 
 import BuyerDelivery from "./pages/Buyer/BuyerDelivery.jsx";
 import BuyerDeliveryTable from "./pages/Buyer/BuyerDeliveryTable.jsx";
@@ -508,8 +512,13 @@ export default function App() {
           {/* <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
           <Route path="/buyert" element={<BuyerTable />} />
           <Route path="/profile" element={<Profile />} /> */}
+      <Route path="/HomePage" element={<HomePage />} /> 
+      <Route path="/payment" element={<PaymentPage />} />
+      <Route path="/cart" element={<CartPage />} /> 
+      <Route path="/MyOrders" element={<MyOrders />} /> 
 
-          <Route path="/Bdelivery" element={<BuyerDelivery />} />
+      
+      <Route path="/Bdelivery" element={<BuyerDelivery />} />
       <Route path="/Bdeliverytable" element={<BuyerDeliveryTable />} />
       <Route path="/updateDelivery/:id" element={<UpdateDeliveryTable />} />
 
