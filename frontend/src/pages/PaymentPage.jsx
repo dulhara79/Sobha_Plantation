@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import {
-  Button, TextField, Box, Typography, Dialog, DialogActions,
-  DialogContent, DialogContentText, DialogTitle, MenuItem, 
-  Select, FormControl, InputLabel, Grid
+  Button, TextField, Box, Typography, MenuItem, Select,
+  FormControl, InputLabel, Grid, InputAdornment, IconButton, Paper
 } from '@mui/material';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import PersonIcon from '@mui/icons-material/Person';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import LockIcon from '@mui/icons-material/Lock';
 
 const PaymentPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { totalAmount = 0, quantities = {} } = location.state || {};
 
   const [form, setForm] = useState({
@@ -20,37 +24,35 @@ const PaymentPage = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const [open, setOpen] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
-  // Allow only letters and spaces for the name field
   const restrictInputToLettersAndSpace = (e) => {
     if (!/[a-zA-Z ]/.test(e.key)) {
-      e.preventDefault(); // Block anything other than letters and spaces
+      e.preventDefault();
     }
   };
 
   const preventNonAlphabetPaste = (e) => {
     const clipboardData = e.clipboardData.getData('Text');
     if (!/^[a-zA-Z ]*$/.test(clipboardData)) {
-      e.preventDefault(); // Prevent pasting non-alphabetic characters
+      e.preventDefault();
     }
   };
 
   const restrictInputToNumbers = (e) => {
     if (!/[0-9]/.test(e.key)) {
-      e.preventDefault(); // Prevent non-numeric input
+      e.preventDefault();
     }
   };
 
   const preventNonNumericPaste = (e) => {
     const clipboardData = e.clipboardData.getData('Text');
     if (!/^[0-9]*$/.test(clipboardData)) {
-      e.preventDefault(); // Prevent non-numeric paste
+      e.preventDefault();
     }
   };
 
@@ -92,14 +94,21 @@ const PaymentPage = () => {
   const handlePaymentSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      setOpen(true);
+      Swal.fire({
+        icon: 'success',
+        title: 'Payment Successful',
+        text: 'Your payment has been processed successfully!',
+        showConfirmButton: false,
+        timer: 3000,  // Auto-dismiss after 3 seconds
+      });
+
+      // Redirect to HomePage after 3 seconds
+      setTimeout(() => {
+        navigate('/HomePage');
+      }, 3000);
     } else {
       Swal.fire('Error', 'Please correct the errors in the form.', 'error');
     }
-  };
-
-  const handleClose = () => {
-    setOpen(false);
   };
 
   const generateYears = () => {
@@ -108,12 +117,22 @@ const PaymentPage = () => {
   };
 
   return (
-    <Box sx={{ padding: '20px' }}>
-      <Typography variant="h3" component="h1" align="center" gutterBottom>
+    <Paper
+      sx={{
+        maxWidth: 600,
+        margin: '40px auto',
+        padding: '30px',
+        borderRadius: '12px',
+        boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.1)',
+      }}
+    >
+      <Typography variant="h3" align="center" gutterBottom>
         Payments Gateway
       </Typography>
-      <Typography variant="h5">Total Amount: LKR {totalAmount}</Typography>
-      <Typography variant="h5">Products Selected:</Typography>
+      <Typography variant="h5" sx={{ textAlign: 'center', marginBottom: '20px' }}>
+        Total Amount: LKR {totalAmount}
+      </Typography>
+      <Typography variant="h6">Products Selected:</Typography>
       <ul>
         {Object.entries(quantities).length > 0 ? (
           Object.entries(quantities).map(([product, quantity]) => (
@@ -138,6 +157,13 @@ const PaymentPage = () => {
           margin="normal"
           onKeyPress={restrictInputToLettersAndSpace}
           onPaste={preventNonAlphabetPaste}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <PersonIcon />
+              </InputAdornment>
+            ),
+          }}
         />
         <TextField
           label="Card Number"
@@ -152,6 +178,13 @@ const PaymentPage = () => {
           inputProps={{ maxLength: 16 }}
           onKeyPress={restrictInputToNumbers}
           onPaste={preventNonNumericPaste}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <CreditCardIcon />
+              </InputAdornment>
+            ),
+          }}
         />
 
         <Grid container spacing={2}>
@@ -210,30 +243,26 @@ const PaymentPage = () => {
           inputProps={{ maxLength: 3 }}
           onKeyPress={restrictInputToNumbers}
           onPaste={preventNonNumericPaste}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <LockIcon />
+              </InputAdornment>
+            ),
+          }}
         />
 
         <Button
           type="submit"
           variant="contained"
           color="primary"
+          fullWidth
           sx={{ marginTop: '20px' }}
         >
           Pay Now
         </Button>
       </form>
-
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Payment Successful</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Your payment has been processed successfully. Thank you for your purchase!
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Close</Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+    </Paper>
   );
 };
 
