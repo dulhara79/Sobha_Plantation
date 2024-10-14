@@ -2,13 +2,12 @@ import React, { useState, useEffect } from "react";
 import Header from "../../../components/Header";
 import Sidebar from "../../../components/Sidebar";
 import NavigationButtons from "../../../components/Sales_and_Finance/NavigationButtons";
-import TransactionTable from "../../../components/Sales_and_Finance/Finance/TransactionTable";
-import TransactionSummaryCard from "../../../components/Sales_and_Finance/Finance/TransactionSummaryCard";
+import MinorTransactionTable from "../../../components/Sales_and_Finance/Finance/MinorTransactionTable";
 import { Breadcrumb, Button } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import NewLoadingScreen from '../../../components/LoadingDots'
 
-const TransactionDisplay = () => {
+const MinorTransactionDisplay = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -57,13 +56,12 @@ const TransactionDisplay = () => {
         <NavigationButtons />
         <div className={`ml-[50px] pt-3 w-[1000px]`}>
           <h1 className="mb-6 text-3xl font-semibold">Finance Dashboard</h1>
-          <TransactionSummaryCard />
         </div>
         <div className="mt-8"></div>
-        <TransactionTable />
+        <MinorTransactionTable />
       </div>
     </div>
   );
 };
 
-export default TransactionDisplay;
+export default MinorTransactionDisplay;

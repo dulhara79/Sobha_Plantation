@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
+
 import NavigationButtons from "../../../components/Sales_and_Finance/NavigationButtons";
 
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
 
+// import FinanceNavigation from "../../../components/finances/FinanceNavigation.js";
+
 import {useNavigate} from "react-router-dom";
 import { useSnackbar } from 'notistack';
-
-import Valuation from '../../../components/Sales_and_Finance/Finance/Valuation/Valuation';
+import UpdateMinorTransactions from '../../../components/Sales_and_Finance/Finance/UpdateMinorTransactions';
 
 import NewLoadingScreen from '../../../components/LoadingDots'
 
-const ValuationDashboard = () => {
-  const [loading, setLoading] = useState(true);
+const UpdateMinorTransactionPage = () => {
+    const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
+
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
       // Simulate loading process (e.g., API calls, component mounting)
@@ -25,11 +29,12 @@ const ValuationDashboard = () => {
     }, []);
   
     if (loading) return <NewLoadingScreen />;
+
   return (
     <div>
     <Header />
     <Sidebar activePage="/salesAndFinance/"/>
-      <div className={`ml-[300px] pt-3 max-w-full`}>
+    <div className={`ml-[300px] pt-3 w-[600px]`}>
     <Breadcrumb
     style={{ margin: "10px 0" }}
         items={[
@@ -59,12 +64,12 @@ const ValuationDashboard = () => {
         ]}
       />
       <NavigationButtons />
+      <div className={`ml-[250px] pt-3 w-[600px]`}>
+      <UpdateMinorTransactions />
       </div>
-      <div className={`ml-[300px] pt-3`}>
-      <Valuation/>
       </div>
-    </div>
+  </div>
   )
 }
 
-export default ValuationDashboard
+export default UpdateMinorTransactionPage

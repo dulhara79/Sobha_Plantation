@@ -31,7 +31,7 @@ const SalesDashboard = () => {
       // Simulate loading process (e.g., API calls, component mounting)
       setTimeout(() => {
         setLoading(false); // Once the components or data are loaded
-      }, 2000); // Adjust the delay as needed
+      }, 1000); // Adjust the delay as needed
     }, []);
   
     if (loading) return <NewLoadingScreen />;
@@ -75,10 +75,10 @@ const SalesDashboard = () => {
             </div>
             <div
               className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
-              onClick={() => navigateTo("/salesAndFinance/finance/transaction-display")}
+              onClick={() => navigateTo("/salesAndFinance/finance/add-minortransaction")}
             >
               <List fontSize="large" className="mb-8 mr-2 size-24" />
-              <span className="text-xl font-semibold">View All Records</span>
+              <span className="text-xl font-semibold">Add Minor Transactions</span>
             </div>
             <div
               className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
@@ -89,11 +89,10 @@ const SalesDashboard = () => {
             </div>
             <div
               className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
-              onClick={() => navigateTo("/salesAndFinance/finance/employeeSalary")}
+              onClick={() => navigateTo("/salesAndFinance/finance/analytics")}
             >
-              {/* <AttachMoney fontSize="large" className="mb-8 mr-2 size-24" /> */}
-              <SriLankanRupeeIcon fontSize="large" className="mb-8 mr-2 size-24" />
-              <span className="text-xl font-semibold">Salary</span>
+              <Analytics fontSize="large" className="mb-8 mr-2 size-24" />
+              <span className="text-xl font-semibold">Analytics</span>
             </div>
             {/* <div
               className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
@@ -102,12 +101,13 @@ const SalesDashboard = () => {
               <AttachMoney fontSize="large" className="mb-8 mr-2 size-24" />
               <span className="text-xl font-semibold">Budget</span>
             </div> */}
-            <div
+            <div 
               className="flex flex-col items-center justify-center col-span-2 h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
-              onClick={() => navigateTo("/salesAndFinance/finance/analytics")}
+              onClick={() => navigateTo("/salesAndFinance/finance/employeeSalary")}
             >
-              <Analytics fontSize="large" className="mb-8 mr-2 size-24" />
-              <span className="text-xl font-semibold">Analytics</span>
+              {/* <AttachMoney fontSize="large" className="mb-8 mr-2 size-24" /> */}
+              <SriLankanRupeeIcon fontSize="large" className="mb-8 mr-2 size-24" />
+              <span className="text-xl font-semibold">Salary</span>
             </div>
           </div>
         </div>
