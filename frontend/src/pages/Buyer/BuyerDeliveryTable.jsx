@@ -6,6 +6,7 @@ import axios from "axios";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
 import moment from "moment";
+import BuyerNavbar from "../../components/Buyer/Header/BuyerNavbar";
 
 import {
   HomeOutlined,
@@ -208,7 +209,7 @@ const BuyerDeliveryTable = () => {
           style={{ flex: 1, padding: "20px", marginLeft: "280px" }}
         >
           {/* Navigation Bar */}
-          <nav className="flex items-center justify-between p-4 bg-transparent">
+          {/* <nav className="flex items-center justify-between p-4 bg-transparent">
             <button
               onClick={() => window.history.back()}
               className="text-gray-600 hover:text-gray-800"
@@ -243,7 +244,9 @@ const BuyerDeliveryTable = () => {
               </Link>
               
             </div>
-          </nav>
+          </nav> */}
+          <div className="flex-1 ml-[300px] p-4 "></div>
+          <BuyerNavbar/>
           <div className="mt-4">
             {/* Breadcrumb */}
             <Breadcrumb
