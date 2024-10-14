@@ -337,6 +337,12 @@ const HarvestSchedule = () => {
               >
                 Generate PDF Report
               </Button>
+              {/* <Button
+                style={{ backgroundColor: "#60DB19", color: "#fff" }}
+                onClick={() => navigate("/harvest/harvestCal")}  // Navigate on click
+              >
+                Estimate Harvest Calculator
+              </Button> */}
             </div>
           </div>
           <Table
