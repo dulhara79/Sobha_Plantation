@@ -4,18 +4,19 @@ import { useSnackbar } from "notistack";
 import { Link, useNavigate } from "react-router-dom";
 import { DatePicker } from "antd";
 import moment from "moment";
+import Swal from "sweetalert2";
 
 const ValuationForm = () => {
   const [loading, setLoading] = useState(false);
   const [date, setDate] = useState("");
   const [type, setType] = useState("null");
   const [subtype, setSubType] = useState();
-  const [quantity, setQuantity] = useState("");
+  const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [payerPayee, setPayerPayee] = useState("");
   const [appreciationOrDepreciation, setAppreciationOrDepreciation] =
-    useState("");
+    useState(0);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate(); // Corrected useNavigate usage
   const [fieldDisabled, setFieldDisabled] = useState({
@@ -29,6 +30,13 @@ const ValuationForm = () => {
     appreciationOrDepreciation: true,
   });
   const [disabledSubmit, setDisabledSubmit] = useState(true);
+  const [displayErrorMassage, setDisplayErrorMassage] = useState(false);
+  
+  const [priceError, setPriceError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [payerPayeeError, setPayerPayeeError] = useState("");
+  
+  const threeWeekBefore = moment().subtract(3, "weeks");
 
   const handleValuationTypeChange = (e) => {
     setType(e.target.value);
@@ -51,6 +59,7 @@ const ValuationForm = () => {
     setFieldDisabled({
       ...fieldDisabled,
       quantity: false,
+      price: false,
     });
   };
 
@@ -60,54 +69,141 @@ const ValuationForm = () => {
     if (
       filteredValue >= 0 ||
       !(filteredValue === "") ||
-      !(filteredValue > 100000)
+      !(filteredValue >= 1000000)
     ) {
       setQuantity(filteredValue);
+      setFieldDisabled({
+        ...fieldDisabled,
+        price: false,
+      });
+      setDisplayErrorMassage(false);
+    } else {
+      setDisplayErrorMassage(true);
+      setErrorMassage({
+        ...errorMassage,
+        quantity: "Quantity should be a number",
+      });
     }
-    setFieldDisabled({
-      ...fieldDisabled,
-      price: false,
-    });
   };
 
   const handlePriceChange = (e) => {
     const value = e.target.value;
-    const filteredValue = value.replace(/[^0-9 ]/g, "");
-    if (
-      filteredValue >= 0 ||
-      !(filteredValue === "") ||
-      !(filteredValue > 10000000)
-    ) {
-      setPrice(filteredValue);
+    const regex = /^[0-9. ]*$/;
+    if (!regex.test(value)) {
+      setDisplayErrorMassage(true);
+      setPriceError("Price should contain only numbers");
+    } else {
+      setDisplayErrorMassage(false);
+      setPriceError("");
     }
-    setFieldDisabled({
-      ...fieldDisabled,
-      description: false,
-    });
+    const filteredValue = value.replace(/[^0-9. ]/g, "");
+    parseFloat(filteredValue);
+
+    if(filteredValue === ""){
+      setDisplayErrorMassage(true);
+      setPriceError("Price should not be empty");
+    } else {
+      setDisplayErrorMassage(false);
+      setPriceError("");
+    }
+    
+    if(filteredValue < 0){
+      setDisplayErrorMassage(true);
+      setPriceError("Price should be greater than 0");
+    } else if (filteredValue > 10000000) {
+      setDisabledSubmit(true);
+      setFieldDisabled({
+        ...fieldDisabled,
+        description: true,
+      });
+      setDisplayErrorMassage(true);
+      setPriceError("Price should be less than 100000");
+    } else {
+      setPrice(filteredValue);
+      setFieldDisabled({
+        ...fieldDisabled,
+        description: false,
+      });
+      setDisplayErrorMassage(false);
+      setPriceError("");
+    }
+    
+    
   };
 
   const handleDescriptionChange = (e) => {
     const value = e.target.value;
-    const filteredValue = value.replace(/[^a-zA-Z0-9 ]/g, "");
-    if (filteredValue.length <= 100) {
+
+    const regex = /^[a-zA-Z ]*$/;
+    if (!regex.test(value)) {
+      console.error("Invalid description input:", value);
+      setDescriptionError(
+        "Invalid charactors in description input. Only letters and numbers are allowed."
+      );
+      setDisabledSubmit(true);
+    } else {
+      setDescriptionError("");
+      setDisabledSubmit(false);
+    }
+
+    // Replace anything that is not a letter (a-z, A-Z) or a space with an empty string
+    const filteredValue = value.replace(/[^a-zA-Z ]/g, "");
+
+    // Ensure the description is limited to 300 characters
+    const isValid = filteredValue.length <= 300;
+
+    // Set the filtered value to the state if it's valid (within the character limit)
+    if (isValid) {
       setDescription(filteredValue);
     }
-    setFieldDisabled({
-      ...fieldDisabled,
-      payerPayee: false,
-    });
+
+    // Enable the 'payerPayee' field if there is any valid description input
+    if (filteredValue.length > 0) {
+      setFieldDisabled({
+        ...fieldDisabled,
+        payerPayee: false, // Enable payer/payee when description is filled
+      });
+      setDisabledSubmit(false);
+    } else {
+      setDisabledSubmit(true);
+      setFieldDisabled({
+        ...fieldDisabled,
+        payerPayee: true,
+        method: true,
+      });
+    }
   };
 
   const handlePayerPayeeChange = (e) => {
-    const value = e.target.value;
-    const filteredValue = value.replace(/[^a-zA-Z ]/g, "");
-    if (filteredValue.length <= 100) {
-      setPayerPayee(filteredValue);
+    const { value } = e.target;
+
+    const regex = /^[a-zA-Z ]*$/;
+    if (!regex.test(value)) {
+      console.error("Invalid payee input:", value);
+      setPayerPayeeError(
+        "Invalid charactors in payee input. Only letters are allowed."
+      );
+      setDisabledSubmit(true);
+    } else {
+      setPayerPayeeError("");
+      setDisabledSubmit(false);
     }
-    setFieldDisabled({
-      ...fieldDisabled,
-      appreciationOrDepreciation: false,
-    });
+
+    const filteredValue = value.replace(/[^a-zA-Z  ]/g, "");
+    setPayerPayee(filteredValue);
+    if (filteredValue.length > 0) {
+      setFieldDisabled({
+        ...fieldDisabled,
+        method: false, // Enable method when payer/payee is filled
+      });
+      setDisabledSubmit(false);
+    } else {
+      setDisabledSubmit(true);
+      setFieldDisabled({
+        ...fieldDisabled,
+        method: true,
+      });
+    }
   };
 
   const handleAppreciationOrDepreciationChange = (e) => {
@@ -133,7 +229,7 @@ const ValuationForm = () => {
       !date ||
       !type ||
       !subtype ||
-      !quantity ||
+      // !quantity ||
       !price ||
       !type ||
       !description ||
@@ -166,15 +262,17 @@ const ValuationForm = () => {
     };
 
     const data = {
-      date,
+      date: moment(date).format("YYYY-MM-DD"),
       type,
       subtype,
-      quantity,
-      price,
+      quantity: 1,
+      price: Number(price),
       description,
       payer_payee: payerPayee, // Ensure naming matches backend
-      appreciationOrDepreciation, // Ensure naming matches backend
+      appreciationOrDepreciation: 0, // Ensure naming matches backend
     };
+
+    console.log("Valuation Data:", data);
 
     axios
       .post("http://localhost:5000/api/salesAndFinance/finance/valuation", data)
@@ -236,25 +334,26 @@ const ValuationForm = () => {
   };
 
   return (
-    <div>
-      <div>
+    <div className="flex flex-col items-center">
+      {/* View All Valuations Link */}
+      <div className="flex justify-end w-full pr-8 mb-4">
         <Link
           to="/salesAndFinance/finance/valuation-dashboard"
-          className={`flex-none rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 ml-[660px] cursor-pointer`}
+          className="flex-none px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-gray-900 rounded-full shadow-md cursor-pointer hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
         >
           View All Valuations
         </Link>
       </div>
-      {/* onSubmit={handleSubmit} */}
-      <form className="flex flex-col items-center justify-center">
-        <div className="w-8/12 px-0 pb-8 space-y-12">
+
+      <form className="flex flex-col items-center w-full">
+        <div className="w-10/12 px-4 pb-8 space-y-10">
           {/* Type Field */}
-          <fieldset className="sm:col-span-4 gap-y-8">
-            <legend className="text-sm font-semibold leading-6 text-black">
+          <fieldset className="gap-y-2">
+            <legend className="text-sm font-semibold leading-6 text-gray-700">
               Valuation type
             </legend>
-            <div className="flex flex-row items-center gap-4 mt-6">
-              <div className="flex items-center gap-x-3">
+            <div className="flex gap-4 mt-2">
+              <label className="flex items-center gap-x-2">
                 <input
                   id="asset"
                   name="type"
@@ -262,17 +361,12 @@ const ValuationForm = () => {
                   value="asset"
                   checked={type === "asset"}
                   onChange={handleValuationTypeChange}
-                  className="w-4 h-4 border-gray-900 text-lime-600 focus:ring-lime-600"
+                  className="w-4 h-4 border-gray-300 text-lime-600 focus:ring-lime-600"
                   required
                 />
-                <label
-                  htmlFor="asset"
-                  className="block text-sm font-medium leading-6 text-black"
-                >
-                  Asset
-                </label>
-              </div>
-              <div className="flex items-center gap-x-3">
+                <span className="text-sm text-gray-700">Asset</span>
+              </label>
+              <label className="flex items-center gap-x-2">
                 <input
                   id="liability"
                   name="type"
@@ -280,24 +374,19 @@ const ValuationForm = () => {
                   value="liability"
                   checked={type === "liability"}
                   onChange={handleValuationTypeChange}
-                  className="w-4 h-4 border-gray-900 text-lime-600 focus:ring-lime-600"
+                  className="w-4 h-4 border-gray-300 text-lime-600 focus:ring-lime-600"
                   required
                 />
-                <label
-                  htmlFor="liability"
-                  className="block text-sm font-medium leading-6 text-black"
-                >
-                  Liability
-                </label>
-              </div>
+                <span className="text-sm text-gray-700">Liability</span>
+              </label>
             </div>
           </fieldset>
 
           {/* Subtype Field */}
-          <div className="sm:col-span-2 sm:col-start-1">
+          <div>
             <label
               htmlFor="subtype"
-              className="block text-sm font-medium leading-6 text-black"
+              className="block mb-1 text-sm font-medium text-gray-700"
             >
               Sub Type
             </label>
@@ -307,11 +396,12 @@ const ValuationForm = () => {
               onChange={handleSubtypeChange}
               id="subtype"
               disabled={fieldDisabled.subtype}
-              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:text-sm sm:leading-6"
+              className="block w-full px-3 py-2 text-gray-800 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-lime-600 focus:border-lime-600"
               required
             >
               {type === "asset" ? (
                 <>
+                  <option>Select Option</option>
                   <option>Land</option>
                   <option>Machinery</option>
                   <option>Crops</option>
@@ -321,6 +411,7 @@ const ValuationForm = () => {
                 </>
               ) : (
                 <>
+                  <option>Select Option</option>
                   <option>Loan</option>
                   <option>Debts</option>
                   <option>Leases</option>
@@ -331,10 +422,10 @@ const ValuationForm = () => {
           </div>
 
           {/* Date, Quantity, Price */}
-          <div className="sm:col-span-3">
+          <div>
             <label
               htmlFor="date"
-              className="block text-sm font-medium leading-6 text-black"
+              className="block mb-1 text-sm font-medium text-gray-700"
             >
               Date
             </label>
@@ -343,15 +434,20 @@ const ValuationForm = () => {
               onChange={(date) => handleDateChange(date)}
               format="YYYY-MM-DD"
               disabled={fieldDisabled.date}
-              disabledDate={(current) => current > moment()}
-              className="block w-full h-8 p-2 mt-2 text-black bg-white border-gray-900 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
+              disabledDate={(current) =>
+                current &&
+                (current < moment(threeWeekBefore) || current > moment())
+              }
+              className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-lime-600 focus:border-lime-600"
               required
             />
           </div>
-          <div className="sm:col-span-3">
+
+          {/* Hidden Quantity */}
+          <div className="hidden">
             <label
               htmlFor="quantity"
-              className="block text-sm font-medium leading-6 text-black"
+              className="block mb-1 text-sm font-medium text-gray-700"
             >
               Quantity
             </label>
@@ -362,14 +458,19 @@ const ValuationForm = () => {
               onChange={handleQuantityChange}
               disabled={fieldDisabled.quantity}
               type="text"
-              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:text-sm sm:leading-6"
+              className="block w-full px-3 py-2 text-gray-800 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-lime-600 focus:border-lime-600"
               required
             />
+            {/* {displayErrorMassage && (
+            <span className="text-red-500">{errorMassage.quantity}</span>
+          )} */}
           </div>
-          <div className="sm:col-span-3">
+
+          {/* Price */}
+          <div>
             <label
               htmlFor="price"
-              className="block text-sm font-medium leading-6 text-black"
+              className="block mb-1 text-sm font-medium text-gray-700"
             >
               Price
             </label>
@@ -380,16 +481,21 @@ const ValuationForm = () => {
               onChange={handlePriceChange}
               disabled={fieldDisabled.price}
               type="text"
-              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:text-sm sm:leading-6"
+              className="block w-full px-3 py-2 text-gray-800 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-lime-600 focus:border-lime-600"
               required
             />
+            {displayErrorMassage && (
+              <span className="text-red-500">
+                {priceError}
+              </span>
+            )}
           </div>
 
           {/* Description */}
-          <div className="col-span-full">
+          <div>
             <label
               htmlFor="description"
-              className="block text-sm font-medium leading-6 text-black"
+              className="block mb-1 text-sm font-medium text-gray-700"
             >
               Description
             </label>
@@ -400,16 +506,19 @@ const ValuationForm = () => {
               value={description}
               disabled={fieldDisabled.description}
               onChange={handleDescriptionChange}
-              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:max-w-xs sm:text-sm sm:leading-6"
+              className="block w-full px-3 py-2 text-gray-800 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-lime-600 focus:border-lime-600"
               required
             />
+            {displayErrorMassage && (
+              <span className="text-red-500">{descriptionError}</span>
+            )}
           </div>
 
           {/* Payer/Payee */}
-          <div className="col-span-full">
+          <div>
             <label
               htmlFor="payer_payee"
-              className="block text-sm font-medium leading-6 text-black"
+              className="block mb-1 text-sm font-medium text-gray-700"
             >
               Payer/Payee
             </label>
@@ -420,16 +529,19 @@ const ValuationForm = () => {
               disabled={fieldDisabled.payerPayee}
               onChange={handlePayerPayeeChange}
               id="payer_payee"
-              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:text-sm sm:leading-6"
+              className="block w-full px-3 py-2 text-gray-800 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-lime-600 focus:border-lime-600"
               required
             />
+            {displayErrorMassage && (
+              <span className="text-red-500">{payerPayeeError}</span>
+            )}
           </div>
 
           {/* Appreciation/Depreciation */}
-          <div className="sm:col-span-2 sm:col-start-1">
+          <div className="hidden">
             <label
               htmlFor="percentage"
-              className="block text-sm font-medium leading-6 text-black"
+              className="block mb-1 text-sm font-medium text-gray-700"
             >
               Percentage
             </label>
@@ -440,26 +552,25 @@ const ValuationForm = () => {
               disabled={fieldDisabled.appreciationOrDepreciation}
               onChange={handleAppreciationOrDepreciationChange}
               id="appreciationOrDepreciation"
-              className="block w-full rounded-md border-2 border-gray-300 py-1.5 text-black shadow-sm sm:text-sm sm:leading-6"
+              className="block w-full px-3 py-2 text-gray-800 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-lime-600 focus:border-lime-600"
               required
             />
           </div>
 
           {/* Buttons */}
-          <div className="flex items-center justify-between">
-            {/* Auto Save Transaction */}
-            <div className="container box-border sticky flex items-center h-auto gap-10 p-4 px-4 py-1 pl-4 mx-auto bg-gray-200 border-4 rounded-full">
-              <label className="">
+          <div className="flex justify-between w-full pt-4">
+            <div className="flex items-center gap-4 p-2 bg-gray-100 rounded-full">
+              <label className="text-sm font-medium text-gray-700">
                 Automatically save to transactions
                 <input
-                  className="ml-4 mr-1 bg-white border-gray-300 rounded-full size-6 form-checkbox text-lime-600 focus:border-lime-500 focus:ring focus:ring-lime-500 focus:ring-opacity-50 hover:bg-lime-100 checked:bg-lime-500"
+                  className="ml-4 rounded form-checkbox text-lime-600 focus:ring-lime-600"
                   type="checkbox"
                   checked={autoSaveTransaction}
                   onChange={(e) => setAutoSaveTransaction(e.target.checked)}
                 />
               </label>
               <button
-                className="px-4 py-1 rounded-full bg-lime-200 hover:bg-lime-400"
+                className="px-4 py-1.5 text-white bg-lime-500 rounded-full hover:bg-lime-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-500"
                 onClick={handleSaveValuationRecord}
                 disabled={disabledSubmit}
               >
@@ -468,7 +579,7 @@ const ValuationForm = () => {
               <button
                 type="button"
                 onClick={handleCancel}
-                className="px-4 py-1 text-white bg-red-600 rounded-full hover:bg-red-700 focus:outline-none"
+                className="px-4 py-1.5 text-white bg-red-500 rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               >
                 Cancel
               </button>

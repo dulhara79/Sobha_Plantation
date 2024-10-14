@@ -21,7 +21,7 @@ const ValuationDashboard = () => {
       // Simulate loading process (e.g., API calls, component mounting)
       setTimeout(() => {
         setLoading(false); // Once the components or data are loaded
-      }, 2000); // Adjust the delay as needed
+      }, 1000); // Adjust the delay as needed
     }, []);
   
     if (loading) return <NewLoadingScreen />;
@@ -29,7 +29,7 @@ const ValuationDashboard = () => {
     <div>
     <Header />
     <Sidebar activePage="/salesAndFinance/"/>
-      <div className={`ml-[300px] pt-3 w-full`}>
+      <div className={`ml-[300px] pt-3 max-w-full`}>
     <Breadcrumb
     style={{ margin: "10px 0" }}
         items={[
@@ -60,7 +60,7 @@ const ValuationDashboard = () => {
       />
       <NavigationButtons />
       </div>
-      <div className={`ml-[300px] pt-3 w-[100px]`}>
+      <div className={`ml-[300px] pt-3`}>
       <Valuation/>
       </div>
     </div>

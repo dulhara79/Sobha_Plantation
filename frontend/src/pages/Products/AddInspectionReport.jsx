@@ -14,8 +14,10 @@ const AddInspectionReport = () => {
   const [errors, setErrors] = useState({});
   const fields = ["productType", "inspectionDate", "status", "inspectorName"];
 
-  // Disable past dates but allow today
-  const disablePastDates = (current) => current && current < moment().startOf('day');
+// Allow only dates from today to 7 days before
+const disablePastDates = (current) =>
+  current < moment().startOf('day').subtract(7, 'days') || current > moment().endOf('day');
+
 
   // Validate inspector name
   const validateInspectorName = (_, value) => {
@@ -23,38 +25,34 @@ const AddInspectionReport = () => {
       return Promise.reject(new Error('Please enter the inspector name!'));
     }
     if (!/^[A-Z][a-z]*$/.test(value)) {
-      return Promise.reject(new Error('Inspector name must start with an uppercase letter and only contain lowercase letters.'));
+      return Promise.reject(
+        new Error('Inspector name must start with an uppercase letter followed by lowercase letters.')
+      );
     }
     return Promise.resolve();
   };
 
   const handleInspectorNameChange = (e) => {
-    const inputValue = e.target.value;
-
-    // Check if the input starts with an uppercase letter
-    if (inputValue.length === 0 || /^[A-Z]/.test(inputValue)) {
-      // Prevent spaces and only allow letters
-      let formattedValue = inputValue
-        .replace(/\s+/g, '') // Remove all spaces
-        .replace(/[^a-zA-Z]/g, ''); // Remove non-letter characters
-
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        inspectorName: formattedValue,
-      }));
-
-      // Update the form field value
-      form.setFieldsValue({ inspectorName: formattedValue });
-    } else {
-      // If the first letter is not uppercase, reset the input to the previous valid value
-      notification.warning({
-        message: 'Invalid Input',
-        description: 'The first letter must be uppercase.',
-      });
-      form.setFieldsValue({ inspectorName: formData.inspectorName }); // Restore the previous value
+    let inputValue = e.target.value;
+  
+    // Auto-correct the first letter to uppercase
+    if (inputValue.length === 1) {
+      inputValue = inputValue.toUpperCase();
     }
+  
+    // Ensure subsequent characters are lowercase and letters only
+    let formattedValue = inputValue
+      .charAt(0) + inputValue.slice(1).toLowerCase().replace(/[^a-z]/g, '');
+  
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      inspectorName: formattedValue,
+    }));
+  
+    form.setFieldsValue({ inspectorName: formattedValue });
   };
-
+  
+  
   // Disable copy/paste/cut for inspector name input
   const handleCopyPasteCut = (e) => {
     e.preventDefault();
@@ -162,20 +160,21 @@ const AddInspectionReport = () => {
 
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item
-                name="inspectionDate"
-                label="Inspection Date"
-                rules={[{ required: true, message: 'Please select the inspection date!' }]}
-              >
-                <DatePicker
-                  format="YYYY-MM-DD"
-                  disabledDate={disablePastDates}
-                  disabled={!formData.productType} // Disable based on previous field
-                  onChange={(date) => handleFieldChange('inspectionDate', date)}
-                  style={{ width: '100%' }}
-                  inputReadOnly
-                />
-              </Form.Item>
+            <Form.Item
+              name="inspectionDate"
+              label="Inspection Date"
+              rules={[{ required: true, message: 'Please select the inspection date!' }]}
+            >
+              <DatePicker
+                format="YYYY-MM-DD"
+                disabledDate={disablePastDates}
+                disabled={!formData.productType} // Disable based on previous field
+                onChange={(date) => handleFieldChange('inspectionDate', date)}
+                style={{ width: '100%' }}
+                inputReadOnly
+              />
+            </Form.Item>
+
             </Col>
 
             <Col span={12}>
@@ -204,9 +203,7 @@ const AddInspectionReport = () => {
           >
             <Input
               placeholder="Enter inspector name"
-              style={{ width: '100%' }}
-              disabled={!formData.productType || !formData.inspectionDate || !formData.status}
-              onChange={handleInspectorNameChange} // Updated handler for validation
+              onChange={handleInspectorNameChange}
               onCopy={handleCopyPasteCut}
               onCut={handleCopyPasteCut}
               onPaste={handleCopyPasteCut}

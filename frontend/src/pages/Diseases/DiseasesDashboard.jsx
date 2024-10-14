@@ -25,7 +25,7 @@ const DiseasesDashboard = () => {
 
     if (loading) {
       setTimeout(() => {
-        setLoading(false);
+        setLoading(false); // Set loading to false after data is loaded
       }, 900);
     }
 

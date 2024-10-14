@@ -1,9 +1,4 @@
 import React, { useEffect, useState } from "react";
-// import SideBar from "../../../components/SideBar";
-// import Navbar from "../../../../components/Sales_and_Finance/NavigationButtons";
-// import FinanceNavigation from "../../../components/finances/FinanceNavigation";
-// import BackButton from "../../../components/utility/BackButton";
-// import Breadcrumb from "../../../components/utility/Breadcrumbs";
 
 import {
   ArrowDownTrayIcon,
@@ -37,7 +32,12 @@ import FinanceValuationStatBar from "../../../../components/Sales_and_Finance/Fi
 
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
-// import {useKindeAuth} from "@kinde-oss/kinde-auth-react";
+import moment from "moment";
+import { Table } from "antd";
+import {
+  ArrowBackIosNewRounded,
+  ArrowForwardIosRounded,
+} from "@mui/icons-material";
 
 export default function Valuation() {
   const [loading, setLoading] = useState(false);
@@ -60,7 +60,7 @@ export default function Valuation() {
     { name: "Valuation", href: "/finances/valuation" },
   ];
 
-  const formattedDate = (date) => new Date(date).toISOString().split("T")[0];
+  const formattedDate = (date) => moment(date).toISOString().split("T")[0];
 
   useEffect(() => {
     setLoading(true);
@@ -68,6 +68,7 @@ export default function Valuation() {
       .get("http://localhost:5000/api/salesAndFinance/finance/valuation/")
       .then((response) => {
         setValuationRecords(response.data.data);
+        console.log(response.data.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -121,8 +122,8 @@ export default function Valuation() {
   const sortedRecords = [...ValuationRecords].sort((a, b) => {
     if (sortBy === "date") {
       return sortOrder === "asc"
-        ? new Date(a.date) - new Date(b.date)
-        : new Date(b.date) - new Date(a.date);
+        ? moment(a.date) - moment(b.date)
+        : moment(b.date) - moment(a.date);
     }
   });
 
@@ -133,7 +134,9 @@ export default function Valuation() {
     // Check if any field in the record contains the search query
     return Object.values(record).some(
       (value) =>
-        typeof value === "string" && value.toLowerCase().includes(searchTerm)
+        typeof value === "string" && value.toLowerCase().includes(searchTerm),
+      typeof value === "number" && value.toString().includes(searchTerm),
+      false
     );
   });
 
@@ -158,17 +161,78 @@ export default function Valuation() {
     setSortOrder("asc");
   };
 
+  const columns = [
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      formattedDate: (date) => moment(date).toISOString().split("T")[0],
+      render: (date) => moment(date).format("YYYY-MM-DD"),
+      sorter: (a, b) => moment(a.date) - moment(b.date),
+    },
+    {
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+      sorter: (a, b) => a.type.localeCompare(b.type),
+    },
+    {
+      title: "Subtype",
+      dataIndex: "subtype",
+      key: "subtype",
+      sorter: (a, b) => a.subtype.localeCompare(b.subtype),
+    },
+    {
+      title: "Payer/Payee",
+      dataIndex: "payer_payee",
+      key: "payer_payee",
+      sorter: (a, b) => a.payer_payee.localeCompare(b.payer_payee),
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      sorter: (a, b) => a.price - b.price,
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (record) => (
+        <>
+          {/* <Link to={`/finances/valuation/viewValuation/${record._id}`}>
+            <InformationCircleIcon className="w-6 h-6 text-gray-800 bg-gray-200 rounded-full hover:bg-gray-500" />
+          </Link> */}
+          <Link to={`/salesAndFinance/finance/edit-valuation/${record._id}`}>
+            <PencilSquareIcon className="w-6 h-6 text-gray-800 bg-blue-200 rounded-full hover:bg-blue-500" />
+          </Link>
+          <Button
+            shape="circle"
+            type="text"
+            onClick={() => handleDeleteValuation(record._id)}
+          >
+            <TrashIcon className="w-6 h-6 text-gray-800 bg-red-200 rounded-full hover:bg-red-500" />
+          </Button>
+        </>
+      ),
+    },
+  ];
+
   const handleDownloadPDF = () => {
     const sortedRecords = ValuationRecords.sort((a, b) => {
       if (sortBy === "date") {
         return sortOrder === "asc"
-          ? new Date(a.date) - new Date(b.date)
-          : new Date(b.date) - new Date(a.date);
+          ? moment(a.date) - moment(b.date)
+          : moment(b.date) - moment(a.date);
       }
     });
 
     const filteredRecords = sortedRecords.filter((valuation) => {
-      const transactionDate = new Date(valuation.date);
+      const transactionDate = moment(valuation.date);
       return (
         transactionDate >= selectedDates[0] &&
         transactionDate <= selectedDates[1]
@@ -213,12 +277,11 @@ export default function Valuation() {
   };
 
   return (
-    <div className={`w-[1219px]`}>
-      {/* Navbar */}
+    <div className={`max-w-full`}>
       <div className="sticky top-0 z-10"></div>
       <div className="">
         <div className="grid sm:grid-cols-6 ">
-          <div className="sticky top-0 left-0 col-span-1 "></div>
+          <div className="sticky top-0 left-0 max-w-full col-span-1"></div>
 
           <div className="flex flex-col w-full col-span-5 ">
             <div className="flex flex-row ">
@@ -230,7 +293,7 @@ export default function Valuation() {
             <div>
               <div className="flex flex-row items-center justify-between px-8 py-4">
                 <div>
-                  <h1 className="text-lg font-semibold text-left ">
+                  <h1 className="font-semibold text-left ">
                     Valuation records
                   </h1>
                   <p className="mt-1 text-sm font-normal text-gray-500 0">
@@ -242,7 +305,7 @@ export default function Valuation() {
                 <div>
                   <Link
                     to="/salesAndFinance/finance/add-new-valuation"
-                    className="flex-none rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
+                    className="flex-none rounded-full bg-lime-600 px-3.5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-lime-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
                   >
                     Add new record <span aria-hidden="true">&rarr;</span>
                   </Link>
@@ -261,7 +324,7 @@ export default function Valuation() {
                     <div className="w-8 h-8">
                       <RectangleGroupIcon />
                     </div>
-                    <dd className="text-xl font-semibold text-gray-900 sm:text-xl [writing-mode:vertical-lr] rotate-180">
+                    <dd className="text-xl font-semibold text-black sm:text-xl [writing-mode:vertical-lr] rotate-180">
                       Land
                     </dd>
                   </div>
@@ -276,12 +339,12 @@ export default function Valuation() {
                       <TruckIcon />
                     </div>
 
-                    <div className="text-xl font-semibold text-gray-900 sm:text-xl [writing-mode:vertical-lr] rotate-180">
+                    <div className="text-xl font-semibold text-black sm:text-xl [writing-mode:vertical-lr] rotate-180">
                       Machinery
                     </div>
                   </span>
                 </button>
-                <button
+                {/* <button
                   value="crops"
                   onClick={(e) => setSearchQuery(e.target.value)}
                   className="w-full overflow-hidden bg-teal-100 flex justify-center items-center hover:w-[120%] hover:h-[105%] hover:shadow-xl transition-all duration-300 ease-in-out"
@@ -291,11 +354,11 @@ export default function Valuation() {
                       <GiFruitBowl className="w-full h-full" />
                     </div>
 
-                    <div className="text-xl font-semibold text-gray-900 sm:text-xl [writing-mode:vertical-lr] rotate-180">
+                    <div className="text-xl font-semibold text-black sm:text-xl [writing-mode:vertical-lr] rotate-180">
                       Crops
                     </div>
                   </div>
-                </button>
+                </button> */}
                 <button
                   value="infrastructure"
                   onClick={(e) => setSearchQuery(e.target.value)}
@@ -305,7 +368,7 @@ export default function Valuation() {
                     <div className="w-8 h-8">
                       <HomeModernIcon />
                     </div>
-                    <div className="text-xl font-semibold text-gray-900 sm:text-xl [writing-mode:vertical-lr] rotate-180">
+                    <div className="text-xl font-semibold text-black sm:text-xl [writing-mode:vertical-lr] rotate-180">
                       Infrastructure
                     </div>
                   </div>
@@ -319,7 +382,7 @@ export default function Valuation() {
                     <div className="w-8 h-8">
                       <MdElectricalServices className="w-full h-full" />
                     </div>
-                    <div className="text-xl font-semibold text-gray-900 sm:text-xl [writing-mode:vertical-lr] rotate-180">
+                    <div className="text-xl font-semibold text-black sm:text-xl [writing-mode:vertical-lr] rotate-180">
                       Utilities
                     </div>
                   </div>
@@ -333,7 +396,7 @@ export default function Valuation() {
                     <div className="w-8 h-8">
                       <GiReceiveMoney className="w-full h-full" />
                     </div>
-                    <div className="text-xl font-semibold text-gray-900 sm:text-xl [writing-mode:vertical-lr] rotate-180">
+                    <div className="text-xl font-semibold text-black sm:text-xl [writing-mode:vertical-lr] rotate-180">
                       Loans
                     </div>
                   </div>
@@ -347,7 +410,7 @@ export default function Valuation() {
                     <div className="w-8 h-8">
                       <GiPayMoney className="w-full h-full" />
                     </div>
-                    <div className="text-xl font-semibold text-gray-900 sm:text-xl [writing-mode:vertical-lr] rotate-180">
+                    <div className="text-xl font-semibold text-black sm:text-xl [writing-mode:vertical-lr] rotate-180">
                       Debts
                     </div>
                   </div>
@@ -361,7 +424,7 @@ export default function Valuation() {
                     <div className="w-8 h-8">
                       <FaMoneyCheck className="w-full h-full" />
                     </div>
-                    <div className="text-xl font-semibold text-gray-900 sm:text-xl [writing-mode:vertical-lr] rotate-180">
+                    <div className="text-xl font-semibold text-black sm:text-xl [writing-mode:vertical-lr] rotate-180">
                       Leases
                     </div>
                   </div>
@@ -375,7 +438,7 @@ export default function Valuation() {
                     <div className="w-8 h-8">
                       <GiTwoCoins className="w-full h-full" />
                     </div>
-                    <div className="text-xl font-semibold text-gray-900 sm:text-xl [writing-mode:vertical-lr] rotate-180">
+                    <div className="text-xl font-semibold text-black sm:text-xl [writing-mode:vertical-lr] rotate-180">
                       Taxes
                     </div>
                   </div>
@@ -473,11 +536,22 @@ export default function Valuation() {
                       onVisibleChange={setPopoverVisible}
                     />
                   </div>
+                  <div>
+                    <Link to="/salesAndFinance/finance/balance-sheet">
+                      <button
+                        shape="round"
+                        className="flex flex-row items-center float-right gap-2 pt-2 pb-2 pl-4 pr-4 font-semibold text-gray-700 border-none rounded-full bg-lime-500 hover:bg-lime-700"
+                      >
+                        Balance Sheet Format
+                        <ArrowForwardIosRounded className="self-center w-4 h-4" />
+                      </button>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <table className="w-full text-sm text-left text-gray-500 rtl:text-right ">
+            {/* <table className="w-full text-sm text-left text-gray-500 rtl:text-right ">
               <thead className="text-xs text-gray-700 uppercase bg-gray-100 border-l-4 border-gray-500 shadow-md ">
                 <tr className="">
                   <th></th>
@@ -558,7 +632,6 @@ export default function Valuation() {
                           />
                         </Link>
                       </td>
-                      {/* { getPermission("update:records").isGranted ? ( */}
                       <td className="py-4 text-right ">
                         <Link to={`/salesAndFinance/finance/edit-valuation/${record._id}`}>
                           <PencilSquareIcon
@@ -567,9 +640,6 @@ export default function Valuation() {
                           />
                         </Link>
                       </td>
-                      {/* ) : null
-                                    } */}
-                      {/* { getPermission("update:records").isGranted ? ( */}
                       <td className="">
                         <Button
                           shape="circle"
@@ -584,9 +654,6 @@ export default function Valuation() {
                           />
                         </Button>
                       </td>
-
-                      {/* ) : null
-                                        } */}
                     </tr>
                   ))
                 ) : (
@@ -597,7 +664,14 @@ export default function Valuation() {
                   </tr>
                 )}
               </tbody>
-            </table>
+            </table> */}
+            <Table
+              dataSource={filteredValuationRecords}
+              columns={columns}
+              rowKey={(record) => record._id}
+              loading={loading}
+              pagination={{ pageSize: 10 }}
+            />
           </div>
         </div>
       </div>
