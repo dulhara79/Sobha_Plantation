@@ -72,7 +72,7 @@ const AddDeliveryRecords = () => {
       setLoading(true);
       const { firstName, lastName, email, address, city, country, postalCode, phone } = values;
 
-      await axios.post("http://localhost:8090/api/deliveryRecords", {
+      await axios.post("http://localhost:5000/api/deliveryRecords", {
         firstName,
         lastName,
         email,
@@ -352,7 +352,7 @@ const restrictInputToAlphanumeric = (e) => {
                   disabled={!isPostalCodeEnabled}
                   onKeyPress={restrictInputToNumbers} // Only allow numbers
                   onPaste={preventNonNumericPaste} // Prevent non-numeric paste
-                  
+                  maxLength={5} 
                 />
               </Form.Item>
 

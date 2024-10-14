@@ -24,7 +24,7 @@ import autoTable from "jspdf-autotable";
 
 // import NewLoadingScreen from '../../NewLoadingScreen';
 import NewLoadingScreen from "../../../components/LoadingDots";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -43,7 +43,6 @@ const TransactionTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const [filteredSchedules, setFilteredSchedules] = useState([]);
-
 
   const [totalIncome, setTotalIncome] = useState(0);
   const [totalExpense, setTotalExpense] = useState(0);
@@ -94,7 +93,6 @@ const TransactionTable = () => {
     setTotalIncome(totalIncome);
     setTotalExpense(totalExpense);
     setTotalRevenue(totalIncome - totalExpense);
-    
   };
 
   const applyFilters = (data) => {
@@ -128,18 +126,50 @@ const TransactionTable = () => {
   };
 
   const handleDateRangeChange = (dates) => {
+    let filtered = [...data];
+    
     setDateRange(dates);
     applyFilters(transactions);
+
+    if (dateRange.length === 2) {
+      const [startDate, endDate] = dateRange;
+      filtered = filtered.filter(
+        (transaction) =>
+          moment(transaction.date).isSameOrAfter(startDate, "day") &&
+          moment(transaction.date).isSameOrBefore(endDate, "day")
+      );
+    }
+
   };
 
   const handleTypeChange = (value) => {
+    let filtered = [...data];
+    
     setTypeFilter(value);
     applyFilters(transactions);
+
+    if (typeFilter) {
+      filtered = filtered.filter(
+        (transaction) => transaction.type === typeFilter
+      );
+    }
+
   };
 
   const handleSearch = (e) => {
+    let filtered = [...data];
+    
     setSearchTerm(e.target.value);
     applyFilters(transactions);
+
+    if (searchTerm) {
+      filtered = filtered.filter((transaction) =>
+        Object.values(transaction).some((value) =>
+          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
+
   };
 
   const handleKeyPress = (e) => {
@@ -217,6 +247,7 @@ const TransactionTable = () => {
 
   const exportToPDF = async () => {
     const doc = new jsPDF();
+    const today = moment().format("YYYY-MM-DD");
 
     // Load the logo image
     const logoUrl = "../../../../src/assets/logo.png";
@@ -233,13 +264,28 @@ const TransactionTable = () => {
       const pageHeight = doc.internal.pageSize.height;
 
       // Header with logo
-      if (logoDataURL) {
-        doc.addImage(logoDataURL, "PNG", 10, 10, 40, 10); // Adjust position and size
-      }
-      doc.setFontSize(12);
-      doc.text("Sobha Plantation", 170, 15); // Adjust x, y position
-      doc.line(10, 25, pageWidth - 10, 25); // Line under header
+      // if (logoDataURL) {
+      //   doc.addImage(logoDataURL, "PNG", 10, 10, 40, 10); // Adjust position and size
+      // }
+      // doc.setFontSize(12);
+      // doc.text("Sobha Plantation", 170, 15); // Adjust x, y position
+      // doc.line(10, 25, pageWidth - 10, 25); // Line under header
+      doc.setFontSize(14);
+      doc.text("Sobha Plantation", 10, 10); // Align left
 
+      doc.setFontSize(10);
+      doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+      doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+      doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+      doc.text("Contact: 0112 751 757", 10, 30); // Email address line
+      doc.text(`Date: ${today}`, pageWidth - 10, 35); // Align right
+      
+
+      if (logoDataURL) {
+        doc.addImage(logoDataURL, "PNG", pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
+      }
+
+      doc.line(10, 40, pageWidth - 10, 40); // Header line
       // Footer with page number
       doc.setFontSize(10);
       doc.text(
@@ -254,8 +300,9 @@ const TransactionTable = () => {
     const marginBottom = 20; // space reserved for footer
 
     // Title of the report
+    
     doc.setFontSize(22);
-    doc.text("Transaction Report", 50, 35); // Adjust y-coordinate to start below header
+    doc.text("Cash Book", 65, 45); // Adjust y-coordinate to start below header
 
     // First Table: Overview Details
     const overviewHeaders = [["Detail", "Value"]];
@@ -299,25 +346,28 @@ const TransactionTable = () => {
     });
 
     // Second Table: Production Schedule Data
-    const scheduleRows = filteredData.map((tx) => [
-      format(new Date(tx.date), "yyyy-MM-dd"),
-      tx.type,
-      tx.subtype,
-      tx.description,
-      tx.payer_payee,
-      tx.method,
-      tx.amount.toFixed(2),
-    ])
+    const scheduleRows = filteredData
+      .map((tx) => [
+        format(new Date(tx.date), "yyyy-MM-dd"),
+        tx.type,
+        tx.subtype,
+        tx.description,
+        tx.payer_payee,
+        tx.method,
+        tx.amount.toFixed(2),
+      ])
       .filter((row) => row.every((cell) => cell !== undefined)); // Ensure no undefined values
 
     const scheduleHeaders = [
-      ["Date",
-          "Type",
-          "Sub Type",
-          "Description",
-          "Payer/Payee",
-          "Method",
-          "Amount",],
+      [
+        "Date",
+        "Type",
+        "Sub Type",
+        "Description",
+        "Payer/Payee",
+        "Method",
+        "Amount",
+      ],
     ];
 
     let finalY = doc.lastAutoTable.finalY + 10; // Adjust space between tables
@@ -353,9 +403,6 @@ const TransactionTable = () => {
     // Save the PDF
     doc.save("transaction_report.pdf");
   };
-
-
-  
 
   const handleDelete = async (id) => {
     try {
@@ -402,15 +449,21 @@ const TransactionTable = () => {
       title: "Income",
       dataIndex: "income",
       key: "income",
-      render: (text, record) => (record.type === "income" ? record.amount.toFixed(2) : "-"),
-      sorter: (a, b) => (a.type === "income" ? a.amount : 0) - (b.type === "income" ? b.amount : 0),
+      render: (text, record) =>
+        record.type === "income" ? record.amount.toFixed(2) : "-",
+      sorter: (a, b) =>
+        (a.type === "income" ? a.amount : 0) -
+        (b.type === "income" ? b.amount : 0),
     },
     {
       title: "Expense",
       dataIndex: "expense",
       key: "expense",
-      render: (text, record) => (record.type === "expense" ? record.amount.toFixed(2) : "-"),
-      sorter: (a, b) => (a.type === "expense" ? a.amount : 0) - (b.type === "expense" ? b.amount : 0),
+      render: (text, record) =>
+        record.type === "expense" ? record.amount.toFixed(2) : "-",
+      sorter: (a, b) =>
+        (a.type === "expense" ? a.amount : 0) -
+        (b.type === "expense" ? b.amount : 0),
     },
     {
       title: "Actions",
@@ -484,6 +537,9 @@ const TransactionTable = () => {
             Export to PDF
           </Button>
         </div>
+        <Link to="/salesAndFinance/finance/cashbook">
+          <Button type="primary">View Cash Book</Button>
+        </Link>
         <Table columns={columns} dataSource={filteredData} rowKey="_id" />
         <div className="mt-4 text-5xl" style={{ color: balanceColor }}>
           <strong>Total Balance:</strong> {totalAmount.toFixed(2)}

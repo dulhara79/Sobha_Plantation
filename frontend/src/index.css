@@ -264,4 +264,8 @@ button.text-gray-800 {
   background-color: #5a6268; /* Darker gray on hover */
 }
 
+.mt-10 {
+  margin-top: 40px;
+}
+
 /* products */

@@ -9,7 +9,7 @@ import {
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useSnackbar } from "notistack";
-import { Button, Table, Input } from "antd";
+
 import { useNavigate } from "react-router-dom";
 import html2canvas from "html2canvas";
 import dayjs from "dayjs";
@@ -17,6 +17,9 @@ import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
 import Breadcrumbs from "../../components/Employee/Breadcrumbss";
+import { QRCodeSVG } from "qrcode.react"; 
+import { QrCodeIcon } from "@heroicons/react/24/outline";
+import { Button, Table, Input, Modal } from "antd";
 
 const EmployeeList = () => {
   const [employeeRecords, setEmployeeRecords] = useState([]);
@@ -25,6 +28,8 @@ const EmployeeList = () => {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -91,27 +96,10 @@ const EmployeeList = () => {
     navigate(`/employee/editemployee/${id}`);
   };
 
-  const getImageDataURL = (url) => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'Anonymous';
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        context.drawImage(img, 0, 0);
-        resolve(canvas.toDataURL('image/png'));
-      };
-      img.onerror = reject;
-      img.src = url;
-    });
-  };
-
   const generateReport = async () => {
     const currentDate = new Date().toLocaleString("en-GB");
     const doc = new jsPDF("landscape");
-
+  
     // Load the logo image
     const logoUrl = '../src/assets/logo.png';
     let logoDataURL;
@@ -120,25 +108,33 @@ const EmployeeList = () => {
     } catch (error) {
       console.error('Failed to load the logo image:', error);
     }
-
+  
     // Function to draw header, footer, and horizontal line
     const drawHeaderFooter = (data) => {
       const pageWidth = doc.internal.pageSize.width;
       const pageHeight = doc.internal.pageSize.height;
-
+  
       // Header with logo
+      doc.setFontSize(14);
+      doc.text("Sobha Plantation", 10, 10); // Align left
+  
+      doc.setFontSize(10);
+      doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+      doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+      doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+      doc.text("Contact: 0112 751 757", 10, 30); // Contact number line
+  
       if (logoDataURL) {
-        doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 10);
+        doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
       }
-      doc.setFontSize(12);
-      doc.text("Employee Details", pageWidth - 15, 15, { align: 'right' });
-      doc.line(10, 25, pageWidth - 10, 25);
-
+  
+      doc.line(10, 35, pageWidth - 10, 35); 
+  
       // Footer with page number
       doc.setFontSize(10);
       doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
     };
-
+  
     const columns = [
       { header: "First Name", dataKey: "firstName" },
       { header: "Last Name", dataKey: "lastName" },
@@ -153,7 +149,7 @@ const EmployeeList = () => {
       { header: "Hired Date", dataKey: "hiredDate" },
       { header: "Hourly Rate", dataKey: "hourlyRate" },
     ];
-
+  
     const rows = filteredEmployeeRecords.map((record) => ({
       firstName: record.firstName,
       lastName: record.lastName,
@@ -168,23 +164,48 @@ const EmployeeList = () => {
       hiredDate: dayjs(record.hiredDate).format("YYYY-MM-DD"),
       hourlyRate: record.hourlyRate,
     }));
-
+  
     doc.setFontSize(16);
-    doc.text("Employee Details", 140, 40, null, null, "center");
+    doc.text("Employee Details", doc.internal.pageSize.width / 2, 45, null, null, "center");
     doc.setFontSize(12);
-    doc.text(`As At: ${currentDate}`, 140, 50, null, null, "center");
-    doc.text(`Number of Employees: ${rows.length}`, 15, 60);
-
-    autoTable(doc, {
+    doc.text(`As At: ${currentDate}`, doc.internal.pageSize.width / 2, 55, null, null, "center");
+    doc.text(`Number of Employees: ${rows.length}`, 15, 65);
+  
+    doc.autoTable({
       columns,
       body: rows,
       startY: 70,
       theme: "grid",
       didDrawPage: drawHeaderFooter,
+      headStyles: { 
+        fillColor: [144, 238, 144], // Light green color (RGB values)
+        textColor: [0, 0, 0], // Black text for better contrast
+        fontStyle: 'bold' 
+      },
+      styles: { fontSize: 8 },
     });
-
+  
     doc.save(`Employee-details_${currentDate}.pdf`);
   };
+  
+  // Helper function to load image as data URL
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  };
+  
 
   const getFilteredEmployeeRecords = (searchQuery) => {
     if (Array.isArray(employeeRecords) && employeeRecords.length > 0) {
@@ -210,6 +231,21 @@ const EmployeeList = () => {
     } else {
       setFilteredEmployeeRecords([]);
     }
+  };
+  const showQRCodeModal = (employee) => {
+    setSelectedEmployee(employee);
+    setIsModalVisible(true);
+  };
+  
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+    setSelectedEmployee(null);
+  };
+  
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      enqueueSnackbar("Link copied to clipboard!", { variant: "success" });
+    });
   };
 
   const columns = [
@@ -280,7 +316,19 @@ const EmployeeList = () => {
         />
       ),
     },
+    {
+      title: "QR Code",
+      key: "qrcode",
+      render: (text, record) => (
+        <QrCodeIcon
+          className="w-5 h-5 text-blue-500 cursor-pointer hover:text-blue-700"
+          onClick={() => showQRCodeModal(record)}
+        />
+      ),
+    },
+ 
   ];
+  
 
   const breadcrumbItems = [
     { name: "Employees", href: "/employees/home" },
@@ -338,6 +386,35 @@ const EmployeeList = () => {
           </div>
         </div>
       </div>
+      <Modal
+  title="Employee QR Code"
+  visible={isModalVisible}
+  onCancel={handleModalCancel}
+  footer={null}
+>
+  {selectedEmployee && (
+    <div className="flex flex-col items-center">
+      <QRCodeSVG
+        value={`http://localhost:5173/employee/viewemployee/${selectedEmployee._id}`}
+        size={200}
+        level={"L"}
+        includeMargin={true}
+      />
+      <p className="mt-4">Scan this QR code to view employee details</p>
+      <Button
+        type="primary"
+        onClick={() =>
+          copyToClipboard(
+            `http://localhost:5173/employee/viewemployee/${selectedEmployee._id}`
+          )
+        }
+        className="mt-4"
+      >
+        Copy Link
+      </Button>
+    </div>
+  )}
+</Modal>
     </>
   );
 };

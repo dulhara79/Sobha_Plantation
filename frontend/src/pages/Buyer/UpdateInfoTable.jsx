@@ -45,7 +45,7 @@ const UpdateBuyerInfoRecords = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:8090/api/buyerInfo/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/buyerInfo/${id}`);
         
         const data = response.data.BuyerInfoRecord;
 
@@ -95,7 +95,7 @@ const UpdateBuyerInfoRecords = () => {
       console.log("Updating with values: ", updatedValues);
 
       // Make a PUT request to update the record
-      await axios.put(`http://localhost:5000/api/buyerInfo/${id}`, updatedValues);
+      await axios.put(`http://localhost:8090/api/buyerInfo/${id}`, updatedValues);
 
 
       notification.success({
