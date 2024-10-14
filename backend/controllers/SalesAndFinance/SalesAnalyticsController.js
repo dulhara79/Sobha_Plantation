@@ -1,5 +1,6 @@
 // const SalesAnalytics = require('../../models/SalesAndFinance/SalesAnalyticsModel');
 const SalesAnalytics = require('../../models/SalesAndFinance/SalesTrackingModel');
+mongoose = require('mongoose');
 
 // Create a new sales analytics record
 exports.createSalesAnalytics = async (req, res, next) => {
@@ -20,6 +21,7 @@ exports.getAllSalesAnalytics = async (req, res, next) => {
     next(error);
   }
 };
+
 
 // Get a sales analytics record by ID
 exports.getSalesAnalyticsById = async (req, res, next) => {
@@ -80,3 +82,41 @@ exports.deleteSalesAnalytics = async (req, res, next) => {
   }
 };
 
+
+exports.getMonthlySalesSummary = async (req, res, next) => {
+  try {
+    // const { month } = req.query;
+
+    const month = new Date().getMonth();    
+
+    // Aggregate data to get total sales, most, and least selling products
+    const salesSummary = await SalesAnalytics.aggregate([
+      { 
+        $match: { month: month }  // Assuming month is stored in a date field
+      },
+      {
+        $group: {
+          _id: "$productName",
+          totalSales: { $sum: "$quantity" }
+        }
+      },
+      {
+        $sort: { totalSales: -1 }
+      }
+    ]);
+
+    // Extract most and least selling products
+    const mostSellingProduct = salesSummary[0]?.productName || "N/A";
+    const leastSellingProduct = salesSummary[salesSummary.length - 1]?.productName || "N/A";
+    const totalSales = salesSummary.reduce((acc, item) => acc + item.totalSales, 0);
+
+    res.status(200).json({
+      success: true,
+      totalSales,
+      mostSellingProduct,
+      leastSellingProduct,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

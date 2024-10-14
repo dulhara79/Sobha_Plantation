@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import {
   faUsers,
   faUserTie,
@@ -10,6 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import PieChartComponent from "../../components/Employee/PieChartComponent";
+import DateTimeDisplay from "../../components/Employee/DateTimeDisplay";
 
 // Styled Components (unchanged)
 const Container = styled.div`
@@ -170,14 +172,17 @@ const EmployeeDash = () => {
 
   return (
     <Container>
-      <Header>
-        <div>
-          <h2>Welcome </h2>
-          <p>Today is {currentDate}</p>
+     {/* Welcome message section with DateTimeDisplay */}
+     <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
+          <div className="flex flex-row items-center justify-between">
+            <DateTimeDisplay />
+            <div className="flex items-center">
+              <NotificationsIcon className="text-3xl" />
+            </div>
+          </div>
         </div>
-      </Header>
 
-      <h3>Welcome to the Employee Management System.</h3>
+      {/* <h3>Welcome to the Employee Management System.</h3> */}
       {/* Pie Chart */}
       <ChartContainer>
         <PieChartComponent

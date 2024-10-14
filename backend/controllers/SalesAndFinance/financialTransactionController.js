@@ -1,5 +1,22 @@
 const FinancialTransaction = require('../../models/SalesAndFinance/FinancialTransactionModel');
 const { join } = require('node:path');
+const moment = require('moment');
+
+// helper function to get the total income and expenses
+// const calculateSummary = (transactions) => {
+//   const summary = { totalTransactions: 0, totalIncome: 0, totalExpenses: 0 };
+
+//   transactions.forEach(transaction => {
+//     summary.totalTransactions += 1;
+//     if (transaction.type === 'income') {
+//       summary.totalIncome += transaction.amount;
+//     } else if (transaction.type === 'expense') {
+//       summary.totalExpenses += transaction.amount;
+//     }
+//   });
+
+//   return summary;
+// };
 
 // helper function to get the total income and expenses
 const calculateSummary = (transactions) => {
@@ -167,3 +184,108 @@ exports.getAllTimeBaseSummaries = async (req, res) => {
     res.status(500).json({ error: 'Error fetching summaries' });
   }
 };
+
+// Get Monthly Income and Expenses for the Year
+exports.getMonthlyIncomeExpenses = async (req, res) => {
+  try {
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 1); // Jan 1st of this year
+
+    // Fetch all transactions from the start of the year
+    const transactions = await FinancialTransaction.find({ createdAt: { $gte: startOfYear } });
+
+    // Initialize arrays to hold income and expenses by month
+    const monthlyIncome = Array(12).fill(0);
+    const monthlyExpenses = Array(12).fill(0);
+
+    // Calculate monthly income and expenses
+    transactions.forEach(transaction => {
+      const month = new Date(transaction.createdAt).getMonth(); // Get month (0 - Jan, 11 - Dec)
+      if (transaction.type === 'income') {
+        monthlyIncome[month] += transaction.amount;
+      } else if (transaction.type === 'expense') {
+        monthlyExpenses[month] += transaction.amount;
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      monthlyIncome,
+      monthlyExpenses
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Failed to fetch monthly income and expenses' });
+  }
+};
+
+
+exports.predictNextMonth = async (req, res) => {
+  try {
+    // Get the current date
+    const currentDate = moment();
+
+    // Calculate the start and end dates for the last 3 months
+    const startDate = moment(currentDate).subtract(3, 'months').startOf('month').format('YYYY-MM-DD');
+    const endDate = moment(currentDate).endOf('month').format('YYYY-MM-DD');
+
+    // Fetch transactions for the last 3 months
+    const transactions = await FinancialTransaction.find({
+      date: { $gte: startDate, $lte: endDate }
+    });
+
+    // Separate income and expenses
+    const income = transactions.filter(t => t.type === 'income');
+    const expenses = transactions.filter(t => t.type === 'expense');
+
+    // Calculate average monthly income and expenses
+    const avgMonthlyIncome = calculateAverage(income);
+    const avgMonthlyExpenses = calculateAverage(expenses);
+
+    // Predict next month's income and expenses
+    const predictedIncome = predictNextMonthValue(income);
+    const predictedExpenses = predictNextMonthValue(expenses);
+
+    res.json({
+      avgMonthlyIncome,
+      avgMonthlyExpenses,
+      predictedIncome,
+      predictedExpenses
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error predicting next month finances', error: error.message });
+  }
+};
+
+function calculateAverage(transactions) {
+  const total = transactions.reduce((sum, t) => sum + t.amount, 0);
+  return total / 3; // Average over 3 months
+}
+
+function predictNextMonthValue(transactions) {
+  if (transactions.length < 3) return 0;
+
+  const monthlyTotals = [0, 0, 0];
+  transactions.forEach(t => {
+    const monthIndex = 2 - moment(t.date).diff(moment().subtract(3, 'months'), 'months');
+    if (monthIndex >= 0 && monthIndex < 3) {
+      monthlyTotals[monthIndex] += t.amount;
+    }
+  });
+
+  // Simple linear regression
+  const x = [1, 2, 3];
+  const y = monthlyTotals;
+  const n = 3;
+
+  const sumX = x.reduce((a, b) => a + b, 0);
+  const sumY = y.reduce((a, b) => a + b, 0);
+  const sumXY = x.reduce((sum, xi, i) => sum + xi * y[i], 0);
+  const sumXX = x.reduce((sum, xi) => sum + xi * xi, 0);
+
+  const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+  const intercept = (sumY - slope * sumX) / n;
+
+  // Predict next month (x = 4)
+  return slope * 4 + intercept;
+}

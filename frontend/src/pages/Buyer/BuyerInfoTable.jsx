@@ -16,6 +16,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import LogoImage from "../../assets/Logo.png";
 import "../../index.css";
+import BuyerNavbar from "../../components/Buyer/Header/BuyerNavbar";
 
 const { Search } = Input;
 
@@ -219,40 +220,8 @@ const BuyerInfoTable = () => {
       <div className="flex h-screen">
         <Sidebar />
         <div className="flex-1 ml-[300px] p-4 overflow-auto">
-          <nav className="flex items-center justify-between p-4 bg-transparent">
-            <button
-              onClick={() => window.history.back()}
-              className="text-gray-600 hover:text-gray-800"
-            >
-              <LeftOutlined className="text-xl" />
-            </button>
-            <div className="flex space-x-4">
-            <Link
-                to="/buyerdashboard"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Home
-              </Link>
-              <Link
-                to="/preorders"
-                
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                Pre Order 
-              </Link>
-              <Link
-                to="/buyerinfotable"
-                className="text-gray-100 px-2 py-0.5 bg-gradient-to-tr from-emerald-500 via-green-500 to-lime-400 rounded-full font-semibold">
-                 Buyer Records
-              </Link>
-              <Link
-                to="/Bdeliverytable"
-                className="text-[#3CCD65] hover:text-[#2b8f57]"
-              >
-                 Delivery Records
-              </Link>
-            </div>
-          </nav>
+        <div className="flex-1 ml-[300px] p-4 "></div>
+          <BuyerNavbar/>
 
           <div className="mt-4">
             <Breadcrumb
