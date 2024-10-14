@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Form, Input, DatePicker, Select, Button, notification, InputNumber } from 'antd';
 import moment from 'moment';
-import Swal from 'sweetalert2'; // Import SweetAlert2
+import Swal from 'sweetalert2'; 
+import Sidebar from '../../components/Sidebar';
 
 const { Option } = Select;
 
@@ -165,6 +166,9 @@ const handlePaste = (e, validationFn) => {
  
 
   return (
+
+    <div>
+      <Sidebar className="sidebar" />
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
         <h2 className="mb-6 text-2xl font-bold text-center" style={{ color: '#1D6660' }}>Edit Production Schedule</h2>
@@ -339,6 +343,7 @@ const handlePaste = (e, validationFn) => {
           </div>
         </Form>
       </div>
+    </div>
     </div>
   );
 };
