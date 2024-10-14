@@ -52,6 +52,7 @@ const seedlingRoutes = require("./routes/seedlingRoutes");
 const scheduleRoutes = require("./routes/scheduleRoutes");
 const soilTestingRoutes = require("./routes/soilTestingRoutes");
 const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
+const emailRoutes = require('./routes/emailRoutes');
 
 /**
  * buyer
@@ -148,11 +149,11 @@ app.use('/api/quality',quality);
 /**
  * crop care
  */
-app.use("/api/diseases", diseasesRoute);
-app.use("/api/cropDiseases", cropDiseasesRoute);
-app.use("/api/treatments", treatmentsRoute);
-app.use("/api/cropTreatments", cropTreatmentsRoute);
-app.use("/api/regularMaintenance", regularMaintenanceRoute);
+app.use('/api/diseases', diseasesRoute);
+app.use('/api/cropDiseases', cropDiseasesRoute);
+app.use('/api/treatments', treatmentsRoute);
+app.use('/api/cropTreatments', cropTreatmentsRoute);
+app.use('/api/regularMaintenance', regularMaintenanceRoute);
 
 /**
  * crop
@@ -162,6 +163,7 @@ app.use("/api/seedlings", seedlingRoutes);
 app.use("/api/schedules", scheduleRoutes);
 app.use("/api/soil-tests", soilTestingRoutes);
 app.use("/api/plant-growth", plantGrowthRoutes);
+app.use('/api', emailRoutes);
 
 /**
  * buyer

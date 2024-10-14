@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const AddSeedlingForm = () => {
   const [seedlingType, setSeedlingType] = useState("");
@@ -23,20 +24,43 @@ const AddSeedlingForm = () => {
       minStock: 50, // Fixed value of 50 for minStock
     };
 
-    try {
-      await axios.post("http://localhost:5000/api/seedlings", newSeedling);
-      setSuccessMessage("Seedling added successfully!");
-      setSeedlingType("");
-      setCurrentQuantity("");
-      setErrorMessage("");
-    } catch (error) {
-      setErrorMessage("Error adding seedling: " + error.response?.data.message);
-      setSuccessMessage("");
+    // Show confirmation dialog
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to add this seedling?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, add it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.post("http://localhost:5000/api/seedlings", newSeedling);
+        setSuccessMessage("Seedling added successfully!");
+        setSeedlingType("");
+        setCurrentQuantity("");
+        setErrorMessage("");
+      } catch (error) {
+        setErrorMessage("Error adding seedling: " + error.response?.data.message);
+        setSuccessMessage("");
+      }
     }
   };
 
-  const handleCancel = () => {
-    navigate(-1); // Navigates back to the previous page
+  const handleCancel = async () => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to cancel adding this seedling?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, cancel it!",
+      cancelButtonText: "No, go back",
+    });
+
+    if (result.isConfirmed) {
+      navigate(-1); // Navigates back to the previous page
+    }
   };
 
   const handleSeedlingTypeChange = (e) => {
