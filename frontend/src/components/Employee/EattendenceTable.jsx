@@ -5,7 +5,7 @@ import {
   PencilSquareIcon,
   TrashIcon,
   MagnifyingGlassIcon,
-} from "@heroicons/react/24/outline"; // Import SearchIcon
+} from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import autoTable from 'jspdf-autotable'; 
@@ -20,24 +20,26 @@ const AttendanceList = () => {
   const [employeeName, setEmployeeName] = useState("");
   const [employees, setEmployees] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
+
   useEffect(() => {
     setLoading(true);
     axios
       .get(`http://localhost:5000/api/attendance`)
       .then((response) => {
         if (response.data) {
-          setAttendanceRecords(response.data); // Adjust based on the actual response
+          setAttendanceRecords(response.data);
         } else {
-          setAttendanceRecords([]); // Fallback in case of unexpected data structure
+          setAttendanceRecords([]);
         }
         setLoading(false);
       })
       .catch((error) => {
         console.log(error);
-        setAttendanceRecords([]); // Set empty array on error
+        setAttendanceRecords([]);
         setLoading(false);
       });
   }, []);
+
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/employee")
@@ -77,55 +79,103 @@ const AttendanceList = () => {
         });
     }
   };
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     if (!startDate || !endDate || !employeeName || employeeName === "Select Employee") {
-        enqueueSnackbar(' Please select all required fields', { variant: 'error' });
+        enqueueSnackbar('Please select all required fields', { variant: 'error' });
         return;
     }
 
     const filteredRecords = attendanceRecords.filter(record => {
-        const recordDate = new Date(record.e_date);
+        const recordDate = new Date(record.date);
         const dateRange = recordDate >= new Date(startDate) && recordDate <= new Date(endDate);
-        const selectedEmployee = employeeName === "All Employees" || record.e_name === employeeName;
+        const selectedEmployee = employeeName === "All Employees" || record.name === employeeName;
         return dateRange && selectedEmployee;
     });
 
     const doc = new jsPDF();
-    doc.text(`Attendance Report`, 10, 10);
-    doc.text(`From ${startDate} To ${endDate}`, 10, 20);
-    doc.text(`Employee :  ${employeeName}`, 10, 30);
+
+    // Load the logo image
+    const logoUrl = '../src/assets/logo.png';
+    let logoDataURL;
+    try {
+      logoDataURL = await getImageDataURL(logoUrl);
+    } catch (error) {
+      console.error('Failed to load the logo image:', error);
+    }
+
+    // Function to draw header, footer, and horizontal line
+    const drawHeaderFooter = (data) => {
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+
+      // Header with logo
+      doc.setFontSize(14);
+      doc.text("Sobha Plantation", 10, 10); // Align left
+
+      doc.setFontSize(10);
+      doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+      doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+      doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+      doc.text("Contact: 0112 751 757", 10, 30); // Contact number line
+
+      if (logoDataURL) {
+        doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
+      }
+
+      doc.line(10, 35, pageWidth - 10, 35);
+      
+      // Footer with page number
+      doc.setFontSize(10);
+      doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
+    };
+
+    // Add title and date range
+    doc.setFontSize(12);
+    doc.text(`Attendance Report`, 10, 45);
+    doc.setFontSize(10);
+    doc.text(`From ${startDate} To ${endDate}`, 10, 55);
+    doc.text(`Employee: ${employeeName}`, 10, 65);
 
     const headers = ["Employee Name", "Date", "Status"];
-    const tableData = [headers];
-
-    filteredRecords.forEach(record => {
-        const rowData = [
-            record.e_name,
-            record.e_date,
-            record.att_status
-        ];
-        tableData.push(rowData);
-    });
+    const tableData = filteredRecords.map(record => [
+        record.name,
+        record.date.split("T")[0],
+        record.status
+    ]);
 
     doc.autoTable({
         head: [headers],
-        body: tableData.slice(1),
-        startY: 40,
+        body: tableData,
+        startY: 70,
         styles: { overflow: 'linebreak', columnWidth: 'wrap' },
-        theme: 'striped'
+        theme: 'grid',
+        didDrawPage: drawHeaderFooter
     });
 
     doc.save('Attendance_report.pdf');
-}
+  }
 
 const filteredRecords = attendanceRecords.filter((record) =>
-    Object.values(record).some((value) => {
-        if (typeof value === 'string' || typeof value === 'number') {
-            return String(value).toLowerCase().includes((searchQuery || '').toLowerCase());
-        }
-        return false;
-    })
+    Object.values(record).some((value) =>
+        String(value).toLowerCase().includes(searchQuery.toLowerCase())
+    )
 );
 
   return (
@@ -145,7 +195,7 @@ const filteredRecords = attendanceRecords.filter((record) =>
             placeholder="Search attendance..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border border-gray-300 rounded-full px-6 py-1.5 pl-10" // Adjust padding to accommodate icon
+            className="border border-gray-300 rounded-full px-6 py-1.5 pl-10"
           />
           <MagnifyingGlassIcon className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
         </div>
@@ -177,7 +227,7 @@ const filteredRecords = attendanceRecords.filter((record) =>
             <option>Select Employee</option>
             <option value="All Employees">All Employees</option>
             {employees.map((employee) => (
-              <option key={employee._id} value={employee.name}>
+              <option key={employee.id} value={employee.name}>
                 {employee.name}
               </option>
             ))}
@@ -235,45 +285,39 @@ const filteredRecords = attendanceRecords.filter((record) =>
           </thead>
 
           <tbody className="border-b border-green-400">
-  {filteredRecords.map((record, index) => (
-    <tr key={index} className="divide-y border-l-4">
-      <td></td>
-      <td className="px-6 py-4">{index + 1}</td>
-      
-      {/* Ensure that record.name exists */}
-      <td className="px-6 py-4">{record.name || "N/A"}</td>
-      
-      {/* Ensure that record.date exists before splitting */}
-      <td className="px-6 py-4">{record.date ? record.date.split("T")[0] : "N/A"}</td>
-      
-      <td className="px-6 py-4">{record.status || "N/A"}</td>
+            {filteredRecords.map((record, index) => (
+              <tr key={index} className="divide-y border-l-4">
+                <td></td>
+                <td className="px-6 py-4">{index + 1}</td>
+                <td className="px-6 py-4">{record.name || "N/A"}</td>
+                <td className="px-6 py-4">{record.date ? record.date.split("T")[0] : "N/A"}</td>
+                <td className="px-6 py-4">{record.status || "N/A"}</td>
 
-      <td className="py-4 text-right">
-        <Link
-          to={`/employee/veiwattendence/${record._id}`} // Corrected route
-          className="font-medium text-blue-600 hover:underline"
-        >
-          <InformationCircleIcon
-            className="h-6 w-6 flex-none bg-gray-300 p-1 rounded-full text-gray-800 hover:bg-gray-500"
-            aria-hidden="true"
-          />
-        </Link>
-      </td>
-      <td className="py-4 text-right">
-        <Link to={`/employee/editattendance`}>
-          <PencilSquareIcon className="w-5 h-5 text-blue-500 hover:text-blue-700" />
-        </Link>
-      </td>
+                <td className="py-4 text-right">
+                  <Link
+                    to={`/employee/veiwattendence/${record._id}`}
+                    className="font-medium text-blue-600 hover:underline"
+                  >
+                    <InformationCircleIcon
+                      className="h-6 w-6 flex-none bg-gray-300 p-1 rounded-full text-gray-800 hover:bg-gray-500"
+                      aria-hidden="true"
+                    />
+                  </Link>
+                </td>
+                <td className="py-4 text-right">
+                  <Link to={`/employee/editattendance`}>
+                    <PencilSquareIcon className="w-5 h-5 text-blue-500 hover:text-blue-700" />
+                  </Link>
+                </td>
 
-      <td className="py-4 text-right">
-        <button className="flex items-center" onClick={() => handleDelete(record._id)}>
-          <TrashIcon className="h-6 w-6 flex-none bg-red-200 p-1 rounded-full text-gray-800 hover:bg-red-500" aria-hidden="true" />
-        </button>
-      </td>
-    </tr>
-  ))}
-</tbody>
-
+                <td className="py-4 text-right">
+                  <button className="flex items-center" onClick={() => handleDelete(record._id)}>
+                    <TrashIcon className="h-6 w-6 flex-none bg-red-200 p-1 rounded-full text-gray-800 hover:bg-red-500" aria-hidden="true" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     </div>

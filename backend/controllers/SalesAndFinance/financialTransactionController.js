@@ -18,6 +18,22 @@ const calculateSummary = (transactions) => {
   return summary;
 };
 
+// helper function to get the total income and expenses
+const calculateSummary = (transactions) => {
+  const summary = { totalTransactions: 0, totalIncome: 0, totalExpenses: 0 };
+
+  transactions.forEach(transaction => {
+    summary.totalTransactions += 1;
+    if (transaction.type === 'income') {
+      summary.totalIncome += transaction.amount;
+    } else if (transaction.type === 'expense') {
+      summary.totalExpenses += transaction.amount;
+    }
+  });
+
+  return summary;
+};
+
 // Create Financial Transaction
 exports.createFinancialTransaction = async (req, res, next) => {
   try {

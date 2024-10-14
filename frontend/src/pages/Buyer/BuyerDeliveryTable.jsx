@@ -1,4 +1,4 @@
-///////
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Breadcrumb, Table, Button, Input, Modal, notification } from "antd";
@@ -112,84 +112,125 @@ const BuyerDeliveryTable = () => {
     }
   };
 
-
+  // Function to get image data URL
+const getImageDataURL = (url) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'Anonymous'; // Ensure cross-origin images are handled
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      context.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+};
   //pdf generation
   const generatePDF = async () => {
     const doc = new jsPDF();
 
+    const logoUrl = '../src/assets/logo.png';
+  let logoDataURL;
+  try {
+    logoDataURL = await getImageDataURL(logoUrl);
+  } catch (error) {
+    console.error('Failed to load the logo image:', error);
+  }
+
+  // Function to draw header, footer, and horizontal line
+  const drawHeaderFooter = (data) => {
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+
+    // Header
+    doc.setFontSize(14);
+    doc.text("Sobha Plantation", 10, 10); // Align left
+
+    doc.setFontSize(10);
+    doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+    doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+    doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+    doc.text("Contact: 0112 751 757", 10, 30); // Email address line
+    
+    // Header with logo
+    if (logoDataURL) {
+      doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
+    }
+
+    doc.line(10, 35, pageWidth - 10, 35); // Header line
+
+    // Footer with page number
+    doc.setFontSize(10);
+    doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
+  };
+    // Set the margins for header and footer space
+    const marginTop = 35; // space reserved for header
+    const marginBottom = 20; // space reserved for footer
+  
+    // Title for the report
+    const title = "Delivery Records Report";
+    doc.setFontSize(22);
+    
+    // Calculate the width of the title
+    const titleWidth = doc.getTextWidth(title);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Calculate the x position to center the title
+    const xPosition = (pageWidth - titleWidth) / 2;
+    
+    // Set the title at the calculated center position
+    doc.text(title, xPosition, 48); // Adjust y-coordinate to fit under the header
+
     // Define the columns for the table
     const columns = [
-      { title: "First Name", dataKey: "firstName" },
-      { title: "Last Name", dataKey: "lastName" },
-      { title: "Email", dataKey: "email" },
-      { title: "Address", dataKey: "address" },
-      { title: "City", dataKey: "city" },
-      { title: "Country", dataKey: "country" },
-      { title: "Postal Code", dataKey: "postalCode" },
-      { title: "Phone Number", dataKey: "phone" },
+      "First Name",
+      "Last Name",
+      "Email", 
+      "Address",
+       "City",
+      "Country",
+      "Postal Code",
+      "Phone Number",
     ]; 
 
     // Get the data from the inspections state
-    const rows = filteredDeliveryRecords.map((deliveryRecord) => ({
+    const rows = filteredDeliveryRecords.map((deliveryRecord) => [
       
-      firstName: deliveryRecord.firstName,
-      lastName: deliveryRecord.lastName,
-      email: deliveryRecord.email,
-      address: deliveryRecord.address,
-      city: deliveryRecord.city,
-      country: deliveryRecord.country,
-      postalCode: deliveryRecord.postalCode,
-      phone: deliveryRecord.phone,
+      deliveryRecord.firstName,
+      deliveryRecord.lastName,
+      deliveryRecord.email,
+      deliveryRecord.address,
+      deliveryRecord.city,
+      deliveryRecord.country,
+      deliveryRecord.postalCode,
+      deliveryRecord.phone,
       
       
-    }));
-
-    // Add title (lowered y-coordinate)
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(20);
-    const titleY = 24; // Adjust this value to lower the title
-    doc.text("Buyer Delivery Records", 70, titleY);
-    
+    ]);
 
     // Add table (adjusted startY)
     
     doc.autoTable({
-      columns: columns,
+      head:[columns],
       body: rows,
-      startY: titleY + 5, // Adjust this value to set how far below the title the table starts
+      startY: 60, // Adjust this value to set how far below the title the table starts
       margin: { horizontal: 10 },
-      styles: {
-        fontSize: 10,
-        minCellHeight: 17, // Adjust this value for desired row height
-        halign: "left", // Left-align content horizontally
-        valign: "middle", // Center content vertically
-      },
       headStyles: {
-        fillColor: [64, 133, 126],
-        textColor: [255, 255, 255],
-        fontSize: 10,
+        fillColor: [64, 133, 126], // Header background color
+        textColor: [255, 255, 255], // Header text color
+        fontSize: 12,
       },
+     
       theme: "striped",
+      didDrawPage: drawHeaderFooter,
     });
-
-    // Add footer with a horizontal line and logo
-    const footerY = doc.internal.pageSize.height - 30;
-
-    doc.setDrawColor(0);
-    doc.setLineWidth(0.5);
-    doc.line(10, footerY, doc.internal.pageSize.width - 10, footerY); // Horizontal line
-
-    // Add logo to the footer
-    const logoData = LogoImage; // Replace with the path to your logo
-    const logoWidth = 40;
-    const logoHeight = 20;
-    const xPosition = (doc.internal.pageSize.width - logoWidth) / 2;
-    const yPosition = footerY - logoHeight - -10; // Adjust margin as needed
-
-    doc.addImage(logoData, "PNG", xPosition, yPosition, logoWidth, logoHeight);
-
+    // Save the PDF
     doc.save("Delivery_Records.pdf");
-  };
+  }
   
 
   return (

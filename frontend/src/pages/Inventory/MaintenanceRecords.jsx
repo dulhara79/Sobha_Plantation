@@ -1,3 +1,4 @@
+
 import React, { useCallback, useEffect, useState } from "react";
 import { Card, Row, Col } from "antd";
 import Sidebar from "../../components/Sidebar";
@@ -91,26 +92,54 @@ const MaintenanceRecords = () => {
 
   const generatePDF = async () => {
     const doc = new jsPDF();
-    const logoUrl = '../src/assets/logo.png'; // Path to your logo image
-    
+
+    // Load the logo image
+    const logoUrl = "../src/assets/logo.png";
+    let logoDataURL;
     try {
-      // Fetch and convert the image to a Data URL
-      const logoDataURL = await getImageDataURL(logoUrl);
-    
-      // Add the logo image to the PDF
-      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
+      logoDataURL = await getImageDataURL(logoUrl);
     } catch (error) {
-      console.error('Failed to load the logo image:', error);
+      console.error("Failed to load the logo image:", error);
     }
-    
-    // Add the title after the logo
+
+    // Function to draw header and footer
+    const drawHeaderFooter = (data) => {
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+
+   
+      // Header
+    doc.setFontSize(14);
+    doc.text("Sobha Plantation", 10, 10); // Align left
+
+    doc.setFontSize(10);
+    doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+    doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+    doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+    doc.text("Contact: 0112 751 757", 10, 30); // Email address line
+
+    if (logoDataURL) {
+      doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
+    }
+
+    doc.line(10, 35, pageWidth - 10, 35); // Header line
+      
+      // Footer
+      doc.setFontSize(10);
+      const currentPage = `Page ${
+        data.pageNumber
+      } of ${doc.internal.getNumberOfPages()}`;
+      doc.text(currentPage, pageWidth - 30, pageHeight - 10); // Page number in footer
+    };
+
+    // Title for the report
     doc.setFontSize(22);
-    doc.text("Maintenance Records Report", 50, 40); // Adjust y-coordinate to fit below the logo
-  
-    // Define the table columns
+    doc.text("Maintenance Records Report", 50, 48); // Adjusted for placement below header
+
+  // Define the table columns
     const columns = [
-      { title: "Date Referred To", dataKey: "referredDate" },
-      { title: "Equipment/Machine", dataKey: "equipment" },
+      { title: "Date Referred", dataKey: "referredDate" },
+      { title: "Equipment", dataKey: "equipment" },
       { title: "Quantity", dataKey: "quantity" },
       { title: "Referred Location", dataKey: "referredLocation" },
       { title: "Received Date", dataKey: "receivedDate" },
@@ -126,12 +155,12 @@ const MaintenanceRecords = () => {
       receivedDate: moment(maintenance.receiveddate).format("YYYY-MM-DD"),
       status: maintenance.status,
     }));
-  
+
     // Add table with column and row data
     doc.autoTable({
       columns: columns,
       body: rows,
-      startY: 50, // Set the table to start below the title and logo
+      startY: 60, // Set the table to start below the title and logo
       margin: { horizontal: 10 },
       styles: {
         fontSize: 10,
@@ -141,40 +170,33 @@ const MaintenanceRecords = () => {
         textColor: [255, 255, 255], // Table header text color
         fontSize: 12,
       },
-      theme: 'striped', // Table theme
-      didDrawPage: (data) => {
-        // Add page number to footer
-        const pageNumber = doc.internal.getNumberOfPages();
-        const pageWidth = doc.internal.pageSize.width;
-        const pageHeight = doc.internal.pageSize.height;
-  
-        doc.setFontSize(10);
-        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10); // Adjust footer positioning
-      },
+      theme: "striped",
+      didDrawPage: drawHeaderFooter, // Draw header and footer on each page
     });
-  
+
     // Save the PDF
     doc.save("maintenance_records_report.pdf");
   };
-  
-  // Utility function to convert the image to a Data URL
+
   const getImageDataURL = (url) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      img.crossOrigin = 'anonymous';
       img.src = url;
       img.onload = () => {
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         canvas.width = img.width;
         canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0);
-        resolve(canvas.toDataURL('image/png'));
+        resolve(canvas.toDataURL("image/png"));
       };
-      img.onerror = reject;
+      img.onerror = (error) => {
+        reject(error);
+      };
     });
   };
-  
+
+
 
   const handleSort = (field, order) => {
     setSorter({ field, order });

@@ -169,10 +169,7 @@ import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
 
 // buyers
 
-// import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
-// import BuyerTable from "./pages/BuyerTable.jsx";
-// import Profile from './components/Profile';
-import BuyerDashboard from './pages/Buyer/BuyerDashboard.jsx';
+
 
 import BuyerDelivery from "./pages/Buyer/BuyerDelivery.jsx";
 import BuyerDeliveryTable from "./pages/Buyer/BuyerDeliveryTable.jsx";
@@ -181,10 +178,9 @@ import UpdateDeliveryTable from "./pages/Buyer/UpdateDeliveryTable.jsx";
 import BuyerInfo from "./pages/Buyer/BuyerInfo.jsx";
 import BuyerInfoTable from "./pages/Buyer/BuyerInfoTable.jsx";
 import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
-
-// import BuyerPreOrderForm from './pages/Buyer/BuyerPreOrderForm';
-// import BuyerPreOrderTable from './pages/Buyer/BuyerPreOrderTable';
-// import UpdateBuyerPreOrderRequests from './pages/Buyer/UpdatePreOrderForm';
+import BuyerPreOrderForm from './pages/Buyer/BuyerPreOrderForm';
+import BuyerPreOrderTable from './pages/Buyer/BuyerPreOrderTable';
+import UpdateBuyerPreOrderRequests from './pages/Buyer/UpdatePreOrderForm';
 
 
 import PageError from "./pages/PageError.jsx";
@@ -489,18 +485,15 @@ export default function App() {
           <Route path="/share/:encodedData" element={<DetailsPage />} />
 
           {/* field view  */}
-          <Route
-            path="/cultivationDashboard"
-            element={<CultivationDashboard />}
-          />
-          <Route path="/varietyCrop" element={<VarietyCrop />} />
-          <Route path="/cvForm" element={<CropVarietyForm />} />
-          <Route path="/seedlingDistribution" element={<Seedling />} />
-          <Route path="/schedules" element={<Schedules />} />
-          <Route path="/scheduleForm" element={<ScheduleForm />} />
-          <Route path="/landPreparation" element={<LandPreparation />} />
-          <Route path="/seedlingForm" element={<AddSeedlingForm />} />
-          <Route path="/pGrowth" element={<PlantGrowth />} />
+      <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
+      <Route path="/varietyCrop" element={<VarietyCrop />} />
+      <Route path="/cvForm" element={<CropVarietyForm />} />
+      <Route path="/seedlingDistribution" element={<Seedling />} />
+      <Route path="/schedules" element={<Schedules />} />
+      <Route path="/scheduleForm" element={<ScheduleForm />} />
+      <Route path="/landPreparation" element={<LandPreparation />} />
+      <Route path="/seedlingForm" element={<AddSeedlingForm />} />
+      <Route path="/pGrowth" element={<PlantGrowth />} />
 
           {/* buyers */}
           
@@ -508,8 +501,11 @@ export default function App() {
           {/* <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
           <Route path="/buyert" element={<BuyerTable />} />
           <Route path="/profile" element={<Profile />} /> */}
-
-          <Route path="/Bdelivery" element={<BuyerDelivery />} />
+      <Route path="/HomePage" element={<HomePage />} /> 
+      <Route path="/payment" element={<PaymentPage />} />
+      <Route path="/cart" element={<CartPage />} /> 
+      <Route path="/MyOrders" element={<MyOrders />} /> 
+      <Route path="/Bdelivery" element={<BuyerDelivery />} />
       <Route path="/Bdeliverytable" element={<BuyerDeliveryTable />} />
       <Route path="/updateDelivery/:id" element={<UpdateDeliveryTable />} />
 
@@ -517,9 +513,9 @@ export default function App() {
       <Route path="/buyerinfotable" element={<BuyerInfoTable />} />
       <Route path="/updateBuyer/:id" element={<UpdateBuyerInfo />} /> 
 
-       {/* <Route path="/create-preorder" element={<BuyerPreOrderForm/> } />
+        <Route path="/create-preorder" element={<BuyerPreOrderForm/> } />
       <Route path="/preorders" element={<BuyerPreOrderTable/>} />
-      <Route path="/update-preorder/:id" element={<UpdateBuyerPreOrderRequests/>} />  */}
+      <Route path="/update-preorder/:id" element={<UpdateBuyerPreOrderRequests/>} />  
 
       <Route path="/buyerdashboard" element={<BuyerDashboard />} />
 

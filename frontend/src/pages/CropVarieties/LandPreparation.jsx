@@ -9,6 +9,7 @@ import { Pie } from '@ant-design/charts';
 import jsPDF from 'jspdf';
 import moment from 'moment'; // Add moment for date formatting
 import FieldViewNavbar from "../../components/FieldView/FieldViewNavbar";
+import Swal from 'sweetalert2';
 
 const { Panel } = Collapse;
 const { Option } = Select; // Import Option from Select
@@ -42,29 +43,56 @@ const LandPreparation = () => {
   };
 
   const handleOk = () => {
-    form.validateFields().then((values) => {
-      const updatedRecord = { ...currentRecord, ...values };
-
-      axios.put(`http://localhost:5000/api/soil-tests/${currentRecord._id}`, updatedRecord)
-        .then(response => {
-          message.success("Record updated successfully");
-          setData((prevData) =>
-            prevData.map((item) => (item._id === currentRecord._id ? updatedRecord : item))
-          );
-          setIsModalVisible(false);
-          setCurrentRecord(null);
-        })
-        .catch(error => {
-          message.error("Failed to update record");
-          console.error(error);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "Do you want to save the changes?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, save it!',
+      cancelButtonText: 'No, cancel!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        form.validateFields().then((values) => {
+          const updatedRecord = { ...currentRecord, ...values };
+  
+          axios.put(`http://localhost:5000/api/soil-tests/${currentRecord._id}`, updatedRecord)
+            .then(response => {
+              message.success("Record updated successfully");
+              setData((prevData) =>
+                prevData.map((item) => (item._id === currentRecord._id ? updatedRecord : item))
+              );
+              setIsModalVisible(false);
+              setCurrentRecord(null);
+            })
+            .catch(error => {
+              message.error("Failed to update record");
+              console.error(error);
+            });
         });
+      }
     });
   };
-
+  
   const handleCancel = () => {
-    setIsModalVisible(false);
-    setCurrentRecord(null);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "Do you want to discard the changes?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, discard it!',
+      cancelButtonText: 'No, keep editing!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setIsModalVisible(false);
+        setCurrentRecord(null);
+      }
+    });
   };
+  
 
   const determineNutrientLevels = (soilPH) => {
     if (soilPH < 6) {
@@ -101,21 +129,34 @@ const LandPreparation = () => {
     });
   };
 
-  // Updated generatePDF function
+  // Handle PDF generation
   const generatePDF = async () => {
     const doc = new jsPDF();
 
     // Load the logo image
-    const logoUrl = '../src/assets/logo.png'; 
+    const logoUrl = '../src/assets/logo.png'; // Adjust the path to your logo as necessary
+    let logoDataURL = null;
     try {
-      const logoDataURL = await getImageDataURL(logoUrl);
-
-      // Add the logo image to the PDF
-      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
-
+      logoDataURL = await getImageDataURL(logoUrl);
     } catch (error) {
       console.error('Failed to load the logo image:', error);
     }
+
+    // Header
+    const pageWidth = doc.internal.pageSize.width;
+    doc.setFontSize(14);
+    doc.text("Sobha Plantation", 10, 10); // Align left
+    doc.setFontSize(10);
+    doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+    doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+    doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address
+    doc.text("Contact: 0112 751 757", 10, 30); // Contact
+
+    // Add logo if it exists
+    if (logoDataURL) {
+      doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right
+    }
+    doc.line(10, 35, pageWidth - 10, 35); // Header line
 
     // Define the table columns
     const columns = [
@@ -139,12 +180,12 @@ const LandPreparation = () => {
 
     // Add title and table
     doc.setFontSize(22);
-    doc.text("Land Preparation Report", 50, 40); // Adjust y-coordinate as needed
+    doc.text("Land Preparation Report", 50, 50); // Adjust y-coordinate as needed
 
     doc.autoTable({
       columns: columns,
       body: rows,
-      startY: 50, 
+      startY: 60, 
       margin: { horizontal: 10 },
       styles: {
         fontSize: 10,
@@ -156,18 +197,18 @@ const LandPreparation = () => {
       },
       theme: 'striped',
       didDrawPage: (data) => {
-        // Add page number to footer
         const pageNumber = doc.internal.getNumberOfPages();
         const pageWidth = doc.internal.pageSize.width;
         const pageHeight = doc.internal.pageSize.height;
 
         doc.setFontSize(10);
-        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10); // Adjust position as needed
+        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10);
       },
     });
 
     // Save the PDF
     doc.save("land_preparation_report.pdf");
+    message.success({ content: 'PDF report generated and downloaded!' });
   };
 
   // Pie chart configuration for soil pH level distribution by field name

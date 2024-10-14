@@ -8,6 +8,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Swal from 'sweetalert2';
 import LoadingDot from '../../components/LoadingDots'; 
+import BarGraph from '../../components/Products/Labeling/BarGraph';
 
 const { Title } = Typography;
 const { Search } = Input;
@@ -34,7 +35,7 @@ const Labeling = () => {
           const response = await axios.get('http://localhost:5000/api/labeling-prices');
           setProductTypes(response.data.data || []);
         setLoading(false); // Stop loading after data fetch
-    }, 150); // Adjust the delay as needed
+    }, 150); // delay 
       } catch (error) {
         console.error('Error fetching product types:', error);
         message.error('Failed to fetch product types');
@@ -72,20 +73,26 @@ const Labeling = () => {
     price: calculatePrice(item.productName, item.quantity),
   }));
 
-  // Handler for search input
-  const onSearch = (value) => {
-    setSearchText(value);
-    filterQualityControls(value, filterStatus);
-  };
+
 
   const handleFilter = (value) => {
     setFilters(value);
   };
 
-  const filteredData = enrichedLabelingData.filter(item => 
-    item.productName.toLowerCase().includes(searchText.toLowerCase())
-    
-  ).filter(item => {
+  const onSearch = (value) => {
+    setSearchText(value);
+  };
+
+  const filteredData = enrichedLabelingData.filter(item => {
+    const searchTextLower = searchText.toLowerCase();
+    return (
+      item.productName.toLowerCase().includes(searchTextLower) ||
+      item.status.toLowerCase().includes(searchTextLower) ||
+      moment(item.labelingDate).format('YYYY-MM-DD').includes(searchTextLower) ||
+      String(item.quantity).includes(searchTextLower) ||
+      String(item.price).includes(searchTextLower)
+    );
+  }).filter(item => {
     return Object.keys(filters).length === 0 || filters.includes(item.status);
   });
 
@@ -252,7 +259,7 @@ const handleDelete = async (labelingId) => {
     ];
   
     doc.autoTable({
-      startY: 60,  // Adjust startY as needed
+      startY: 60,  // startY
       head: upperTableHeaders,
       body: upperTableRows,
       margin: { horizontal: 10 },
@@ -265,10 +272,10 @@ const handleDelete = async (labelingId) => {
         fontSize: 12,
       },
       theme: 'grid',
-      didDrawPage: drawHeaderFooter, // Add header, footer, and line to each page
+      didDrawPage: drawHeaderFooter, 
     });
   
-    // Adjust startY for the second table to start below the first table
+    // startY for the second table to start below the first table
     let finalY = doc.lastAutoTable.finalY + 10;  // Add a gap between the two tables
   
     // Second Table: Map the filteredData for the labeling details
@@ -333,12 +340,18 @@ const handleDelete = async (labelingId) => {
         fontSize: 12,
       },
       theme: 'striped',
-      didDrawPage: drawHeaderFooter, // Add header, footer, and line to each page
+      didDrawPage: drawHeaderFooter, 
     });
   
     // Save the PDF
     doc.save('labeling_report.pdf');
   };
+
+  // Prepare data for the bar graph
+  const graphData = labelingData.map(item => ({
+    name: item.productName, 
+    value: item.quantity, 
+  }));
 
   if (loading) return <LoadingDot />;
 
@@ -415,7 +428,7 @@ const handleDelete = async (labelingId) => {
           >
             <Option value="Pending">Pending</Option>
             <Option value="Completed">Completed</Option>
-            {/* Add other status options as needed */}
+            
           </Select>
         </Space>
       </div>
@@ -524,6 +537,12 @@ const handleDelete = async (labelingId) => {
         </>
       )}
     </Modal>
+
+    {/* Bar Graph Section */}
+    <div style={{ margin: '20px 0' }}>
+        <Title level={4}>Labeling Quantity by Product Type</Title>
+        <BarGraph data={graphData} />
+      </div>
 
 
       {/* Delete Modal */}

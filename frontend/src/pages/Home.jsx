@@ -11,6 +11,9 @@ import LearnMore from '../components/LearnMore';
 import { Link } from 'react-router-dom';
 import NewsletterSubscription from '../components/NewsletterSubscription';
 
+import Chatbot from '../components/Buyer/Header/Chatbot';
+
+// Import images
 import productIMG1 from '../assets/HomeImg/cream.jpg';
 import productIMG2 from '../assets/HomeImg/shell.jpg';
 import productIMG3 from '../assets/HomeImg/milk.jpg';
@@ -50,6 +53,8 @@ const Home = () => {
   }, []);
 
   return (
+
+    
     <div className="flex flex-col min-h-screen">
       {/* App Bar */}
       <AppBar
@@ -458,9 +463,10 @@ const Home = () => {
 
         {/* Footer Section */}
         <Footer />
+        <Chatbot/>
 
 
-        
+
       </main>
       <style jsx>{`
   .rotate-typing {
