@@ -19,7 +19,7 @@ const AddPreOrderRecords = () => {
   const [isAddressEnabled, setIsAddressEnabled] = useState(false);
   const [isProductTypeEnabled, setIsProductTypeEnabled] = useState(false);
   const [isProductQuantityEnabled, setIsProductQuantityEnabled] = useState(false);
-  const [isorderDateEnabled, setIsorderDateEnabled] = useState(false);
+  const [isOrderDateEnabled, setIsOrderDateEnabled] = useState(false);
 
   const alphabeticNumericRule = [
     {
@@ -56,8 +56,21 @@ const AddPreOrderRecords = () => {
 
   const phoneRule = [
     {
-      pattern: /^[0-9]{10}$/,
-      message: "Phone number must be exactly 10 digits.",
+      pattern: /^0[0-9]{9}$/,
+      message: "Phone number must start with 0 and be exactly 10 digits.",
+    },
+    {
+      required: true,
+      message: "This field is required.",
+    },
+  ];
+
+  const productQuantityRule = [
+    {
+      type: 'number',
+      min: 1,
+      max: 100,
+      message: "Product quantity must be between 1 and 100.",
     },
     {
       required: true,
@@ -113,7 +126,7 @@ const AddPreOrderRecords = () => {
   };
 
   const handleProductQuantityChange = (e) => {
-    setIsorderDateEnabled(!!e.target.value);
+    setIsOrderDateEnabled(!!e.target.value);
   };
 
   const handleCancel = () => {
@@ -258,7 +271,6 @@ const AddPreOrderRecords = () => {
                   onChange={handleAddressChange}
                   onKeyPress={restrictInputForAddress} 
                   onPaste={preventInvalidAddressPaste} 
-                  
                 />
               </Form.Item>
 
@@ -283,7 +295,7 @@ const AddPreOrderRecords = () => {
               <Form.Item
                 label="Product Quantity (Kg)"
                 name="productQuantity"
-                rules={numericRule}
+                rules={productQuantityRule}
               >
                 <Input
                   placeholder="Enter product quantity"
@@ -304,6 +316,12 @@ const AddPreOrderRecords = () => {
                   },
                   {
                     validator: (_, value) =>
+                      value && dayjs(value).isAfter(dayjs().add(6, "month"), "day")
+                        ? Promise.reject(new Error("Order date cannot be more than 6 months from today"))
+                        : Promise.resolve(),
+                  },
+                  {
+                    validator: (_, value) =>
                       value && dayjs(value).isBefore(dayjs().add(1, "day"), "day")
                         ? Promise.reject(new Error("Past dates and today's date are not allowed"))
                         : Promise.resolve(),
@@ -312,8 +330,9 @@ const AddPreOrderRecords = () => {
               >
                 <Input
                   type="date"
-                  disabled={!isorderDateEnabled}
+                  disabled={!isOrderDateEnabled}
                   min={dayjs().add(1, "day").format("YYYY-MM-DD")}
+                  max={dayjs().add(6, "month").format("YYYY-MM-DD")}
                 />
               </Form.Item>
 
