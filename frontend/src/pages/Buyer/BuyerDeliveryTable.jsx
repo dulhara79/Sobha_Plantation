@@ -149,7 +149,7 @@ const getImageDataURL = (url) => {
 
     // Header
     doc.setFontSize(14);
-    doc.text("Sobha Plantation", 10, 10); // Align left
+    doc.text("Sobha Plantations", 10, 10); // Align left
 
     doc.setFontSize(10);
     doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
