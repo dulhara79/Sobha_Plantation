@@ -3,7 +3,9 @@ import { Form, InputNumber, Button, Select, message, DatePicker, Row, Col } from
 import axios from 'axios';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2'; // Import SweetAlert2
+import Swal from 'sweetalert2'; 
+import Sidebar from '../../components/Sidebar';
+
 
 const { Option } = Select;
 
@@ -104,6 +106,8 @@ const AddPackage = () => {
   };
 
   return (
+    <div>
+      <Sidebar className="sidebar" />
     <div style={{ padding: '24px', backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '24px', color: '#1D6660' }}>Add New Packaging</h2>
       <Form
@@ -265,6 +269,8 @@ const AddPackage = () => {
           </Row>
         </Form.Item>
       </Form>
+    </div>
+
     </div>
   );
 };

@@ -5,6 +5,7 @@ const {
     getYieldRecordsById,
     updateYieldRecords,
     deleteYieldRecords,
+    
 } = require('../../controllers/Harvest/yeildController');
 
 const router = express.Router();
@@ -14,5 +15,6 @@ router.get('/', getAllYieldRecords);
 router.get('/:id', getYieldRecordsById);
 router.put('/:id', updateYieldRecords);
 router.delete('/:id', deleteYieldRecords);
+
 
 module.exports = router;

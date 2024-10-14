@@ -111,7 +111,7 @@ const YieldRecords = () => {
 
   const generatePDF = async () => {
     const doc = new jsPDF();
-
+  
     // Load the logo image
     const logoUrl = "../src/assets/logo.png";
     let logoDataURL;
@@ -120,55 +120,73 @@ const YieldRecords = () => {
     } catch (error) {
       console.error("Failed to load the logo image:", error);
     }
-
+  
     // Function to draw header, footer, and horizontal line
     const drawHeaderFooter = (data) => {
       const pageWidth = doc.internal.pageSize.width;
       const pageHeight = doc.internal.pageSize.height;
-
+      
+      // Header
+      doc.setFontSize(14);
+      doc.text("Sobha Plantation", 10, 10); // Align left
+  
+      doc.setFontSize(10);
+      doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+      doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+      doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+      doc.text("Contact: 0112 751 757", 10, 30); // Email address line
+      
       // Header with logo
       if (logoDataURL) {
-        doc.addImage(logoDataURL, "PNG", 10, 10, 40, 15); // Adjust position and size of the logo
+        doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
       }
-      doc.setFontSize(12);
-      doc.text("Sobha Plantation", 170, 20); // Adjust text position
-      doc.line(10, 25, pageWidth - 10, 25); // Line under header
-
+  
+      doc.line(10, 35, pageWidth - 10, 35); // Header line
+  
       // Footer with page number
       doc.setFontSize(10);
-      doc.text(
-        `Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`,
-        pageWidth - 30,
-        pageHeight - 10
-      );
+      doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
     };
-
+  
     // Set the margins for header and footer space
-    const marginTop = 30; // space reserved for header
+    const marginTop = 35; // space reserved for header
     const marginBottom = 20; // space reserved for footer
-
+  
     // Title for the report
+    const title = "Yield Records Report";
     doc.setFontSize(22);
-    doc.text("Yield Records Report", 70, 35); // Adjust y-coordinate to fit under the header
-
+    
+    // Calculate the width of the title
+    const titleWidth = doc.getTextWidth(title);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Calculate the x position to center the title
+    const xPosition = (pageWidth - titleWidth) / 2;
+    
+    // Set the title at the calculated center position
+    doc.text(title, xPosition, 48); // Adjust y-coordinate to fit under the header
+  
     // Define the table columns and rows
     const tableColumn = [
       "Harvest Date",
       "Field Number",
       "Crop Type",
       "Quantity",
+      "Unit",
       "Trees Picked",
       "Storage Location",
     ];
+    
     const tableRows = filteredSchedules.map((schedule) => [
       moment(schedule.harvestdate).format("YYYY-MM-DD"),
       schedule.fieldNumber,
       schedule.cropType,
       schedule.quantity,
+      schedule.unit,
       schedule.treesPicked,
       schedule.storageLocation,
     ]);
-
+  
     // Add table to the PDF
     doc.autoTable({
       head: [tableColumn],
@@ -186,10 +204,11 @@ const YieldRecords = () => {
       theme: "striped",
       didDrawPage: drawHeaderFooter, // Add header and footer to each page
     });
-
+  
     // Save the PDF
     doc.save("yield_records_report.pdf");
   };
+  
 
   const getImageDataURL = (url) => {
     return new Promise((resolve, reject) => {
@@ -340,6 +359,13 @@ const YieldRecords = () => {
               >
                 Generate PDF Report
               </Button>
+              <Button
+                style={{ backgroundColor: "#60DB19", color: "#fff" }}
+                onClick={() => navigate("/harvest/harvestCal")}  // Navigate on click
+              >
+                Estimate Harvest Calculator
+              </Button>
+
             </div>
           </div>
           <Table
@@ -374,6 +400,15 @@ const YieldRecords = () => {
                 sorter: (a, b) => a.quantity - b.quantity, // Sort numerically
                 sortOrder: sorter.field === "quantity" ? sorter.order : null,
               },
+              {
+                title: "Unit",
+                dataIndex: "unit",
+                key: "unit",
+                sorter: (a, b) => a.unit.localeCompare(b.unit), // Sort alphabetically
+                sortOrder: sorter.field === "unit" ? sorter.order : null,
+              },
+              
+              
               {
                 title: "Trees Picked",
                 dataIndex: "treesPicked",
