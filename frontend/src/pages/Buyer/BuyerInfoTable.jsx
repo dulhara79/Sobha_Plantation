@@ -32,7 +32,7 @@ const BuyerInfoTable = () => {
   // Fetch Info records from API
   const fetchInfoRecords = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/buyerInfo");
+      const response = await axios.get("http://localhost:8090/api/buyerInfo");
 
       setInfoRecords(response.data.data);
       setFilteredInfoRecords(response.data.data);
@@ -82,7 +82,7 @@ const BuyerInfoTable = () => {
   // Handle delete Info record
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/buyerInfo/${id}`);
+      await axios.delete(`http://localhost:8090/api/buyerInfo/${id}`);
 
       notification.success({
         message: "Record deleted successfully",
@@ -97,71 +97,123 @@ const BuyerInfoTable = () => {
       });
     }
   };
-
-  // PDF Generation
-  const generatePDF = async () => {
-    const doc = new jsPDF();
-
-    // Define the columns for the table
-    const columns = [
-      { title: "First Name", dataKey: "firstName" },
-      { title: "Last Name", dataKey: "lastName" },
-      { title: "Gender", dataKey: "Gender" },
-      { title: "Date of Birth", dataKey: "DOB" },
-      { title: "Phone Number", dataKey: "Number" },
-      { title: "Email", dataKey: "email" },
-    ];
-
-    // Get the data from the InfoRecords state
-    const rows = filteredInfoRecords.map((InfoRecord) => ({
-      firstName: InfoRecord.firstName,
-      lastName: InfoRecord.lastName,
-      Gender: InfoRecord.Gender,
-      DOB: moment(InfoRecord.DOB).format("YYYY-MM-DD"),
-      Number: InfoRecord.Number,
-      email: InfoRecord.email,
-    }));
-
-    // Add title
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(20);
-    const titleY = 24;
-    doc.text("Buyer Info Records", 70, titleY);
-
-    // Add table
-    doc.autoTable({
-      columns: columns,
-      body: rows,
-      startY: titleY + 5,
-      margin: { horizontal: 10 },
-      styles: {
-        fontSize: 10,
-        minCellHeight: 17,
-        halign: "left",
-        valign: "middle",
-      },
-      headStyles: {
-        fillColor: [64, 133, 126],
-        textColor: [255, 255, 255],
-        fontSize: 10,
-      },
-      theme: "striped",
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous'; // Ensure cross-origin images are handled
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+      img.src = url;
     });
-
-    // Add footer with a horizontal line and logo
-    const footerY = doc.internal.pageSize.height - 30;
-    doc.setDrawColor(0);
-    doc.setLineWidth(0.5);
-    doc.line(10, footerY, doc.internal.pageSize.width - 10, footerY);
-
-    // Add logo to the footer
-    const logoWidth = 40;
-    const logoHeight = 20;
-    const xPosition = (doc.internal.pageSize.width - logoWidth) / 2;
-    const yPosition = footerY - logoHeight - -10;
-
-    doc.addImage(LogoImage, "PNG", xPosition, yPosition, logoWidth, logoHeight);
-
+  };
+    
+  //pdf generation
+    const generatePDF = async () => {
+      const doc = new jsPDF();
+  
+      const logoUrl = '../src/assets/logo.png';
+    let logoDataURL;
+    try {
+      logoDataURL = await getImageDataURL(logoUrl);
+    } catch (error) {
+      console.error('Failed to load the logo image:', error);
+    }
+  
+    // Function to draw header, footer, and horizontal line
+    const drawHeaderFooter = (data) => {
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+  
+      // Header
+      doc.setFontSize(14);
+      doc.text("Sobha Plantation", 10, 10); // Align left
+  
+      doc.setFontSize(10);
+      doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+      doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+      doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+      doc.text("Contact: 0112 751 757", 10, 30); // Email address line
+      
+      // Header with logo
+      if (logoDataURL) {
+        doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
+      }
+  
+      doc.line(10, 35, pageWidth - 10, 35); // Header line
+  
+      // Footer with page number
+      doc.setFontSize(10);
+      doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
+    };
+      // Set the margins for header and footer space
+      const marginTop = 35; // space reserved for header
+      const marginBottom = 20; // space reserved for footer
+    
+      // Title for the report
+      const title = "Delivery Records Report";
+      doc.setFontSize(22);
+      
+      // Calculate the width of the title
+      const titleWidth = doc.getTextWidth(title);
+      const pageWidth = doc.internal.pageSize.getWidth();
+      
+      // Calculate the x position to center the title
+      const xPosition = (pageWidth - titleWidth) / 2;
+      
+      // Set the title at the calculated center position
+      doc.text(title, xPosition, 48); // Adjust y-coordinate to fit under the header
+  
+      // Define the columns for the table
+      const columns = [
+        "First Name",
+        "Last Name",
+        "Gender", 
+        "DOB",
+         "Number",
+        "Email",
+        
+      ]; 
+  
+      // Get the data from the inspections state
+      const rows = filteredInfoRecords.map((InfoRecord) => [
+        
+        InfoRecord.firstName,
+        InfoRecord.lastName,
+        InfoRecord.Gender,
+        moment(InfoRecord.DOB).format("YYYY-MM-DD"),
+        InfoRecord.Number,
+        InfoRecord.email,
+        
+        
+        
+        
+      ]);
+  
+      // Add table (adjusted startY)
+      
+      doc.autoTable({
+        head:[columns],
+        body: rows,
+        startY: 60, // Adjust this value to set how far below the title the table starts
+        margin: { horizontal: 10 },
+        headStyles: {
+          fillColor: [64, 133, 126], // Header background color
+          textColor: [255, 255, 255], // Header text color
+          fontSize: 12,
+        },
+       
+        theme: "striped",
+        didDrawPage: drawHeaderFooter,
+      });
+      // Save the PDF
+    
     doc.save("Buyer_Info_Records.pdf");
   };
 
