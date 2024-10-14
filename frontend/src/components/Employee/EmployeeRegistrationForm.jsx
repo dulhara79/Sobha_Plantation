@@ -488,7 +488,7 @@ const Eregistration = () => {
         // Show success message immediately after registration
         Swal.fire({
           title: "Success",
-          text: "Employee registered successfully!",
+          text: "Employee registered successfully and confirmation email sent!!",
           icon: "success",
           timer: 2000,
           showConfirmButton: false,
