@@ -12,6 +12,7 @@ import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
+import VisitUs from "./pages/VisitUs.jsx";
 
 /**
  * sales and finance
@@ -217,6 +218,7 @@ export default function App() {
       {/* landing page and dashboard */}
       <Route path="/" element={<Home />} />
       <Route path="/learn-more" element={<LearnMore />} />
+      <Route path="/VisitUs" element={<VisitUs />} />
 
       {/* <Route element={<ProtectedRoute />}> */}
       <Route path="/dashboard" element={<Dashboard />} />
