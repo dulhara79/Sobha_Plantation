@@ -11,6 +11,9 @@ import {
 } from "antd";
 import Swal from "sweetalert2";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
+
 
 const AddSalesRecord = () => {
   const [form] = Form.useForm();
@@ -24,6 +27,7 @@ const AddSalesRecord = () => {
   const [productToGetQuantity, setProductToGetQuantity] = useState("");
   const [totalQuantity, setTotalQuantity] = useState("");
   const [productError, setProductError] = useState("");
+  const [selectedProductID, setSelectedProductID] = useState("");
   const [submitDisabled, setSubmitDisabled] = useState(true);
   const [submitData, setSubmitData] = useState({
     product: "",
@@ -33,6 +37,7 @@ const AddSalesRecord = () => {
     revenueGenerated: "",
   });
   const [autoSaveTransaction, setAutoSaveTransaction] = useState(true);
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSoldQuantityChange = (e) => {
     const { value } = e.target;
@@ -73,10 +78,15 @@ const AddSalesRecord = () => {
     }
   };
 
+  console.log("totalQuantity-soldQuantity", totalQuantity-soldQuantity);
+
   const handleDateChange = (date) => {
     setSubmitData({ ...submitData, saleDate: date.format("YYYY-MM-DD") });
     setQuantityDisabled(!date);
   };
+
+  const threeWeekBefore = moment().subtract(3, "weeks");
+  console.log("threeWeekBefore:", threeWeekBefore);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -106,14 +116,18 @@ const AddSalesRecord = () => {
     fetchCompletedProducts();
   }, []);
 
+  
+
   const handleProductChange = (value) => {
     const selectedProduct = products.find(
       (product) => product.productType === value
     );
     const selectedProductQty = productToGetQuantity.find(
-      (product) =>
+      (product) => 
         product.productName === value && product.status === "Completed"
     );
+
+    
 
     if (selectedProduct && selectedProductQty) {
       if (selectedProductQty.quantity === 0) {
@@ -126,6 +140,8 @@ const AddSalesRecord = () => {
       setUnitPrice(selectedProduct.unitPrice);
       setUnitType(selectedProduct.typeUnit);
       setTotalQuantity(selectedProductQty.quantity);
+      console.log("selectedProductQty.id", selectedProductQty._id);
+      setSelectedProductID(selectedProductQty._id);
       form.setFieldsValue({
         unitType: selectedProduct.typeUnit,
         unitPrice: selectedProduct.unitPrice,
@@ -189,6 +205,53 @@ const AddSalesRecord = () => {
   //   }
   // };
 
+  // const handleSubmit = async () => {
+  //   const result = await Swal.fire({
+  //     title: "Confirmation Required",
+  //     text: "Are you sure you want to submit this report?",
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonText: "Yes, submit it!",
+  //     cancelButtonText: "No, cancel!",
+  //   });
+  
+  //   if (autoSaveTransaction) {
+  //     const transactionData = {
+  //       date: submitData.saleDate,
+  //       type: "income",
+  //       subtype: "sales",
+  //       amount: submitData.revenueGenerated,
+  //       description: "Sales record automatically saved",
+  //       payer_payee: "Customer",
+  //       method: "Automated Entry",
+  //     };
+  
+  //     handleSaveTransactionRecord(transactionData);
+  //   }
+  
+  //   if (result.isConfirmed) {
+  //     try {
+  //       console.log(submitData);
+  //       await axios.post(
+  //         "http://localhost:5000/api/salesAndFinance/sales/tracking",
+  //         submitData
+  //       );
+  //       Swal.fire("Success", "Sales record added successfully!", "success");
+  
+  //       // Clear the form fields after successful submission
+  //       form.resetFields();
+        
+  //       // Disable further submissions
+  //       setSubmitDisabled(true);
+  //     } catch (error) {
+  //       notification.error({
+  //         message: "Error",
+  //         description: "Failed to add sales record.",
+  //       });
+  //     }
+  //   }
+  // };
+
   const handleSubmit = async () => {
     const result = await Swal.fire({
       title: "Confirmation Required",
@@ -199,33 +262,23 @@ const AddSalesRecord = () => {
       cancelButtonText: "No, cancel!",
     });
   
-    if (autoSaveTransaction) {
-      const transactionData = {
-        date: submitData.saleDate,
-        type: "income",
-        subtype: "sales",
-        amount: submitData.revenueGenerated,
-        description: "Sales record automatically saved",
-        payer_payee: "Customer",
-        method: "Automated Entry",
-      };
-  
-      handleSaveTransactionRecord(transactionData);
-    }
-  
     if (result.isConfirmed) {
       try {
-        console.log(submitData);
-        await axios.post(
-          "http://localhost:5000/api/salesAndFinance/sales/tracking",
-          submitData
-        );
-        Swal.fire("Success", "Sales record added successfully!", "success");
+        // Update the labeling data when submitting the form
+        if (selectedProductID && totalQuantity !== null && soldQuantity !== null) {
+          await axios.put(`http://localhost:5000/api/labeling/${selectedProductID}`, {
+            productName: submitData.product,
+            labelingDate: submitData.saleDate,
+            status: "Completed",
+            quantity: totalQuantity - soldQuantity,
+          });
+        }
   
-        // Clear the form fields after successful submission
+        // Submit the sales record data
+        await axios.post("http://localhost:5000/api/salesAndFinance/sales/tracking", submitData);
+  
+        Swal.fire("Success", "Sales record added successfully!", "success");
         form.resetFields();
-        
-        // Disable further submissions
         setSubmitDisabled(true);
       } catch (error) {
         notification.error({
@@ -235,6 +288,7 @@ const AddSalesRecord = () => {
       }
     }
   };
+  
 
   const handleCancel = () => {
     Swal.fire({
@@ -254,6 +308,21 @@ const AddSalesRecord = () => {
       }
     });
   };
+
+  // useEffect(() => {
+  //   try {
+  //     axios.put(`http://localhost:5000/api/labeling/${selectedProductID}`, {
+  //       // selectedProductID: selectedProductID,
+  //       productName: submitData.product,
+  //       labelingDate: submitData.saleDate,
+  //       status: "Completed",
+  //       quantity: totalQuantity - soldQuantity,
+  //     });
+  //     navigate(''); // Navigate back to the Labeling page
+  //   } catch (error) {
+  //     console.error('Error updating labeling details:', error);
+  //   }
+  // }, [selectedProductID]);
 
   const handleSaveTransactionRecord = (transactionData) => {
     console.log(
@@ -305,7 +374,8 @@ const AddSalesRecord = () => {
           <DatePicker
             disabled={isDateDisabled}
             disabledDate={(current) =>
-              current && current > moment().endOf("day")
+              current &&
+              (current < moment(threeWeekBefore) || current > moment())
             }
             onChange={handleDateChange}
           />

@@ -8,6 +8,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import Swal from 'sweetalert2';
 import LoadingDot from '../../components/LoadingDots'; 
+import BarGraph from '../../components/Products/Labeling/BarGraph';
 
 const { Title } = Typography;
 const { Search } = Input;
@@ -34,7 +35,7 @@ const Labeling = () => {
           const response = await axios.get('http://localhost:5000/api/labeling-prices');
           setProductTypes(response.data.data || []);
         setLoading(false); // Stop loading after data fetch
-    }, 150); // Adjust the delay as needed
+    }, 150); // delay 
       } catch (error) {
         console.error('Error fetching product types:', error);
         message.error('Failed to fetch product types');
@@ -72,19 +73,26 @@ const Labeling = () => {
     price: calculatePrice(item.productName, item.quantity),
   }));
 
-  // Handler for search input
-  const onSearch = (value) => {
-    setSearchText(value);
-    filterQualityControls(value, filterStatus);
-  };
+
 
   const handleFilter = (value) => {
     setFilters(value);
   };
 
-  const filteredData = enrichedLabelingData.filter(item => 
-    item.productName.toLowerCase().includes(searchText.toLowerCase())
-  ).filter(item => {
+  const onSearch = (value) => {
+    setSearchText(value);
+  };
+
+  const filteredData = enrichedLabelingData.filter(item => {
+    const searchTextLower = searchText.toLowerCase();
+    return (
+      item.productName.toLowerCase().includes(searchTextLower) ||
+      item.status.toLowerCase().includes(searchTextLower) ||
+      moment(item.labelingDate).format('YYYY-MM-DD').includes(searchTextLower) ||
+      String(item.quantity).includes(searchTextLower) ||
+      String(item.price).includes(searchTextLower)
+    );
+  }).filter(item => {
     return Object.keys(filters).length === 0 || filters.includes(item.status);
   });
 
@@ -217,19 +225,21 @@ const handleDelete = async (labelingId) => {
       const pageWidth = doc.internal.pageSize.width;
       const pageHeight = doc.internal.pageSize.height;
   
-      // Draw the header
-      if (logoDataURL) {
-        doc.addImage(logoDataURL, 'PNG', 5, 5, 40, 10); // Adjust x, y, width, height as needed
-      }
-  
-      // Add the title next to the logo
-      doc.setFontSize(12);
-      doc.text("Sobha Plantation", 170, 10); // Adjust x, y position as needed
-  
-      // Draw a horizontal line after the header
-      //doc.setDrawColor(64, 133, 126); // Line color
-      //doc.setLineWidth(1); // Line width
-      doc.line(10, 20, pageWidth - 10, 20); // Draw line from (x1, y1) to (x2, y2)
+      // Header
+    doc.setFontSize(14);
+    doc.text("Sobha Plantation", 10, 10); // Align left
+
+    doc.setFontSize(10);
+    doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+    doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+    doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+    doc.text("Contact: 0112 751 757", 10, 30); // Email address line
+
+    if (logoDataURL) {
+      doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
+    }
+
+    doc.line(10, 35, pageWidth - 10, 35); // Header line
   
       // Draw the footer with page number
       doc.setFontSize(10);
@@ -238,7 +248,7 @@ const handleDelete = async (labelingId) => {
   
     // Add title after the logo
     doc.setFontSize(22);
-    doc.text("Labeling Report", 80, 35); // Adjust x, y position as needed
+    doc.text("Labeling Report", 80, 48); // Adjust x, y position as needed
   
     // First Table: Upper table details
     const upperTableHeaders = [['Detail', 'Value']];
@@ -249,7 +259,7 @@ const handleDelete = async (labelingId) => {
     ];
   
     doc.autoTable({
-      startY: 50,  // Adjust startY as needed
+      startY: 60,  // startY
       head: upperTableHeaders,
       body: upperTableRows,
       margin: { horizontal: 10 },
@@ -262,10 +272,10 @@ const handleDelete = async (labelingId) => {
         fontSize: 12,
       },
       theme: 'grid',
-      didDrawPage: drawHeaderFooter, // Add header, footer, and line to each page
+      didDrawPage: drawHeaderFooter, 
     });
   
-    // Adjust startY for the second table to start below the first table
+    // startY for the second table to start below the first table
     let finalY = doc.lastAutoTable.finalY + 10;  // Add a gap between the two tables
   
     // Second Table: Map the filteredData for the labeling details
@@ -330,12 +340,18 @@ const handleDelete = async (labelingId) => {
         fontSize: 12,
       },
       theme: 'striped',
-      didDrawPage: drawHeaderFooter, // Add header, footer, and line to each page
+      didDrawPage: drawHeaderFooter, 
     });
   
     // Save the PDF
     doc.save('labeling_report.pdf');
   };
+
+  // Prepare data for the bar graph
+  const graphData = labelingData.map(item => ({
+    name: item.productName, 
+    value: item.quantity, 
+  }));
 
   if (loading) return <LoadingDot />;
 
@@ -412,7 +428,7 @@ const handleDelete = async (labelingId) => {
           >
             <Option value="Pending">Pending</Option>
             <Option value="Completed">Completed</Option>
-            {/* Add other status options as needed */}
+            
           </Select>
         </Space>
       </div>
@@ -521,6 +537,12 @@ const handleDelete = async (labelingId) => {
         </>
       )}
     </Modal>
+
+    {/* Bar Graph Section */}
+    <div style={{ margin: '20px 0' }}>
+        <Title level={4}>Labeling Quantity by Product Type</Title>
+        <BarGraph data={graphData} />
+      </div>
 
 
       {/* Delete Modal */}

@@ -1,8 +1,16 @@
-import React, { useEffect, useState } from "react"; 
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { SnackbarProvider, useSnackbar } from "notistack";
 import axios from "axios";
-import { message, DatePicker, Select, Input, Button, Radio, Typography } from "antd";
+import {
+  message,
+  DatePicker,
+  Select,
+  Input,
+  Button,
+  Radio,
+  Typography,
+} from "antd";
 import moment from "moment";
 
 const { TextArea } = Input;
@@ -17,11 +25,14 @@ function EditValuationForm() {
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [payerPayee, setPayerPayee] = useState("");
-  const [appreciationOrDepreciation, setAppreciationOrDepreciation] = useState("");
+  const [appreciationOrDepreciation, setAppreciationOrDepreciation] =
+    useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams();
+
+  const [fixDate, setFixDate] = useState(null);
 
   // Fetch data for the form fields based on ID
   useEffect(() => {
@@ -38,6 +49,7 @@ function EditValuationForm() {
         setDescription(data.description);
         setPayerPayee(data.payer_payee);
         setAppreciationOrDepreciation(data.appreciationOrDepreciation);
+        setFixDate(data.date ? moment(data.date) : null);
         setLoading(false);
       })
       .catch((error) => {
@@ -46,32 +58,48 @@ function EditValuationForm() {
       });
   }, [id]);
 
+  console.log(fixDate);
+
   // Validation and submission handler for editing the valuation record
   const handleEditValuationRecord = async (e) => {
     e.preventDefault();
     // Additional validation for positive values
-    if (isNaN(quantity) || quantity <= 0 || isNaN(price) || price <= 0) {
+    if (price === "" || price < 0) {
       message.warning("Quantity and price must be positive numbers.");
       return;
     }
-    if (!date || !type || !subtype || !quantity || !price || !description || !payerPayee || !appreciationOrDepreciation) {
-      message.warning("Please fill in all fields. The record will not be saved with incomplete data.");
+    /* if (
+      !date ||
+      !type ||
+      !subtype ||
+      !quantity ||
+      !price ||
+      !description ||
+      !payerPayee ||
+      !appreciationOrDepreciation
+    ) {
+      message.warning(
+        "Please fill in all fields. The record will not be saved with incomplete data."
+      );
       return;
-    }
-    
+    } */
+
     const data = {
       date,
       type,
       subtype,
-      quantity,
+      quantity : 1,
       price,
       description,
       payer_payee: payerPayee,
-      appreciationOrDepreciation,
+      appreciationOrDepreciation : 1,
     };
     setLoading(true);
     axios
-      .put(`http://localhost:5000/api/salesAndFinance/finance/valuation/${id}`, data)
+      .put(
+        `http://localhost:5000/api/salesAndFinance/finance/valuation/${id}`,
+        data
+      )
       .then(() => {
         setLoading(false);
         message.success("Valuation record has successfully updated.");
@@ -131,14 +159,38 @@ function EditValuationForm() {
     setSubType("Loans");
   };
 
+  // Calculate the date boundaries
+  const savedDate = fixDate ? moment(fixDate) : null;
+  const threeWeeksBefore = savedDate
+    ? moment(savedDate).subtract(3, "weeks")
+    : null;
+  const today = moment();
+
+  console.log(savedDate, threeWeeksBefore, today);
+
+  const disabledDate = (currentDate) => {
+    // Disable today, future dates, and dates outside the three-week window
+    if (!savedDate) return true; // Block all dates until the savedDate is loaded
+    return (
+      currentDate > savedDate ||
+      currentDate < threeWeeksBefore ||
+      currentDate >= today
+    );
+  };
+
   return (
     <SnackbarProvider>
-      <form className="flex flex-col items-center justify-center py-6" onSubmit={handleEditValuationRecord}>
+      <form
+        className="flex flex-col items-center justify-center py-6"
+        onSubmit={handleEditValuationRecord}
+      >
         <div className="w-full max-w-3xl px-4 py-8 space-y-6 bg-white rounded-lg shadow-lg">
           <Title level={2}>Edit Valuation Record</Title>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-6">
             <fieldset className="sm:col-span-4">
-              <legend className="text-sm font-semibold text-gray-900">Valuation Type</legend>
+              <legend className="text-sm font-semibold text-gray-900">
+                Valuation Type
+              </legend>
               <div className="flex items-center mt-4 space-x-6">
                 <Radio.Group onChange={handleTypeChange} value={type}>
                   <Radio value="asset">Asset</Radio>
@@ -148,13 +200,18 @@ function EditValuationForm() {
             </fieldset>
 
             <div className="sm:col-span-2">
-              <label htmlFor="subtype" className="block text-sm font-medium text-gray-900">Sub Type</label>
+              <label
+                htmlFor="subtype"
+                className="block text-sm font-medium text-gray-900"
+              >
+                Sub Type
+              </label>
               <Select
                 id="subtype"
                 value={subtype}
                 onChange={setSubType}
                 className="w-full mt-2"
-                style={{ fontSize: '1rem' }}
+                style={{ fontSize: "1rem" }}
               >
                 {type === "asset" ? (
                   <>
@@ -178,84 +235,119 @@ function EditValuationForm() {
 
             {/* Date */}
             <div className="sm:col-span-3">
-              <label htmlFor="date" className="block text-sm font-medium text-gray-900">Date</label>
+              <label
+                htmlFor="date"
+                className="block text-sm font-medium text-gray-900"
+              >
+                Date
+              </label>
               <DatePicker
                 value={date}
                 onChange={(date) => setDate(date)}
                 className="w-full mt-2"
-                disabledDate={(current) => current && current > moment().endOf('day')}
-                style={{ fontSize: '1rem' }}
+                disabledDate={disabledDate}
+                style={{ fontSize: "1rem" }}
               />
             </div>
 
             {/* Quantity */}
-            <div className="sm:col-span-3">
-              <label htmlFor="quantity" className="block text-sm font-medium text-gray-900">Quantity</label>
+            <div className="hidden sm:col-span-3">
+              <label
+                htmlFor="quantity"
+                className="block text-sm font-medium text-gray-900"
+              >
+                Quantity
+              </label>
               <Input
                 id="quantity"
                 name="quantity"
                 value={quantity}
                 onChange={handleQuantityChange}
                 type="number"
-                style={{ fontSize: '1rem' }}
+                style={{ fontSize: "1rem" }}
               />
             </div>
 
             {/* Price */}
             <div className="sm:col-span-3">
-              <label htmlFor="price" className="block text-sm font-medium text-gray-900">Price</label>
+              <label
+                htmlFor="price"
+                className="block text-sm font-medium text-gray-900"
+              >
+                Price
+              </label>
               <Input
                 id="price"
                 name="price"
                 value={price}
                 onChange={handlePriceChange}
                 type="number"
-                style={{ fontSize: '1rem' }}
+                style={{ fontSize: "1rem" }}
               />
             </div>
 
             {/* Description */}
             <div className="col-span-full">
-              <label htmlFor="description" className="block text-sm font-medium text-gray-900">Description</label>
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-900"
+              >
+                Description
+              </label>
               <TextArea
                 id="description"
                 name="description"
                 rows={3}
                 value={description}
                 onChange={handleDescriptionChange}
-                style={{ fontSize: '1rem' }}
+                style={{ fontSize: "1rem" }}
               />
             </div>
 
             {/* Payer/Payee */}
             <div className="col-span-full">
-              <label htmlFor="payer_payee" className="block text-sm font-medium text-gray-900">Payer/Payee</label>
+              <label
+                htmlFor="payer_payee"
+                className="block text-sm font-medium text-gray-900"
+              >
+                Payer/Payee
+              </label>
               <Input
                 type="text"
                 name="payer_payee"
                 value={payerPayee}
                 onChange={handlePayerPayeeChange}
                 id="payer_payee"
-                style={{ fontSize: '1rem' }}
+                style={{ fontSize: "1rem" }}
               />
             </div>
 
             {/* Percentage */}
-            <div className="sm:col-span-2">
-              <label htmlFor="percentage" className="block text-sm font-medium text-gray-900">Appreciation / Depreciation %</label>
+            <div className="hidden sm:col-span-2">
+              <label
+                htmlFor="percentage"
+                className="block text-sm font-medium text-gray-900"
+              >
+                Appreciation / Depreciation %
+              </label>
               <Input
                 id="appreciationOrDepreciation"
                 name="appreciationOrDepreciation"
                 value={appreciationOrDepreciation}
                 onChange={handleAppreciationOrDepreciationChange}
                 type="number"
-                style={{ fontSize: '1rem' }}
+                style={{ fontSize: "1rem" }}
               />
             </div>
 
             {/* Submit Button */}
             <div className="col-span-full">
-              <Button type="primary" loading={loading} htmlType="submit" className="w-full py-3">
+              <Button
+                type="primary"
+                loading={loading}
+                htmlType="submit"
+                className="w-full py-3"
+              >
                 Save Valuation Record
               </Button>
             </div>
