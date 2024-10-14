@@ -13,6 +13,7 @@ import {
 } from '@ant-design/icons';
 import axios from 'axios';  // Import axios for API calls
 import BuyerNavbar from '../../components/Buyer/Header/BuyerNavbar';
+import NewLoadingScreen from '../../components/LoadingDots'
 
 const BuyerDashboard = () => {
   const navigate = useNavigate();
@@ -25,7 +26,15 @@ const BuyerDashboard = () => {
   // Function to handle navigation
   const handleNavigation = (path) => {
     navigate(path);
-  };
+  };const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading process (e.g., API calls, component mounting)
+    setTimeout(() => {
+      setLoading(false); // Once the components or data are loaded
+    }, 1000); // Adjust the delay as needed
+  }, []);
+
 
   // Update the date and time every minute
   useEffect(() => {
@@ -58,6 +67,8 @@ const BuyerDashboard = () => {
   // Format the date
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = currentDate.toLocaleDateString(undefined, options);
+
+  if (loading) return <NewLoadingScreen />;
 
   return (
     <div>
