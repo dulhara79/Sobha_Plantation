@@ -67,12 +67,6 @@ const AddPreOrderRecords = () => {
 
   const productQuantityRule = [
     {
-      type: 'number',
-      min: 1,
-      max: 100,
-      message: "Product quantity must be between 1 and 100.",
-    },
-    {
       required: true,
       message: "This field is required.",
     },
