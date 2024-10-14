@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import BuyerHeader from '../components/BuyerHeader';
 
-// Import your product images
 import product_1 from '../assets/Buyer/product_1.jpg';
 import product_2 from '../assets/Buyer/product_2.jpg';
 import product_3 from '../assets/Buyer/product_3.jpg';
@@ -23,7 +22,6 @@ import crop_3 from '../assets/Buyer/crop_3.jpg';
 import crop_4 from '../assets/Buyer/crop_4.jpg';
 import crop_5 from '../assets/Buyer/crop_5.jpg';
 
-// Product details array with prices
 const products = [
   { name: 'COCONUT (1 unit)', img: crop_1, description: '110.00 LKR', price: 110 },
   { name: 'BANANA 1kg (Kolikuttu)', img: crop_2, description: '300.00 LKR', price: 300 },
@@ -47,13 +45,11 @@ const HomePage = () => {
 
   const handleQuantityChange = (productName, value) => {
     const numericValue = value.replace(/\D/g, '');
-
     if (numericValue > 250) {
       setError({ [productName]: 'You have reached the maximum quantity.' });
     } else {
       setError({});
     }
-
     setQuantities({
       ...quantities,
       [productName]: numericValue ? parseInt(numericValue, 10) : 0,
@@ -108,18 +104,15 @@ const HomePage = () => {
     setSortOrder(event.target.value);
   };
 
-  const filteredProducts = products
-    .filter((product) =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .sort((a, b) => {
-      if (sortOrder === 'lowToHigh') {
-        return a.price - b.price;
-      } else if (sortOrder === 'highToLow') {
-        return b.price - a.price;
-      }
-      return 0;
-    });
+  const sortedProducts = [...products].sort((a, b) => {
+    if (sortOrder === 'lowToHigh') return a.price - b.price;
+    if (sortOrder === 'highToLow') return b.price - a.price;
+    return 0;
+  });
+
+  const filteredProducts = sortedProducts.filter((product) =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <>
@@ -152,13 +145,9 @@ const HomePage = () => {
               }}
             />
 
-            <FormControl variant="outlined" sx={{ minWidth: 150, marginRight: '16px' }}>
-              <InputLabel>Sort by Price</InputLabel>
-              <Select
-                value={sortOrder}
-                onChange={handleSortChange}
-                label="Sort by Price"
-              >
+            <FormControl variant="outlined" sx={{ minWidth: 120, marginRight: '16px' }}>
+              <InputLabel>Sort by</InputLabel>
+              <Select value={sortOrder} onChange={handleSortChange} label="Sort by">
                 <MenuItem value="lowToHigh">Price: Low to High</MenuItem>
                 <MenuItem value="highToLow">Price: High to Low</MenuItem>
               </Select>
@@ -217,7 +206,7 @@ const HomePage = () => {
                         sx={{ width: '190px', textAlign: 'center' }}
                         placeholder="Enter Quantity"
                         error={!!error[product.name]}
-                        helperText={error[product.name]}
+                        helperText={error[product.name] || ''}
                       />
                       <IconButton onClick={() => incrementQuantity(product.name)}>
                         <AddIcon />
@@ -233,18 +222,19 @@ const HomePage = () => {
                     >
                       <Button
                         variant="contained"
-                        color="primary"
-                        onClick={() => handleBuyNow(product)}
-                      >
-                        Buy Now
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="secondary"
+                        sx={{ backgroundColor: 'yellow', color: 'black' }}
                         startIcon={<AddShoppingCartIcon />}
                         onClick={() => handleAddToCart(product)}
                       >
                         Add to Cart
+                      </Button>
+                      <Button
+                        variant="contained"
+                        sx={{ backgroundColor: 'green', color: 'white' }}
+                        startIcon={<ShoppingCartCheckoutIcon />}
+                        onClick={handleBuyNow}
+                      >
+                        Buy Now
                       </Button>
                     </Box>
                   </CardContent>
@@ -252,7 +242,9 @@ const HomePage = () => {
               </Grid>
             ))
           ) : (
-            <Typography variant="h6">No products found.</Typography>
+            <Typography variant="h6" color="text.secondary">
+              No products found.
+            </Typography>
           )}
         </Grid>
       </Box>
