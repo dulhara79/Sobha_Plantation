@@ -6,6 +6,7 @@ import { Breadcrumb } from "antd";
 import { Link } from "react-router-dom";
 import LoadingDot from "../../components/LoadingDots";
 import DiseasesNavBar from "../../components/DiseasesComponents/DiseasesNavBar";
+import DateTimeDisplay from '../../components/Products/DateTimeDisplay';
 
 // Import images
 import diseaseIdentificationImg from "../../assets/DiseasesImages/disease.jpg";
@@ -65,8 +66,10 @@ const DiseasesDashboard = () => {
 
         {/* Welcome Message */}
         <div className="bg-white shadow-md rounded-lg p-4 my-4">
-          <h2 className="text-2xl font-semibold">👋 Welcome,</h2>
-          <p>Today is {formattedDate}</p>
+          {/* <h2 className="text-2xl font-semibold">👋 Welcome,</h2>
+          <p>Today is {formattedDate}</p> */}
+                      <DateTimeDisplay />
+
         </div>
 
         {/* Slogan Section */}
