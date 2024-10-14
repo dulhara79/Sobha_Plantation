@@ -31,6 +31,8 @@ export default function FinanceValuationStatBar() {
               let futureAssets = 0;
               let futureLiabilities = 0;
 
+              console.log('Valuation data: ', response.data.data);
+
               response.data.data.forEach(valuation => {
                   const currentVal = valuation.price * valuation.quantity;
                   const appreciationFactor = Math.pow(1 + valuation.appreciationOrDepreciation / 100, 5); // Compound appreciation or depreciation over 5 years
@@ -48,6 +50,10 @@ export default function FinanceValuationStatBar() {
               setTotalLiabilities(liabilities);
               setNetValue(assets - liabilities);
               setFutureNetValue(futureAssets - futureLiabilities); // Calculate future net worth
+
+              console.log('Total assets: ', assets);
+                console.log('Total liabilities: ', liabilities);
+                console.log('Net worth: ', assets - liabilities);
           })
           .catch(error => {
               console.error('Error fetching total records: ', error);
@@ -58,11 +64,11 @@ export default function FinanceValuationStatBar() {
       // Convert the formatted string back to a number
       const profitOrLossNumber = parseFloat(profitOrLoss.replace(/,/g, ''));
       const colorClass = profitOrLossNumber >= 0 ? 'text-lime-500' : 'text-red-600';
-      return <span className={`${colorClass} text-xl font-semibold tracking-tight sm:text-3xl`}>Rs.{profitOrLoss}</span>;
+      return <span className={`${colorClass} text- font-semibold tracking-tight sm:text-3xl`}>Rs.{profitOrLoss}</span>;
   };
 
   return (
-      <div className="relative py-8 overflow-hidden sm:py-8 ">
+      <div className="relative w-full py-10 overflow-hidden sm:py-8">
           {/* Additional divs and elements for styling omitted for brevity */}
           <div
               className="absolute left-[max(-7rem,calc(50%-52rem))] top-1/2 -z-10 -translate-y-1/4 transform-gpu blur-2xl"
@@ -95,24 +101,24 @@ export default function FinanceValuationStatBar() {
                   <div className="flex flex-col max-w-xs mx-auto gap-y-1">
                       {/* Transactions this week */}
                       <div className="flex flex-row items-center gap-4">
-                          <dd className="text-xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
+                          <dd className="text-xl text-black texttracking-tight font-emibold sm:text-3xl">
                               {totalRecords.length}
                           </dd>
 
                       </div>
-                      <dt className="text-base leading-7 text-gray-900">Total Records</dt>
+                      <dt className="text-xl font-semibold text-black textleading-7">Total Records</dt>
                   </div>
 
                   <div className="flex flex-col mx-auto gap-y-1">
                       {/* Income this week */}
                       <div className="flex flex-row items-center gap-8">
-                          <dd className="text-xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
+                          <dd className="text-xl text-black texttracking-tight font-emibold sm:text-3xl">
                               Rs.{totalAssets.toLocaleString()}
                           </dd>
 
                       </div>
                       <div className="flex flex-row items-center justify-between gap-12">
-                          <dt className="text-base leading-7 text-lime-600">Total Assets</dt>
+                          <dt className="text-3xl font-semibold leading-7 text-lime-600">Total Assets</dt>
 
                       </div>
 
@@ -121,13 +127,13 @@ export default function FinanceValuationStatBar() {
                   <div className="flex flex-col max-w-xs mx-auto gap-y-1">
                       {/* Expense this week */}
                       <div className="flex flex-row items-center gap-8">
-                          <dd className="text-xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
+                          <dd className="text-xl text-black texttracking-tight font-emibold sm:text-3xl">
                               Rs.{totalLiabilities.toLocaleString()}
                           </dd>
 
                       </div>
                       <div className="flex flex-row items-center gap-12">
-                          <dt className="text-base leading-7 text-red-600">Total Liabilities</dt>
+                          <dt className="text-xl font-semibold text-red-600 textleading-7">Total Liabilities</dt>
 
                       </div>
 
@@ -135,22 +141,22 @@ export default function FinanceValuationStatBar() {
                   <div className="flex flex-col max-w-xs mx-auto gap-y-1">
                       {/* Expense this week */}
                       <div className="flex flex-row items-center gap-4">
-                          <dd className="text-xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
+                          <dd className="text-xl text-black texttracking-tight font-emibold sm:text-3xl">
                               {renderProfitLoss(netValue.toLocaleString())}
                           </dd>
                           {/*{renderProfitLossIcon(profitLoss)}*/}
                       </div>
-                      <dt className="text-base leading-7 text-gray-900">Net Worth</dt>
+                      <dt className="text-xl font-semibold text-black textleading-7">Net Worth</dt>
                   </div>
                   {/* <div className="flex flex-col max-w-xs mx-auto gap-y-1"> */}
                       {/* Expense this week */}
                       {/* <div className="flex flex-row items-center gap-4">
-                          <dd className="text-xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
+                          <dd className="text-xl text-black texttracking-tight font-emibold sm:text-3xl">
                               {renderProfitLoss(Math.round(futureNetValue).toLocaleString())}
                           </dd> */}
                           {/*{renderProfitLossIcon(profitLoss)}*/}
                       {/* </div>
-                      <dt className="text-base leading-7 text-gray-900">Net Worth in 5 Years</dt>
+                      <dt className="text-xl text-black textleading-7">Net Worth in 5 Years</dt>
                   </div> */}
               </div>
           </div>

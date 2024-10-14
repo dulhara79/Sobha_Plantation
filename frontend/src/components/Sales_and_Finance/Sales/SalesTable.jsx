@@ -175,6 +175,7 @@ const SalesTable = () => {
 
   const exportToPDF = async () => {
     const doc = new jsPDF();
+    const today = moment().format("YYYY-MM-DD");
 
     // Load the logo image
     const logoUrl = "../../../../src/assets/logo.png";
@@ -191,12 +192,26 @@ const SalesTable = () => {
       const pageHeight = doc.internal.pageSize.height;
 
       // Header with logo
+      // if (logoDataURL) {
+      //   doc.addImage(logoDataURL, "PNG", 10, 10, 40, 10); // Adjust position and size
+      // }
+      // doc.setFontSize(12);
+
+      doc.setFontSize(14);
+      doc.text("Sobha Plantation", 10, 10); // Align left
+
+      doc.setFontSize(10);
+      doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+      doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+      doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+      doc.text("Contact: 0112 751 757", 10, 30); // Email address line
+      doc.text(`Date: ${today}`, 10, 35); // Align right
+
       if (logoDataURL) {
-        doc.addImage(logoDataURL, "PNG", 10, 10, 40, 10); // Adjust position and size
+        doc.addImage(logoDataURL, "PNG", pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
       }
-      doc.setFontSize(12);
-      doc.text("Sobha Plantation", 170, 15); // Adjust x, y position
-      doc.line(10, 25, pageWidth - 10, 25); // Line under header
+      
+      doc.line(10, 40, pageWidth - 10, 40); // Line under header
 
       // Footer with page number
       doc.setFontSize(10);
@@ -213,7 +228,7 @@ const SalesTable = () => {
 
     // Title of the report
     doc.setFontSize(22);
-    doc.text("Sales Report", 50, 35); // Adjust y-coordinate to start below header
+    doc.text("Sales Report", 65, 50); // Adjust y-coordinate to start below header
 
     // First Table: Overview Details
     const overviewHeaders = [["Detail", "Value"]];
@@ -235,7 +250,7 @@ const SalesTable = () => {
 
     // Render the first table
     doc.autoTable({
-      startY: marginTop + 20, // Start the first table below the header space
+      startY: marginTop + 25, // Start the first table below the header space
       head: overviewHeaders,
       body: overviewRows,
       margin: { top: marginTop, bottom: marginBottom, horizontal: 10 },
