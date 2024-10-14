@@ -348,17 +348,18 @@ const YieldRecords = () => {
                 value={searchText} // Keep the input controlled
               />
               <Button
-                style={{ backgroundColor: "#60DB19", color: "#fff" }}
+                style={{ backgroundColor: "#22c55e", color: "#fff" }}
                 onClick={() => navigate("/yield/addrecords")}
               >
                 Add Records
               </Button>
               <Button
-                style={{ backgroundColor: "#60DB19", color: "#fff" }}
+                style={{ backgroundColor: "#22c55e", color: "#fff" }}
                 onClick={generatePDF}
               >
                 Generate PDF Report
               </Button>
+
 
             </div>
           </div>
