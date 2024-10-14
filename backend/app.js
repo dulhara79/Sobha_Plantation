@@ -52,6 +52,7 @@ const seedlingRoutes = require("./routes/seedlingRoutes");
 const scheduleRoutes = require("./routes/scheduleRoutes");
 const soilTestingRoutes = require("./routes/soilTestingRoutes");
 const plantGrowthRoutes = require("./routes/plantGrowthRoutes");
+const emailRoutes1 = require('./routes/emailRoutes1.js');
 
 /**
  * buyer
@@ -66,10 +67,11 @@ const buyerPreOrderRoute = require("./routes/buyerPreOrderRoutes");
  */
 const FinancialTransactionRoutes = require("./routes/SalesAndFinance/financialTransactionRoutes.js");
 const InvoiceRoutes = require("./routes/SalesAndFinance/InvoiceRoutes.js");
-const SalesAnalyticsRoutes = require("./routes/SalesAndFinance/SalesAnalyticsRoutes.js");
+// const SalesAnalyticsRoutes = require("./routes/SalesAndFinance/SalesAnalyticsRoutes.js");
 const SalesTrackingRoutes = require("./routes/SalesAndFinance/SalesTrackingRoutes.js");
 const valuationRoutes = require("./routes/SalesAndFinance/valuationRoutes.js");
 const SalaryRoutes = require("./routes/SalesAndFinance/SalaruRoute.js");
+const MinorTransactionsRoutes = require("./routes/SalesAndFinance/minorTransactionRoutes.js");
 
 /**
  * employee
@@ -148,11 +150,11 @@ app.use('/api/quality',quality);
 /**
  * crop care
  */
-app.use("/api/diseases", diseasesRoute);
-app.use("/api/cropDiseases", cropDiseasesRoute);
-app.use("/api/treatments", treatmentsRoute);
-app.use("/api/cropTreatments", cropTreatmentsRoute);
-app.use("/api/regularMaintenance", regularMaintenanceRoute);
+app.use('/api/diseases', diseasesRoute);
+app.use('/api/cropDiseases', cropDiseasesRoute);
+app.use('/api/treatments', treatmentsRoute);
+app.use('/api/cropTreatments', cropTreatmentsRoute);
+app.use('/api/regularMaintenance', regularMaintenanceRoute);
 
 /**
  * crop
@@ -162,6 +164,7 @@ app.use("/api/seedlings", seedlingRoutes);
 app.use("/api/schedules", scheduleRoutes);
 app.use("/api/soil-tests", soilTestingRoutes);
 app.use("/api/plant-growth", plantGrowthRoutes);
+app.use('/api', emailRoutes1);
 
 /**
  * buyer
@@ -177,9 +180,10 @@ app.use('/api/buyerPreOrder', buyerPreOrderRoute);
 app.use("/api/salesAndFinance/finance/transaction", FinancialTransactionRoutes);
 app.use("/api/salesAndFinance/finance/salary", SalaryRoutes);
 app.use("/api/salesAndFinance/finance/invoice", InvoiceRoutes);
-app.use("/api/salesAndFinance/sales/analytics", SalesAnalyticsRoutes);
+// app.use("/api/salesAndFinance/sales/analytics", SalesAnalyticsRoutes);
 app.use("/api/salesAndFinance/sales/tracking", SalesTrackingRoutes);
 app.use("/api/salesAndFinance/finance/valuation", valuationRoutes);
+app.use("/api/salesAndFinance/finance/minorTransactions", MinorTransactionsRoutes);
 
 /**
  * employee

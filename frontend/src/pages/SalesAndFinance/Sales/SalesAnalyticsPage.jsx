@@ -22,7 +22,7 @@ const SalesAnalyticsPage = () => {
     // Simulate loading process (e.g., API calls, component mounting)
     setTimeout(() => {
       setLoading(false); // Once the components or data are loaded
-    }, 2000); // Adjust the delay as needed
+    }, 1000); // Adjust the delay as needed
   }, []);
 
   if (loading) return <NewLoadingScreen />;
@@ -86,8 +86,8 @@ const SalesAnalyticsPage = () => {
             </div> */}
 
             {/* Charts */}
-            <MonthlySoldProductsChart />
             <WeeklySoldProductsChart />
+            <MonthlySoldProductsChart />
             <YearlyRevenueChart />
           </div>
         </div>

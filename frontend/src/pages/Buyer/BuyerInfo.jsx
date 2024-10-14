@@ -61,7 +61,7 @@ const AddInfoRecords = () => {
 
       const { firstName, lastName, Gender, DOB, Number, email } = values;
 
-      await axios.post("http://localhost:8090/api/buyerInfo", {
+      await axios.post("http://localhost:5000/api/buyerInfo", {
         firstName,
         lastName,
         Gender,

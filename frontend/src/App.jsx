@@ -33,6 +33,10 @@ import TransactionDisplay from "./pages/SalesAndFinance/Finance/TransactionDispl
 import UpdateTransactionPage from "./pages/SalesAndFinance/Finance/UpdateTransactionPage.jsx";
 import FinancialAnalyticsPage from "./pages/SalesAndFinance/Finance/FinancialAnalyticsPage.jsx";
 
+import AddMinorTransactionPage from "./pages/SalesAndFinance/Finance/AddMinorTransactionPage.jsx";
+import MinorTransactionDisplay from "./pages/SalesAndFinance/Finance/MinorTransactionDisplay.jsx";
+import UpdateMinorTransactionPage from "./pages/SalesAndFinance/Finance/UpdateMinorTransactionPage.jsx";
+
 import AddNewValuationPage from "./pages/SalesAndFinance/Finance/AddNewValuationPage.jsx";
 import ValuationDashboardPage from "./pages/SalesAndFinance/Finance/ValuationDashboard.jsx";
 import EditValuationPage from "./pages/SalesAndFinance/Finance/EditValuationPage.jsx";
@@ -40,6 +44,10 @@ import EditValuationPage from "./pages/SalesAndFinance/Finance/EditValuationPage
 import Esalary from "./pages/SalesAndFinance/Finance/Esalary.jsx";
 import ViewSalaryRecordPage from "./pages/SalesAndFinance/Finance/ViewSalaryRecordPage.jsx";
 import EditEmployeeSalaryRecords from "./pages/SalesAndFinance/Finance/EditEmployeeSalaryRecords.jsx";
+
+import CashBook from "./pages/SalesAndFinance/Finance/CashBook.jsx";
+import BalanceSheet from "./pages/SalesAndFinance/Finance/BalanceSheet.jsx";
+import PettyCash from "./pages/SalesAndFinance/Finance/PettyCash.jsx";
 
 // inventory
 import FertilizerRecords from "./pages/Inventory/FertilizerRecords.jsx";
@@ -82,10 +90,10 @@ import EditHarvestSchedule from "./pages/Harvest/EditHarvestSchedule";
 import EditYieldRecords from "./pages/Harvest/EditYieldRecords.jsx";
 import AddComplianceCheck from "./pages/Harvest/AddComplianceCheck.jsx";
 import EditComplianceCheck from "./pages/Harvest/EditComplianceCheck.jsx";
-import YieldBarChart from "./pages/Harvest/YieldBarChart.jsx";
 import HarvestQuality from "./pages/Harvest/HarvestQuality";
 import AddInspection from "./pages/Harvest/AddInspection.jsx";
 import EditInspection from "./pages/Harvest/EditInspection.jsx";
+import HarvestCal from "./pages/Harvest/HarvestCal.jsx";
 
 // crop care (diseases)
 import DiseasesDashboard from "./pages/Diseases/DiseasesDashboard.jsx";
@@ -166,12 +174,15 @@ import ScheduleForm from "./pages/CropVarieties/ScheduleForm.jsx";
 import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
 import AddSeedlingForm from "./pages/CropVarieties/AddSeedlingForm.jsx";
 import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
+import PlantGrowthForm from "./pages/CropVarieties/PlantGrowthForm.jsx";
 
-// buyers
-
+/**
+ * buyer
+ */
 // import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
 // import BuyerTable from "./pages/BuyerTable.jsx";
 // import Profile from './components/Profile';
+
 import BuyerDashboard from './pages/Buyer/BuyerDashboard.jsx';
 import PaymentPage from './pages/PaymentPage'; 
 import HomePage from './pages/HomePage';
@@ -185,7 +196,6 @@ import UpdateDeliveryTable from "./pages/Buyer/UpdateDeliveryTable.jsx";
 import BuyerInfo from "./pages/Buyer/BuyerInfo.jsx";
 import BuyerInfoTable from "./pages/Buyer/BuyerInfoTable.jsx";
 import UpdateBuyerInfo from "./pages/Buyer/UpdateInfoTable.jsx";
-
 import BuyerPreOrderForm from './pages/Buyer/BuyerPreOrderForm';
 import BuyerPreOrderTable from './pages/Buyer/BuyerPreOrderTable';
 import UpdateBuyerPreOrderRequests from './pages/Buyer/UpdatePreOrderForm';
@@ -217,7 +227,6 @@ export default function App() {
             path="/salesAndFinance/"
             element={<SalesAndFinanceDashboard />}
           />
-
           <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
           <Route
             path="/salesAndFinance/sales/addSalesRecord"
@@ -235,12 +244,10 @@ export default function App() {
             path="/salesAndFinance/sales/analytics"
             element={<SalesAnalyticsPage />}
           />
-
           <Route
             path="/salesAndFinance/finance/"
             element={<FinanceDashboard />}
           />
-
           <Route
             path="/salesAndFinance/finance/add-transaction"
             element={<AddTransactionPage />}
@@ -254,6 +261,18 @@ export default function App() {
             element={<TransactionDisplay />}
           />
           <Route
+            path="/salesAndFinance/finance/add-minortransaction"
+            element={<AddMinorTransactionPage />}
+          />
+          <Route
+            path="/salesAndFinance/finance/minortransaction-update/:id"
+            element={<UpdateMinorTransactionPage />}
+          />
+          <Route
+            path="/salesAndFinance/finance/minortransaction-display"
+            element={<MinorTransactionDisplay />}
+          />
+          <Route
             path="/salesAndFinance/finance/analytics"
             element={<FinancialAnalyticsPage />}
           />
@@ -261,17 +280,14 @@ export default function App() {
             path="/salesAndFinance/finance/employeeSalary"
             element={<Esalary />}
           />
-
           <Route
             path="/salesAndFinance/finance/viewSalaryRecord"
             element={<ViewSalaryRecordPage />}
           />
-
           <Route
             path="/salesAndFinance/finance/EditEmployeeSalaryRecords/:id"
-            element={<EditEmployeeSalaryRecords />} 
+            element={<EditEmployeeSalaryRecords />}
           />
-
           <Route
             path="/salesAndFinance/finance/valuation-dashboard"
             element={<ValuationDashboardPage />}
@@ -283,6 +299,18 @@ export default function App() {
           <Route
             path="/salesAndFinance/finance/edit-valuation/:id"
             element={<EditValuationPage />}
+          />
+          <Route
+            path="/salesAndFinance/finance/cashbook"
+            element={<CashBook />}
+          />
+          <Route
+            path="/salesAndFinance/finance/balance-sheet"
+            element={<BalanceSheet />}
+          />
+          <Route
+            path="/salesAndFinance/finance/petty-cash"
+            element={<PettyCash />}
           />
 
           {/* inventory */}
@@ -335,11 +363,11 @@ export default function App() {
             element={<AddRequestPaymentRecord />}
           />
           <Route
-            path="/Inventory/EditRequestPaymentRecords/:id"
+            path="/Inventory/EditRequestPaymentRecord/:id"
             element={<EditRequestPaymentRecord />}
           />
 
-           {/* employee */}
+          {/* employee */}
           <Route path="/employee/dashboard" element={<Edashboard />} />
           <Route path="/employee/registration" element={<Eregistration />} />
           <Route path="/employee/task" element={<EaddTask />} />
@@ -367,8 +395,7 @@ export default function App() {
             path="/employee/viewemployee/:id"
             element={<ViewOneEmployee />}
           />
-          <Route path="/employee/editattendance" element = {<EditAtendence/>}/>
-
+          <Route path="/employee/editattendance" element={<EditAtendence />} />
 
           {/* harvest */}
           <Route
@@ -396,30 +423,42 @@ export default function App() {
             path="/compliance-checks/editrecords/:id"
             element={<EditComplianceCheck />}
           />
-          <Route path="/yield-bar-chart" element={<YieldBarChart />} />
           <Route path="/harvest/quality" element={<HarvestQuality />} />
           <Route path="/quality/addinspection" element={<AddInspection />} />
           <Route
             path="/quality/editinspection/:id"
             element={<EditInspection />}
           />
+          <Route path ="/harvest/harvestCal" element={<HarvestCal />} />
 
           {/* crop care */}
           <Route path="/diseases" element={<DiseasesDashboard />} />
           <Route path="/coconutInspections" element={<CoconutInspections />} />
-          <Route path="/intercropInspections" element={<IntercropInspections />} />
+          <Route
+            path="/intercropInspections"
+            element={<IntercropInspections />}
+          />
           <Route path="/addCoconutDiseases" element={<AddCoconutDiseases />} />
           <Route path="/addCropDiseases" element={<AddCropsDiseases />} />
           <Route path="/coconutTreatments" element={<CoconutTreatments />} />
-          <Route path="/intercropTreatments" element={<IntercropTreatments />} />
+          <Route
+            path="/intercropTreatments"
+            element={<IntercropTreatments />}
+          />
           <Route path="/coconutPests" element={<CoconutPests />} />
           <Route path="/RegularMaintenance" element={<RegularMaintenance />} />
           <Route path="/intercropPests" element={<IntercropPests />} />
           <Route path="/UserProfile" element={<UserProfile />} />
           <Route path="/coconutLeafMiner" element={<CoconutLeafMiner />} />
           <Route path="/blackBeetle" element={<BlackBeetle />} />
-          <Route path="/addCoconutTreatments" element={<AddCoconutTreatments />} />
-          <Route path="/addIntercropTreatments" element={<AddIntercropTreatments />} />
+          <Route
+            path="/addCoconutTreatments"
+            element={<AddCoconutTreatments />}
+          />
+          <Route
+            path="/addIntercropTreatments"
+            element={<AddIntercropTreatments />}
+          />
           <Route path="/insights" element={<Insights />} />
           <Route path="/detailedOverview" element={<DetailedOverview />} />
           <Route path="/addMaintenance" element={<AddMaintenance />} />
@@ -446,11 +485,26 @@ export default function App() {
           <Route path="/papayaRingspot" element={<PapayaRingspot />} />
           <Route path="/fusariumWilt" element={<FusariumWilt />} />
           <Route path="/powderyMildew" element={<PowderyMildew />} />
-          <Route path="/updateCoconutDiseases/:id" element={<UpdateCoconutDiseases />} />
-          <Route path="/updateCropsDiseases/:id" element={<UpdateCropsDiseases />} />
-          <Route path="/updateCoconutTreatments/:id" element={<UpdateCoconutTreatments />} />
-          <Route path="/updateCropsTreatments/:id" element={<UpdateCropsTreatments />} />
-          <Route path="/updateMaintenance/:id" element={<UpdateMaintenance />} />
+          <Route
+            path="/updateCoconutDiseases/:id"
+            element={<UpdateCoconutDiseases />}
+          />
+          <Route
+            path="/updateCropsDiseases/:id"
+            element={<UpdateCropsDiseases />}
+          />
+          <Route
+            path="/updateCoconutTreatments/:id"
+            element={<UpdateCoconutTreatments />}
+          />
+          <Route
+            path="/updateCropsTreatments/:id"
+            element={<UpdateCropsTreatments />}
+          />
+          <Route
+            path="/updateMaintenance/:id"
+            element={<UpdateMaintenance />}
+          />
 
           {/* product new */}
           <Route
@@ -493,21 +547,18 @@ export default function App() {
           <Route path="/share/:encodedData" element={<DetailsPage />} />
 
           {/* field view  */}
-          <Route
-            path="/cultivationDashboard"
-            element={<CultivationDashboard />}
-          />
-          <Route path="/varietyCrop" element={<VarietyCrop />} />
-          <Route path="/cvForm" element={<CropVarietyForm />} />
-          <Route path="/seedlingDistribution" element={<Seedling />} />
-          <Route path="/schedules" element={<Schedules />} />
-          <Route path="/scheduleForm" element={<ScheduleForm />} />
-          <Route path="/landPreparation" element={<LandPreparation />} />
-          <Route path="/seedlingForm" element={<AddSeedlingForm />} />
-          <Route path="/pGrowth" element={<PlantGrowth />} />
+      <Route path="/cultivationDashboard" element={<CultivationDashboard />} />
+      <Route path="/varietyCrop" element={<VarietyCrop />} />
+      <Route path="/cvForm" element={<CropVarietyForm />} />
+      <Route path="/seedlingDistribution" element={<Seedling />} />
+      <Route path="/schedules" element={<Schedules />} />
+      <Route path="/scheduleForm" element={<ScheduleForm />} />
+      <Route path="/landPreparation" element={<LandPreparation />} />
+      <Route path="/seedlingForm" element={<AddSeedlingForm />} />
+      <Route path="/pGrowth" element={<PlantGrowth />} />
+      <Route path="/pGrowthForm" element={<PlantGrowthForm />} />
 
           {/* buyers */}
-          
           {/* <Route path="/buyer-registration" element={<BuyerRegistrationForm />} /> */}
           {/* <Route path="/register-buyer" element={<BuyerRegistrationForm />} />
           <Route path="/buyert" element={<BuyerTable />} />
@@ -516,22 +567,19 @@ export default function App() {
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/cart" element={<CartPage />} /> 
       <Route path="/MyOrders" element={<MyOrders />} /> 
-
-      
       <Route path="/Bdelivery" element={<BuyerDelivery />} />
       <Route path="/Bdeliverytable" element={<BuyerDeliveryTable />} />
       <Route path="/updateDelivery/:id" element={<UpdateDeliveryTable />} />
 
-      <Route path="/buyerinfo" element={<BuyerInfo />} />
-      <Route path="/buyerinfotable" element={<BuyerInfoTable />} />
-      <Route path="/updateBuyer/:id" element={<UpdateBuyerInfo />} /> 
+          <Route path="/buyerinfo" element={<BuyerInfo />} />
+          <Route path="/buyerinfotable" element={<BuyerInfoTable />} />
+          <Route path="/updateBuyer/:id" element={<UpdateBuyerInfo />} />
 
         <Route path="/create-preorder" element={<BuyerPreOrderForm/> } />
       <Route path="/preorders" element={<BuyerPreOrderTable/>} />
       <Route path="/update-preorder/:id" element={<UpdateBuyerPreOrderRequests/>} />  
 
-      <Route path="/buyerdashboard" element={<BuyerDashboard />} />
-
+          <Route path="/buyerdashboard" element={<BuyerDashboard />} />
 
           {/* page not found & error page */}
           {/* <Route path="/test" element={<Test />} /> */}

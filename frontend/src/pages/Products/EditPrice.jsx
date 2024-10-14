@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Form, Input, Button, notification, InputNumber } from 'antd';
 import Swal from 'sweetalert2';
+import Sidebar from '../../components/Sidebar';
 
 const EditPrice = () => {
   const { id } = useParams();
@@ -72,6 +73,9 @@ const EditPrice = () => {
   };
 
   return (
+
+    <div>
+      <Sidebar className="sidebar" />
     <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
       <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
         <h2 className="mb-6 text-2xl font-bold text-center">Edit Product Price</h2>
@@ -155,6 +159,7 @@ const EditPrice = () => {
             </div>
           </Form.Item>
         </Form>
+        </div>
       </div>
     </div>
   );

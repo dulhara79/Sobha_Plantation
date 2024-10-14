@@ -220,7 +220,7 @@ const HarvestQuality = () => {
   };
   const generatePDF = async () => {
     const doc = new jsPDF();
-
+  
     // Load the logo image
     const logoUrl = "../src/assets/logo.png";
     let logoDataURL;
@@ -229,37 +229,52 @@ const HarvestQuality = () => {
     } catch (error) {
       console.error("Failed to load the logo image:", error);
     }
-
+  
     // Function to draw header, footer, and horizontal line
     const drawHeaderFooter = (data) => {
       const pageWidth = doc.internal.pageSize.width;
       const pageHeight = doc.internal.pageSize.height;
-
+  
+      // Header
+      doc.setFontSize(14);
+      doc.text("Sobha Plantation", 10, 10); // Align left
+  
+      doc.setFontSize(10);
+      doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+      doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+      doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+      doc.text("Contact: 0112 751 757", 10, 30); // Email address line
+      
       // Header with logo
       if (logoDataURL) {
-        doc.addImage(logoDataURL, "PNG", 10, 10, 40, 10); // Adjust position and size
+        doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
       }
-      doc.setFontSize(12);
-      doc.text("Sobha Plantation", 170, 15); // Adjust x, y position
-      doc.line(10, 25, pageWidth - 10, 25); // Line under header
-
+  
+      doc.line(10, 35, pageWidth - 10, 35); // Header line
+  
       // Footer with page number
       doc.setFontSize(10);
-      doc.text(
-        `Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`,
-        pageWidth - 30,
-        pageHeight - 10
-      );
+      doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
     };
-
+  
     // Set the margins for header and footer space
     const marginTop = 30; // space reserved for header
     const marginBottom = 20; // space reserved for footer
-
-    // Title of the report
+  
+    // Title for the report
+    const title = "Quality Report";
     doc.setFontSize(22);
-    doc.text("Quality Report", 50, 35); // Adjust y-coordinate to start below header
-
+    
+    // Calculate the width of the title
+    const titleWidth = doc.getTextWidth(title);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Calculate the x position to center the title
+    const xPosition = (pageWidth - titleWidth) / 2;
+    
+    // Set the title at the calculated center position
+    doc.text(title, xPosition, 48); // Adjust y-coordinate to fit under the header
+  
     const passRate =
       metrics.totalInspections > 0
         ? (metrics.passCount / metrics.totalInspections) * 100
@@ -268,7 +283,7 @@ const HarvestQuality = () => {
       metrics.totalInspections > 0
         ? (metrics.failCount / metrics.totalInspections) * 100
         : 0;
-
+  
     // Define the overview details
     const overviewHeaders = [["Detail", "Value"]];
     const overviewRows = [
@@ -276,7 +291,7 @@ const HarvestQuality = () => {
       ["Pass Rate", `${passRate.toFixed(2)}%`], // Show pass rate in percentage format
       ["Fail Rate", `${failRate.toFixed(2)}%`], // Show fail rate in percentage format
     ];
-
+  
     // Add Overview Details Table
     doc.autoTable({
       startY: marginTop + 20, // Start the first table below the header space
@@ -294,25 +309,37 @@ const HarvestQuality = () => {
       theme: "grid",
       didDrawPage: drawHeaderFooter, // Add header and footer to each page
     });
-
+  
     // Second Table: Quality Control Data
     const columns = [
       { title: "Crop Type", dataKey: "cropType" },
       { title: "Check Date", dataKey: "checkDate" },
       { title: "Quality Status", dataKey: "qualityStatus" },
       { title: "Quality Controller", dataKey: "qualityController" },
+      { title: "Parameters", dataKey: "parameters" },
     ];
-
+  
     // Map the filteredQualityControls data to match the columns
-    const rows = filteredQualityControls.map((qc) => ({
-      cropType: qc.cropType,
-      checkDate: moment(qc.checkDate).format("YYYY-MM-DD"),
-      qualityStatus: qc.qualityStatus,
-      qualityController: qc.qualityController,
-    }));
-
+    const rows = filteredQualityControls.map((qc) => {
+      // Convert parameters to a string representation
+      const params = qc.parameters;
+      const parametersString = `
+        
+        Ripeness: ${params.ripeness || 'N/A'}, 
+        Damage: ${params.damage || 'N/A'}
+      `.trim(); // Trim any extra spaces
+  
+      return {
+        cropType: qc.cropType,
+        checkDate: moment(qc.checkDate).format("YYYY-MM-DD"),
+        qualityStatus: qc.qualityStatus,
+        qualityController: qc.qualityController,
+        parameters: parametersString, // Use the formatted string
+      };
+    });
+  
     let finalY = doc.lastAutoTable.finalY + 10; // Adjust space between tables
-
+  
     doc.autoTable({
       startY: finalY, // Start this table below the first table
       columns: columns,
@@ -329,10 +356,11 @@ const HarvestQuality = () => {
       theme: "striped",
       didDrawPage: drawHeaderFooter,
     });
-
+  
     // Save the PDF
     doc.save("Quality_Report.pdf");
   };
+  
 
   // Handler for "Add Inspection" button
   const handleAddInspection = () => {
@@ -373,7 +401,7 @@ const HarvestQuality = () => {
             </div>
           </nav>
 
-          {/* Breadcrumb and Gallery Button */}
+          
           <div className="flex items-center justify-between mb-5">
             <Breadcrumb
               items={[
@@ -525,6 +553,23 @@ const HarvestQuality = () => {
                 key="qualityController"
                 sorter={true} // Enable sorting
               />
+              <Table.Column
+    title="Parameters"
+    key="parameters"
+    render={(text, record) => {
+        const ripeness = record.parameters?.ripeness || 'N/A';
+        const damage = record.parameters?.damage || 'N/A';
+
+        return (
+            <span>
+                 Ripeness: {ripeness}, Damage: {damage}
+            </span>
+        );
+    }}
+    sorter={true} // Enable sorting
+/>
+
+
               <Table.Column
                 title="Actions"
                 key="actions"

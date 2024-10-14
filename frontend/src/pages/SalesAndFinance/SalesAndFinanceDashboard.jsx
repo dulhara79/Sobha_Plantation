@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; 
 import axios from "axios";
 
 import Header from "../../components/Header";
@@ -8,96 +8,42 @@ import UserGreetingCard from "../../components/Sales_and_Finance/UserGreetingCar
 import FinanceCard from "../../components/Sales_and_Finance/Finance/HomeFinanceCard";
 import SalesCard from "../../components/Sales_and_Finance/Sales/HomeSalesCard";
 
-import { Breadcrumb } from "antd";
-import { HomeOutlined, UserOutlined } from "@ant-design/icons";
-
-// import Notification from "../../components/Sales_and_Finance/Notification";
-// import NotificationMenu from "../../components/Sales_and_Finance/NotificationMenu";
-// import Calendar from "../../components/Sales_and_Finance/Calendar";
-import NewLoadingScreen from '../../components/LoadingDots'
+import NewLoadingScreen from "../../components/LoadingDots";
 
 const FinanceDashboard = () => {
-  // State for Sales and Finance Data
-  const [salesData, setSalesData] = useState({
-    totalSales: 0,
-    mostSellingProduct: "",
-    leastSellingProduct: "",
-  });
-
+  const [loading, setLoading] = useState(true);
   const [financeData, setFinanceData] = useState({
     totalTransactions: 0,
     totalIncome: 0,
     totalExpenses: 0,
   });
 
-  // State for Notifications
-  const [notifications, setNotifications] = useState([]);
-  const [unreadNotifications, setUnreadNotifications] = useState(true);
+  useEffect(() => {
+    // Simulate loading process (e.g., API calls, component mounting)
+    setTimeout(() => {
+      setLoading(false); // Once the components or data are loaded
+    }, 1000); // Adjust the delay as needed
+  }, []);
 
   // Fetch Sales and Finance Data from Database
   useEffect(() => {
-    axios.get("/api/sales").then((response) => {
-      setSalesData(response.data);
-    });
-
     axios.get("/api/finance").then((response) => {
       setFinanceData(response.data);
     });
-
-    // Fetch Notifications
-    axios.get("/api/notifications").then((response) => {
-      setNotifications(response.data);
-    });
   }, []);
 
-  // Mark Notifications as Read
-  const handleNotificationClick = () => {
-    setUnreadNotifications(false);
-    axios.post("/api/notifications/read").then(() => {
-      console.log("Notifications marked as read.");
-    });
-  };
-
-  const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-      // Simulate loading process (e.g., API calls, component mounting)
-      setTimeout(() => {
-        setLoading(false); // Once the components or data are loaded
-      }, 2000); // Adjust the delay as needed
-    }, []);
-  
-    if (loading) return <NewLoadingScreen />;
+  if (loading) return <NewLoadingScreen />;
 
   return (
     <div>
       <Header />
       <Sidebar activePage="/salesAndFinance/"/>
       <div className={`ml-[300px] pt-3`}>
-      <Breadcrumb
-      style={{ margin: "10px 0" }}
-          items={[
-            {
-              href: "/dashboard",
-              title: <HomeOutlined />,
-            },
-            {
-              title: "Sales and Finance",
-            },
-          ]}
-        />
         <NavigationButtons />
         <div className="min-h-screen p-6 bg-gray-100">
-          <UserGreetingCard
-            unreadNotifications={unreadNotifications}
-            handleNotificationClick={handleNotificationClick}
-          />
+          <UserGreetingCard />
           <FinanceCard financeData={financeData} />
-          <SalesCard salesData={salesData} />
-
-          {/* <Calendar /> */}
-          {/* <NotificationMenu /> */}
-          {/* <Notification /> */}
+          <SalesCard />
         </div>
       </div>
     </div>

@@ -5,7 +5,8 @@ const {
   getSalesAnalyticsById,
   updateSalesAnalytics,
   deleteSalesAnalytics,
-  getWeeklySalesSummary
+  getWeeklySalesSummary,
+  getMonthlySalesSummary
 } = require("../../controllers/SalesAndFinance/salesAnalyticsController");
 const { validate } = require("../../middleware/SalesAndFinance/validateMiddleware");
 const { salesAnalyticsSchema } = require("../../validations/SalesAndFinance/salesAnalyticsValidation");
@@ -17,17 +18,7 @@ router.get("/", getAllSalesAnalytics);
 router.get("/:id", getSalesAnalyticsById);
 router.put("/:id", updateSalesAnalytics);
 router.delete("/:id", deleteSalesAnalytics);
-
-
-// router
-//   .route("/")
-//   .get(getAllSalesAnalytics)
-//   .post(validate(salesAnalyticsSchema), createSalesAnalytics);
-
-// router
-//   .route("/:id")
-//   .get(getSalesAnalyticsById)
-//   .put(validate(salesAnalyticsSchema), updateSalesAnalytics)
-//   .delete(deleteSalesAnalytics);
+// router.get("/weekly", getWeeklySalesSummary);
+router.get("/monthly-summary", getMonthlySalesSummary);
 
 module.exports = router;
