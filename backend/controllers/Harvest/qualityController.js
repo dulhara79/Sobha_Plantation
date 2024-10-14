@@ -1,14 +1,25 @@
 const QualityControl = require("../../models/Harvest/Quality.js");
 
+// Controller for creating a quality control report
 exports.createQualityControl = async (req, res) => {
   try {
     console.log(req.body); // Log the incoming request body for debugging
 
-    const { cropType, checkDate, qualityStatus, qualityController } = req.body;
+    const { cropType, checkDate, qualityStatus, qualityController, parameters } = req.body;
 
-    // Basic validation
+    // Basic validation: Ensure all required fields are provided
     if (!cropType || !checkDate || !qualityStatus || qualityController === undefined) {
       return res.status(400).json({ error: "All fields are required" });
+    }
+
+    // Validate cropType and parameters
+    const validCrops = ['Coconut', 'Papaya', 'Banana', 'Pineapple', 'Pepper'];
+    if (!validCrops.includes(cropType)) {
+      return res.status(400).json({ error: `Invalid crop type. Allowed types: ${validCrops.join(", ")}` });
+    }
+
+    if (['Papaya', 'Banana', 'Pineapple'].includes(cropType) && (!parameters || !parameters.ripeness)) {
+      return res.status(400).json({ error: `Ripeness is required for ${cropType}` });
     }
 
     // Create new inspection report
@@ -17,20 +28,21 @@ exports.createQualityControl = async (req, res) => {
       checkDate,
       qualityStatus,
       qualityController,
+      parameters: {
+        ripeness: parameters?.ripeness,
+        damage: parameters?.damage || false, // Default to false if not provided
+      }
     });
 
     await newInspectionReport.save();
-    res.status(201).json({ message: "Inspection Report added successfully" });
+    res.status(201).json({ message: "Inspection Report added successfully", report: newInspectionReport });
   } catch (error) {
     console.error("Server Error:", error);
     res.status(500).json({ error: "Server error", details: error.message });
   }
 };
 
-
-
-
-// Controller for getting all inspection reports
+// Controller for getting all quality control reports
 exports.getAllQualityControl = async (req, res) => {
   try {
     const reports = await QualityControl.find({});
@@ -45,7 +57,7 @@ exports.getAllQualityControl = async (req, res) => {
   }
 };
 
-// Controller for getting a single inspection report by ID
+// Controller for getting a single quality control report by ID
 exports.getQualityControlById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -65,17 +77,39 @@ exports.getQualityControlById = async (req, res) => {
 // Controller for updating an inspection report
 exports.updateQualityControl = async (req, res) => {
   try {
-    const { cropType, checkDate, qualityStatus, qualityController } = req.body;
+    const { cropType, checkDate, qualityStatus, qualityController, parameters } = req.body;
 
+    // Validate required fields
     if (!cropType || !checkDate || !qualityStatus || qualityController === undefined) {
       return res.status(400).send({
         message: "Send all required fields: cropType, checkDate, qualityStatus, qualityController",
       });
     }
 
+    // Validate cropType and parameters
+    const validCrops = ['Coconut', 'Papaya', 'Banana', 'Pineapple', 'Pepper'];
+    if (!validCrops.includes(cropType)) {
+      return res.status(400).json({ error: `Invalid crop type. Allowed types: ${validCrops.join(", ")}` });
+    }
+
+    if (['Papaya', 'Banana', 'Pineapple'].includes(cropType) && (!parameters || !parameters.ripeness)) {
+      return res.status(400).json({ error: `Ripeness is required for ${cropType}` });
+    }
+
     const { id } = req.params;
 
-    const report = await QualityControl.findByIdAndUpdate(id, req.body, { new: true });
+    // Update the report
+    const report = await QualityControl.findByIdAndUpdate(id, {
+      cropType,
+      checkDate,
+      qualityStatus,
+      qualityController,
+      parameters: {
+        
+        ripeness: parameters?.ripeness,
+        damage: parameters?.damage || false,
+      }
+    }, { new: true });
 
     if (!report) {
       return res.status(404).json({ message: "Inspection report not found" });
