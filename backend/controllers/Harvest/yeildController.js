@@ -4,12 +4,12 @@ const YieldRecords = require('../../models/Harvest/Yield'); // Ensure this path 
 // Controller for creating a new Yield Record
 exports.createYieldRecords = async (req, res) => {
     try {
-        const { harvestdate, fieldNumber, cropType, quantity, treesPicked, storageLocation } = req.body;
+        const { harvestdate, fieldNumber, cropType, quantity,unit, treesPicked, storageLocation } = req.body;
 
         // Validate required fields
-        if (!harvestdate || !fieldNumber || !cropType || !quantity || !treesPicked || !storageLocation) {
+        if (!harvestdate || !fieldNumber || !cropType || !quantity || !unit || !treesPicked || !storageLocation) {
             return res.status(400).json({
-                message: 'Please provide all required fields: harvestdate, fieldNumber, cropType, quantity, treesPicked, storageLocation',
+                message: 'Please provide all required fields: harvestdate, fieldNumber, cropType, quantity,unit, treesPicked, storageLocation',
             });
         }
 
@@ -19,6 +19,7 @@ exports.createYieldRecords = async (req, res) => {
             fieldNumber,
             cropType,
             quantity,
+            unit,
             treesPicked,
             storageLocation,
         });
@@ -73,7 +74,7 @@ exports.getYieldRecordsById = async (req, res) => {
 exports.updateYieldRecords = async (req, res) => {
     try {
         const { id } = req.params;
-        const { harvestdate, fieldNumber, cropType, quantity, treesPicked, storageLocation } = req.body;
+        const { harvestdate, fieldNumber, cropType, quantity,unit, treesPicked, storageLocation } = req.body;
 
         // Check for a valid MongoDB ObjectId
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -81,7 +82,7 @@ exports.updateYieldRecords = async (req, res) => {
         }
 
         // Ensure all required fields are present
-        if (!harvestdate || !fieldNumber || !cropType || !quantity || !treesPicked || !storageLocation) {
+        if (!harvestdate || !fieldNumber || !cropType || !quantity || !unit || !treesPicked || !storageLocation) {
             return res.status(400).json({
                 message: 'Please provide all required fields: harvestdate, fieldNumber, cropType, quantity, treesPicked, storageLocation',
             });
@@ -90,7 +91,7 @@ exports.updateYieldRecords = async (req, res) => {
         // Update the record
         const result = await YieldRecords.findByIdAndUpdate(
             id,
-            { harvestdate, fieldNumber, cropType, quantity, treesPicked, storageLocation },
+            { harvestdate, fieldNumber, cropType, quantity,unit, treesPicked, storageLocation },
             { new: true, runValidators: true }
         );
 
@@ -123,3 +124,5 @@ exports.deleteYieldRecords = async (req, res) => {
         res.status(500).json({ message: 'Failed to delete record.' });
     }
 };
+
+

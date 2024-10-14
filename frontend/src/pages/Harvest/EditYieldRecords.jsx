@@ -149,34 +149,55 @@ const EditYieldRecord = () => {
               </Form.Item>
 
               <Form.Item
-                label="Quantity"
-                name="quantity"
-                rules={[
-                  { required: true, message: "Please enter the quantity!" },
-                  {
-                    validator: (_, value) => {
-                      if (value && value >= 1) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(
-                        new Error("Quantity must be at least 1!")
-                      );
-                    },
-                  },
-                ]}
-              >
-                <InputNumber
-                  placeholder="Enter quantity"
-                  min={1} // Minimum value set to 1
-                  style={{ width: "100%" }} // Full width input
-                  onPaste={(e) => e.preventDefault()} // Prevent pasting
-                  onKeyPress={(e) => {
-                    if (!/[0-9]/.test(e.key)) {
-                      e.preventDefault(); // Prevent non-numeric input
-                    }
-                  }}
-                />
-              </Form.Item>
+  label="Quantity"
+  required
+>
+  <Input.Group compact>
+    <Form.Item
+      name="quantity"
+      noStyle
+      rules={[{ required: true, message: "Quantity is required!" }]}
+    >
+      <InputNumber
+        placeholder="Quantity Picked"
+        min={1} // Minimum value set to 1
+        onChange={(value) => handleFieldChange("quantity", value)} // Update field value on change
+        style={{ width: "70%" }} // Adjust width for InputNumber
+        parser={(value) => value.replace(/\D/g, "")} // Ensure only numbers are entered
+        onKeyPress={(e) => {
+          if (!/[0-9]/.test(e.key)) {
+            e.preventDefault(); // Prevent non-numeric input
+          }
+        }}
+        onPaste={(e) => e.preventDefault()} // Prevent pasting
+        onBlur={(e) => {
+          const value = e.target.value;
+          // Clear input if it's invalid on blur (less than 1)
+          if (value && value < 1) {
+            form.setFieldsValue({ quantity: undefined });
+          }
+        }}
+      />
+    </Form.Item>
+    
+    <Form.Item
+      name="unit"
+      noStyle
+      rules={[{ required: true, message: "Please select a unit!" }]}
+    >
+      <Select
+        placeholder="Unit"
+        style={{ width: "30%" }} // Adjust width for the Select
+        onChange={(value) => handleFieldChange("unit", value)} // Update field value on change
+      >
+        <Select.Option value="Kg">Kg</Select.Option>
+        <Select.Option value="MetricTon">Metric Ton</Select.Option>
+      </Select>
+    </Form.Item>
+  </Input.Group>
+</Form.Item>
+
+
 
               <Form.Item
                 label="Trees Picked"

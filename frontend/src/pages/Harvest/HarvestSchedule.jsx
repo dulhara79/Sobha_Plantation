@@ -19,7 +19,7 @@ const menuItems = [
   { name: "HOME", path: "/harvest/harvestdashboard" },
   { name: "SCHEDULE", path: "/harvest/harvest-schedule" },
   { name: "YIELD", path: "/harvest/yield" },
-  { name: "QUALITYCHECKING", path: "/harvest/quality" },
+  { name: "QUALITY CHECKING", path: "/harvest/quality" },
   // { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist" },
 ];
 
@@ -107,26 +107,45 @@ const HarvestSchedule = () => {
     const drawHeaderFooter = (data) => {
       const pageWidth = doc.internal.pageSize.width;
       const pageHeight = doc.internal.pageSize.height;
-
-      // Header
-      if (logoDataURL) {
-        doc.addImage(logoDataURL, "PNG", 10, 10, 40, 15); // Adjust position and size
-      }
-      doc.setFontSize(12);
-      doc.text("Sobha Plantation", 170, 19); // Adjust x, y position
-      doc.line(10, 25, pageWidth - 10, 25); // Line under header
-
-      // Footer
+         
+      //Header
+      doc.setFontSize(14);
+      doc.text("Sobha Plantation", 10, 10); // Align left
+  
       doc.setFontSize(10);
-      const currentPage = `Page ${
-        data.pageNumber
-      } of ${doc.internal.getNumberOfPages()}`;
-      doc.text(currentPage, pageWidth - 30, pageHeight - 10); // Page number in footer
+      doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+      doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+      doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+      doc.text("Contact: 0112 751 757", 10, 30); // Email address line
+       // Header with logo
+       if (logoDataURL) {
+        doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
+      }
+  
+      doc.line(10, 35, pageWidth - 10, 35); // Header line
+  
+      // Footer with page number
+      doc.setFontSize(10);
+      doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
     };
-
+  
+    // Set the margins for header and footer space
+    const marginTop = 35; // space reserved for header
+    const marginBottom = 20; // space reserved for footer
+  
     // Title for the report
+    const title = "Harvest Schedule Report";
     doc.setFontSize(22);
-    doc.text("Harvest Schedule Report", 70, 40); // Adjusted for placement below header
+    
+    // Calculate the width of the title
+    const titleWidth = doc.getTextWidth(title);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Calculate the x position to center the title
+    const xPosition = (pageWidth - titleWidth) / 2;
+    
+    // Set the title at the calculated center position
+    doc.text(title, xPosition, 48); // Adjust y-coordinate to fit under the header
 
     // Define table columns and rows
     const tableColumn = [

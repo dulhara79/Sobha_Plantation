@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
 import Swal from 'sweetalert2';
+import Sidebar from '../../components/Sidebar';
 
 const { Option } = Select;
 
@@ -112,6 +113,9 @@ const handlePreventPaste = (e) => {
 };
 
   return (
+
+    <div>
+      <Sidebar className="sidebar" />
     <div style={{ padding: '24px', backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '24px', color: '#1D6660' }}>Edit Labeling Details</h2>
       <Form
@@ -229,6 +233,7 @@ const handlePreventPaste = (e) => {
           </Row>
         </Form.Item>
       </Form>
+    </div>
     </div>
   );
 };

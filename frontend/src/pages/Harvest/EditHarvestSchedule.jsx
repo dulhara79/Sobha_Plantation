@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Button, Form, Input, DatePicker, Select, notification } from "antd";
+import React, { useEffect } from "react";
+import { Button, Form, Input, DatePicker, Select, TimePicker, notification } from "antd";
 import axios from "axios";
 import moment from "moment";
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,26 +12,22 @@ const { Option } = Select;
 const EditHarvestSchedule = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const { id } = useParams(); // Get the record ID from the route parameters
+  const { id } = useParams();
 
   const disablePastAndFutureDates = (current) => {
     return current && (current < moment().startOf("day") || current > moment().endOf("year"));
   };
 
-  // Fetch harvest schedule data
   useEffect(() => {
     const fetchRecord = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/harvest/${id}`
-        );
+        const response = await axios.get(`http://localhost:5000/api/harvest/${id}`);
         const data = response.data;
-
         form.setFieldsValue({
           cropType: data.cropType,
-          harvestdate: moment(data.harvestDate), // Ensure field name matches backend
-          startTime: data.startTime,
-          endTime: data.endTime,
+          harvestDate: moment(data.harvestDate),
+          startTime: moment(data.startTime, "HH:mm"),
+          endTime: moment(data.endTime, "HH:mm"),
           fieldNumber: data.fieldNumber,
           numberOfWorkers: data.numberOfWorkers,
         });
@@ -42,7 +38,6 @@ const EditHarvestSchedule = () => {
     fetchRecord();
   }, [id, form]);
 
-  // Handle form submission
   const handleSubmit = async (values) => {
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -57,37 +52,33 @@ const EditHarvestSchedule = () => {
       try {
         const payload = {
           cropType: values.cropType,
-          harvestDate: values.harvestdate.format("YYYY-MM-DD"), // Ensure this matches backend
-          startTime: values.startTime,
-          endTime: values.endTime,
+          harvestDate: values.harvestDate.format("YYYY-MM-DD"),
+          startTime: values.startTime.format("HH:mm"),
+          endTime: values.endTime.format("HH:mm"),
           fieldNumber: values.fieldNumber,
           numberOfWorkers: values.numberOfWorkers,
         };
 
-        const response = await axios.put(
-          `http://localhost:5000/api/harvest/${id}`,
-          payload
-        );
+        await axios.put(`http://localhost:5000/api/harvest/${id}`, payload);
 
-        Swal.fire(
-          "Updated!",
-          "The harvest schedule has been updated.",
-          "success"
-        );
-        navigate("/harvest/harvest-schedule"); // Redirect after successful update
+        Swal.fire("Updated!", "The harvest schedule has been updated.", "success");
+        navigate("/harvest/harvest-schedule");
       } catch (error) {
         console.error("Failed to update harvest:", error.response?.data);
-        Swal.fire(
-          "Error",
-          `Failed to update harvest. ${
-            error.response?.data?.message || "Please try again."
-          }`,
-          "error"
-        );
+        Swal.fire("Error", `Failed to update harvest. ${error.response?.data?.message || "Please try again."}`, "error");
       }
     } else {
       Swal.fire("Cancelled", "The update was cancelled", "info");
     }
+  };
+
+  // Function to check if the time is within valid range
+  const validateTimeRange = (time) => {
+    if (time) {
+      const hour = time.hour();
+      return hour >= 8 && hour <= 18;
+    }
+    return false;
   };
 
   return (
@@ -98,18 +89,15 @@ const EditHarvestSchedule = () => {
 
         <div className="flex items-center justify-center min-h-screen p-4 bg-gray-100">
           <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-            <h2 className="mb-6 text-2xl font-bold text-center">
-              Edit Harvest Schedule
-            </h2>
+            <h2 className="mb-6 text-2xl font-bold text-center">Edit Harvest Schedule</h2>
             <Form form={form} onFinish={handleSubmit} layout="vertical">
+              {/* Crop Type */}
               <Form.Item
                 label="Crop Type"
                 name="cropType"
-                rules={[
-                  { required: true, message: "Please select a crop type!" },
-                ]}
+                rules={[{ required: true, message: "Please select a crop type!" }]}
               >
-                <Select placeholder="Select a crop type">
+                <Select placeholder="Select a crop type" style={{ width: "100%" }}>
                   <Option value="Coconut">Coconut</Option>
                   <Option value="Banana">Banana</Option>
                   <Option value="Pepper">Pepper</Option>
@@ -118,109 +106,128 @@ const EditHarvestSchedule = () => {
                 </Select>
               </Form.Item>
 
+              {/* Harvest Date */}
               <Form.Item
                 label="Harvest Date"
-                name="harvestdate"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select the harvest date!",
-                  },
-                ]}
+                name="harvestDate"
+                rules={[{ required: true, message: "Please select the harvest date!" }]}
               >
                 <DatePicker
                   format="YYYY-MM-DD"
                   disabledDate={disablePastAndFutureDates}
+                  style={{ width: "100%" }}
+                  inputReadOnly
                 />
               </Form.Item>
-
               <Form.Item
-                label="Start Time"
-                name="startTime"
-                rules={[
-                  { required: true, message: "Please enter the Start Time!" },
-                ]}
-              >
-                <Input type="time" placeholder="Enter Start Time" />
-              </Form.Item>
+  label="Start Time"
+  name="startTime"
+  rules={[
+    { required: true, message: "Please select the start time!" },
+    {
+      validator(_, value) {
+        if (!validateTimeRange(value)) {
+          return Promise.reject(new Error("Start time must be between 08:00 and 18:00!"));
+        }
+        return Promise.resolve();
+      },
+    },
+  ]}
+>
+  <TimePicker
+    format="HH:mm"
+    style={{ width: "100%" }}
+    inputReadOnly
+    onChange={(time) => {
+      form.setFieldsValue({ startTime: time });
+    }}
+    disabledHours={() => {
+      const hours = [];
+      for (let i = 0; i < 24; i++) {
+        if (i < 8 || i > 18) {
+          hours.push(i);
+        }
+      }
+      return hours;
+    }}
+  />
+</Form.Item>
 
-              <Form.Item
-                label="End Time"
-                name="endTime"
-                rules={[
-                  { required: true, message: "Please enter End Time!" },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      if (
-                        !value ||
-                        moment(value, "HH:mm").isAfter(
-                          moment(getFieldValue("startTime"), "HH:mm")
-                        )
-                      ) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(
-                        new Error("End time must be after Start Time!")
-                      );
-                    },
-                  }),
-                ]}
-              >
-                <Input type="time" placeholder="Enter End Time" />
-              </Form.Item>
+<Form.Item
+  label="End Time"
+  name="endTime"
+  rules={[
+    { required: true, message: "Please select the end time!" },
+    ({ getFieldValue }) => ({
+      validator(_, value) {
+        const startTime = getFieldValue("startTime");
+        if (!value || (startTime && value.isBefore(startTime.clone().add(1, "hour")))) {
+          return Promise.reject(new Error("End time must be at least 1 hour after the start time!"));
+        }
+        return Promise.resolve();
+      },
+    }),
+    {
+      validator(_, value) {
+        if (!validateTimeRange(value)) {
+          return Promise.reject(new Error("End time must be between 08:00 and 18:00!"));
+        }
+        return Promise.resolve();
+      },
+    },
+  ]}
+>
+  <TimePicker
+    format="HH:mm"
+    style={{ width: "100%" }}
+    inputReadOnly
+    onChange={(time) => {
+      form.setFieldsValue({ endTime: time });
+    }}
+    disabledHours={() => {
+      const startTime = form.getFieldValue("startTime");
+      const hours = [];
+      if (startTime) {
+        const startHour = startTime.hour();
+        for (let i = 0; i < 24; i++) {
+          if (i <= startHour || i < 8 || i > 18) {
+            hours.push(i);
+          }
+        }
+      }
+      return hours;
+    }}
+  />
+</Form.Item>
 
+
+              {/* Field Number */}
               <Form.Item
                 label="Field Number"
                 name="fieldNumber"
-                rules={[
-                  { required: true, message: "Please enter the Field Number!" },
-                ]}
+                rules={[{ required: true, message: "Please select a field number!" }]}
               >
-                <Select placeholder="Select a field number">
+                <Select placeholder="Select a field number" style={{ width: "100%" }}>
                   <Option value="AA1">AA1</Option>
                   <Option value="BB1">BB1</Option>
                   <Option value="CC1">CC1</Option>
                   <Option value="DD1">DD1</Option>
                 </Select>
               </Form.Item>
+
+              {/* Number of Workers */}
               <Form.Item
                 label="Number of Workers"
                 name="numberOfWorkers"
-                rules={[
-                  { required: true, message: "Number of workers is required!" },
-                  {
-                    pattern: /^\d+$/,
-                    message: "Number of workers must be numeric",
-                  },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      const parsedValue = parseInt(value, 10);
-                      if (!value || (parsedValue >= 1 && parsedValue <= 40)) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(
-                        new Error("Number of workers must be between 1 and 40!")
-                      );
-                    },
-                  }),
-                ]}
+                rules={[{ required: true, message: "Please specify the number of workers!" }]}
               >
-                <Input
-                  type="number"
-                  min={1}
-                  placeholder="Enter Number of Workers"
-                  onPaste={(e) => e.preventDefault()} // Prevent pasting
-                  onKeyPress={(e) => {
-                    if (!/[0-9]/.test(e.key)) {
-                      e.preventDefault(); // Prevent non-numeric input
-                    }
-                  }}
-                />
+                <Input type="number" placeholder="Enter number of workers" min={1} />
               </Form.Item>
 
+              {/* Submit Button */}
               <Form.Item>
-                <Button type="primary" htmlType="submit">
-                  Update Record
+                <Button type="primary" htmlType="submit" className="w-full">
+                  Update Schedule
                 </Button>
               </Form.Item>
             </Form>
