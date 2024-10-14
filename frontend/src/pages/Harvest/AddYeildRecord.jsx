@@ -17,21 +17,19 @@ const AddSchedule = () => {
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
   const fields = [
+    "cropType",
     "harvestdate",
     "fieldNumber",
-    "cropType",
     "quantity",
     "treesPicked",
     "storageLocation",
   ];
 
   const disableDateRange = (current) => {
-    const today = moment().startOf("day");
-    const pastWeek = moment().subtract(7, "days").startOf("day");
-  
-    // Disable dates that are before the past week or after today
-    return current && (current < pastWeek || current > today);
+    const targetDate = moment("2024-10-10"); // Only allow the specific date
+    return !current || !current.isSame(targetDate, 'day');
   };
+
 
   const validateQuantity = (_, value) => {
     if (value >= 1) {
@@ -139,6 +137,21 @@ const AddSchedule = () => {
               layout="vertical"
               nFieldsChange={(_, allFields) => handleFieldsError(allFields)}
             >
+              <Form.Item
+                label="Crop Type"
+                name="cropType"
+                rules={[
+                  { required: true, message: "Please select a crop type!" },
+                ]}
+              >
+                <Select
+                  placeholder="Select a crop type"
+                  onChange={(value) => handleFieldChange("cropType", value)}
+                  style={{ width: "100%" }}
+                >
+                  <Option value="Coconut">Coconut</Option>
+                </Select>
+              </Form.Item>
               {/* Form Item for Harvest Date */}
            
 <Form.Item
@@ -151,6 +164,7 @@ const AddSchedule = () => {
   <DatePicker
     format="YYYY-MM-DD"
     disabledDate={disableDateRange} // Apply the new date range validation
+    disabled={!formData.cropType}
     onChange={(date) => handleFieldChange("harvestdate", date)}
     style={{ width: "100%" }}
     inputReadOnly
@@ -173,27 +187,6 @@ const AddSchedule = () => {
                   <Option value="BB1">BB1</Option>
                   <Option value="CC1">CC1</Option>
                   <Option value="DD1">DD1</Option>
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                label="Crop Type"
-                name="cropType"
-                rules={[
-                  { required: true, message: "Please select a crop type!" },
-                ]}
-              >
-                <Select
-                  placeholder="Select a crop type"
-                  onChange={(value) => handleFieldChange("cropType", value)}
-                  disabled={!formData.harvestdate || !formData.fieldNumber}
-                  style={{ width: "100%" }}
-                >
-                  <Option value="Coconut">Coconut</Option>
-                  <Option value="Banana">Banana</Option>
-                  <Option value="Pepper">Pepper</Option>
-                  <Option value="Papaya">Papaya</Option>
-                  <Option value="Pineapple">Pineapple</Option>
                 </Select>
               </Form.Item>
 
