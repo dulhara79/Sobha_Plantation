@@ -357,7 +357,12 @@ return (
           <Button
             type="primary"
             icon={<FilePdfOutlined />}
-            style={{ marginRight: '8px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
+            style={{
+              backgroundColor: '#22c55e', // bg-green-500
+              borderColor: '#22c55e',
+            }}
+            className="px-4 py-2 text-white rounded hover:bg-green-600 hover:border-green-600"
+            // style={{ marginRight: '8px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
             onClick={generatePDF}
           >
             Generate Report
@@ -366,7 +371,12 @@ return (
             type="primary"
             icon={<PlusOutlined />}
             onClick={() => navigate('/products/addPackage')} // Navigates to the add package page
-            style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
+            // style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
+            style={{
+              backgroundColor: '#22c55e', // bg-green-500
+              borderColor: '#22c55e',
+            }}
+            className="px-4 py-2 text-white rounded hover:bg-green-600 hover:border-green-600"
           >
             Add Packaging
           </Button>

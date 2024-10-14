@@ -10,6 +10,7 @@ import { HomeOutlined } from "@ant-design/icons";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import DateTimeDisplay from "../../components/Harvest/DateTimeDisplay";
 import Weather from "../../components/WeatherInf";
+import LoadingDot from '../../components/LoadingDots'; 
 
 const menuItems = [
   { name: "HOME", path: "/harvest/harvestdashboard" },
@@ -23,21 +24,29 @@ const HarvestDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [upcomingHarvests, setUpcomingHarvests] = useState([]);
   const [expiredHarvests, setExpiredHarvests] = useState([]);
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate(); 
   const location = useLocation();
   const activePage = location.pathname;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+
+        setTimeout(async () => {
+          
         const harvestResponse = await axios.get(
           "http://localhost:5000/api/harvest"
         );
         classifyHarvests(harvestResponse.data.data);
+        
+
+        setLoading(false); // Stop loading after data fetch
+        }, 500); // Adjust the delay as needed
       } catch (error) {
         console.error("Error fetching data:", error);
-      } finally {
         setLoading(false);
+      } finally {
+  
       }
     };
 
@@ -68,6 +77,8 @@ const HarvestDashboard = () => {
     navigate(-1); // Navigate back to the previous page
   }, [navigate]);
 
+  if (loading) return <LoadingDot />;
+  
   return (
     <div>
       <Header />
@@ -121,8 +132,8 @@ const HarvestDashboard = () => {
             <Weather />
           </div>
 
-          <div className="flex flex-row justify-between mt-5 gap-4">
-            <div className="flex-1 flex flex-col items-center justify-center p-3 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-green-400 to-green-600 hover:scale-105">
+          <div className="flex flex-row justify-between gap-4 mt-5">
+            <div className="flex flex-col items-center justify-center flex-1 p-3 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-green-400 to-green-600 hover:scale-105">
               <h3 className="text-xl text-center">Upcoming Harvests</h3>
               <ul>
                 {upcomingHarvests.map((harvest, index) => (
@@ -133,7 +144,7 @@ const HarvestDashboard = () => {
                 ))}
               </ul>
             </div>
-            <div className="flex-1 flex flex-col items-center justify-center p-3 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-red-400 to-red-600 hover:scale-105">
+            <div className="flex flex-col items-center justify-center flex-1 p-3 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-red-400 to-red-600 hover:scale-105">
               <h3 className="text-xl text-center">Expired Harvests</h3>
               {expiredHarvests.length > 0 ? (
                 <ul className="w-full">
