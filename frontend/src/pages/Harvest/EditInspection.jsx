@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Form, Input, DatePicker, Select, Button, notification } from "antd";
+import { Form, Input, DatePicker, Select, Button, notification, Row, Col } from "antd";
 import moment from "moment";
 import Swal from "sweetalert2";
 import Sidebar from "../../components/Sidebar";
@@ -26,60 +26,85 @@ const EditInspection = () => {
   const disablePastDates = (current) =>
     current && current < moment().startOf("day");
 
-  // Validate inspector name
-  const validatequalityController = (_, value) => {
+  // Validation function for Quality Controller
+  const validateQualityController = (_, value) => {
     if (!value) {
-      return Promise.reject(new Error("Please enter the quality Controller!"));
+      return Promise.reject(new Error("Please enter the Quality Controller!"));
     }
-    if (!/^[A-Z][a-z\s]*$/.test(value)) {
+
+    const nameRegex = /^[A-Z][a-z]*(?:\s[A-Z][a-z]*)?$/;
+
+    if (!nameRegex.test(value)) {
       return Promise.reject(
         new Error(
-          "Quality Controller must start with an uppercase letter and only contain lowercase letters and spaces."
+          "Each name part must start with a capital letter, followed by lowercase letters, and only two words are allowed."
         )
       );
     }
+
+    if (value.length > 25) {
+      return Promise.reject(new Error("Name cannot exceed 25 characters!"));
+    }
+
     return Promise.resolve();
   };
 
-  const handlequalityControllerChange = (e) => {
-    const inputValue = e.target.value;
+  // Handle input change for Quality Controller
+  const handleQualityControllerChange = (e) => {
+    let inputValue = e.target.value;
 
-    // Only allow the first letter to be uppercase, and prevent lowercase as the first character
-    let formattedValue = inputValue;
+    // Step 1: Remove any extra spaces
+    inputValue = inputValue.replace(/\s+/g, ' ');
 
-    // If the first character is lowercase, prevent it from being typed
-    if (formattedValue.length === 1 && /[a-z]/.test(formattedValue)) {
-      formattedValue = ""; // Disable lowercase first letter
-    } else {
-      // After the first letter, allow letters and spaces, but convert everything after the first letter to lowercase
-      formattedValue = formattedValue
-        .replace(/[^a-zA-Z\s]/g, "") // Remove non-letter characters and numbers
-        .replace(/^([a-zA-Z])/, (m) => m.toUpperCase()) // Ensure first letter is uppercase
-        .replace(/(?<=^[A-Z])([A-Z]+)/g, (m) => m.toLowerCase()); // Convert any remaining uppercase letters to lowercase
+    // Step 2: Ensure only two words are allowed
+    const words = inputValue.split(' ');
+
+    if (words.length > 2) {
+      inputValue = words.slice(0, 2).join(' '); // Allow only two words
     }
+
+    // Step 3: Format the first letter of each word to be capitalized
+    inputValue = inputValue
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      qualityController: formattedValue,
+      qualityController: inputValue,
     }));
 
-    // Update the form field value
-    form.setFieldsValue({ qualityController: formattedValue });
+    form.setFieldsValue({ qualityController: inputValue });
   };
 
   const handleFieldChange = (name, value) => {
-    const currentIndex = fields.indexOf(name);
-    if (currentIndex > 0) {
-      const previousField = fields[currentIndex - 1];
-      if (errors[previousField] || !formData[previousField]) {
-        return; // Block current field if previous has errors or is empty
-      }
+    if (name === "qualityStatus") {
+      // When qualityStatus changes, set the ripeness and damage based on the status
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+        parameters: {
+          ...prevFormData.parameters, // Ensure other parameters stay the same
+          ripeness: value === "Passed" ? "Ripe" : undefined,
+          damage: value === "Passed" ? "None" : undefined,
+        },
+      }));
+  
+      // Update form fields as well for ripeness and damage
+      form.setFieldsValue({
+        parameters: {
+          ripeness: value === "Passed" ? "Ripe" : undefined,
+          damage: value === "Passed" ? "None" : undefined,
+        },
+      });
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
     }
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
   };
+  
 
   const handleFieldsError = (errorInfo) => {
     const newErrors = errorInfo.reduce((acc, { name, errors }) => {
@@ -100,6 +125,12 @@ const EditInspection = () => {
           ...data,
           checkDate: data.checkDate ? moment(data.checkDate) : null,
         });
+        // Set formData based on fetched data
+        setFormData({
+          ...data,
+          checkDate: data.checkDate ? moment(data.checkDate) : null,
+          parameters: data.parameters || {},
+        });
       } catch (error) {
         notification.error({
           message: "Error",
@@ -112,22 +143,44 @@ const EditInspection = () => {
   }, [id, form]);
 
   const handleSubmit = async (values) => {
-    try {
-      await axios.put(`http://localhost:5000/api/quality/${id}`, {
-        ...values,
-        checkDate: values.checkDate ? values.checkDate.toISOString() : null,
-      });
-      Swal.fire(
-        "Success",
-        "Inspection report updated successfully!",
-        "success"
-      );
-      navigate("/harvest/quality");
-    } catch (error) {
-      notification.error({
-        message: "Error",
-        description: "Error updating inspection report",
-      });
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to update the Inspection report?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, update it!",
+      cancelButtonText: "No, cancel!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const payload = {
+          ...values,
+          checkDate: values.checkDate
+            ? moment(values.checkDate).toISOString()
+            : null,
+        };
+
+        await axios.put(`http://localhost:5000/api/quality/${id}`, payload);
+
+        notification.success({
+          message: "Success",
+          description: "Inspection report updated successfully!",
+        });
+
+        navigate("/harvest/quality");
+      } catch (error) {
+        console.error("Failed to update Inspection report:", error);
+
+        notification.error({
+          message: "Error",
+          description: `Failed to update Inspection report. ${
+            error.response?.data?.message || "Please try again."
+          }`,
+        });
+      }
+    } else {
+      Swal.fire("Cancelled", "The update was cancelled", "info");
     }
   };
 
@@ -146,7 +199,7 @@ const EditInspection = () => {
               className="mb-6 text-2xl font-bold text-center"
               style={{ color: "#1D6660" }}
             >
-              Edit Inspection Report
+              Edit Quality Inspection 
             </h2>
             <Form
               form={form}
@@ -157,95 +210,129 @@ const EditInspection = () => {
               <Form.Item
                 label="Crop Type"
                 name="cropType"
-                rules={[
-                  { required: true, message: "Please select a Crop Type!" },
-                ]}
+                rules={[{ required: true, message: "Please select a Crop Type!" }]}
               >
                 <Select
                   placeholder="Select a Crop Type"
                   onChange={(value) => handleFieldChange("cropType", value)}
                   style={{ width: "100%" }}
                 >
-                  <Option value="coconut">Coconut</Option>
-                  <Option value="banana">Banana</Option>
-                  <Option value="papaya">Papaya</Option>
-                  <Option value="pineapple">Pineapple</Option>
-                  <Option value="pepper">Pepper</Option>
+                  <Option value="Coconut">Coconut</Option>
+                  <Option value="Banana">Banana</Option>
+                  <Option value="Papaya">Papaya</Option>
+                  <Option value="Pineapple">Pineapple</Option>
+                  <Option value="Pepper">Pepper</Option>
                 </Select>
               </Form.Item>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    label="Check Date"
+                    name="checkDate"
+                    rules={[{ required: true, message: "Please select the check date!" }]}
+                  >
+                    <DatePicker
+                      format="YYYY-MM-DD"
+                      disabledDate={(current) => {
+                        const today = moment().startOf("day");
+                        const sevenDaysAgo = today.clone().subtract(7, "days");
+                        return current && (current > today || current < sevenDaysAgo);
+                      }}
+                      onChange={(date) => handleFieldChange("checkDate", date)}
+                      style={{ width: "100%" }}
+                      inputReadOnly
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    name="qualityStatus"
+                    label="Quality Status"
+                    rules={[{ required: true, message: "Please select the quality status!" }]}
+                  >
+                    <Select
+                      placeholder="Select quality status"
+                      onChange={(value) => handleFieldChange("qualityStatus", value)}
+                      style={{ width: "100%" }}
+                    >
+                      <Option value="Passed">Passed</Option>
+                      <Option value="Failed">Failed</Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
 
               <Form.Item
-                name="checkDate"
-                label="Check Date"
-                rules={[
-                  { required: true, message: "Please select the checkDate!" },
-                ]}
-              >
-                <DatePicker
-                  format="YYYY-MM-DD"
-                  disabledDate={disablePastDates}
-                  onChange={(date) => handleFieldChange("checkDate", date)}
-                  style={{ width: "100%" }}
-                  inputReadOnly
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Quality Status"
-                name="qualityStatus"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select the Quality Status!",
-                  },
-                ]}
-              >
-                <Select
-                  placeholder="Select qualityStatus"
-                  onChange={(value) =>
-                    handleFieldChange("qualityStatus", value)
-                  }
-                  style={{ width: "100%" }}
-                >
-                  <Option value="Passed">Pass</Option>
-                  <Option value="Failed">Fail</Option>
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                label="Quality Controller(Mr/Ms)"
+                label="Quality Controller (Mr/Ms)"
                 name="qualityController"
-                rules={[{ validator: validatequalityController }]}
+                rules={[{ validator: validateQualityController }]}
               >
                 <Input
-                  placeholder="Enter inspector name"
+                  placeholder="Enter Quality Controller"
                   style={{ width: "100%" }}
-                  onChange={handlequalityControllerChange}
+                  onChange={handleQualityControllerChange}
+                  maxLength={25}
                 />
               </Form.Item>
-
-              <Form.Item>
-                <div className="flex justify-between">
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{
-                      width: "48%",
-                      backgroundColor: "#1D6660",
-                      borderColor: "#1D6660",
-                    }}
+              
+              {/* Parameters Section */}
+              <h3>Parameters:</h3>
+              <Row gutter={16}>
+                <Col span={8}>
+                  <Form.Item
+                    label="Ripeness"
+                    name={['parameters', 'ripeness']}
+                    rules={[{ required: formData.qualityStatus === "Failed", message: "Please select ripeness!" }]}
                   >
-                    Update Report
-                  </Button>
-                  <Button
-                    type="default"
-                    onClick={handleCancel}
-                    style={{ width: "48%" }}
+                    <Select
+                      placeholder="Select ripeness"
+                      onChange={(value) => handleFieldChange('parameters.ripeness', value)}
+                      style={{ width: "100%" }}
+                    >
+                     {formData.qualityStatus === "Passed" ? (
+                    <Option value="Ripe">Ripe</Option>
+                  ) : (
+                    <>
+                      <Option value="Unripe">Unripe</Option>
+                      <Option value="Overripe">Overripe</Option>
+                    </>
+                  )}
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item
+                    label="Damage"
+                    name={['parameters', 'damage']}
+                    rules={[{ required: true , message: "Please select damage!" }]}
                   >
-                    Cancel
-                  </Button>
-                </div>
-              </Form.Item>
+                    <Select
+                      placeholder="Select damage"
+                      onChange={(value) => handleFieldChange('parameters.damage', value)}
+                      style={{ width: "100%" }}
+                      
+                    >
+                      {formData.qualityStatus === "Passed" ? (
+                    <Option value="None">None</Option>
+                  ) : (
+                    <>
+                      <Option value="Minor">Minor</Option>
+                      <Option value="Severe">Severe</Option>
+                    </>
+                  )}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+              
+              <div className="flex justify-between mt-6">
+                <Button type="primary" htmlType="submit" disabled={Object.values(errors).some((e) => e)}>
+                  Update
+                </Button>
+                <Button type="default" onClick={handleCancel}>
+                  Cancel
+                </Button>
+              </div>
             </Form>
           </div>
         </div>

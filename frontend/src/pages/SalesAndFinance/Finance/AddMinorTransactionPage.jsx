@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 
-import AddTransaction from "../../../components/Sales_and_Finance/Finance/AddTransaction";
+import AddMinorTransactions from "../../../components/Sales_and_Finance/Finance/AddMinorTransactions";
 import NavigationButtons from "../../../components/Sales_and_Finance/NavigationButtons";
 
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
@@ -15,7 +15,7 @@ import NewLoadingScreen from '../../../components/LoadingDots'
 import {useNavigate} from "react-router-dom";
 import { useSnackbar } from 'notistack';
 
-const AddTransactionPage = () => {
+const AddMinorTransactionPage = () => {
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
 
@@ -65,7 +65,7 @@ const AddTransactionPage = () => {
       />
       <NavigationButtons />
       <div className={`ml-[250px] pt-3 w-[600px]`}>
-      <AddTransaction />
+      <AddMinorTransactions />
       </div>
       </div>
   </div>
@@ -73,4 +73,4 @@ const AddTransactionPage = () => {
 }
 
 
-export default AddTransactionPage;
+export default AddMinorTransactionPage;

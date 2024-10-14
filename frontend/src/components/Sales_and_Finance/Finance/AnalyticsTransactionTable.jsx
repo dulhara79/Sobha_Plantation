@@ -1,14 +1,15 @@
 // src/components/AnalyticsTransactionTable.jsx
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const AnalyticsTransactionTable = () => {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/salesAndFinance/finance/analytics/transactions')
-      .then(response => setTransactions(response.data))
-      .catch(error => console.error('Error fetching transactions:', error));
+    axios
+      .get("http://localhost:5000/api/salesAndFinance/finance/transaction")
+      .then((response) => setTransactions(response.data.data))
+      .catch((error) => console.error("Error fetching transactions:", error));
   }, []);
 
   return (
@@ -27,7 +28,7 @@ const AnalyticsTransactionTable = () => {
           </tr>
         </thead>
         <tbody>
-          {transactions.map(transaction => (
+          {transactions.map((transaction) => (
             <tr key={transaction._id}>
               <td className="px-4 py-2 border">{transaction.date}</td>
               <td className="px-4 py-2 border">{transaction.type}</td>

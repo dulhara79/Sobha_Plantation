@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import moment from 'moment';
 
 const MonthlySoldProductsChart = () => {
   const [monthlySoldProducts, setMonthlySoldProducts] = useState([]);
   const [month, setMonth] = useState([]);
   const [loading, setLoading] = useState(true);
+  const thisMonth = moment().format('MMMM');
 
   const fetchMonthlySoldProducts = async () => {
     try {
@@ -31,7 +33,7 @@ const MonthlySoldProductsChart = () => {
 
   return (
     <div className="p-6 my-8 bg-white rounded-lg shadow-lg">
-      <h3 className="mb-4 text-2xl font-bold text-gray-800">Monthly Sold Products <span className="mb-4 text-xl font-semibold text-gray-400">{month}</span></h3>
+      <h3 className="mb-4 text-2xl font-bold text-gray-800">Monthly Sold Products <span className="mb-4 text-xl font-semibold text-gray-400">{thisMonth}</span></h3>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={monthlySoldProducts}>
           <CartesianGrid strokeDasharray="3 3" />

@@ -1,40 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react'
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
-
-import AddTransaction from "../../../components/Sales_and_Finance/Finance/AddTransaction";
 import NavigationButtons from "../../../components/Sales_and_Finance/NavigationButtons";
 
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
+import AnalyticsBalanceSheet from "../../../components/Sales_and_Finance/Finance/AnalyticsBalanceSheet"
+import NewLoadingScreen from "../../../components/LoadingDots";
 
-import NewLoadingScreen from '../../../components/LoadingDots'
-
-// import FinanceNavigation from "../../../components/finances/FinanceNavigation.js";
-
-import {useNavigate} from "react-router-dom";
-import { useSnackbar } from 'notistack';
-
-const AddTransactionPage = () => {
-    const navigate = useNavigate();
-    const { enqueueSnackbar } = useSnackbar();
-
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-      // Simulate loading process (e.g., API calls, component mounting)
-      setTimeout(() => {
-        setLoading(false); // Once the components or data are loaded
-      }, 1000); // Adjust the delay as needed
-    }, []);
-  
-    if (loading) return <NewLoadingScreen />;
-
+const BalanceSheet = () => {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    // Simulate loading process (e.g., API calls, component mounting)
+    setTimeout(() => {
+      setLoading(false); // Once the components or data are loaded
+    }, 1000); // Adjust the delay as needed
+  }, []);
+  if (loading) return <NewLoadingScreen />;
   return (
     <div>
     <Header />
     <Sidebar activePage="/salesAndFinance/"/>
-    <div className={`ml-[300px] pt-3 w-[600px]`}>
+      <div className={`ml-[300px] pt-3 max-w-full`}>
     <Breadcrumb
     style={{ margin: "10px 0" }}
         items={[
@@ -64,13 +51,12 @@ const AddTransactionPage = () => {
         ]}
       />
       <NavigationButtons />
-      <div className={`ml-[250px] pt-3 w-[600px]`}>
-      <AddTransaction />
       </div>
+      <div className={`ml-[300px] pt-3`}>
+      <AnalyticsBalanceSheet/>
       </div>
-  </div>
+    </div>
   )
 }
 
-
-export default AddTransactionPage;
+export default BalanceSheet
