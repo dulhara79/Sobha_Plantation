@@ -117,35 +117,57 @@ const HarvestQuality = () => {
     filterQualityControls(searchText, value);
   };
 
-  // Function to filter quality controls based on search text and filter status
-  const filterQualityControls = (searchText, filterStatus) => {
-    let filteredData = qualityControls;
+// Function to filter quality controls based on search text, filter status, and multiple fields
+const filterQualityControls = (searchText, filterStatus) => {
+  let filteredData = qualityControls;
 
-    if (searchText) {
-      filteredData = filteredData.filter((qc) =>
-        qc.cropType.toLowerCase().includes(searchText.toLowerCase())
+  // Filter by search text on multiple fields
+  if (searchText) {
+    const searchLower = searchText.toLowerCase();
+    filteredData = filteredData.filter((qc) => {
+      // Log the checkDate value for debugging
+      console.log('Checking QC:', qc);
+
+      // Check against cropType, checkDate, qualityController, and parameters (size, ripeness, damage)
+      return (
+        qc.cropType.toLowerCase().includes(searchLower) ||
+        // Check if checkDate matches the search text
+        (typeof qc.checkDate === 'string' && qc.checkDate.toLowerCase().includes(searchLower)) || // For string representation
+        (qc.checkDate instanceof Date && new Date(qc.checkDate).toLocaleDateString().includes(searchLower)) || // For Date objects
+        qc.qualityController.toLowerCase().includes(searchLower) ||
+        (qc.parameters?.size && qc.parameters.size.toString().includes(searchLower)) ||
+        (qc.parameters?.ripeness && qc.parameters.ripeness.toLowerCase().includes(searchLower)) ||
+        (qc.parameters?.damage && qc.parameters.damage.toLowerCase().includes(searchLower))
       );
-    }
+    });
+  }
 
-    if (filterStatus !== "All") {
-      filteredData = filteredData.filter(
-        (qc) => qc.qualityStatus === filterStatus
-      );
-    }
+  // Filter by quality status if it's not "All"
+  if (filterStatus !== "All") {
+    filteredData = filteredData.filter((qc) => qc.qualityStatus === filterStatus);
+  }
 
-    if (sorter.field) {
-      filteredData = [...filteredData].sort((a, b) => {
-        if (sorter.order === "ascend") {
-          return a[sorter.field] > b[sorter.field] ? 1 : -1;
-        } else {
-          return a[sorter.field] < b[sorter.field] ? 1 : -1;
-        }
-      });
-    }
+  // Apply sorting if sorter field is provided
+  if (sorter.field) {
+    filteredData = [...filteredData].sort((a, b) => {
+      const fieldA = a[sorter.field];
+      const fieldB = b[sorter.field];
 
-    setFilteredQualityControls(filteredData);
-    calculateMetrics(filteredData); // Update metrics based on filtered data
-  };
+      if (sorter.order === "ascend") {
+        return fieldA > fieldB ? 1 : fieldA < fieldB ? -1 : 0;
+      } else {
+        return fieldA < fieldB ? 1 : fieldA > fieldB ? -1 : 0;
+      }
+    });
+  }
+
+  // Update state and metrics
+  setFilteredQualityControls(filteredData);
+  calculateMetrics(filteredData); // Update metrics based on filtered data
+};
+
+
+
 
   // Sorting handler
   const handleSort = (field, order) => {
@@ -481,11 +503,11 @@ const HarvestQuality = () => {
                   allowClear
                 />
 
-                {/* <Select defaultValue="All" style={{ width: 120 }} onChange={onFilterChange}>
+                <Select defaultValue="All" style={{ width: 120 }} onChange={onFilterChange}>
                 <Option value="All">All</Option>
                 <Option value="Passed">Pass</Option>
                 <Option value="Failed">Fail</Option>
-              </Select> */}
+              </Select>
               </div>
 
               {/* Buttons for actions */}
@@ -521,84 +543,69 @@ const HarvestQuality = () => {
 
             {/* Table */}
 
+            {/* Table displaying quality control inspections */}
             <Table
               dataSource={filteredQualityControls}
               rowKey="_id"
+              pagination={{ pageSize: 5 }}
               onChange={(pagination, filters, sorter) =>
                 handleSort(sorter.field, sorter.order)
-              } // Handle sorting changes
-            >
-              <Table.Column
-                title="Crop Type"
-                dataIndex="cropType"
-                key="cropType"
-                sorter={true} // Enable sorting
-              />
-              <Table.Column
-                title="Check Date"
-                dataIndex="checkDate"
-                key="checkDate"
-                render={(date) => moment(date).format("YYYY-MM-DD")}
-                sorter={(a, b) => new Date(a.checkDate) - new Date(b.checkDate)} // Custom sorting function
-              />
-              <Table.Column
-                title="Quality Status"
-                dataIndex="qualityStatus"
-                key="qualityStatus"
-                sorter={true} // Enable sorting
-              />
-              <Table.Column
-                title="Quality Controller"
-                dataIndex="qualityController"
-                key="qualityController"
-                sorter={true} // Enable sorting
-              />
-              <Table.Column
-    title="Parameters"
-    key="parameters"
-    render={(text, record) => {
-        const ripeness = record.parameters?.ripeness || 'N/A';
-        const damage = record.parameters?.damage || 'N/A';
-
-        return (
-            <span>
-                 Ripeness: {ripeness}, Damage: {damage}
-            </span>
-        );
-    }}
-    sorter={true} // Enable sorting
-/>
-
-
-              <Table.Column
-                title="Actions"
-                key="actions"
-                render={(text, record) => (
-                  <div>
-                    <Button
-                      icon={<EditOutlined />}
-                      onClick={() => handleSubmit(record._id)}
-                      style={{
-                        marginRight: 8,
-                        backgroundColor: "#1890ff",
-                        borderColor: "#1890ff",
-                        color: "#fff",
-                      }} // Blue color
-                    />
-                    <Button
-                      icon={<DeleteOutlined />}
-                      onClick={() => confirmDelete(record._id)}
-                      type="danger"
-                      style={{
-                        backgroundColor: "#ff4d4f",
-                        borderColor: "#ff4d4f",
-                        color: "#fff",
-                      }} // Red color
-                    />
-                  </div>
-                )}
-              />
-            </Table>
+              }
+              columns={[
+                {
+                  title: "Crop Type",
+                  dataIndex: "cropType",
+                  sorter: true,
+                  sortOrder: sorter.field === "cropType" && sorter.order,
+                },
+                {
+                  title: "Check Date",
+                  dataIndex: "checkDate",
+                  render: (date) => moment(date).format("YYYY-MM-DD"),
+                  sorter: true,
+                  sortOrder: sorter.field === "checkDate" && sorter.order,
+                },
+                {
+                  title: "Quality Status",
+                  dataIndex: "qualityStatus",
+                  sorter: true,
+                  sortOrder: sorter.field === "qualityStatus" && sorter.order,
+                },
+                {
+                  title: "Quality Controller",
+                  dataIndex: "qualityController",
+                  sorter: true,
+                  sortOrder:
+                    sorter.field === "qualityController" && sorter.order,
+                },
+                {
+                  title: "Parameters",
+                  dataIndex: "parameters",
+                  render: (params) => (
+                    <span>{`Ripeness: ${params.ripeness || "N/A"}, Damage: ${
+                      params.damage || "N/A"
+                    }`}</span>
+                  ),
+                },
+                {
+                  title: "Actions",
+                  render: (record) => (
+                    <div>
+                      <Button
+                        icon={<EditOutlined />}
+                        style={{ marginRight: 8 }}
+                        onClick={() => handleSubmit(record._id)}
+                      />
+                      <Button
+                        icon={<DeleteOutlined />}
+                        danger
+                        onClick={() => confirmDelete(record._id)}
+                      />
+                    </div>
+                  ),
+                },
+              ]}
+            />
           </div>
         </div>
       </div>

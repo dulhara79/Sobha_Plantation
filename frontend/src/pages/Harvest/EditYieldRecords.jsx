@@ -18,8 +18,8 @@ const EditYieldRecord = () => {
 
   // Function to disable past dates
   const disableDateRange = (current) => {
-    const oneWeekAgo = moment().subtract(7, "days").startOf("day");
-    return current && (current > moment().endOf("day") || current < oneWeekAgo);
+    const targetDate = moment("2024-10-10"); // Only allow the specific date
+    return !current || !current.isSame(targetDate, 'day');
   };
   // Fetch record data
   useEffect(() => {
@@ -100,6 +100,19 @@ const EditYieldRecord = () => {
             </h2>
             <Form form={form} onFinish={handleSubmit} layout="vertical">
             <Form.Item
+                label="Crop Type"
+                name="cropType"
+                rules={[
+                  { required: true, message: "Please select a crop type!" },
+                ]}
+              >
+                <Select placeholder="Select a crop type">
+                  <Option value="Coconut">Coconut</Option>
+                  
+                </Select>
+              </Form.Item>
+
+            <Form.Item
                 label="Harvest Date"
                 name="harvestdate"
                 rules={[
@@ -132,22 +145,7 @@ const EditYieldRecord = () => {
                 </Select>
               </Form.Item>
 
-              <Form.Item
-                label="Crop Type"
-                name="cropType"
-                rules={[
-                  { required: true, message: "Please select a crop type!" },
-                ]}
-              >
-                <Select placeholder="Select a crop type">
-                  <Option value="Coconut">Coconut</Option>
-                  <Option value="Banana">Banana</Option>
-                  <Option value="Pepper">Pepper</Option>
-                  <Option value="Papaya">Papaya</Option>
-                  <Option value="Pineapple">Pineapple</Option>
-                </Select>
-              </Form.Item>
-
+              
               <Form.Item
   label="Quantity"
   required
