@@ -365,12 +365,15 @@ const [selectedEmployee, setSelectedEmployee] = useState(null);
                 </div>
 
                 <div className="flex space-x-4">
-                  <Button type="primary" onClick={handleAddNewEmployee}>
+                  <button type="primary" onClick={handleAddNewEmployee}
+                   className="bg-green-500 text-white px-4 py-2 rounded hover:bg-gray-700"
+                  >
                     Add New Employee
-                  </Button>
-                  <Button type="primary" onClick={generateReport}>
+                  </button>
+                  <button type="primary" onClick={generateReport}
+                   className="bg-green-500 text-white px-4 py-2 rounded hover:bg-gray-700">
                     Generate Report
-                  </Button>
+                  </button>
                 </div>
               </div>
 
