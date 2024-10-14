@@ -95,7 +95,7 @@ const BuyerDashboard = () => {
           <div className="flex flex-row items-center justify-between">
             <DateTimeDisplay />
             <div className="flex items-center">
-              <NotificationsIcon className="text-3xl" />
+              {/* <NotificationsIcon className="text-3xl" /> */}
             </div>
           </div>
         </div>
