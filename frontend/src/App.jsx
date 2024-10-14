@@ -79,6 +79,7 @@ import EattendenceList from "./pages/employee/EattendenceList.jsx";
 import ViewOneAttendance from "./pages/employee/ViewOneAttendance.jsx";
 import EditEmployeePage from "./pages/employee/EditEmployeePage.jsx";
 import ViewOneEmployee from "./pages/employee/ViewOneEmployee.jsx";
+import EmployeeQRView from './pages/employee/EmployeeQRView.jsx';
 
 // harvest
 import HarvestDashboard from "./pages/Harvest/HarvestDashboard";
@@ -376,6 +377,7 @@ export default function App() {
       <Route path="/employee/editemployee/:id" element={<EditEmployeePage />} />
       <Route path="/employee/viewemployee/:id" element={<ViewOneEmployee />} />
       <Route path="/employee/editattendance" element={<EditAtendence />} />
+      <Route path="/employee/qr/:id" element={<EmployeeQRView />} />
 
       {/* harvest */}
       <Route path="/harvest/harvestdashboard" element={<HarvestDashboard />} />
