@@ -30,7 +30,6 @@ const AddSchedule = () => {
     return !current || !current.isSame(targetDate, 'day');
   };
 
-
   const validateQuantity = (_, value) => {
     if (value >= 1) {
       setQuantityComplete(true);
@@ -150,6 +149,7 @@ const AddSchedule = () => {
                   style={{ width: "100%" }}
                 >
                   <Option value="Coconut">Coconut</Option>
+                 
                 </Select>
               </Form.Item>
               {/* Form Item for Harvest Date */}
