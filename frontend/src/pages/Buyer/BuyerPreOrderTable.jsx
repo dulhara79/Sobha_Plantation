@@ -308,8 +308,8 @@ const BuyerPreOrderTable = () => {
               icon={<FilePdfOutlined />}
               onClick={generatePDF}
               style={{
-                backgroundColor: "red",
-                borderColor: "red",
+                backgroundColor: '#84cc16',  // Set background color to red
+                borderColor: '#84cc16', 
                 color: "white",
               }}
             >
