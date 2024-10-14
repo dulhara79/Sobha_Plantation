@@ -148,10 +148,10 @@ const IntercropInspections = () => {
 
         // Header
         doc.setFontSize(14);
-        doc.text("Sobha Plantation", 10, 10); // Align left
+        doc.text("Sobha Plantations", 10, 10); // Align left
         doc.setFontSize(10);
         doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
-        doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+        doc.text("Kurunegala, Sri Lanka.", 10, 20); // Address line 2
         doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
         doc.text("Contact: 0112 751 757", 10, 30); // Contact number
 
@@ -161,9 +161,9 @@ const IntercropInspections = () => {
 
         doc.line(10, 35, pageWidth - 10, 35); // Header line
 
-        // Footer with page number
-        doc.setFontSize(10);
-        doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
+        // // Footer with page number
+        // doc.setFontSize(10);
+        // doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
     };
 
     // Set the margins for header and footer space
