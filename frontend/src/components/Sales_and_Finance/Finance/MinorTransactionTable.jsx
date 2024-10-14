@@ -52,7 +52,7 @@ const TransactionTable = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/salesAndFinance/finance/transaction"
+          "http://localhost:5000/api/salesAndFinance/finance/minorTransactions"
         );
         const data = response.data.data;
         setTransactions(data);
@@ -407,7 +407,7 @@ const TransactionTable = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(
-        `http://localhost:5000/api/salesAndFinance/finance/transaction/${id}`
+        `http://localhost:5000/api/salesAndFinance/finance/minorTransactions/${id}`
       );
       const updatedData = filteredData.filter((item) => item._id !== id);
       setFilteredData(updatedData);
@@ -424,7 +424,7 @@ const TransactionTable = () => {
   };
 
   const handleEdit = (id) => {
-    navigate(`/salesAndFinance/finance/transaction-update/${id}`);
+    navigate(`/salesAndFinance/finance/minortransaction-update/${id}`);
   };
 
   const columns = [
@@ -537,8 +537,8 @@ const TransactionTable = () => {
             Export to PDF
           </Button>
         </div>
-        <Link to="/salesAndFinance/finance/cashbook">
-          <Button type="primary">View Cash Book</Button>
+        <Link to="/salesAndFinance/finance/petty-cash">
+          <Button type="primary">View Petty Cash Book</Button>
         </Link>
         <Table columns={columns} dataSource={filteredData} rowKey="_id" />
         <div className="mt-4 text-5xl" style={{ color: balanceColor }}>
