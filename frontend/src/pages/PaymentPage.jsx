@@ -99,10 +99,9 @@ const PaymentPage = () => {
         title: 'Payment Successful',
         text: 'Your payment has been processed successfully!',
         showConfirmButton: false,
-        timer: 3000,  // Auto-dismiss after 3 seconds
+        timer: 3000,
       });
 
-      // Redirect to HomePage after 3 seconds
       setTimeout(() => {
         navigate('/MyOrders', { state: { totalAmount, quantities } });
       }, 3000);
@@ -184,9 +183,9 @@ const PaymentPage = () => {
                 <CreditCardIcon />
               </InputAdornment>
             ),
+            readOnly: !form.cardHolderName || !!errors.cardHolderName,
           }}
         />
-
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <FormControl fullWidth margin="normal" required>
@@ -196,6 +195,18 @@ const PaymentPage = () => {
                 value={form.expiryMonth}
                 onChange={handleChange}
                 error={!!errors.expiryDate}
+                displayEmpty
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '4px',
+                  },
+                }}
+                disabled={
+                  !form.cardNumber ||
+                  !!errors.cardNumber ||
+                  !form.cardHolderName ||
+                  !!errors.cardHolderName
+                }
               >
                 {[...Array(12).keys()].map((month) => (
                   <MenuItem key={month + 1} value={month + 1}>
@@ -213,6 +224,18 @@ const PaymentPage = () => {
                 value={form.expiryYear}
                 onChange={handleChange}
                 error={!!errors.expiryDate}
+                displayEmpty
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '4px',
+                  },
+                }}
+                disabled={
+                  !form.cardNumber ||
+                  !!errors.cardNumber ||
+                  !form.cardHolderName ||
+                  !!errors.cardHolderName
+                }
               >
                 {generateYears().map((year) => (
                   <MenuItem key={year} value={year}>
@@ -249,6 +272,14 @@ const PaymentPage = () => {
                 <LockIcon />
               </InputAdornment>
             ),
+            readOnly:
+              !form.expiryMonth ||
+              !form.expiryYear ||
+              !!errors.expiryDate ||
+              !form.cardNumber ||
+              !!errors.cardNumber ||
+              !form.cardHolderName ||
+              !!errors.cardHolderName,
           }}
         />
 
