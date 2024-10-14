@@ -96,7 +96,7 @@ const ProductsDashboard = () => {
 
 
   
-  if (loading) return <LoadingDot />; // Show loading screen if loading is true
+  if (loading) return <LoadingDot />;
 
   return (
     <div>
