@@ -9,7 +9,7 @@ import {
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useSnackbar } from "notistack";
-import { Button, Table, Input } from "antd";
+
 import { useNavigate } from "react-router-dom";
 import html2canvas from "html2canvas";
 import dayjs from "dayjs";
@@ -17,6 +17,9 @@ import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import EmployeeNavbar from "../../components/Employee/EmployeeNavbar";
 import Breadcrumbs from "../../components/Employee/Breadcrumbss";
+import { QRCodeSVG } from "qrcode.react"; 
+import { QrCodeIcon } from "@heroicons/react/24/outline";
+import { Button, Table, Input, Modal } from "antd";
 
 const EmployeeList = () => {
   const [employeeRecords, setEmployeeRecords] = useState([]);
@@ -25,6 +28,8 @@ const EmployeeList = () => {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -227,6 +232,21 @@ const EmployeeList = () => {
       setFilteredEmployeeRecords([]);
     }
   };
+  const showQRCodeModal = (employee) => {
+    setSelectedEmployee(employee);
+    setIsModalVisible(true);
+  };
+  
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+    setSelectedEmployee(null);
+  };
+  
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      enqueueSnackbar("Link copied to clipboard!", { variant: "success" });
+    });
+  };
 
   const columns = [
     {
@@ -296,7 +316,19 @@ const EmployeeList = () => {
         />
       ),
     },
+    {
+      title: "QR Code",
+      key: "qrcode",
+      render: (text, record) => (
+        <QrCodeIcon
+          className="w-5 h-5 text-blue-500 cursor-pointer hover:text-blue-700"
+          onClick={() => showQRCodeModal(record)}
+        />
+      ),
+    },
+ 
   ];
+  
 
   const breadcrumbItems = [
     { name: "Employees", href: "/employees/home" },
@@ -354,6 +386,35 @@ const EmployeeList = () => {
           </div>
         </div>
       </div>
+      <Modal
+  title="Employee QR Code"
+  visible={isModalVisible}
+  onCancel={handleModalCancel}
+  footer={null}
+>
+  {selectedEmployee && (
+    <div className="flex flex-col items-center">
+      <QRCodeSVG
+        value={`http://localhost:5173/employee/viewemployee/${selectedEmployee._id}`}
+        size={200}
+        level={"L"}
+        includeMargin={true}
+      />
+      <p className="mt-4">Scan this QR code to view employee details</p>
+      <Button
+        type="primary"
+        onClick={() =>
+          copyToClipboard(
+            `http://localhost:5173/employee/viewemployee/${selectedEmployee._id}`
+          )
+        }
+        className="mt-4"
+      >
+        Copy Link
+      </Button>
+    </div>
+  )}
+</Modal>
     </>
   );
 };

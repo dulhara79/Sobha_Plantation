@@ -181,7 +181,12 @@ import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
 // import BuyerRegistrationForm from './pages/BuyerRegistrationForm.jsx';
 // import BuyerTable from "./pages/BuyerTable.jsx";
 // import Profile from './components/Profile';
-import BuyerDashboard from "./pages/Buyer/BuyerDashboard.jsx";
+
+import BuyerDashboard from './pages/Buyer/BuyerDashboard.jsx';
+import PaymentPage from './pages/PaymentPage'; 
+import HomePage from './pages/HomePage';
+import CartPage from './pages/Cart.jsx';
+import MyOrders from './pages/MyOrders';
 
 import BuyerDelivery from "./pages/Buyer/BuyerDelivery.jsx";
 import BuyerDeliveryTable from "./pages/Buyer/BuyerDeliveryTable.jsx";
@@ -357,7 +362,7 @@ export default function App() {
             element={<AddRequestPaymentRecord />}
           />
           <Route
-            path="/Inventory/EditRequestPaymentRecords/:id"
+            path="/Inventory/EditRequestPaymentRecord/:id"
             element={<EditRequestPaymentRecord />}
           />
 
