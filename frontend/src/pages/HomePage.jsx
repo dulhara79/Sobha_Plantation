@@ -26,14 +26,14 @@ const products = [
   { name: 'COCONUT (1 unit)', img: crop_1, description: '110.00 LKR', price: 110 },
   { name: 'BANANA 1kg (Kolikuttu)', img: crop_2, description: '300.00 LKR', price: 300 },
   { name: 'PINEAPPLE 1kg', img: crop_3, description: '690.00 LKR', price: 690 },
-  { name: 'PAPAYA 1kg', img: crop_4, description: '200.00 LKR', price: 200 },
-  { name: 'PEPPER 1Kg', img: crop_5, description: '250.00 LKR', price: 250 },
-  { name: 'COCONUT-CREAM', img: product_1, description: '350.00 LKR', price: 350 },
-  { name: 'COCONUT - MILK', img: product_2, description: '400.00 LKR', price: 400 },
-  { name: 'COCONUT - WATER', img: product_3, description: '450.00 LKR', price: 450 },
-  { name: 'SHELL', img: product_4, description: '500.00 LKR', price: 500 },
-  { name: 'COCONUT-OIL', img: product_5, description: '550.00 LKR', price: 550 },
-  { name: 'COIR', img: product_6, description: '600.00 LKR', price: 600 },
+  { name: 'PAPAYA 1kg', img: crop_4, description: '250.00 LKR', price: 250 },
+  { name: 'PEPPER 1Kg', img: crop_5, description: '2500.00 LKR', price: 2500 },
+  { name: 'COCONUT-CREAM Tub', img: product_1, description: '750.00 LKR', price: 750 },
+  { name: 'COCONUT - MILK 375 ml', img: product_2, description: '400.00 LKR', price: 400 },
+  { name: 'COCONUT - WATER 500 ml', img: product_3, description: '450.00 LKR', price: 450 },
+  { name: 'Coconut Shell Spoon Set', img: product_4, description: '600.00 LKR', price: 600 },
+  { name: 'COCONUT-OIL 750 ml', img: product_5, description: '550.00 LKR', price: 550 },
+  { name: 'COIR DUST 1kg', img: product_6, description: '200.00 LKR', price: 200 },
 ];
 
 const HomePage = () => {
