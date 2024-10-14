@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import Swal from "sweetalert2"; // Import SweetAlert
+import Swal from "sweetalert2";
 
 const ETaskForm = () => {
   const [emp_id, setEmp_id] = useState("");
-  const [emp_name, setEmp_name] = useState(""); // Store the selected employee's full name
+  const [emp_name, setEmp_name] = useState("");
   const [task, setTask] = useState("");
   const [assign_date, setAssign_date] = useState("");
   const [due_date, setDue_date] = useState("");
@@ -42,7 +42,6 @@ const ETaskForm = () => {
     let valid = true;
     let newErrors = { ...errors };
 
-    // Validate task
     if (!/^[a-zA-Z\s]*$/.test(task)) {
       newErrors.task = "Task must only contain letters.";
       valid = false;
@@ -50,7 +49,6 @@ const ETaskForm = () => {
       newErrors.task = "";
     }
 
-    // Validate assign_date and due_date
     if (assign_date && due_date && new Date(due_date) <= new Date(assign_date)) {
       newErrors.due_date = "Due date must be later than the assign date.";
       valid = false;
@@ -58,7 +56,6 @@ const ETaskForm = () => {
       newErrors.due_date = "";
     }
 
-    // Check if all required fields are filled
     if (!emp_id || !task || !assign_date || !due_date || !task_des || !task_status) {
       valid = false;
     }
@@ -109,7 +106,7 @@ const ETaskForm = () => {
     const selectedEmpId = e.target.value;
     const selectedEmp = employees.find((emp) => emp.id === selectedEmpId);
     setEmp_id(selectedEmpId);
-    setEmp_name(selectedEmp ? selectedEmp.name : ""); // Set the full name of the selected employee
+    setEmp_name(selectedEmp ? selectedEmp.name : "");
   };
 
   const handleCancel = () => {
@@ -120,10 +117,16 @@ const ETaskForm = () => {
     navigate("/employee/TaskListview");
   };
 
-  // Helper function to get today's date in YYYY-MM-DD format
+  // Updated helper function to get today's date in YYYY-MM-DD format
   const getTodayDate = () => {
     const today = new Date();
-    return today.toISOString().split("T")[0]; // Returns date in 'YYYY-MM-DD' format
+    return today.toISOString().split("T")[0];
+  };
+
+  // Updated helper function to get the last day of the current year
+  const getLastDayOfYear = () => {
+    const currentYear = new Date().getFullYear();
+    return `${currentYear}-12-31`;
   };
 
   return (
@@ -156,7 +159,6 @@ const ETaskForm = () => {
                     value={emp_id}
                     onChange={handleEmployeeChange}
                     className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-
                     required
                   >
                     <option value="">Select an employee</option>
@@ -179,11 +181,10 @@ const ETaskForm = () => {
                     value={task}
                     onChange={(e) => setTask(e.target.value)}
                     className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
-
                       errors.task ? "border-red-500" : ""
                     }`}
                     required
-                        disabled={!emp_id}
+                    disabled={!emp_id}
                   />
                   {errors.task && (
                     <p className="text-sm text-red-500">{errors.task}</p>
@@ -192,7 +193,6 @@ const ETaskForm = () => {
               </div>
               <div className="col-span-full">
                 <label className="block text-sm font-medium leading-6 text-black">
-
                   Assign Date
                 </label>
                 <div className="mt-2">
@@ -200,10 +200,10 @@ const ETaskForm = () => {
                     type="date"
                     name="assign_date"
                     value={assign_date}
-                    min={getTodayDate()} // Set minimum date to today
+                    min={getTodayDate()}
+                    max={getLastDayOfYear()}
                     onChange={(e) => setAssign_date(e.target.value)}
                     className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
-
                       errors.assign_date ? "border-red-500" : ""
                     }`}
                     required
@@ -213,7 +213,6 @@ const ETaskForm = () => {
               </div>
               <div className="col-span-full">
                 <label className="block text-sm font-medium leading-6 text-black">
-
                   Due Date
                 </label>
                 <div className="mt-2">
@@ -221,10 +220,10 @@ const ETaskForm = () => {
                     type="date"
                     name="due_date"
                     value={due_date}
-                    min={assign_date || getTodayDate()} // Set minimum date to assign_date or today
+                    min={assign_date || getTodayDate()}
+                    max={getLastDayOfYear()}
                     onChange={(e) => setDue_date(e.target.value)}
                     className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
-
                       errors.due_date ? "border-red-500" : ""
                     }`}
                     required

@@ -8,6 +8,7 @@ const {
   getWeeklySalesSummary,
   getMonthlySalesSummary,
   getYearlyRevenueSummary,
+  getMonthSalecardSummary
 } = require("../../controllers/SalesAndFinance/SalesTrackingController");
 const {
   validate,
@@ -26,5 +27,6 @@ router.delete("/:id", deleteSalesTracking);
 router.get("/weekly-summary", getWeeklySalesSummary);
 router.get("/monthly-summary", getMonthlySalesSummary);
 router.get("/yearly-revenue-summary", getYearlyRevenueSummary); // New route
+router.get("/month-salecard-summary", getMonthSalecardSummary); // New route
 
 module.exports = router;

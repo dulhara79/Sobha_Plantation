@@ -92,6 +92,16 @@ exports.updateBuyerPreOrderRecords = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message || error });
   }
 };
+// Get total count of PreOrders
+exports.getBuyerPreOrderCount = async (req, res) => {
+  try {
+    const count = await BuyerPreOrderRecords.countDocuments();
+    return res.status(200).json({ totalPreOrders: count });
+  } catch (error) {
+    console.error('Error fetching PreOrder count:', error.message || error);
+    res.status(500).json({ message: "Server error", error: error.message || error });
+  }
+};
 
 // Delete a PreOrder record
 exports.deleteBuyerPreOrderRecords = async (req, res) => {

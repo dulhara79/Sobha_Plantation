@@ -233,7 +233,7 @@ const EditSalaryRecord = () => {
               <input
                 type="number"
                 name="ot_hours"
-                value={record.week_hours != 0 ? parseFloat(record.week_hours).toFixed(2) : 0}
+                value={record.after_hours != 0 ? parseFloat(record.after_hours).toFixed(2) : 0}
                 onChange={handleChange}
                 className="w-full px-4 py-2 text-base text-black border rounded-md"
                 disabled
@@ -268,7 +268,7 @@ const EditSalaryRecord = () => {
           </div>
 
           {/* EPF/ETF */}
-          <div>
+          <div className="hidden">
             <label className="block font-medium text-gray-700">
               EPF/ETF (%)
             </label>
@@ -276,6 +276,20 @@ const EditSalaryRecord = () => {
               type="number"
               name="epf_etf"
               value={parseFloat(record.epf_etf).toFixed(2)}
+              onChange={handleChange}
+              className="w-full px-4 py-2 text-base text-black border rounded-md"
+              disabled
+            />
+          </div>
+          
+          <div>
+            <label className="block font-medium text-gray-700">
+              Paid Amount
+            </label>
+            <input
+              type="number"
+              name="paidAmount"
+              value={parseFloat(record.netSalary).toFixed(2)}
               onChange={handleChange}
               className="w-full px-4 py-2 text-base text-black border rounded-md"
               disabled

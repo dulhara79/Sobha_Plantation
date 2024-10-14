@@ -368,3 +368,48 @@ exports.getYearlyRevenueSummary = async (req, res) => {
     res.status(500).json({ success: false, message: 'Error fetching yearly revenue summary' });
   }
 };
+
+exports.getMonthSalecardSummary = async (req, res) => {
+  try {
+    const currentMonth = new Date().getMonth() + 1; // getMonth() returns 0-11
+    const currentYear = new Date().getFullYear();
+
+    const monthlySummary = await SalesTracking.aggregate([
+      // Filter to include only records from the current month and year
+      {
+        $match: {
+          $expr: {
+            $and: [
+              { $eq: [{ $month: "$saleDate" }, currentMonth] },
+              { $eq: [{ $year: "$saleDate" }, currentYear] }
+            ]
+          }
+        }
+      },
+      // Group data to calculate total sales and identify products
+      {
+        $group: {
+          _id: "$product",
+          totalSales: { $sum: "$revenueGenerated" },
+          quantitySold: { $sum: "$quantitySold" }
+        }
+      },
+      // Sort by quantitySold to find the most and least selling products
+      { $sort: { quantitySold: -1 } }
+    ]);
+
+    // Extract most and least selling products after sorting
+    // const totalSales = monthlySummary.reduce((acc, item) => acc + item.totalSales, 0);
+    const totalSales = monthlySummary.length;
+    const mostSellingProduct = monthlySummary[0]?._id || "No data";
+    const leastSellingProduct = monthlySummary[monthlySummary.length - 1]?._id || "No data";
+
+    res.status(200).json({ data: {
+      totalSales,
+      mostSellingProduct,
+      leastSellingProduct }
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching monthly summary", error });
+  }
+};
