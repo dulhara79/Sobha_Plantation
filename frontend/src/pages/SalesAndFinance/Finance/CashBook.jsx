@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import Sidebar from "../../../components/Sidebar";
 import Header from "../../../components/Header";
 import NavigationButtons from "../../../components/Sales_and_Finance/NavigationButtons";
@@ -6,8 +6,16 @@ import NavigationButtons from "../../../components/Sales_and_Finance/NavigationB
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
 import AnalyticsCashbook from "../../../components/Sales_and_Finance/Finance/AnalyticsCashbook"
-
+import NewLoadingScreen from "../../../components/LoadingDots";
 const CashBook = () => {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    // Simulate loading process (e.g., API calls, component mounting)
+    setTimeout(() => {
+      setLoading(false); // Once the components or data are loaded
+    }, 1000); // Adjust the delay as needed
+  }, []);
+  if (loading) return <NewLoadingScreen />;
   return (
     <div>
     <Header />
