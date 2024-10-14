@@ -79,6 +79,10 @@ import AnalyticsCashbook from "../../../components/Sales_and_Finance/Finance/Ana
 import AnalyticsTransactionTable from "../../../components/Sales_and_Finance/Finance/AnalyticsTransactionTable";
 import AnalyticsSummaryCard from "../../../components/Sales_and_Finance/Finance/AnalyticsSummaryCard";
 
+import FinancialLineGraph from "../../../components/Sales_and_Finance/Finance/FinancialLineGraph";
+import ValuationPieChart from "../../../components/Sales_and_Finance/Finance/ValuationPieChart";
+import FinancialPrediction from "../../../components/Sales_and_Finance/Finance/FinancialPrediction";
+
 import NewLoadingScreen from "../../../components/LoadingDots";
 
 const FinancialAnalyticsPage = () => {
@@ -88,7 +92,7 @@ const FinancialAnalyticsPage = () => {
     // Simulate loading process (e.g., API calls, component mounting)
     setTimeout(() => {
       setLoading(false); // Once the components or data are loaded
-    }, 2000); // Adjust the delay as needed
+    }, 1000); // Adjust the delay as needed
   }, []);
 
   if (loading) return <NewLoadingScreen />;
@@ -131,9 +135,15 @@ const FinancialAnalyticsPage = () => {
         <NavigationButtons activePage="sales" />
         <AnalyticsSummaryCard />
         {/* <div className={`ml-[300px] pt-3`}> */}
-        <AnalyticsBalanceSheet />
-        <AnalyticsCashbook />
+        {/* <AnalyticsBalanceSheet /> */}
+        {/* <AnalyticsCashbook /> */}
         {/* <AnalyticsTransactionTable /> */}
+
+        <FinancialLineGraph />
+        <ValuationPieChart />
+        <FinancialPrediction />
+        {/* </div> */}
+        
       </div>
     </div>
   );
