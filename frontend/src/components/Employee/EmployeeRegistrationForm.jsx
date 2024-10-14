@@ -495,7 +495,7 @@ const Eregistration = () => {
         });
   
         // Send confirmation email in the background
-        axios.post("http://localhost:5000/api/send-email", {
+        axios.post("http://localhost:5000/api/email/send-email", {
           to: email,
           subject: "Successfully Registered",
           text: "Congratulations! You have successfully registered to the system.",
