@@ -104,7 +104,7 @@ const PaymentPage = () => {
 
       // Redirect to HomePage after 3 seconds
       setTimeout(() => {
-        navigate('/HomePage');
+        navigate('/MyOrders', { state: { totalAmount, quantities } });
       }, 3000);
     } else {
       Swal.fire('Error', 'Please correct the errors in the form.', 'error');
