@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import Header from "../../components/Header";
+import Sidebar from "../../components/Sidebar";
 
 const AddSeedlingForm = () => {
   const [seedlingType, setSeedlingType] = useState("");
@@ -158,7 +160,9 @@ const AddSeedlingForm = () => {
           padding: 10px 0;
         }
       `}</style>
-
+<div>
+<Header />
+<Sidebar />
       <div className="form-container">
         <h2>Add New Seedling Type</h2>
         {errorMessage && <p className="message error">{errorMessage}</p>}
@@ -202,6 +206,7 @@ const AddSeedlingForm = () => {
             Cancel
           </button>
         </form>
+      </div>
       </div>
     </div>
   );
