@@ -389,8 +389,8 @@ const Seedling = () => {
             </Col>
             <Col>
               <div style={{ textAlign: 'right' }}>
-                <Button type="primary" className="mr-2" onClick={() => navigate('/seedlingForm')}>Add New Seedling Type</Button>
-                <Button type="default" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={generatePDF}>Generate Reports</Button>
+                <button type="primary" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => navigate('/seedlingForm')}>Add New Seedling Type</button>
+                <button type="default" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={generatePDF}>Generate Reports</button>
               </div>
             </Col>
           </Row>

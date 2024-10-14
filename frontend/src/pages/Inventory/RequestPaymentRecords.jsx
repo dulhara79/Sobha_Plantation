@@ -346,10 +346,10 @@ const rows = filteredRequests.map(request => ({
                   style={{ width: 200 }}
                   value={searchText}
                 />
-                <Button style={{ backgroundColor: "#60DB19", color: "#fff" }} onClick={() => navigate("/Inventory/AddRequestPaymentRecord")}>
+                <Button style={{ backgroundColor: "#22c55e", color: "#fff" }} onClick={() => navigate("/Inventory/AddRequestPaymentRecord")}>
                   Add Records
                 </Button>
-                <Button style={{ backgroundColor: "#60DB19", color: "#fff" }} onClick={generatePDF}>
+                <Button style={{ backgroundColor: "#22c55e", color: "#fff" }} onClick={generatePDF}>
                   Generate PDF Report
                 </Button>
               </div>

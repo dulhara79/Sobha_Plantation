@@ -33,7 +33,7 @@ const BuyerPreOrderTable = () => {
   // Fetch PreOrder records from API
   const fetchPreOrderRecords = async () => {
     try {
-      const response = await axios.get("http://localhost:8090/api/buyerPreOrder");
+      const response = await axios.get("http://localhost:5000/api/buyerPreOrder");
       setPreOrderRecords(response.data.data);
       setFilteredPreOrderRecords(response.data.data);
     } catch (error) {

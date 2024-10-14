@@ -1,5 +1,5 @@
 
-import React, { useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Chart as ChartJS, ArcElement } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import { Card, Row, Col } from "antd";
@@ -13,6 +13,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Breadcrumb } from 'antd';
 import { Link,useNavigate,useLocation } from 'react-router-dom';
 import DateTimeDisplay from "../../components/Inventory/DateTimeDisplay";
+import LoadingDot from '../../components/LoadingDots';
 
 // Import image assets
 import Tools from '../../assets/Inventory/tools.jpg';
@@ -80,18 +81,27 @@ const InventoryDashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const activePage = location.pathname;
+  const [loading, setLoading] = useState(true);
 
+  
 
   const onBackClick = useCallback(() => {
     navigate(-1);
   }, [navigate]);
 
- 
+  useEffect(() => {
+    // Simulate loading process (e.g., API calls, component mounting)
+    setTimeout(() => {
+      setLoading(false); // Once the components or data are loaded
+    }, 500); // Adjust the delay as needed
+  }, []);
+
+  if (loading) return <LoadingDot />;
 
 
   const isActive = (page) => activePage === page;
 
-
+  
   return (
      
     <div className="flex flex-col min-h-screen bg-gray-100">
@@ -133,7 +143,7 @@ const InventoryDashboard = () => {
             </div>
           </div>
 
-        <div className="flex justify-center items-center mt-5">
+        <div className="flex items-center justify-center mt-5">
           <div className="w-full max-w-[1200px]">
             <Row gutter={[16, 16]} justify="center" className="mt-5">
               <Col span={8}>

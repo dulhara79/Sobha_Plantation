@@ -4,6 +4,9 @@ import Sidebar from '../../components/Sidebar';
 import { HomeOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Row, Col } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
+import DateTimeDisplay from '../../components/Products/DateTimeDisplay';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+
 import {
   FileTextOutlined,
   CalendarOutlined,
@@ -83,12 +86,18 @@ const BuyerDashboard = () => {
             { href: '', title: <HomeOutlined /> },
             { href: '', title: 'Buyer Management' },
           ]}
+
+          className="mb-6"
         />
 
-        {/* Welcome Message */}
-        <div className="p-6 my-6 bg-white rounded-lg shadow-md welcome-message" style={{ marginTop: '20px' }}>
-          <h2 className="text-2xl font-bold">👋 Welcome,</h2>
-          <p className="text-gray-600">Today is {formattedDate}</p>
+        {/* Welcome message section with DateTimeDisplay */}
+        <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
+          <div className="flex flex-row items-center justify-between">
+            <DateTimeDisplay />
+            <div className="flex items-center">
+              <NotificationsIcon className="text-3xl" />
+            </div>
+          </div>
         </div>
 
         {/* Summary Section */}

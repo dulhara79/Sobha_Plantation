@@ -475,8 +475,13 @@ const generatePDF = async () => {
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button 
                 type="primary" 
+                style={{
+                  backgroundColor: '#22c55e', // bg-green-500
+                  borderColor: '#22c55e',
+                }}
+                className="px-4 py-2 text-white rounded hover:bg-green-600 hover:border-green-600"
                 icon={<FilePdfOutlined />}
-                style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }} 
+                // style={{ marginBottom: '24px', backgroundColor: '#22c55e', borderColor: '#60DB19', color: '#000000' }} 
                 onClick={generatePDF}
                 
               >
@@ -485,9 +490,13 @@ const generatePDF = async () => {
               <Button 
                 type="primary" 
                 icon={<PlusOutlined />}
-
+                style={{
+                  backgroundColor: '#22c55e', // bg-green-500
+                  borderColor: '#22c55e',
+                }}
+                className="px-4 py-2 text-white rounded hover:bg-green-600 hover:border-green-600"
                 onClick={handleAddInspection} // Added button for adding inspections
-                style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
+                // style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
               >
                 Add Inspection
               </Button>
