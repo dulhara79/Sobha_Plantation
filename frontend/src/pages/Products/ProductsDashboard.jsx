@@ -127,8 +127,14 @@ const ProductsDashboard = () => {
             ]}
           />
           <Button
-            className="flex items-center text-white bg-blue-500 rounded-md shadow-md hover:bg-blue-600"
-            style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
+            className="flex items-center text-white rounded hover:bg-green-600 hover:border-green-600"
+            // className="px-4 py-2 "
+            // style={{ marginBottom: '24px', backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
+            style={{
+              backgroundColor: '#22c55e', // bg-green-500
+              borderColor: '#22c55e',
+            }}
+            
             onClick={() => navigate('/products/gallery')}
           >
             <CollectionsSharpIcon className="mr-2" />
