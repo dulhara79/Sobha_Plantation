@@ -7,6 +7,7 @@ import AddIcon from '@mui/icons-material/Add';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import BuyerHeader from '../components/BuyerHeader';
 
 // Import your product images
 import product_1 from '../assets/Buyer/product_1.jpg';
@@ -97,6 +98,10 @@ const HomePage = () => {
   };
 
   return (
+    <>
+
+    <BuyerHeader />
+
     <Box
       sx={{
         padding: '20px',
@@ -201,6 +206,7 @@ const HomePage = () => {
         ))}
       </Grid>
     </Box>
+    </>
   );
 };
 
