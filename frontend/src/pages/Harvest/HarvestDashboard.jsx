@@ -133,17 +133,24 @@ const HarvestDashboard = () => {
           </div>
 
           <div className="flex flex-row justify-between gap-4 mt-5">
-            <div className="flex flex-col items-center justify-center flex-1 p-3 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-green-400 to-green-600 hover:scale-105">
-              <h3 className="text-xl text-center">Upcoming Harvests</h3>
-              <ul>
-                {upcomingHarvests.map((harvest, index) => (
-                  <li key={index}>
-                    {harvest.cropType} -{" "}
-                    {new Date(harvest.harvestDate).toLocaleDateString()}
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="flex flex-col items-center justify-center flex-1 p-2 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-green-400 to-green-600 hover:scale-105">
+  <h3 className="text-lg text-center">Upcoming Harvests</h3> {/* Reduced font size */}
+  <div className="flex flex-wrap justify-between w-full"> {/* Flex layout for side by side */}
+    {upcomingHarvests.length > 0 ? (
+      upcomingHarvests.map((harvest, index) => (
+        <div key={index} className="w-1/2 p-1"> {/* Each item takes half the width, reduced padding */}
+          <p className="text-center text-sm"> {/* Reduced font size for harvest items */}
+            {harvest.cropType} - {new Date(harvest.harvestDate).toLocaleDateString()}
+          </p>
+        </div>
+      ))
+    ) : (
+      <p className="w-full text-center text-sm">No upcoming harvests.</p>
+    )}
+  </div>
+</div>
+
+
             <div className="flex flex-col items-center justify-center flex-1 p-3 text-white transition-transform duration-300 ease-in-out transform rounded-lg shadow-lg bg-gradient-to-r from-red-400 to-red-600 hover:scale-105">
               <h3 className="text-xl text-center">Expired Harvests</h3>
               {expiredHarvests.length > 0 ? (
