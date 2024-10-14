@@ -70,7 +70,7 @@ const DiseasesDashboard = () => {
         </div>
 
         {/* Slogan Section */}
-        <div className="my-4 p-4 bg-gradient-to-r from-yellow-300 via-green-500 to-yellow-300 rounded-lg shadow-lg text-center">
+        <div className="my-4 p-4 bg-gradient-to-r from-green-300 via-green-500 to-green-300 rounded-lg shadow-lg text-center">
           {/* <h2 className="text-16xl font-bold text-white animate-text-slide">     {/*animate-pulse*/}
           {/* 🤍🌴 Nurture Your Crops, Nourish Your Future! 🌴🤍
           </h2>  */}
