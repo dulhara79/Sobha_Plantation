@@ -70,7 +70,7 @@ const AddPreOrderRecords = () => {
       setLoading(true);
       const { name, phoneNumber, address, productType, productQuantity, orderDate } = values;
 
-      await axios.post("http://localhost:8090/api/buyerPreOrder", {
+      await axios.post("http://localhost:5000/api/buyerPreOrder", {
         name,
         phoneNumber,
         address,

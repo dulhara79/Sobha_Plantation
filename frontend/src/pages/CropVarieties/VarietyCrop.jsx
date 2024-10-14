@@ -47,90 +47,103 @@ const VarietyCrop = () => {
     }
   };
 
-  // Function to get image data URL
-  const getImageDataURL = (url) => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'Anonymous'; // Ensure cross-origin images are handled
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        context.drawImage(img, 0, 0);
-        resolve(canvas.toDataURL('image/png'));
-      };
-      img.onerror = reject;
-      img.src = url;
-    });
-  };
+ // Function to get image data URL
+ const getImageDataURL = (url) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'Anonymous'; // Ensure cross-origin images are handled
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      context.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+};
 
-  // Generate PDF report
-  const handleGenerateReport = async () => {
-    const doc = new jsPDF();
+// Generate PDF report
+const handleGenerateReport = async () => {
+  const doc = new jsPDF();
 
-    // Load the logo image
-    const logoUrl = '../src/assets/logo.png'; 
-    try {
-      const logoDataURL = await getImageDataURL(logoUrl);
+  // Load the logo image
+  const logoUrl = '../src/assets/logo.png'; 
+  let logoDataURL = null;
+  try {
+    logoDataURL = await getImageDataURL(logoUrl);
+  } catch (error) {
+    console.error('Failed to load the logo image:', error);
+  }
 
-      // Add the logo image to the PDF
-      doc.addImage(logoDataURL, 'PNG', 10, 10, 40, 20); // Adjust x, y, width, height as needed
+  // Header
+  const pageWidth = doc.internal.pageSize.width;
+  doc.setFontSize(14);
+  doc.text("Sobha Plantation", 10, 10); // Align left
+  doc.setFontSize(10);
+  doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+  doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+  doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address
+  doc.text("Contact: 0112 751 757", 10, 30); // Contact
 
-    } catch (error) {
-      console.error('Failed to load the logo image:', error);
-    }
+  if (logoDataURL) {
+    doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right
+  }
+  doc.line(10, 35, pageWidth - 10, 35); // Header line
 
-    // Define the table columns
-    const columns = [
-      { title: "Assigned Person", dataKey: "assignedPerson" },
-      { title: "Field Name", dataKey: "fieldName" },
-      { title: "Varieties", dataKey: "varieties" },
-      { title: "Plantation Date", dataKey: "plantationDate" },
-      { title: "Status", dataKey: "status" },
-    ];
+  // Define the table columns
+  const columns = [
+    { title: "Assigned Person", dataKey: "assignedPerson" },
+    { title: "Field Name", dataKey: "fieldName" },
+    { title: "Varieties", dataKey: "varieties" },
+    { title: "Plantation Date", dataKey: "plantationDate" },
+    { title: "Status", dataKey: "status" },
+  ];
 
-    // Map the filtered cropVarieties data to match the columns
-    const rows = cropVarieties.map(variety => ({
-      assignedPerson: variety.assignedPerson,
-      fieldName: variety.fieldName,
-      varieties: variety.varieties,
-      plantationDate: moment(variety.plantationDate).format('YYYY-MM-DD'),
-      status: variety.status,
-    }));
+  // Map the filtered cropVarieties data to match the columns
+  const rows = cropVarieties.map(variety => ({
+    assignedPerson: variety.assignedPerson,
+    fieldName: variety.fieldName,
+    varieties: variety.varieties,
+    plantationDate: moment(variety.plantationDate).format('YYYY-MM-DD'),
+    status: variety.status,
+  }));
 
-    // Add title and table
-    doc.setFontSize(22);
-    doc.text("Crop Varieties Report", 50, 40); // Adjust y-coordinate as needed
+  // Add title and table
+  doc.setFontSize(22);
+  doc.text("Crop Varieties Report", 50, 50); // Adjust y-coordinate as needed
 
-    doc.autoTable({
-      columns: columns,
-      body: rows,
-      startY: 50, 
-      margin: { horizontal: 10 },
-      styles: {
-        fontSize: 10,
-      },
-      headStyles: {
-        fillColor: [64, 133, 126], 
-        textColor: [255, 255, 255], 
-        fontSize: 12,
-      },
-      theme: 'striped',
-      didDrawPage: (data) => {
-        // Add page number to footer
-        const pageNumber = doc.internal.getNumberOfPages();
-        const pageWidth = doc.internal.pageSize.width;
-        const pageHeight = doc.internal.pageSize.height;
+  doc.autoTable({
+    columns: columns,
+    body: rows,
+    startY: 60, 
+    margin: { horizontal: 10 },
+    styles: {
+      fontSize: 10,
+    },
+    headStyles: {
+      fillColor: [64, 133, 126], 
+      textColor: [255, 255, 255], 
+      fontSize: 12,
+    },
+    theme: 'striped',
+    didDrawPage: (data) => {
+      // Add page number to footer
+      const pageNumber = doc.internal.getNumberOfPages();
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
 
-        doc.setFontSize(10);
-        doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10); // Adjust position as needed
-      },
-    });
+      doc.setFontSize(10);
+      doc.text(`Page ${data.pageNumber} of ${pageNumber}`, pageWidth - 25, pageHeight - 10); // Adjust position as needed
+    },
+  });
 
-    // Save the PDF
-    doc.save("crop_varieties_report.pdf");
-  };
+  // Save the PDF
+  doc.save("crop_varieties_report.pdf");
+  notification.success({ message: 'PDF report generated and downloaded!' });
+};
 
   const filteredData = cropVarieties.filter(item => (
     (filter === 'All' || item.status === filter) &&

@@ -33,7 +33,7 @@ const BuyerInfoTable = () => {
   // Fetch Info records from API
   const fetchInfoRecords = async () => {
     try {
-      const response = await axios.get("http://localhost:8090/api/buyerInfo");
+      const response = await axios.get("http://localhost:5000/api/buyerInfo");
 
       setInfoRecords(response.data.data);
       setFilteredInfoRecords(response.data.data);
@@ -83,7 +83,7 @@ const BuyerInfoTable = () => {
   // Handle delete Info record
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:8090/api/buyerInfo/${id}`);
+      await axios.delete(`http://localhost:5000/api/buyerInfo/${id}`);
 
       notification.success({
         message: "Record deleted successfully",

@@ -41,17 +41,17 @@ const BuyerDashboard = () => {
     const fetchBuyerData = async () => {
       try {
         // Fetch total buyers
-        const buyerResponse = await axios.get('http://localhost:8090/api/buyerInfo/count/buyers'); // Replace with your API endpoint
-        setTotalBuyers(buyerResponse.data.length);
+        const buyerResponse = await axios.get('http://localhost:5000/api/buyerInfo/count/buyers'); // Replace with your API endpoint
+        setTotalBuyers(buyerResponse.data.totalBuyers);
 
         // Fetch total pre-orders
-        const preOrderResponse = await axios.get('http://localhost:8090/api/buyerPreOrder'); // Replace with your API endpoint
-        setTotalPreOrders(preOrderResponse.data.length);
+        const preOrderResponse = await axios.get('http://localhost:5000/api/buyerPreOrder/count/preOrders'); // Replace with your API endpoint
+        setTotalPreOrders(preOrderResponse.data.totalPreOrders);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-
+    
     fetchBuyerData();
   }, []); // Empty dependency array means it runs once after the component mounts
 

@@ -5,56 +5,82 @@ const moment = require("moment");
 // Controller for creating a new salary record
 exports.createSalaryRecord = async (request, response) => {
     try {
-        const requiredFields = [
-            'payment_date',
-            'emp_name',
-            'salary_start_date',
-            'salary_end_date',
-            'nic',
-            'type',
-            'basic_days',
-            'basic_rate',
-            // 'bonus_salary',
-            // 'after_hours',
-            // 'saturday_hours',
-            // 'sunday_hours',
-            'ot_rate',
-            'epf_etf',
-            // 'description',
-            "isPaid"
-        ];
+        // const requiredFields = [
+        //     'payment_date',
+        //     'emp_name',
+        //     'salary_start_date',
+        //     'salary_end_date',
+        //     'nic',
+        //     'type',
+        //     // 'basic_days',
+        //     'basic_rate',
+        //     // 'bonus_salary',
+        //     // 'after_hours',
+        //     // 'saturday_hours',
+        //     // 'sunday_hours',
+        //     'ot_rate',
+        //     'epf_etf',
+        //     // 'description',
+        //     // "isPaid",
+        //     "partialPayment"
+        // ];
 
-        const missingFields = requiredFields.filter(field => !request.body[field]);
+        // const missingFields = requiredFields.filter(field => !request.body[field]);
 
-        if (missingFields.length > 0) {
-            return response.status(400).send({
-                message: `Missing required fields: ${missingFields.join(', ')}`,
-            });
-        }
+        // if (missingFields.length > 0) {
+        //     return response.status(400).send({
+        //         message: `Missing required fields: ${missingFields.join(', ')}`,
+        //     });
+        // }
+
+        // const NewSalaryRecord = {
+        //     payment_date: request.body.payment_date,
+        //     emp_name: request.body.emp_name,
+        //     salary_start_date: request.body.salary_start_date,
+        //     salary_end_date: request.body.salary_end_date,
+        //     nic: request.body.nic,
+        //     type: request.body.type,
+        //     basic_days: request.body.basic_days,
+        //     basic_rate: request.body.basic_rate,
+        //     bonus_salary: request.body.bonus_salary,
+        //     week_hours: request.body.after_hours,
+        //     saturday_hours: request.body.saturday_hours,
+        //     sunday_hours: request.body.sunday_hours,
+        //     ot_rate: request.body.ot_rate,
+        //     epf_etf: request.body.epf_etf,
+        //     description: request.body.description,
+        //     isPaid: request.body.isPaid,
+        //     partialPayment: request.body.partialPayment,
+        //     netSalary: request.body.netSalary,
+        // };
 
         const NewSalaryRecord = {
-            payment_date: request.body.payment_date,
-            emp_name: request.body.emp_name,
-            salary_start_date: request.body.salary_start_date,
-            salary_end_date: request.body.salary_end_date,
-            nic: request.body.nic,
-            type: request.body.type,
+            after_hours: request.body.after_hours,
             basic_days: request.body.basic_days,
             basic_rate: request.body.basic_rate,
             bonus_salary: request.body.bonus_salary,
-            week_hours: request.body.after_hours,
+            description: request.body.description,
+            emp_name: request.body.emp_name,
+            epf_deduction: request.body.epf_deduction,
+            etf_contribution: request.body.etf_contribution,
+            fullMonthSalary: request.body.fullMonthSalary,
+            isPaid: request.body.isPaid,
+            netSalary: request.body.netSalary,
+            nic: request.body.nic,
+            ot_rate: request.body.ot_rate,
+            partialPayment: request.body.partialPayment,
+            payment_date: new Date(request.body.payment_date),
+            salary_end_date: new Date(request.body.salary_end_date),
+            salary_start_date: new Date(request.body.salary_start_date),
             saturday_hours: request.body.saturday_hours,
             sunday_hours: request.body.sunday_hours,
-            ot_rate: request.body.ot_rate,
-            epf_etf: request.body.epf_etf,
-            description: request.body.description,
-            isPaid: request.body.isPaid,
+            type: request.body.type,
         };
 
         console.log(NewSalaryRecord);
 
         const SalaryRecord = await SalariesRecord.create(NewSalaryRecord);
-        return response.status(201).send(SalaryRecord);
+        return response.status(201).send({SalaryRecord, id: SalaryRecord._id});
 
     } catch (error) {
         console.log(error.message);

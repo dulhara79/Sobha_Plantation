@@ -17,7 +17,7 @@ const BarGraph = ({ data }) => {
       <Legend />
       <Bar 
         dataKey="value" 
-        fill="#20C997" // Change color as needed
+        fill="#1D6660" // Change color as needed
         animationDuration={500} // Animation duration in milliseconds
       />
     </BarChart>
