@@ -262,7 +262,7 @@ const TaskList = () => {
               <div className="w-8 h-8">
                 <FaHourglassStart />
               </div>
-              <dd className="text-xl font-semibold text-gray-900">Pending</dd>
+              <dd className="text-xl font-semibold text-gray-700">Pending</dd>
             </div>
           </button>
           {/* <button
@@ -289,7 +289,7 @@ const TaskList = () => {
               <div className="w-8 h-8">
                  <FaTools />
               </div>
-              <div className="text-xl font-semibold text-gray-900">
+              <div className="text-xl font-semibold text-gray-700">
               In Progress
               </div>
             </div>
@@ -298,13 +298,13 @@ const TaskList = () => {
           <button
             value="completed"
             onClick={(e) => setSearchQuery(e.target.value)}
-            className="flex-grow overflow-hidden bg-blue-100 flex justify-center items-center hover:w-[20%] hover:h-[105%] transition-all duration-300 ease-in-out"
+            className="flex-grow overflow-hidden bg-blue-200  flex justify-center items-center hover:w-[20%] hover:h-[105%] transition-all duration-300 ease-in-out "
           >
             <div className="flex flex-col items-center content-center justify-between h-full pt-4 pb-4 align-middle ">
               <div className="w-8 h-8">
                 <FaCheck />
               </div>
-              <div className="text-xl font-semibold text-gray-900">
+              <div className="text-xl font-semibold text-gray-700">
                 Completed
               </div>
             </div>
@@ -318,7 +318,7 @@ const TaskList = () => {
               <div className="w-8 h-8">
                 <GiPauseButton />
               </div>
-              <div className="text-xl font-semibold text-gray-900">On Hold</div>
+              <div className="text-xl font-semibold text-gray-700">On Hold</div>
             </div>
           </button>
           <button
@@ -330,7 +330,7 @@ const TaskList = () => {
               <div className="w-8 h-8">
                 <FaBan />
               </div>
-              <div className="text-xl font-semibold text-gray-900">
+              <div className="text-xl font-semibold text-gray-700">
                 Cancelled
               </div>
             </div>
