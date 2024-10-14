@@ -19,7 +19,7 @@ const menuItems = [
   { name: "HOME", path: "/harvest/harvestdashboard" },
   { name: "SCHEDULE", path: "/harvest/harvest-schedule" },
   { name: "YIELD", path: "/harvest/yield" },
-  { name: "QUALITY CHECKING", path: "/harvest/quality" },
+  { name: "QUALITYCHECKING", path: "/harvest/quality" },
   // { name: "COMPLIANCECHECKLIST", path: "/harvest/compliancechecklist" },
 ];
 
