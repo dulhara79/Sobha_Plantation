@@ -26,14 +26,14 @@ const products = [
   { name: 'COCONUT (1 unit)', img: crop_1, description: '110.00 LKR', price: 110 },
   { name: 'BANANA 1kg (Kolikuttu)', img: crop_2, description: '300.00 LKR', price: 300 },
   { name: 'PINEAPPLE 1kg', img: crop_3, description: '690.00 LKR', price: 690 },
-  { name: 'PAPAYA', img: crop_4, description: '200.00 LKR', price: 200 },
-  { name: 'Crop 5', img: crop_5, description: '250.00 LKR', price: 250 },
-  { name: 'Product 1', img: product_1, description: 'Description of product 1', price: 350 },
-  { name: 'Product 2', img: product_2, description: 'Description of product 2', price: 400 },
-  { name: 'Product 3', img: product_3, description: 'Description of product 3', price: 450 },
-  { name: 'Product 4', img: product_4, description: 'Description of product 4', price: 500 },
-  { name: 'Product 5', img: product_5, description: 'Description of product 5', price: 550 },
-  { name: 'Product 6', img: product_6, description: 'Description of product 6', price: 600 },
+  { name: 'PAPAYA 1kg', img: crop_4, description: '200.00 LKR', price: 200 },
+  { name: 'PEPPER 1Kg', img: crop_5, description: '250.00 LKR', price: 250 },
+  { name: 'COCONUT-CREAM', img: product_1, description: '350.00 LKR', price: 350 },
+  { name: 'COCONUT - MILK', img: product_2, description: '400.00 LKR', price: 400 },
+  { name: 'COCONUT - WATER', img: product_3, description: '450.00 LKR', price: 450 },
+  { name: 'SHELL', img: product_4, description: '500.00 LKR', price: 500 },
+  { name: 'COCONUT-OIL', img: product_5, description: '550.00 LKR', price: 550 },
+  { name: 'COIR', img: product_6, description: '600.00 LKR', price: 600 },
 ];
 
 const HomePage = () => {

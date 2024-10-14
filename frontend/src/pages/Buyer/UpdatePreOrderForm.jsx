@@ -64,7 +64,7 @@ const updateBuyerPreOrderRecords = () => {
   useEffect(() => {
     const fetchRecord = async () => {
       try {
-        const response = await axios.get(`http://localhost:8090/api/buyerPreOrder/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/buyerPreOrder/${id}`);
         const data = response.data.BuyerPreOrderRecord;        ;
         console.log("Record data:", response);
         // Set form values including DatePicker values
@@ -98,7 +98,7 @@ const updateBuyerPreOrderRecords = () => {
         orderDate: values.orderDate.toISOString(),
       };
 
-      await axios.put(`http://localhost:8090/api/buyerPreOrder/${id}`, payload);
+      await axios.put(`http://localhost:5000/api/buyerPreOrder/${id}`, payload);
 
       notification.success({
         message: "Record updated successfully",
