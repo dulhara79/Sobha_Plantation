@@ -33,7 +33,7 @@ const BuyerPreOrderTable = () => {
   // Fetch PreOrder records from API
   const fetchPreOrderRecords = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/buyerPreOrder");
+      const response = await axios.get("http://localhost:8090/api/buyerPreOrder");
       setPreOrderRecords(response.data.data);
       setFilteredPreOrderRecords(response.data.data);
     } catch (error) {
@@ -82,7 +82,7 @@ const BuyerPreOrderTable = () => {
   // Handle delete PreOrder record
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/buyerPreOrder/${id}`);
+      await axios.delete(`http://localhost:8090/api/buyerPreOrder/${id}`);
       notification.success({
         message: "Record deleted successfully",
         description: "Record has been deleted successfully",
@@ -97,73 +97,6 @@ const BuyerPreOrderTable = () => {
     }
   };
 
-  // // PDF Generation
-  // const generatePDF = async () => {
-  //   const doc = new jsPDF();
-
-  //   // Define the columns for the table
-  //   const columns = [
-  //     { title: "Name", dataKey: "name" },
-  //     { title: "Phone Number", dataKey: "phoneNumber" },
-  //     { title: "Address", dataKey: "address" },
-  //     { title: "product Type", dataKey: "productType" },
-  //     { title: "product Quantity", dataKey: "productQuantity" },
-  //     { title: "Order Date", dataKey: "orderDate" },
-  //   ];
-
-  //   // Get the data from the PreOrderRecords state
-  //   const rows = filteredPreOrderRecords.map((PreOrderRecord) => ({
-  //     name: PreOrderRecord.name,
-  //     phoneNumber: PreOrderRecord.phoneNumber,
-  //     address: PreOrderRecord.address,
-      
-  //     productType: PreOrderRecord.productType,
-  //     productQuantity: PreOrderRecord.productQuantity,
-  //     orderDate: moment(PreOrderRecord.orderDate).format("YYYY-MM-DD"),
-  //   }));
-
-  //   // Add title
-  //   doc.setFont("helvetica", "bold");
-  //   doc.setFontSize(20);
-  //   const titleY = 24;
-  //   doc.text("Buyer PreOrder Records", 70, titleY);
-
-  //   // Add table
-  //   doc.autoTable({
-  //     columns: columns,
-  //     body: rows,
-  //     startY: titleY + 5,
-  //     margin: { horizontal: 10 },
-  //     styles: {
-  //       fontSize: 10,
-  //       minCellHeight: 17,
-  //       halign: "left",
-  //       valign: "middle",
-  //     },
-  //     headStyles: {
-  //       fillColor: [64, 133, 126],
-  //       textColor: [255, 255, 255],
-  //       fontSize: 10,
-  //     },
-  //     theme: "striped",
-  //   });
-
-  //   // Add footer with a horizontal line and logo
-  //   const footerY = doc.internal.pageSize.height - 30;
-  //   doc.setDrawColor(0);
-  //   doc.setLineWidth(0.5);
-  //   doc.line(10, footerY, doc.internal.pageSize.width - 10, footerY);
-
-  //   // Add logo to the footer
-  //   const logoWidth = 40;
-  //   const logoHeight = 20;
-  //   const xPosition = (doc.internal.pageSize.width - logoWidth) / 2;
-  //   const yPosition = footerY - logoHeight - -10;
-
-  //   doc.addImage(LogoImage, "PNG", xPosition, yPosition, logoWidth, logoHeight);
-
-  //   doc.save("Buyer_PreOrder_Records.pdf");
-  // };
   const getImageDataURL = (url) => {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -224,7 +157,7 @@ const BuyerPreOrderTable = () => {
       const marginBottom = 20; // space reserved for footer
     
       // Title for the report
-      const title = "Delivery Records Report";
+      const title = "Buyer Pre Order Report";
       doc.setFontSize(22);
       
       // Calculate the width of the title
@@ -239,24 +172,24 @@ const BuyerPreOrderTable = () => {
   
       // Define the columns for the table
       const columns = [
-        "First Name",
-        "Last Name",
-        "Gender", 
-        "DOB",
-         "Number",
-        "Email",
+        "name",
+        "phoneNumber",
+        "address", 
+        "productType",
+         "productQuantity",
+        "orderDate",
         
       ]; 
-  
-      // Get the data from the inspections state
-      const rows = filteredInfoRecords.map((InfoRecord) => [
+      
+      const rows = filteredPreOrderRecords.map((PreOrderRecord) => [
         
-        InfoRecord.firstName,
-        InfoRecord.lastName,
-        InfoRecord.Gender,
-        moment(InfoRecord.DOB).format("YYYY-MM-DD"),
-        InfoRecord.Number,
-        InfoRecord.email,
+        PreOrderRecord.name,
+        PreOrderRecord.phoneNumber,
+        PreOrderRecord.address,
+        PreOrderRecord.productType,
+        PreOrderRecord.productQuantity,
+        moment(PreOrderRecord.orderDate).format("YYYY-MM-DD"),
+        
         
         
         
@@ -281,7 +214,7 @@ const BuyerPreOrderTable = () => {
       });
       // Save the PDF
     
-    doc.save("Buyer_Info_Records.pdf");
+    doc.save("Buyer_PreOrder_Records.pdf");
   };
 
   const columns = [
@@ -375,8 +308,8 @@ const BuyerPreOrderTable = () => {
               icon={<FilePdfOutlined />}
               onClick={generatePDF}
               style={{
-                backgroundColor: "red",
-                borderColor: "red",
+                backgroundColor: '#84cc16',  // Set background color to red
+                borderColor: '#84cc16', 
                 color: "white",
               }}
             >
