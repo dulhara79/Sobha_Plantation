@@ -203,13 +203,13 @@ const filteredRecords = attendanceRecords.filter((record) =>
         <div className="flex items-center space-x-2">
           <button
             onClick={handleDownloadPDF}
-            className="rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-opacity-50"
+            className="rounded-full bg-green-500  px-3.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-opacity-50"
           >
             Generate Report
           </button>
           <Link
             to="/employee/attendance"
-            className="rounded-full bg-gray-900 px-3.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-opacity-50"
+            className="rounded-full bg-green-500 px-3.5 py-1 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-opacity-50"
           >
             Get Attendance <span aria-hidden="true">&rarr;</span>
           </Link>

@@ -31,6 +31,9 @@ const HarvestSchedule = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const activePage = location.pathname;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10); // Default page size
+
 
   useEffect(() => {
     fetchSchedules();
@@ -41,6 +44,7 @@ const HarvestSchedule = () => {
       const response = await axios.get("http://localhost:5000/api/harvest");
       setSchedules(response.data.data);
       setFilteredSchedules(response.data.data);
+      setCurrentPage(1); // Reset to first page on new fetch
     } catch (error) {
       console.error("Error fetching yield records:", error);
     }
@@ -326,17 +330,23 @@ const HarvestSchedule = () => {
                 value={searchText}
               />
               <Button
-                style={{ backgroundColor: "#60DB19", color: "#fff" }}
+                style={{ backgroundColor: "#22c55e", color: "#fff" }}
                 onClick={() => navigate("/harvest/addschedule")}
               >
                 Add Schedule
               </Button>
               <Button
-                style={{ backgroundColor: "#60DB19", color: "#fff" }}
+                style={{ backgroundColor: "#22c55e", color: "#fff" }}
                 onClick={generatePDF}
               >
                 Generate PDF Report
               </Button>
+              {/* <Button
+                style={{ backgroundColor: "#60DB19", color: "#fff" }}
+                onClick={() => navigate("/harvest/harvestCal")}  // Navigate on click
+              >
+                Estimate Harvest Calculator
+              </Button> */}
             </div>
           </div>
           <Table
@@ -411,10 +421,18 @@ const HarvestSchedule = () => {
                 ),
               },
             ]}
-            dataSource={filteredSchedules}
+            dataSource={filteredSchedules.slice((currentPage - 1) * pageSize, currentPage * pageSize)} // Slice for pagination
             rowKey="_id"
-            pagination={false}
-            scroll={{ y: 400 }}
+            pagination={{
+              current: currentPage,
+              pageSize,
+              total: filteredSchedules.length,
+              onChange: (page, size) => {
+                setCurrentPage(page);
+                setPageSize(size); // Optional: change the page size
+              },
+            }}
+          
             onChange={(pagination, filters, sorter) => {
               if (sorter && sorter.order) {
                 handleSort(sorter.field, sorter.order);

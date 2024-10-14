@@ -246,18 +246,18 @@ const handleGenerateReport = async () => {
             </Select>
           </div>
           <div className="flex gap-4">
-            <Button
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            <button
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
               onClick={() => navigate('/cvForm')}
             >
               + Add New Activity
-            </Button>
-            <Button
+            </button>
+            <button
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
               onClick={handleGenerateReport}
             >
               Generate Reports
-            </Button>
+            </button>
           </div>
         </div>
 

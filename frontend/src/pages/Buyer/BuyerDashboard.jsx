@@ -4,6 +4,9 @@ import Sidebar from '../../components/Sidebar';
 import { HomeOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Row, Col } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
+import DateTimeDisplay from '../../components/Products/DateTimeDisplay';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+
 import {
   FileTextOutlined,
   CalendarOutlined,
@@ -13,6 +16,7 @@ import {
 } from '@ant-design/icons';
 import axios from 'axios';  // Import axios for API calls
 import BuyerNavbar from '../../components/Buyer/Header/BuyerNavbar';
+import NewLoadingScreen from '../../components/LoadingDots'
 
 const BuyerDashboard = () => {
   const navigate = useNavigate();
@@ -25,7 +29,15 @@ const BuyerDashboard = () => {
   // Function to handle navigation
   const handleNavigation = (path) => {
     navigate(path);
-  };
+  };const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading process (e.g., API calls, component mounting)
+    setTimeout(() => {
+      setLoading(false); // Once the components or data are loaded
+    }, 1000); // Adjust the delay as needed
+  }, []);
+
 
   // Update the date and time every minute
   useEffect(() => {
@@ -59,6 +71,8 @@ const BuyerDashboard = () => {
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = currentDate.toLocaleDateString(undefined, options);
 
+  if (loading) return <NewLoadingScreen />;
+
   return (
     <div>
       <Header />
@@ -72,12 +86,18 @@ const BuyerDashboard = () => {
             { href: '', title: <HomeOutlined /> },
             { href: '', title: 'Buyer Management' },
           ]}
+
+          className="mb-6"
         />
 
-        {/* Welcome Message */}
-        <div className="p-6 my-6 bg-white rounded-lg shadow-md welcome-message" style={{ marginTop: '20px' }}>
-          <h2 className="text-2xl font-bold">👋 Welcome,</h2>
-          <p className="text-gray-600">Today is {formattedDate}</p>
+        {/* Welcome message section with DateTimeDisplay */}
+        <div className="flex flex-col shadow-[1px_3px_20px_2px_rgba(0,_0,_0,_0.2)] rounded-6xl bg-gray-100 p-5 max-w-full gap-5">
+          <div className="flex flex-row items-center justify-between">
+            <DateTimeDisplay />
+            <div className="flex items-center">
+              <NotificationsIcon className="text-3xl" />
+            </div>
+          </div>
         </div>
 
         {/* Summary Section */}

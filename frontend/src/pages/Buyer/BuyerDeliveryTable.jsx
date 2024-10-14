@@ -326,8 +326,8 @@ const getImageDataURL = (url) => {
               icon={<FilePdfOutlined />}
               onClick={generatePDF}
               style={{
-                backgroundColor: 'red',  // Set background color to red
-                borderColor: 'red',      // Set border color to red
+                backgroundColor: '#84cc16',  // Set background color to red
+                borderColor: '#84cc16',      // Set border color to red
                 color: 'white',          // Set text color to white for contrast
               }}
             >

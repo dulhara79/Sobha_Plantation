@@ -8,22 +8,22 @@ import { Link } from "react-router-dom"; // Assuming you're using React Router f
 
 const VisitUs = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-r from-green-100 via-white to-green-100 p-10">
-      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-8">
+    <div className="min-h-screen p-10 bg-gradient-to-r from-green-100 via-white to-green-100">
+      <div className="p-8 mx-auto bg-white rounded-lg shadow-lg max-w-7xl">
         {/* Header Section */}
-        <div className="text-center mb-12">
+        <div className="mb-12 text-center">
           <h1 className="text-6xl font-bold text-green-600">Visit Us</h1>{" "}
-          {/* <p className="text-xl text-gray-500 mt-4">
+          {/* <p className="mt-4 text-xl text-gray-500">
             Learn more about Sobha Plantations and how you can engage with us.
           </p> */}
         </div>
 
         {/* Company Background Section */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold text-green-700 mb-4">
+          <h2 className="mb-4 text-3xl font-bold text-green-700">
             Company Background
           </h2>
-          <p className="text-gray-600 text-lg leading-relaxed">
+          <p className="text-lg leading-relaxed text-gray-600">
             Sobha Plantations is an 11-acre estate located in the lush region of
             Kurunegala, North Western Province. Specializing in coconuts with
             intercrops like banana, pepper, and papaya, the estate’s potential
@@ -35,10 +35,10 @@ const VisitUs = () => {
 
         {/* Interactive Map Section */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold text-green-700 mb-4">
+          <h2 className="mb-4 text-3xl font-bold text-green-700">
             Our Location
           </h2>
-          <p className="text-gray-600 text-lg mb-6">
+          <p className="mb-6 text-lg text-gray-600">
             Sobha Plantations is located in Kurunegala, North Western Province,
             Sri Lanka. Come visit our lush coconut estate and explore the
             beautiful intercrops we cultivate.
@@ -60,10 +60,10 @@ const VisitUs = () => {
 
         {/* Contact Information Section */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold text-green-700 mb-4">
+          <h2 className="mb-4 text-3xl font-bold text-green-700">
             Get in Touch
           </h2>
-          <p className="text-gray-600 text-lg mb-6">
+          <p className="mb-6 text-lg text-gray-600">
             Whether you're a buyer or just interested in visiting, reach out to
             us. We're happy to answer any questions you may have.
           </p>
@@ -78,7 +78,7 @@ const VisitUs = () => {
             </div>
             <div className="flex items-center space-x-4">
               <PhoneOutlined style={{ fontSize: "32px", color: "#48BB78" }} />
-              <span className="text-lg text-gray-600">+94 77 123 4567</span>
+              <span className="text-lg text-gray-600">+94 71 058 8207</span>
             </div>
             <div className="flex items-center space-x-4">
               <MailOutlined style={{ fontSize: "32px", color: "#48BB78" }} />
@@ -93,7 +93,7 @@ const VisitUs = () => {
         <section className="text-center">
           {/* <Link
             to="/contact"
-            className="bg-green-600 text-white text-xl py-3 px-6 rounded-full shadow-lg hover:bg-green-700 transition duration-300"
+            className="px-6 py-3 text-xl text-white transition duration-300 bg-green-600 rounded-full shadow-lg hover:bg-green-700"
           >
             Schedule a Visit
           </Link> */}

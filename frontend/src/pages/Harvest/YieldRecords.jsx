@@ -32,6 +32,10 @@ const YieldRecords = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const activePage = location.pathname;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10); // Default page size
+
+
 
   useEffect(() => {
     fetchSchedules();
@@ -348,23 +352,18 @@ const YieldRecords = () => {
                 value={searchText} // Keep the input controlled
               />
               <Button
-                style={{ backgroundColor: "#60DB19", color: "#fff" }}
+                style={{ backgroundColor: "#22c55e", color: "#fff" }}
                 onClick={() => navigate("/yield/addrecords")}
               >
                 Add Records
               </Button>
               <Button
-                style={{ backgroundColor: "#60DB19", color: "#fff" }}
+                style={{ backgroundColor: "#22c55e", color: "#fff" }}
                 onClick={generatePDF}
               >
                 Generate PDF Report
               </Button>
-              <Button
-                style={{ backgroundColor: "#60DB19", color: "#fff" }}
-                onClick={() => navigate("/harvest/harvestCal")}  // Navigate on click
-              >
-                Estimate Harvest Calculator
-              </Button>
+
 
             </div>
           </div>
@@ -449,10 +448,18 @@ const YieldRecords = () => {
                 ),
               },
             ]}
-            dataSource={filteredSchedules}
+            dataSource={filteredSchedules.slice((currentPage - 1) * pageSize, currentPage * pageSize)} // Slice for pagination
             rowKey="_id"
-            pagination={false} // Disable pagination
-            scroll={{ y: 400 }} // Optional: Add vertical scroll if there are many rows
+            pagination={{
+              current: currentPage,
+              pageSize,
+              total: filteredSchedules.length,
+              onChange: (page, size) => {
+                setCurrentPage(page);
+                setPageSize(size); // Optional: change the page size
+              },
+            }} 
+        
             onChange={(pagination, filters, sorter) => {
               handleSort(sorter.field, sorter.order);
             }}
