@@ -1,5 +1,7 @@
 import React, { Fragment, useState } from 'react'
 import { Link, useLocation } from "react-router-dom";
+import { LeftOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const menuItems = [
     { name: "HOME", path:"/employee/dashboard"  },
@@ -12,6 +14,7 @@ const menuItems = [
 
 export default function EmployeeNavbar() {
     const [open, setOpen] = useState(false)
+    const navigate = useNavigate();
     const location = useLocation();
     const [activeTab, setActiveTab] = useState(null);
 
@@ -30,6 +33,10 @@ export default function EmployeeNavbar() {
                     <div className=" border-gray-200 ">
                         <div className="flex items-center justify-center">
                             <ul className="flex flex-row items-center w-full gap-2 text-gray-800 px-2 text-xs font-medium h-8">
+                            <LeftOutlined
+                  className="rounded-full hover:bg-[#abadab] p-2"
+                  onClick={() => navigate(-1)}
+                />
                                 {menuItems.map((item) => (
                                     <li
                                         key={item.name}
