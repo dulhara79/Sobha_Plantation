@@ -30,7 +30,7 @@ const EditTask = () => {
 
         setFormData({
           emp_id: taskData.emp_id || "",
-          emp_name: taskData.emp_name || "", // Set employee name
+          emp_name: taskData.emp_name || "",
           task: taskData.task || "",
           assign_date: taskData.assign_date
             ? taskData.assign_date.split("T")[0]
@@ -114,6 +114,18 @@ const EditTask = () => {
       valid = false;
     }
 
+    // Validate assign_date
+    if (new Date(formData.assign_date) < new Date(getTodayDate())) {
+      newErrors.assign_date = "Assign date cannot be earlier than today.";
+      valid = false;
+    }
+
+    // Validate due_date
+    if (new Date(formData.due_date) > new Date(getLastDayOfYear())) {
+      newErrors.due_date = "Due date cannot be later than the end of the year.";
+      valid = false;
+    }
+
     setErrors(newErrors);
     return valid;
   };
@@ -138,6 +150,18 @@ const EditTask = () => {
 
   const handleCancel = () => {
     navigate(-1);
+  };
+
+  // Helper function to get today's date in YYYY-MM-DD format
+  const getTodayDate = () => {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  };
+
+  // Helper function to get the last day of the current year
+  const getLastDayOfYear = () => {
+    const currentYear = new Date().getFullYear();
+    return `${currentYear}-12-31`;
   };
 
   return (
@@ -171,7 +195,7 @@ const EditTask = () => {
                       {formData.emp_name || "Select an employee"}
                     </option>
                     {employees
-                      .filter((employee) => employee.id !== formData.emp_id) // Filter out current employee from the dropdown list
+                      .filter((employee) => employee.id !== formData.emp_id)
                       .map((employee) => (
                         <option key={employee.id} value={employee.id}>
                           {employee.name}
@@ -212,9 +236,16 @@ const EditTask = () => {
                     name="assign_date"
                     value={formData.assign_date}
                     onChange={handleInputChange}
-                    className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    min={getTodayDate()}
+                    max={getLastDayOfYear()}
+                    className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
+                      errors.assign_date ? "border-red-500" : ""
+                    }`}
                     required
                   />
+                  {errors.assign_date && (
+                    <p className="text-sm text-red-500">{errors.assign_date}</p>
+                  )}
                 </div>
               </div>
               <div className="col-span-full">
@@ -227,6 +258,8 @@ const EditTask = () => {
                     name="due_date"
                     value={formData.due_date}
                     onChange={handleInputChange}
+                    min={formData.assign_date || getTodayDate()}
+                    max={getLastDayOfYear()}
                     className={`block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${
                       errors.due_date ? "border-red-500" : ""
                     }`}
@@ -266,7 +299,6 @@ const EditTask = () => {
                   >
                     <option value="">Select task status</option>
                     <option value="Pending">Pending</option>
-
                     <option value="In Progress">In Progress</option>
                     <option value="Completed">Completed</option>
                   </select>
