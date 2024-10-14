@@ -166,6 +166,7 @@ import ScheduleForm from "./pages/CropVarieties/ScheduleForm.jsx";
 import LandPreparation from "./pages/CropVarieties/LandPreparation.jsx";
 import AddSeedlingForm from "./pages/CropVarieties/AddSeedlingForm.jsx";
 import PlantGrowth from "./pages/CropVarieties/plantGrowth.jsx";
+import PlantGrowthForm from "./pages/CropVarieties/PlantGrowthForm.jsx";
 
 // buyers
 import BuyerDashboard from './pages/Buyer/BuyerDashboard.jsx';
@@ -498,6 +499,7 @@ export default function App() {
       <Route path="/landPreparation" element={<LandPreparation />} />
       <Route path="/seedlingForm" element={<AddSeedlingForm />} />
       <Route path="/pGrowth" element={<PlantGrowth />} />
+      <Route path="/pGrowthForm" element={<PlantGrowthForm />} />
 
           {/* buyers */}
           

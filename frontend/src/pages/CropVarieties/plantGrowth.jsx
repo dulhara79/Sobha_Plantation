@@ -352,7 +352,7 @@ const PlantGrowth = () => {
             </Select>
           </div>
           <div>
-            <Button type="primary" onClick={handleAddNew} style={{ marginRight: 16 }}>+Add New Record</Button>
+            <Button type="primary" onClick={() => navigate('/pGrowthForm')} style={{ marginRight: 16 }}>+Add New Record</Button>
             <Button
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
               onClick={handleGenerateReport}
@@ -394,6 +394,7 @@ const PlantGrowth = () => {
         <Option value="Banana">Banana</Option>
         <Option value="Pepper">Pepper</Option>
         <Option value="Pineapple">Pineapple</Option>
+        <Option value="Papaya">Papaya</Option>
       </Select>
     </Form.Item>
     <Form.Item
