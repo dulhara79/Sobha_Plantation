@@ -330,13 +330,13 @@ const HarvestSchedule = () => {
                 value={searchText}
               />
               <Button
-                style={{ backgroundColor: "#60DB19", color: "#fff" }}
+                style={{ backgroundColor: "#22c55e", color: "#fff" }}
                 onClick={() => navigate("/harvest/addschedule")}
               >
                 Add Schedule
               </Button>
               <Button
-                style={{ backgroundColor: "#60DB19", color: "#fff" }}
+                style={{ backgroundColor: "#22c55e", color: "#fff" }}
                 onClick={generatePDF}
               >
                 Generate PDF Report

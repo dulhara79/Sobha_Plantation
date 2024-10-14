@@ -517,7 +517,7 @@ const filterQualityControls = (searchText, filterStatus) => {
                   icon={<FilePdfOutlined />}
                   style={{
                     marginBottom: "24px",
-                    backgroundColor: "#60DB19",
+                    backgroundColor: "#22c55e",
                     borderColor: "#60DB19",
                     color: "#000000",
                   }}
@@ -531,7 +531,7 @@ const filterQualityControls = (searchText, filterStatus) => {
                   onClick={handleAddInspection} // Added button for adding inspections
                   style={{
                     marginBottom: "24px",
-                    backgroundColor: "#60DB19",
+                    backgroundColor: "#22c55e",
                     borderColor: "#60DB19",
                     color: "#000000",
                   }}
