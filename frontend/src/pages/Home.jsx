@@ -10,7 +10,7 @@ import { Security } from '@mui/icons-material';
 import LearnMore from '../components/LearnMore';
 import { Link } from 'react-router-dom';
 import NewsletterSubscription from '../components/NewsletterSubscription';
-
+import HeaderHome from '../components/HeaderHome';
 import Chatbot from '../components/Buyer/Header/Chatbot';
 
 // Import images
@@ -56,16 +56,19 @@ const Home = () => {
 
     
     <div className="flex flex-col min-h-screen">
+      <div>
+      <HeaderHome />
+      
       {/* App Bar */}
-      <AppBar
+      {/* <AppBar
         position="fixed"
         className={`transition-all duration-500 ${headerExpanded ? 'h-32' : 'h-16'}`}
         // sx={{ backgroundColor: '#DCFCE7' }} 
         sx={{ backgroundColor: '#FFFFFF' }} 
-      >
-        <Toolbar className="flex justify-between">
-          <div className="text-2xl font-bold text-black">Sobha Plantations</div> 
-          <div className={`transition-all duration-500 ${searchBarVisible ? 'w-full bg-white bg-opacity-50' : ''}`}>
+      > */}
+        {/*<Toolbar className="flex justify-between">
+          <div className="text-2xl font-bold text-black">Sobha Plantations</div>  */}
+          {/* <div className={`transition-all duration-500 ${searchBarVisible ? 'w-full bg-white bg-opacity-50' : ''}`}>
             {searchBarVisible ? (
               <InputBase
                 placeholder="Search…"
@@ -79,7 +82,8 @@ const Home = () => {
             )}
           </div>
         </Toolbar>
-      </AppBar>
+      </AppBar>*/}
+
 
       {/* Main Content */}
       <main className="flex-grow">
@@ -492,6 +496,7 @@ const Home = () => {
   }
 `}</style>
 
+    </div>
     </div>
   );
 };
