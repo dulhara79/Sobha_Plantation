@@ -38,10 +38,13 @@ const CoconutTreatments = () => {
   const fetchTreatments = async () => {
     try {
       const response = await axios.get("http://localhost:5000/api/treatments");
-        setTreatments(response.data.data);
-        setFilteredTreatments(response.data.data);
+      setTreatments(response.data.data);
+      setFilteredTreatments(response.data.data);
     } catch (error) {
-      console.error("Error fetching treatments: ", error.response ? error.response.data : error.message);
+      console.error(
+        "Error fetching treatments: ",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -100,7 +103,9 @@ const CoconutTreatments = () => {
           message: "Treatment deleted successfully",
           description: "The treatment record has been deleted successfully.",
         });
-        setFilteredTreatments(filteredTreatments.filter((treatment) => treatment._id !== id));
+        setFilteredTreatments(
+          filteredTreatments.filter((treatment) => treatment._id !== id)
+        );
       } else {
         notification.error({
           message: "Error deleting treatment",
@@ -116,89 +121,92 @@ const CoconutTreatments = () => {
     }
   };
 
-
   // Function to get image data URL
-const getImageDataURL = (url) => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = 'Anonymous'; // Ensure cross-origin images are handled
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      context.drawImage(img, 0, 0);
-      resolve(canvas.toDataURL('image/png'));
-    };
-    img.onerror = reject;
-    img.src = url;
-  });
-};
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "Anonymous"; // Ensure cross-origin images are handled
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  };
   //pdf generation
   const generatePDF = async () => {
     const doc = new jsPDF();
 
-    const logoUrl = '../src/assets/logo.png';
-  let logoDataURL;
-  try {
-    logoDataURL = await getImageDataURL(logoUrl);
-  } catch (error) {
-    console.error('Failed to load the logo image:', error);
-  }
-
-  // Function to draw header, footer, and horizontal line
-  const drawHeaderFooter = (data) => {
-    const pageWidth = doc.internal.pageSize.width;
-    const pageHeight = doc.internal.pageSize.height;
-
-    // Header
-    doc.setFontSize(14);
-    doc.text("Sobha Plantations", 10, 10); // Align left
-
-    doc.setFontSize(10);
-    doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
-    doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
-    doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
-    doc.text("Contact: 0112 751 757", 10, 30); // Email address line
-    
-    // Header with logo
-    if (logoDataURL) {
-      doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
+    const logoUrl = "../src/assets/logo.png";
+    let logoDataURL;
+    try {
+      logoDataURL = await getImageDataURL(logoUrl);
+    } catch (error) {
+      console.error("Failed to load the logo image:", error);
     }
 
-    doc.line(10, 35, pageWidth - 10, 35); // Header line
+    // Function to draw header, footer, and horizontal line
+    const drawHeaderFooter = (data) => {
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
 
-    // Footer with page number
-    doc.setFontSize(10);
-    doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
-  };
+      // Header
+      doc.setFontSize(14);
+      doc.text("Sobha Plantations", 10, 10); // Align left
+
+      doc.setFontSize(10);
+      doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+      doc.text("Kurunegala, Sri Lanka.", 10, 20); // Address line 2
+      doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+      doc.text("Contact: 0112 751 757", 10, 30); // Email address line
+
+      // Header with logo
+      if (logoDataURL) {
+        doc.addImage(logoDataURL, "PNG", pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
+      }
+
+      doc.line(10, 35, pageWidth - 10, 35); // Header line
+
+      // Footer with page number
+      doc.setFontSize(10);
+      doc.text(
+        `Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`,
+        pageWidth - 30,
+        pageHeight - 10
+      );
+    };
     // Set the margins for header and footer space
     const marginTop = 35; // space reserved for header
     const marginBottom = 20; // space reserved for footer
-  
+
     // Title for the report
-    const title = "Delivery Records Report";
+    const title = "Coconut Treatments Report";
     doc.setFontSize(22);
-    
+
     // Calculate the width of the title
     const titleWidth = doc.getTextWidth(title);
     const pageWidth = doc.internal.pageSize.getWidth();
-    
+
     // Calculate the x position to center the title
     const xPosition = (pageWidth - titleWidth) / 2;
-    
+
     // Set the title at the calculated center position
     doc.text(title, xPosition, 48); // Adjust y-coordinate to fit under the header
 
     // Define the columns for the table
     const columns = [
-    "Date of Treatment",  
-   "Pest or Disease",  
-   "Treatment Method", 
-   "Current Health Rate", 
-    "Treated By", 
-    "Notes"
-    ]; 
+      "Date of Treatment",
+      "Pest or Disease",
+      "Treatment Method",
+      "Current Health Rate",
+      "Treated By",
+      "Notes",
+    ];
 
     // Get the data from the inspections state
     const rows = filteredTreatments.map((treatment) => [
@@ -208,13 +216,12 @@ const getImageDataURL = (url) => {
       treatment.healthRate,
       treatment.treatedBy,
       treatment.notes,
-      
     ]);
 
     // Add table (adjusted startY)
-    
+
     doc.autoTable({
-      head:[columns],
+      head: [columns],
       body: rows,
       startY: 60, // Adjust this value to set how far below the title the table starts
       margin: { horizontal: 10 },
@@ -223,21 +230,20 @@ const getImageDataURL = (url) => {
         textColor: [255, 255, 255], // Header text color
         fontSize: 12,
       },
-     
+
       theme: "striped",
       didDrawPage: drawHeaderFooter,
     });
     // Save the PDF
     doc.save("Coconut_Treatments_Report.pdf");
-  }
-  
+  };
+
   return (
     <div>
       <Header />
       <div className="flex h-screen">
         <Sidebar />
         <div className="flex-1 ml-[285px] p-4 overflow-auto">
-          
           <div className="mt-2">
             <Breadcrumb
               items={[
@@ -265,13 +271,15 @@ const getImageDataURL = (url) => {
                 Pests and Diseases Treatments
               </h1>
               <div className="flex space-x-4">
-              <Search
-                placeholder="Search for treatments"
-                prefix={<SearchOutlined />}
-                onChange={(e) => handleSearch(e.target.value)}
-                style={{ width: "100%" }}
-              />
-                <Button icon={<FilePdfOutlined />} onClick={generatePDF}>Generate Reports</Button>
+                <Search
+                  placeholder="Search for treatments"
+                  prefix={<SearchOutlined />}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  style={{ width: "100%" }}
+                />
+                <Button icon={<FilePdfOutlined />} onClick={generatePDF}>
+                  Generate Reports
+                </Button>
               </div>
             </div>
 
@@ -294,55 +302,70 @@ const getImageDataURL = (url) => {
             {/* Table */}
             <div id="table-to-pdf">
               <Table
-              columns={[
-                {
-                  title: "Date of Treatment",
-                  dataIndex: "dateOfTreatment",
-                  key: "dateOfTreatment",
-                  render: (text) => moment(text).format("YYYY-MM-DD"),
-                },
-                {
-                  title: "Pest or Disease",
-                  dataIndex: "pestOrDisease",
-                  key: "pestOrDisease",
-                },
-                {
-                  title: "Treatment Method",
-                  dataIndex: "treatmentMethod",
-                  key: "treatmentMethod",
-                },
-                {
-                  title: "Current Health Rate",
-                  dataIndex: "healthRate",
-                  key: "healthRate",
-                },
-                {
-                  title: "Treated By",
-                  dataIndex: "treatedBy",
-                  key: "treatedBy",
-                },
-                {
-                  title: "Notes",
-                  dataIndex: "notes",
-                  key: "notes",
-                },
-                {
-                  title: "Actions",
-                  key: "actions",
-                  render: (text, record) => (
-                    <span style={{ display: "flex", gap: "2px" }}>
-                      <Button type="link" icon={<EditOutlined />} onClick={() => handleUpdate(record._id)}/>
-                      <Button type="link" icon={<DeleteOutlined />} danger onClick={() => confirmDelete(record._id)}/>
-                      <Button type="link" icon={<MoreOutlined />} onClick={() => navigate("/detailedOverview")}>More</Button>
-                    </span>
-                  ),
-                },
-              ]}
-              dataSource={filteredTreatments}
-              rowKey="_id"
-              pagination={{ pageSize: 10 }}
-              style={{ width: "100%" }} // Ensure table width fits content
-              bordered
+                columns={[
+                  {
+                    title: "Date of Treatment",
+                    dataIndex: "dateOfTreatment",
+                    key: "dateOfTreatment",
+                    render: (text) => moment(text).format("YYYY-MM-DD"),
+                  },
+                  {
+                    title: "Pest or Disease",
+                    dataIndex: "pestOrDisease",
+                    key: "pestOrDisease",
+                  },
+                  {
+                    title: "Treatment Method",
+                    dataIndex: "treatmentMethod",
+                    key: "treatmentMethod",
+                  },
+                  {
+                    title: "Current Health Rate",
+                    dataIndex: "healthRate",
+                    key: "healthRate",
+                  },
+                  {
+                    title: "Treated By",
+                    dataIndex: "treatedBy",
+                    key: "treatedBy",
+                  },
+                  {
+                    title: "Notes",
+                    dataIndex: "notes",
+                    key: "notes",
+                  },
+                  {
+                    title: "Actions",
+                    key: "actions",
+                    render: (text, record) => (
+                      <span style={{ display: "flex", gap: "2px" }}>
+                        <Button
+                          type="link"
+                          icon={<EditOutlined />}
+                          onClick={() => handleUpdate(record._id)}
+                        />
+                        <Button
+                          type="link"
+                          icon={<DeleteOutlined />}
+                          danger
+                          onClick={() => confirmDelete(record._id)}
+                        />
+                        <Button
+                          type="link"
+                          icon={<MoreOutlined />}
+                          onClick={() => navigate("/detailedOverview")}
+                        >
+                          More
+                        </Button>
+                      </span>
+                    ),
+                  },
+                ]}
+                dataSource={filteredTreatments}
+                rowKey="_id"
+                pagination={{ pageSize: 10 }}
+                style={{ width: "100%" }} // Ensure table width fits content
+                bordered
               />
             </div>
 
