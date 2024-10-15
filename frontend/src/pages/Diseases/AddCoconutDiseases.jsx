@@ -42,6 +42,12 @@ const AddCoconutDiseases = () => {
     return current && current < moment().startOf("day");
   };
 
+  const disableFutureAndPastDates = (current) => {
+    // Allow only past dates up to 3 months ago
+    const threeMonthsAgo = moment().subtract(3, 'months');
+    return current && (current > moment().endOf('day') || current < threeMonthsAgo.startOf('day'));
+  };
+
   const alphabeticNumericRule = [
     {
       pattern: /^[a-zA-Z0-9\s%]*$/,
@@ -176,32 +182,32 @@ const handleAlphanumericKeyPress = (e) => {
               onValuesChange={(_, values) => handleFieldChange(values)}
             >
               <Form.Item
-                label="Date of Inspection"
-                name="dateOfInspection"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select a date of inspection.",
-                  },
-                ]}
-              >
-                <DatePicker
-                  style={{ width: "100%" }}
-                  disabledDate={disableFutureDates}
-                  onChange={(date, dateString) => {
-                    if (date && date > moment()) {
-                      form.setFields([
-                        {
-                          name: "dateOfInspection",
-                          errors: [
-                            "Please select a date that is not in the future.",
-                          ],
-                        },
-                      ]);
-                    }
-                  }}
-                />
-              </Form.Item>
+  label="Date of Inspection"
+  name="dateOfInspection"
+  rules={[
+    {
+      required: true,
+      message: "Please select a date of inspection.",
+    },
+  ]}
+>
+  <DatePicker
+    style={{ width: "100%" }}
+    disabledDate={disableFutureAndPastDates}
+    onChange={(date, dateString) => {
+      if (date && date > moment()) {
+        form.setFields([
+          {
+            name: "dateOfInspection",
+            errors: [
+              "Please select a date that is not in the future.",
+            ],
+          },
+        ]);
+      }
+    }}
+  />
+</Form.Item>
 
               <Form.Item
                 label="Section of Land"
