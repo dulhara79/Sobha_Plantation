@@ -240,6 +240,7 @@ export default function Valuation() {
   };
 
   const handleDownloadPDF = async () => {
+    const today = moment().format("YYYY-MM-DD");
     const sortedRecords = ValuationRecords.sort((a, b) => {
       if (sortBy === "date") {
         return sortOrder === "asc"
@@ -279,6 +280,8 @@ export default function Valuation() {
       doc.text("Kurunagala, Sri Lanka.", 10, 20);
       doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25);
       doc.text("Contact: 0112 751 757", 10, 30);
+      doc.text(`Date: ${today}`, 10, 15);
+      
   
       if (logoDataURL) {
         doc.addImage(logoDataURL, "PNG", pageWidth - 50, 10, 40, 10);
