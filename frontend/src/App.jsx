@@ -49,6 +49,7 @@ import EditEmployeeSalaryRecords from "./pages/SalesAndFinance/Finance/EditEmplo
 import CashBook from "./pages/SalesAndFinance/Finance/CashBook.jsx";
 import BalanceSheet from "./pages/SalesAndFinance/Finance/BalanceSheet.jsx";
 import PettyCash from "./pages/SalesAndFinance/Finance/PettyCash.jsx";
+import AllFinanceFormatTables from "./pages/SalesAndFinance/Finance/AllFinanceFormatTables.jsx";
 
 // inventory
 import FertilizerRecords from "./pages/Inventory/FertilizerRecords.jsx";
@@ -225,86 +226,99 @@ export default function App() {
       <Route path="/dashboard" element={<Dashboard />} />
 
       {/* sales and finance */}
-      <Route path="/salesAndFinance/" element={<SalesAndFinanceDashboard />} />
-      <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
       <Route
-        path="/salesAndFinance/sales/addSalesRecord"
-        element={<AddSalesRecordDashboard />}
-      />
-      <Route
-        path="/salesAndFinance/sales/viewSalesRecord"
-        element={<ViewSalesRecordDashboard />}
-      />
-      <Route
-        path="/salesAndFinance/sales/editSalesRecord/:id"
-        element={<EditSalesDataPage />}
-      />
-      <Route
-        path="/salesAndFinance/sales/analytics"
-        element={<SalesAnalyticsPage />}
-      />
-      <Route path="/salesAndFinance/finance/" element={<FinanceDashboard />} />
-      <Route
-        path="/salesAndFinance/finance/add-transaction"
-        element={<AddTransactionPage />}
-      />
-      <Route
-        path="/salesAndFinance/finance/transaction-update/:id"
-        element={<UpdateTransactionPage />}
-      />
-      <Route
-        path="/salesAndFinance/finance/transaction-display"
-        element={<TransactionDisplay />}
-      />
-      <Route
-        path="/salesAndFinance/finance/add-minortransaction"
-        element={<AddMinorTransactionPage />}
-      />
-      <Route
-        path="/salesAndFinance/finance/minortransaction-update/:id"
-        element={<UpdateMinorTransactionPage />}
-      />
-      <Route
-        path="/salesAndFinance/finance/minortransaction-display"
-        element={<MinorTransactionDisplay />}
-      />
-      <Route
-        path="/salesAndFinance/finance/analytics"
-        element={<FinancialAnalyticsPage />}
-      />
-      <Route
-        path="/salesAndFinance/finance/employeeSalary"
-        element={<Esalary />}
-      />
-      <Route
-        path="/salesAndFinance/finance/viewSalaryRecord"
-        element={<ViewSalaryRecordPage />}
-      />
-      <Route
-        path="/salesAndFinance/finance/EditEmployeeSalaryRecords/:id"
-        element={<EditEmployeeSalaryRecords />}
-      />
-      <Route
-        path="/salesAndFinance/finance/valuation-dashboard"
-        element={<ValuationDashboardPage />}
-      />
-      <Route
-        path="/salesAndFinance/finance/add-new-valuation"
-        element={<AddNewValuationPage />}
-      />
-      <Route
-        path="/salesAndFinance/finance/edit-valuation/:id"
-        element={<EditValuationPage />}
-      />
-      <Route path="/salesAndFinance/finance/cashbook" element={<CashBook />} />
-      <Route
-        path="/salesAndFinance/finance/balance-sheet"
-        element={<BalanceSheet />}
-      />
-      <Route
-        path="/salesAndFinance/finance/petty-cash"
-        element={<PettyCash />}
-      />
+            path="/salesAndFinance/"
+            element={<SalesAndFinanceDashboard />}
+          />
+          <Route path="/salesAndFinance/sales/" element={<SalesDashboard />} />
+          <Route
+            path="/salesAndFinance/sales/addSalesRecord"
+            element={<AddSalesRecordDashboard />}
+          />
+          <Route
+            path="/salesAndFinance/sales/viewSalesRecord"
+            element={<ViewSalesRecordDashboard />}
+          />
+          <Route
+            path="/salesAndFinance/sales/editSalesRecord/:id"
+            element={<EditSalesDataPage />}
+          />
+          <Route
+            path="/salesAndFinance/sales/analytics"
+            element={<SalesAnalyticsPage />}
+          />
+          <Route
+            path="/salesAndFinance/finance/"
+            element={<FinanceDashboard />}
+          />
+          <Route
+            path="/salesAndFinance/finance/add-transaction"
+            element={<AddTransactionPage />}
+          />
+          <Route
+            path="/salesAndFinance/finance/transaction-update/:id"
+            element={<UpdateTransactionPage />}
+          />
+          <Route
+            path="/salesAndFinance/finance/transaction-display"
+            element={<TransactionDisplay />}
+          />
+          <Route
+            path="/salesAndFinance/finance/add-minortransaction"
+            element={<AddMinorTransactionPage />}
+          />
+          <Route
+            path="/salesAndFinance/finance/minortransaction-update/:id"
+            element={<UpdateMinorTransactionPage />}
+          />
+          <Route
+            path="/salesAndFinance/finance/minortransaction-display"
+            element={<MinorTransactionDisplay />}
+          />
+          <Route
+            path="/salesAndFinance/finance/analytics"
+            element={<FinancialAnalyticsPage />}
+          />
+          <Route
+            path="/salesAndFinance/finance/employeeSalary"
+            element={<Esalary />}
+          />
+          <Route
+            path="/salesAndFinance/finance/viewSalaryRecord"
+            element={<ViewSalaryRecordPage />}
+          />
+          <Route
+            path="/salesAndFinance/finance/EditEmployeeSalaryRecords/:id"
+            element={<EditEmployeeSalaryRecords />}
+          />
+          <Route
+            path="/salesAndFinance/finance/valuation-dashboard"
+            element={<ValuationDashboardPage />}
+          />
+          <Route
+            path="/salesAndFinance/finance/add-new-valuation"
+            element={<AddNewValuationPage />}
+          />
+          <Route
+            path="/salesAndFinance/finance/edit-valuation/:id"
+            element={<EditValuationPage />}
+          />
+          <Route
+            path="/salesAndFinance/finance/cashbook"
+            element={<CashBook />}
+          />
+          <Route
+            path="/salesAndFinance/finance/balance-sheet"
+            element={<BalanceSheet />}
+          />
+          <Route
+            path="/salesAndFinance/finance/petty-cash"
+            element={<PettyCash />}
+          />
+          <Route
+            path="/salesAndFinance/finance/finance-format-tables"
+            element={<AllFinanceFormatTables />}
+          />
 
       {/* inventory */}
       <Route

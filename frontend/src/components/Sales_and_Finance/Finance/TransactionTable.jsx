@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback} from "react";
 import axios from "axios";
 import {
   Table,
@@ -9,11 +9,15 @@ import {
   Button,
   Popconfirm,
   Tooltip,
+  Dropdown,
+  Menu,
 } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
   InfoCircleOutlined,
+  SearchOutlined,
+  DownloadOutlined,
 } from "@ant-design/icons";
 import { format } from "date-fns";
 import moment from "moment";
@@ -95,7 +99,7 @@ const TransactionTable = () => {
     setTotalRevenue(totalIncome - totalExpense);
   };
 
-  const applyFilters = (data) => {
+  const applyFilters = useCallback((data) => {
     let filtered = [...data];
 
     if (dateRange.length === 2) {
@@ -108,9 +112,7 @@ const TransactionTable = () => {
     }
 
     if (typeFilter) {
-      filtered = filtered.filter(
-        (transaction) => transaction.type === typeFilter
-      );
+      filtered = filtered.filter((transaction) => transaction.type === typeFilter);
     }
 
     if (searchTerm) {
@@ -123,61 +125,25 @@ const TransactionTable = () => {
 
     setFilteredData(filtered);
     calculateTotal(filtered);
-  };
+  }, [dateRange, typeFilter, searchTerm]);
+
+  useEffect(() => {
+    applyFilters(transactions);
+  }, [applyFilters, transactions]);
 
   const handleDateRangeChange = (dates) => {
-    let filtered = [...data];
-    
-    setDateRange(dates);
-    applyFilters(transactions);
-
-    if (dateRange.length === 2) {
-      const [startDate, endDate] = dateRange;
-      filtered = filtered.filter(
-        (transaction) =>
-          moment(transaction.date).isSameOrAfter(startDate, "day") &&
-          moment(transaction.date).isSameOrBefore(endDate, "day")
-      );
-    }
-
+    setDateRange(dates || []);
   };
 
   const handleTypeChange = (value) => {
-    let filtered = [...data];
-    
     setTypeFilter(value);
-    applyFilters(transactions);
-
-    if (typeFilter) {
-      filtered = filtered.filter(
-        (transaction) => transaction.type === typeFilter
-      );
-    }
-
   };
 
-  const handleSearch = (e) => {
-    let filtered = [...data];
-    
+  const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    applyFilters(transactions);
-
-    if (searchTerm) {
-      filtered = filtered.filter((transaction) =>
-        Object.values(transaction).some((value) =>
-          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
-    }
-
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      applyFilters(transactions);
-    }
-  };
-
+  
   const exportToCSV = () => {
     const csv = Papa.unparse(filteredData);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -194,6 +160,32 @@ const TransactionTable = () => {
     XLSX.utils.book_append_sheet(wb, ws, "Transactions");
     XLSX.writeFile(wb, "petty_cash_transactions.xlsx");
   };
+
+  const handleExport = ({ key }) => {
+    switch (key) {
+      case 'pdf':
+        console.log('Exporting to PDF...');
+        exportToPDF();
+        break;
+      case 'csv':
+        console.log('Exporting to CSV...');
+        exportToCSV();
+        break;
+      case 'excel':
+        console.log('Exporting to Excel...');
+        exportToExcel();
+        break;
+      default:
+        break;
+    }
+  };
+  const exportMenu = (
+    <Menu onClick={handleExport}>
+      <Menu.Item key="pdf">Download as PDF</Menu.Item>
+      <Menu.Item key="csv">Download as CSV</Menu.Item>
+      <Menu.Item key="excel">Download as Excel</Menu.Item>
+    </Menu>
+  );
 
   /*
   const exportToPDF = () => {
@@ -500,46 +492,38 @@ const TransactionTable = () => {
   return (
     <div className="p-4">
       <Card>
-        <div className="mb-4">
-          <RangePicker onChange={handleDateRangeChange} format="YYYY-MM-DD" />
-          <Select
-            placeholder="Select Type"
-            onChange={handleTypeChange}
-            className="ml-4"
-            style={{ width: 200 }}
-          >
-            <Option value="">All Types</Option>
-            <Option value="income">Income</Option>
-            <Option value="expense">Expense</Option>
-          </Select>
-          <Input
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={handleSearch}
-            onKeyPress={handleKeyPress}
-            className="ml-4"
-            style={{ width: 300 }}
-          />
-          <Button
-            onClick={() => applyFilters(transactions)}
-            type="primary"
-            className="ml-4"
-          >
-            Apply Filters
-          </Button>
-          <Button onClick={exportToCSV} type="default" className="ml-4">
-            Export to CSV
-          </Button>
-          <Button onClick={exportToExcel} type="default" className="ml-4">
-            Export to Excel
-          </Button>
-          <Button onClick={exportToPDF} type="default" className="ml-4">
-            Export to PDF
-          </Button>
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-4">
+            <RangePicker  className="border-gray-300 rounded-full" onChange={handleDateRangeChange}/>
+            <Select
+              placeholder="Select Type"
+              onChange={handleTypeChange}
+              className="w-40 rounded-full"
+            >
+              <Option value="">All Types</Option>
+              <Option value="income">Income</Option>
+              <Option value="expense">Expense</Option>
+            </Select>
+            <Input
+              placeholder="Search transactions..."
+              onChange={handleSearchChange}
+              prefix={<SearchOutlined />}
+              className="w-64 rounded-full"
+              allowClear
+            />
+          </div>
+          <div className="flex items-center gap-4">
+            <Link to="/salesAndFinance/finance/cashbook">
+            <button type="primary" className="flex flex-row items-center gap-2 pt-2 pb-2 pl-4 pr-4 font-semibold text-white border-none rounded-full text-whii-700 bg-lime-600 hover:bg-lime-700">View Cash Book</button>
+            </Link>
+          </div>                    
+          <Dropdown overlay={exportMenu} trigger={['hover']}>
+            <button className="flex flex-row items-center gap-2 pt-2 pb-2 pl-4 pr-4 font-semibold text-white border-none rounded-full text-whii-700 bg-lime-600 hover:bg-lime-700">
+              Export <DownloadOutlined />
+            </button>
+          </Dropdown>
         </div>
-        <Link to="/salesAndFinance/finance/cashbook">
-          <Button type="primary">View Cash Book</Button>
-        </Link>
+                
         <Table columns={columns} dataSource={filteredData} rowKey="_id" />
         <div className="mt-4 text-5xl" style={{ color: balanceColor }}>
           <strong>Total Balance:</strong> {totalAmount.toFixed(2)}

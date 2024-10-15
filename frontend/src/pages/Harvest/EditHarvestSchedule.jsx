@@ -215,14 +215,46 @@ const EditHarvestSchedule = () => {
                 </Select>
               </Form.Item>
 
-              {/* Number of Workers */}
-              <Form.Item
-                label="Number of Workers"
-                name="numberOfWorkers"
-                rules={[{ required: true, message: "Please specify the number of workers!" }]}
-              >
-                <Input type="number" placeholder="Enter number of workers" min={1} />
-              </Form.Item>
+               {/* Number of Workers */}
+               <Form.Item
+  label="Number of Workers"
+  name="numberOfWorkers"
+  rules={[
+    { required: true, message: "Number of workers is required!" },
+    {
+      pattern: /^[1-9][0-9]*$/,
+      message: "Number of workers must be numeric and greater than 0",
+    },
+    ({ getFieldValue }) => ({
+      validator(_, value) {
+        const parsedValue = parseInt(value, 10);
+        if (!value || (parsedValue >= 1 && parsedValue < 40)) {
+          return Promise.resolve();
+        }
+        return Promise.reject(
+          new Error("Number of workers must be between 1 and 40!")
+        );
+      },
+    }),
+  ]}
+>
+  <Input
+    placeholder="Enter Number of Workers"
+    type="number"
+    min={1}
+    max={39}
+    onKeyPress={(e) => {
+      const inputChar = String.fromCharCode(e.charCode);
+      const newValue = parseInt(e.target.value + inputChar, 10);
+
+      // Prevent non-numeric input, 0, and input above 40
+      if (!/[1-9]/.test(inputChar) || newValue > 39) {
+        e.preventDefault(); // Prevent invalid input
+      }
+    }}
+    style={{ width: "100%" }}
+  />
+</Form.Item>
 
               {/* Submit Button */}
               <Form.Item>
