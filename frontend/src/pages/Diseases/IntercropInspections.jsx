@@ -131,6 +131,7 @@ const IntercropInspections = () => {
 
   const generatePDF = async () => {
     const doc = new jsPDF();
+    const today = moment().format("YYYY-MM-DD");
 
     // Load the logo image
     let logoDataURL;
@@ -154,12 +155,13 @@ const IntercropInspections = () => {
         doc.text("Kurunegala, Sri Lanka.", 10, 20); // Address line 2
         doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
         doc.text("Contact: 0112 751 757", 10, 30); // Contact number
+        doc.text(`Date: ${today}`, 10, 35);
 
         if (logoDataURL) {
             doc.addImage(logoDataURL, "PNG", pageWidth - 50, 10, 40, 10); // Align right
         }
 
-        doc.line(10, 35, pageWidth - 10, 35); // Header line
+        doc.line(10, 38, pageWidth - 10, 38); // Header line
 
         // // Footer with page number
         // doc.setFontSize(10);
@@ -269,13 +271,13 @@ return (
             </div>
           
             {/* Topic Heading */}
-            <div className="flex justify-center items-center">
+            <div className="flex items-center justify-center">
               <h1 className="text-5xl font-semibold">
                 Intercrop Inspections and Disease Identification
               </h1>
             </div>
             {/* Buttons Row */}
-            <div className="flex space-x-4 mt-4">
+            <div className="flex mt-4 space-x-4">
               <Search
                 placeholder="Search for Pests and Diseases"
                 prefix={<SearchOutlined />}
@@ -285,7 +287,7 @@ return (
               <Button icon={<FilePdfOutlined />} onClick={generatePDF}>Generate Reports</Button>
             </div>
             {/* Centered Buttons */}
-            <div className="flex justify-center space-x-8 mt-8 mb-8">
+            <div className="flex justify-center mt-8 mb-8 space-x-8">
               <Button
                 style={{ backgroundColor: "rgba(196, 196, 196, 0)" }}
                 onClick={() => navigate("/CoconutInspections")}
@@ -342,7 +344,7 @@ return (
             </div>
 
             {/* Learn More and Add Buttons */}
-            <div className="flex flex-col items-center mt-8 pb-8">
+            <div className="flex flex-col items-center pb-8 mt-8">
               <Button
                 style={{
                   backgroundColor: "rgba(196, 196, 196, 0.44)",
