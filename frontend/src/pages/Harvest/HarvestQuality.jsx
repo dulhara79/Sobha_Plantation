@@ -117,35 +117,57 @@ const HarvestQuality = () => {
     filterQualityControls(searchText, value);
   };
 
-  // Function to filter quality controls based on search text and filter status
-  const filterQualityControls = (searchText, filterStatus) => {
-    let filteredData = qualityControls;
+// Function to filter quality controls based on search text, filter status, and multiple fields
+const filterQualityControls = (searchText, filterStatus) => {
+  let filteredData = qualityControls;
 
-    if (searchText) {
-      filteredData = filteredData.filter((qc) =>
-        qc.cropType.toLowerCase().includes(searchText.toLowerCase())
+  // Filter by search text on multiple fields
+  if (searchText) {
+    const searchLower = searchText.toLowerCase();
+    filteredData = filteredData.filter((qc) => {
+      // Log the checkDate value for debugging
+      console.log('Checking QC:', qc);
+
+      // Check against cropType, checkDate, qualityController, and parameters (size, ripeness, damage)
+      return (
+        qc.cropType.toLowerCase().includes(searchLower) ||
+        // Check if checkDate matches the search text
+        (typeof qc.checkDate === 'string' && qc.checkDate.toLowerCase().includes(searchLower)) || // For string representation
+        (qc.checkDate instanceof Date && new Date(qc.checkDate).toLocaleDateString().includes(searchLower)) || // For Date objects
+        qc.qualityController.toLowerCase().includes(searchLower) ||
+        (qc.parameters?.size && qc.parameters.size.toString().includes(searchLower)) ||
+        (qc.parameters?.ripeness && qc.parameters.ripeness.toLowerCase().includes(searchLower)) ||
+        (qc.parameters?.damage && qc.parameters.damage.toLowerCase().includes(searchLower))
       );
-    }
+    });
+  }
 
-    if (filterStatus !== "All") {
-      filteredData = filteredData.filter(
-        (qc) => qc.qualityStatus === filterStatus
-      );
-    }
+  // Filter by quality status if it's not "All"
+  if (filterStatus !== "All") {
+    filteredData = filteredData.filter((qc) => qc.qualityStatus === filterStatus);
+  }
 
-    if (sorter.field) {
-      filteredData = [...filteredData].sort((a, b) => {
-        if (sorter.order === "ascend") {
-          return a[sorter.field] > b[sorter.field] ? 1 : -1;
-        } else {
-          return a[sorter.field] < b[sorter.field] ? 1 : -1;
-        }
-      });
-    }
+  // Apply sorting if sorter field is provided
+  if (sorter.field) {
+    filteredData = [...filteredData].sort((a, b) => {
+      const fieldA = a[sorter.field];
+      const fieldB = b[sorter.field];
 
-    setFilteredQualityControls(filteredData);
-    calculateMetrics(filteredData); // Update metrics based on filtered data
-  };
+      if (sorter.order === "ascend") {
+        return fieldA > fieldB ? 1 : fieldA < fieldB ? -1 : 0;
+      } else {
+        return fieldA < fieldB ? 1 : fieldA > fieldB ? -1 : 0;
+      }
+    });
+  }
+
+  // Update state and metrics
+  setFilteredQualityControls(filteredData);
+  calculateMetrics(filteredData); // Update metrics based on filtered data
+};
+
+
+
 
   // Sorting handler
   const handleSort = (field, order) => {
@@ -220,7 +242,7 @@ const HarvestQuality = () => {
   };
   const generatePDF = async () => {
     const doc = new jsPDF();
-
+  
     // Load the logo image
     const logoUrl = "../src/assets/logo.png";
     let logoDataURL;
@@ -229,37 +251,52 @@ const HarvestQuality = () => {
     } catch (error) {
       console.error("Failed to load the logo image:", error);
     }
-
+  
     // Function to draw header, footer, and horizontal line
     const drawHeaderFooter = (data) => {
       const pageWidth = doc.internal.pageSize.width;
       const pageHeight = doc.internal.pageSize.height;
-
+  
+      // Header
+      doc.setFontSize(14);
+      doc.text("Sobha Plantation", 10, 10); // Align left
+  
+      doc.setFontSize(10);
+      doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+      doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
+      doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+      doc.text("Contact: 0112 751 757", 10, 30); // Email address line
+      
       // Header with logo
       if (logoDataURL) {
-        doc.addImage(logoDataURL, "PNG", 10, 10, 40, 10); // Adjust position and size
+        doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
       }
-      doc.setFontSize(12);
-      doc.text("Sobha Plantation", 170, 15); // Adjust x, y position
-      doc.line(10, 25, pageWidth - 10, 25); // Line under header
-
+  
+      doc.line(10, 35, pageWidth - 10, 35); // Header line
+  
       // Footer with page number
       doc.setFontSize(10);
-      doc.text(
-        `Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`,
-        pageWidth - 30,
-        pageHeight - 10
-      );
+      doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
     };
-
+  
     // Set the margins for header and footer space
     const marginTop = 30; // space reserved for header
     const marginBottom = 20; // space reserved for footer
-
-    // Title of the report
+  
+    // Title for the report
+    const title = "Quality Report";
     doc.setFontSize(22);
-    doc.text("Quality Report", 50, 35); // Adjust y-coordinate to start below header
-
+    
+    // Calculate the width of the title
+    const titleWidth = doc.getTextWidth(title);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Calculate the x position to center the title
+    const xPosition = (pageWidth - titleWidth) / 2;
+    
+    // Set the title at the calculated center position
+    doc.text(title, xPosition, 48); // Adjust y-coordinate to fit under the header
+  
     const passRate =
       metrics.totalInspections > 0
         ? (metrics.passCount / metrics.totalInspections) * 100
@@ -268,7 +305,7 @@ const HarvestQuality = () => {
       metrics.totalInspections > 0
         ? (metrics.failCount / metrics.totalInspections) * 100
         : 0;
-
+  
     // Define the overview details
     const overviewHeaders = [["Detail", "Value"]];
     const overviewRows = [
@@ -276,7 +313,7 @@ const HarvestQuality = () => {
       ["Pass Rate", `${passRate.toFixed(2)}%`], // Show pass rate in percentage format
       ["Fail Rate", `${failRate.toFixed(2)}%`], // Show fail rate in percentage format
     ];
-
+  
     // Add Overview Details Table
     doc.autoTable({
       startY: marginTop + 20, // Start the first table below the header space
@@ -294,25 +331,37 @@ const HarvestQuality = () => {
       theme: "grid",
       didDrawPage: drawHeaderFooter, // Add header and footer to each page
     });
-
+  
     // Second Table: Quality Control Data
     const columns = [
       { title: "Crop Type", dataKey: "cropType" },
       { title: "Check Date", dataKey: "checkDate" },
       { title: "Quality Status", dataKey: "qualityStatus" },
       { title: "Quality Controller", dataKey: "qualityController" },
+      { title: "Parameters", dataKey: "parameters" },
     ];
-
+  
     // Map the filteredQualityControls data to match the columns
-    const rows = filteredQualityControls.map((qc) => ({
-      cropType: qc.cropType,
-      checkDate: moment(qc.checkDate).format("YYYY-MM-DD"),
-      qualityStatus: qc.qualityStatus,
-      qualityController: qc.qualityController,
-    }));
-
+    const rows = filteredQualityControls.map((qc) => {
+      // Convert parameters to a string representation
+      const params = qc.parameters;
+      const parametersString = `
+        
+        Ripeness: ${params.ripeness || 'N/A'}, 
+        Damage: ${params.damage || 'N/A'}
+      `.trim(); // Trim any extra spaces
+  
+      return {
+        cropType: qc.cropType,
+        checkDate: moment(qc.checkDate).format("YYYY-MM-DD"),
+        qualityStatus: qc.qualityStatus,
+        qualityController: qc.qualityController,
+        parameters: parametersString, // Use the formatted string
+      };
+    });
+  
     let finalY = doc.lastAutoTable.finalY + 10; // Adjust space between tables
-
+  
     doc.autoTable({
       startY: finalY, // Start this table below the first table
       columns: columns,
@@ -329,10 +378,11 @@ const HarvestQuality = () => {
       theme: "striped",
       didDrawPage: drawHeaderFooter,
     });
-
+  
     // Save the PDF
     doc.save("Quality_Report.pdf");
   };
+  
 
   // Handler for "Add Inspection" button
   const handleAddInspection = () => {
@@ -373,7 +423,7 @@ const HarvestQuality = () => {
             </div>
           </nav>
 
-          {/* Breadcrumb and Gallery Button */}
+          
           <div className="flex items-center justify-between mb-5">
             <Breadcrumb
               items={[
@@ -453,11 +503,11 @@ const HarvestQuality = () => {
                   allowClear
                 />
 
-                {/* <Select defaultValue="All" style={{ width: 120 }} onChange={onFilterChange}>
+                <Select defaultValue="All" style={{ width: 120 }} onChange={onFilterChange}>
                 <Option value="All">All</Option>
                 <Option value="Passed">Pass</Option>
                 <Option value="Failed">Fail</Option>
-              </Select> */}
+              </Select>
               </div>
 
               {/* Buttons for actions */}
@@ -467,7 +517,7 @@ const HarvestQuality = () => {
                   icon={<FilePdfOutlined />}
                   style={{
                     marginBottom: "24px",
-                    backgroundColor: "#60DB19",
+                    backgroundColor: "#22c55e",
                     borderColor: "#60DB19",
                     color: "#000000",
                   }}
@@ -481,7 +531,7 @@ const HarvestQuality = () => {
                   onClick={handleAddInspection} // Added button for adding inspections
                   style={{
                     marginBottom: "24px",
-                    backgroundColor: "#60DB19",
+                    backgroundColor: "#22c55e",
                     borderColor: "#60DB19",
                     color: "#000000",
                   }}
@@ -493,67 +543,69 @@ const HarvestQuality = () => {
 
             {/* Table */}
 
+            {/* Table displaying quality control inspections */}
             <Table
               dataSource={filteredQualityControls}
               rowKey="_id"
+              pagination={{ pageSize: 5 }}
               onChange={(pagination, filters, sorter) =>
                 handleSort(sorter.field, sorter.order)
-              } // Handle sorting changes
-            >
-              <Table.Column
-                title="Crop Type"
-                dataIndex="cropType"
-                key="cropType"
-                sorter={true} // Enable sorting
-              />
-              <Table.Column
-                title="Check Date"
-                dataIndex="checkDate"
-                key="checkDate"
-                render={(date) => moment(date).format("YYYY-MM-DD")}
-                sorter={(a, b) => new Date(a.checkDate) - new Date(b.checkDate)} // Custom sorting function
-              />
-              <Table.Column
-                title="Quality Status"
-                dataIndex="qualityStatus"
-                key="qualityStatus"
-                sorter={true} // Enable sorting
-              />
-              <Table.Column
-                title="Quality Controller"
-                dataIndex="qualityController"
-                key="qualityController"
-                sorter={true} // Enable sorting
-              />
-              <Table.Column
-                title="Actions"
-                key="actions"
-                render={(text, record) => (
-                  <div>
-                    <Button
-                      icon={<EditOutlined />}
-                      onClick={() => handleSubmit(record._id)}
-                      style={{
-                        marginRight: 8,
-                        backgroundColor: "#1890ff",
-                        borderColor: "#1890ff",
-                        color: "#fff",
-                      }} // Blue color
-                    />
-                    <Button
-                      icon={<DeleteOutlined />}
-                      onClick={() => confirmDelete(record._id)}
-                      type="danger"
-                      style={{
-                        backgroundColor: "#ff4d4f",
-                        borderColor: "#ff4d4f",
-                        color: "#fff",
-                      }} // Red color
-                    />
-                  </div>
-                )}
-              />
-            </Table>
+              }
+              columns={[
+                {
+                  title: "Crop Type",
+                  dataIndex: "cropType",
+                  sorter: true,
+                  sortOrder: sorter.field === "cropType" && sorter.order,
+                },
+                {
+                  title: "Check Date",
+                  dataIndex: "checkDate",
+                  render: (date) => moment(date).format("YYYY-MM-DD"),
+                  sorter: true,
+                  sortOrder: sorter.field === "checkDate" && sorter.order,
+                },
+                {
+                  title: "Quality Status",
+                  dataIndex: "qualityStatus",
+                  sorter: true,
+                  sortOrder: sorter.field === "qualityStatus" && sorter.order,
+                },
+                {
+                  title: "Quality Controller",
+                  dataIndex: "qualityController",
+                  sorter: true,
+                  sortOrder:
+                    sorter.field === "qualityController" && sorter.order,
+                },
+                {
+                  title: "Parameters",
+                  dataIndex: "parameters",
+                  render: (params) => (
+                    <span>{`Ripeness: ${params.ripeness || "N/A"}, Damage: ${
+                      params.damage || "N/A"
+                    }`}</span>
+                  ),
+                },
+                {
+                  title: "Actions",
+                  render: (record) => (
+                    <div>
+                      <Button
+                        icon={<EditOutlined />}
+                        style={{ marginRight: 8 }}
+                        onClick={() => handleSubmit(record._id)}
+                      />
+                      <Button
+                        icon={<DeleteOutlined />}
+                        danger
+                        onClick={() => confirmDelete(record._id)}
+                      />
+                    </div>
+                  ),
+                },
+              ]}
+            />
           </div>
         </div>
       </div>

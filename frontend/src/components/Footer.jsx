@@ -43,7 +43,7 @@ const Footer = () => {
           <h4 className="text-lg font-bold">Contact</h4>
           <div className='flex flex-row items-center justify-start w-full py-2 mt-0 mb-0 text-center no-underline '>
             <Call />
-            <p className='pl-8'>0112 751 757 / 075 216 9421</p>
+            <p className='pl-8'>0112 751 757 / +94 71 058 8207</p>
           </div>
           <div className='flex flex-row items-center justify-start w-full py-2 mt-0 mb-0 text-center no-underline '>
             <Email />

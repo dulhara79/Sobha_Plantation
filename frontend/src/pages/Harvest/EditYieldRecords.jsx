@@ -18,8 +18,8 @@ const EditYieldRecord = () => {
 
   // Function to disable past dates
   const disableDateRange = (current) => {
-    const oneWeekAgo = moment().subtract(7, "days").startOf("day");
-    return current && (current > moment().endOf("day") || current < oneWeekAgo);
+    const targetDate = moment("2024-10-10"); // Only allow the specific date
+    return !current || !current.isSame(targetDate, 'day');
   };
   // Fetch record data
   useEffect(() => {
@@ -100,6 +100,19 @@ const EditYieldRecord = () => {
             </h2>
             <Form form={form} onFinish={handleSubmit} layout="vertical">
             <Form.Item
+                label="Crop Type"
+                name="cropType"
+                rules={[
+                  { required: true, message: "Please select a crop type!" },
+                ]}
+              >
+                <Select placeholder="Select a crop type">
+                  <Option value="Coconut">Coconut</Option>
+                  
+                </Select>
+              </Form.Item>
+
+            <Form.Item
                 label="Harvest Date"
                 name="harvestdate"
                 rules={[
@@ -132,51 +145,57 @@ const EditYieldRecord = () => {
                 </Select>
               </Form.Item>
 
+              
               <Form.Item
-                label="Crop Type"
-                name="cropType"
-                rules={[
-                  { required: true, message: "Please select a crop type!" },
-                ]}
-              >
-                <Select placeholder="Select a crop type">
-                  <Option value="Coconut">Coconut</Option>
-                  <Option value="Banana">Banana</Option>
-                  <Option value="Pepper">Pepper</Option>
-                  <Option value="Papaya">Papaya</Option>
-                  <Option value="Pineapple">Pineapple</Option>
-                </Select>
-              </Form.Item>
+  label="Quantity"
+  required
+>
+  <Input.Group compact>
+    <Form.Item
+      name="quantity"
+      noStyle
+      rules={[{ required: true, message: "Quantity is required!" }]}
+    >
+      <InputNumber
+        placeholder="Quantity Picked"
+        min={1} // Minimum value set to 1
+        onChange={(value) => handleFieldChange("quantity", value)} // Update field value on change
+        style={{ width: "70%" }} // Adjust width for InputNumber
+        parser={(value) => value.replace(/\D/g, "")} // Ensure only numbers are entered
+        onKeyPress={(e) => {
+          if (!/[0-9]/.test(e.key)) {
+            e.preventDefault(); // Prevent non-numeric input
+          }
+        }}
+        onPaste={(e) => e.preventDefault()} // Prevent pasting
+        onBlur={(e) => {
+          const value = e.target.value;
+          // Clear input if it's invalid on blur (less than 1)
+          if (value && value < 1) {
+            form.setFieldsValue({ quantity: undefined });
+          }
+        }}
+      />
+    </Form.Item>
+    
+    <Form.Item
+      name="unit"
+      noStyle
+      rules={[{ required: true, message: "Please select a unit!" }]}
+    >
+      <Select
+        placeholder="Unit"
+        style={{ width: "30%" }} // Adjust width for the Select
+        onChange={(value) => handleFieldChange("unit", value)} // Update field value on change
+      >
+        <Select.Option value="Kg">Kg</Select.Option>
+        <Select.Option value="MetricTon">Metric Ton</Select.Option>
+      </Select>
+    </Form.Item>
+  </Input.Group>
+</Form.Item>
 
-              <Form.Item
-                label="Quantity"
-                name="quantity"
-                rules={[
-                  { required: true, message: "Please enter the quantity!" },
-                  {
-                    validator: (_, value) => {
-                      if (value && value >= 1) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(
-                        new Error("Quantity must be at least 1!")
-                      );
-                    },
-                  },
-                ]}
-              >
-                <InputNumber
-                  placeholder="Enter quantity"
-                  min={1} // Minimum value set to 1
-                  style={{ width: "100%" }} // Full width input
-                  onPaste={(e) => e.preventDefault()} // Prevent pasting
-                  onKeyPress={(e) => {
-                    if (!/[0-9]/.test(e.key)) {
-                      e.preventDefault(); // Prevent non-numeric input
-                    }
-                  }}
-                />
-              </Form.Item>
+
 
               <Form.Item
                 label="Trees Picked"

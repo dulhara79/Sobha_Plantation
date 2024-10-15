@@ -438,7 +438,12 @@ const handleDelete = async (labelingId) => {
           type="default"
           icon={<FilePdfOutlined />}
           onClick={generatePDF}
-          style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
+          style={{
+            backgroundColor: '#22c55e', // bg-green-500
+            borderColor: '#22c55e',
+          }}
+          className="px-4 py-2 text-white rounded hover:bg-green-600 hover:border-green-600"
+          // style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
         >
           Generate PDF
         </Button>
@@ -447,7 +452,12 @@ const handleDelete = async (labelingId) => {
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => navigate('/products/addLabeling')}
-          style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
+          style={{
+            backgroundColor: '#22c55e', // bg-green-500
+            borderColor: '#22c55e',
+          }}
+          className="px-4 py-2 text-white rounded hover:bg-green-600 hover:border-green-600"
+          // style={{ backgroundColor: '#60DB19', borderColor: '#60DB19', color: '#000000' }}
         >
           Add Label
         </Button>

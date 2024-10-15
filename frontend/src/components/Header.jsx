@@ -144,7 +144,7 @@ const Header = ({
     try {
       await axios.get("http://localhost:5000/api/auth/logout"); // Adjust the API URL if necessary
       localStorage.removeItem("token"); // Remove any JWT token if stored
-      navigate("/login"); // Redirect to login after logout
+      navigate("/"); // Redirect to login after logout
     } catch (err) {
       console.error("Logout error:", err);
     }
@@ -153,7 +153,7 @@ const Header = ({
   const menuItems = [
     { name: "Home", path: "/" },
     { name: "Products", path: "/HomePage" },
-    { name: "Visit Us", path: "/visit-us" },
+    { name: "Visit Us", path: "/VisitUs" },
   ];
 
   return (

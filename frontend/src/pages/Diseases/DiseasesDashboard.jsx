@@ -6,6 +6,7 @@ import { Breadcrumb } from "antd";
 import { Link } from "react-router-dom";
 import LoadingDot from "../../components/LoadingDots";
 import DiseasesNavBar from "../../components/DiseasesComponents/DiseasesNavBar";
+import DateTimeDisplay from '../../components/Products/DateTimeDisplay';
 
 // Import images
 import diseaseIdentificationImg from "../../assets/DiseasesImages/disease.jpg";
@@ -65,15 +66,44 @@ const DiseasesDashboard = () => {
 
         {/* Welcome Message */}
         <div className="bg-white shadow-md rounded-lg p-4 my-4">
-          {/* <h2 className="text-2xl font-semibold">Welcome Dewdu Sendanayake!</h2> */}
-          <p>Today is {formattedDate}</p>
+          {/* <h2 className="text-2xl font-semibold">👋 Welcome,</h2>
+          <p>Today is {formattedDate}</p> */}
+                      <DateTimeDisplay />
+
         </div>
 
         {/* Slogan Section */}
-        <div className="my-4 p-4 bg-gradient-to-r from-yellow-300 via-green-500 to-yellow-300 rounded-lg shadow-lg text-center">
-          <h2 className="text-16xl font-bold text-white animate-pulse">
+        <div className="my-4 p-4 bg-gradient-to-r from-green-300 via-green-500 to-green-300 rounded-lg shadow-lg text-center">
+          {/* <h2 className="text-16xl font-bold text-white animate-text-slide">     {/*animate-pulse*/}
+          {/* 🤍🌴 Nurture Your Crops, Nourish Your Future! 🌴🤍
+          </h2>  */}
+          <h2 className="text-16xl font-bold text-white animate-bounce">
             🤍🌴 Nurture Your Crops, Nourish Your Future! 🌴🤍
           </h2>
+
+          {/* Tailwind custom CSS within JSX */}
+          <style jsx>{`
+            @keyframes bounce {
+              0%,
+              20%,
+              50%,
+              80%,
+              100% {
+                transform: translateY(0);
+              }
+              40% {
+                transform: translateY(-20px);
+              }
+              60% {
+                transform: translateY(-10px);
+              }
+            }
+
+            .animate-bounce {
+              animation: bounce 2s infinite;
+            }
+          `}</style>
+
           <p className="text-xl text-white mt-2">
             Discover the best practices for healthy coconut cultivation!
           </p>

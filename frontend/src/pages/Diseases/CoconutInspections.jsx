@@ -119,79 +119,127 @@ const CoconutInspections = () => {
       });
     }
   };
-
-  const generatePDF = async () => {
-    const doc = new jsPDF();
-
-    // Define the columns for the table
-    const columns = [
-      { title: "Date", dataKey: "dateOfInspection" },
-      { title: "Field Section", dataKey: "sectionOfLand" },
-      { title: "Identified Pests", dataKey: "identifiedPest" },
-      { title: "Identified Diseases", dataKey: "identifiedDisease" },
-      { title: "Inspected By", dataKey: "inspectedBy" },
-      { title: "Inspection Result", dataKey: "inspectionResult" },
-      { title: "Re-Inspection Date", dataKey: "suggestedReInspectionDate" },
-    ];
-
-    // Get the data from the inspections state
-    const rows = filteredInspections.map((inspection) => ({
-      dateOfInspection: moment(inspection.dateOfInspection).format(
-        "YYYY-MM-DD"
-      ),
-      sectionOfLand: inspection.sectionOfLand,
-      identifiedPest: inspection.identifiedPest,
-      identifiedDisease: inspection.identifiedDisease,
-      inspectedBy: inspection.inspectedBy,
-      inspectionResult: inspection.inspectionResult,
-      suggestedReInspectionDate: moment(
-        inspection.suggestedReInspectionDate
-      ).format("YYYY-MM-DD"),
-    }));
-
-    // Add title (lowered y-coordinate)
-    doc.setFontSize(18);
-    const titleY = 24; // Adjust this value to lower the title
-    doc.text("Coconut Inspections and Disease Identification", 35, titleY);
-
-    // Add table (adjusted startY)
-    doc.autoTable({
-      columns: columns,
-      body: rows,
-      startY: titleY + 13, // Adjust this value to set how far below the title the table starts
-      margin: { horizontal: 10 },
-      styles: {
-        fontSize: 10,
-        minCellHeight: 17, // Adjust this value for desired row height
-        halign: "left", // Left-align content horizontally
-        valign: "middle", // Center content vertically
-      },
-      headStyles: {
-        fillColor: [64, 133, 126],
-        textColor: [255, 255, 255],
-        fontSize: 12,
-      },
-      theme: "striped",
-    });
-
-    // Add footer with a horizontal line and logo
-    const footerY = doc.internal.pageSize.height - 30;
-
-    doc.setDrawColor(0);
-    doc.setLineWidth(0.5);
-    doc.line(10, footerY, doc.internal.pageSize.width - 10, footerY); // Horizontal line
-
-    // Add logo to the footer
-    const logoData = LogoImage; // Replace with the path to your logo
-    const logoWidth = 40;
-    const logoHeight = 20;
-    const xPosition = (doc.internal.pageSize.width - logoWidth) / 2;
-    const yPosition = footerY - logoHeight - -10; // Adjust margin as needed
-
-    doc.addImage(logoData, "PNG", xPosition, yPosition, logoWidth, logoHeight);
-
-    doc.save("Coconut_Diseases_Report.pdf");
+  
+  // Helper function to convert image to Data URL
+  const getImageDataURL = (imagePath) => {
+      return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = imagePath;
+          img.crossOrigin = "anonymous";
+          img.onload = () => {
+              const canvas = document.createElement("canvas");
+              canvas.width = img.width;
+              canvas.height = img.height;
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(img, 0, 0);
+              const dataURL = canvas.toDataURL("image/png");
+              resolve(dataURL);
+          };
+          img.onerror = (error) => reject(error);
+      });
   };
+  
+  const generatePDF = async () => {
+      const doc = new jsPDF();
+  
+      // Load the logo image
+      let logoDataURL;
+      try {
+          logoDataURL = await getImageDataURL(LogoImage);
+      } catch (error) {
+          console.error("Failed to load the logo image:", error);
+          return; // Exit the function if the logo can't be loaded
+      }
+  
+      // Draw header and footer function
+      const drawHeaderFooter = (data) => {
+          const pageWidth = doc.internal.pageSize.width;
+          const pageHeight = doc.internal.pageSize.height;
+
+          // Header
+          doc.setFontSize(14);
+          doc.text("Sobha Plantations", 10, 10); // Align left
+          doc.setFontSize(10);
+          doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
+          doc.text("Kurunegala, Sri Lanka.", 10, 20); // Address line 2
+          doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
+          doc.text("Contact: 0112 751 757", 10, 30); // Contact number
+  
+          if (logoDataURL) {
+              doc.addImage(logoDataURL, "PNG", pageWidth - 50, 10, 40, 10); // Align right
+          }
+  
+          doc.line(10, 35, pageWidth - 10, 35); // Header line
+  
+          // // Footer with page number
+          // doc.setFontSize(10);
+          // doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
+      };
+  
+      // Set the margins for header and footer space
+      const marginTop = 40; // Space reserved for header
+      const marginBottom = 20; // Space reserved for footer
+  
+      // Define the columns for the table
+      const columns = [
+          { title: "Date", dataKey: "dateOfInspection" },
+          { title: "Field Section", dataKey: "sectionOfLand" },
+          { title: "Identified Pests", dataKey: "identifiedPest" },
+          { title: "Identified Diseases", dataKey: "identifiedDisease" },
+          { title: "Inspected By", dataKey: "inspectedBy" },
+          { title: "Inspection Result", dataKey: "inspectionResult" },
+          { title: "Re-Inspection Date", dataKey: "suggestedReInspectionDate" },
+      ];
+  
+      // Prepare the data for the table
+      const rows = filteredInspections.map((inspection) => ({
+          dateOfInspection: moment(inspection.dateOfInspection).format("YYYY-MM-DD"),
+          sectionOfLand: inspection.sectionOfLand,
+          identifiedPest: inspection.identifiedPest,
+          identifiedDisease: inspection.identifiedDisease,
+          inspectedBy: inspection.inspectedBy,
+          inspectionResult: inspection.inspectionResult,
+          suggestedReInspectionDate: moment(inspection.suggestedReInspectionDate).format("YYYY-MM-DD"),
+      }));
+  
+      // Add title
+      doc.setFontSize(18);
+      const titleY = 50; // Adjust this value to lower the title
+      doc.text("Coconut Inspections and Disease Identification", 35, titleY);
+  
+      // Add table
+      doc.autoTable({
+          columns: columns,
+          body: rows,
+          startY: titleY + 13, // Set how far below the title the table starts
+          margin: { horizontal: 10 },
+          styles: {
+              fontSize: 10,
+              minCellHeight: 17, // Adjust for desired row height
+              halign: "left", // Left-align content horizontally
+              valign: "middle", // Center content vertically
+          },
+          headStyles: {
+              fillColor: [64, 133, 126],
+              textColor: [255, 255, 255],
+              fontSize: 12,
+          },
+          theme: "striped",
+      });
+  
+      // Draw the header and footer for each page
+      doc.setPage(1);
+      drawHeaderFooter({ pageNumber: 1 });
+      for (let pageIndex = 1; pageIndex <= doc.internal.getNumberOfPages(); pageIndex++) {
+          doc.setPage(pageIndex);
+          drawHeaderFooter({ pageNumber: pageIndex });
+      }
+  
+      // Save the PDF
+      doc.save("Coconut_Diseases_Report.pdf");
+  };
+  
+  
 
   return (
     <div

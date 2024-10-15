@@ -149,7 +149,7 @@ const getImageDataURL = (url) => {
 
     // Header
     doc.setFontSize(14);
-    doc.text("Sobha Plantation", 10, 10); // Align left
+    doc.text("Sobha Plantations", 10, 10); // Align left
 
     doc.setFontSize(10);
     doc.text("317/23, Nikaweratiya,", 10, 15); // Address line 1
@@ -326,8 +326,8 @@ const getImageDataURL = (url) => {
               icon={<FilePdfOutlined />}
               onClick={generatePDF}
               style={{
-                backgroundColor: 'red',  // Set background color to red
-                borderColor: 'red',      // Set border color to red
+                backgroundColor: '#84cc16',  // Set background color to red
+                borderColor: '#84cc16',      // Set border color to red
                 color: 'white',          // Set text color to white for contrast
               }}
             >

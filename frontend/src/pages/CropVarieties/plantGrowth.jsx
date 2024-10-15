@@ -352,13 +352,13 @@ const PlantGrowth = () => {
             </Select>
           </div>
           <div>
-            <Button type="primary" onClick={handleAddNew} style={{ marginRight: 16 }}>+Add New Record</Button>
-            <Button
+            <button type="primary"  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => navigate('/pGrowthForm')} style={{ marginRight: 16 }}>+Add New Record</button>
+            <button
               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
               onClick={handleGenerateReport}
             >
               Generate Reports
-            </Button>
+            </button>
           </div>
         </div>
         <Table dataSource={filteredData} columns={columns} rowKey="_id" />
@@ -394,6 +394,7 @@ const PlantGrowth = () => {
         <Option value="Banana">Banana</Option>
         <Option value="Pepper">Pepper</Option>
         <Option value="Pineapple">Pineapple</Option>
+        <Option value="Papaya">Papaya</Option>
       </Select>
     </Form.Item>
     <Form.Item

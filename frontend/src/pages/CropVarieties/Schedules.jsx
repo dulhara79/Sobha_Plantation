@@ -55,7 +55,7 @@ const VarietySchedule = () => {
         team: schedule.assignedTeam,
         fieldName: schedule.fieldName,
         varieties: schedule.cropVariety,
-        dateComparison: new Date(schedule.scheduledDate) > new Date() ? 'To date' : 'Overdue',
+       // dateComparison: new Date(schedule.scheduledDate) > new Date() ? 'To date' : 'Overdue',
         scheduledDate: new Date(schedule.scheduledDate).toLocaleDateString('en-US'),
         status: schedule.status,
         seedsUsed: schedule.seedsUsed,
@@ -286,11 +286,11 @@ const VarietySchedule = () => {
       dataIndex: 'varieties',
       key: 'varieties',
     },
-    {
+    {/*
       title: 'Date Comparison',
       dataIndex: 'dateComparison',
       key: 'dateComparison',
-    },
+    */},
     {
       title: 'Scheduled Date',
       dataIndex: 'scheduledDate',
@@ -376,16 +376,16 @@ const VarietySchedule = () => {
             </div>
            {/* Button container for alignment */}
            <div style={{ display: 'flex', gap: '8px' }}>
-              <Button type="primary" onClick={() => navigate('/scheduleForm')}>
+              <button type="primary" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => navigate('/scheduleForm')}>
                 Add Schedule
-              </Button>
-              <Button
+              </button>
+              <button
                 type="primary"
                 onClick={generateReport}
                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
               >
                 Generate Report
-              </Button>
+              </button>
           </div>
           </div>
 
@@ -435,14 +435,14 @@ const VarietySchedule = () => {
                 />
               </Form.Item>
               <Form.Item
-                name="assignedTeam"
-                label="Assigned Team"
-                rules={[{ required: true, message: 'Please enter a team name' }]}
-              >
-                <Input
-                  onKeyPress={restrictInputToLetters}
-                  onPaste={preventNonAlphabeticPaste}
-                />
+              name="team"
+              label="Assigned Team"
+              rules={[{ required: true, message: 'Please input the team!' }]}
+            >
+              <Input
+                onKeyPress={restrictInputToLetters} // Only allow letters
+                onPaste={preventNonAlphabeticPaste} // Prevent non-letter paste
+              />
               </Form.Item>
               <Form.Item
                 name="fieldName"
@@ -453,7 +453,7 @@ const VarietySchedule = () => {
                   <Option value="Field A">Field A</Option>
                   <Option value="Field B">Field B</Option>
                   <Option value="Field C">Field C</Option>
-                  <Option value="Field C">Field C</Option>
+                  <Option value="Field D">Field D</Option>
                   
                 </Select>
               </Form.Item>
