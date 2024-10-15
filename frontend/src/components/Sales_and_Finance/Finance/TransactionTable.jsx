@@ -150,7 +150,7 @@ const TransactionTable = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", "petty_cash_transactions.csv");
+    link.setAttribute("download", "transactions.csv");
     link.click();
   };
 
@@ -158,7 +158,7 @@ const TransactionTable = () => {
     const ws = XLSX.utils.json_to_sheet(filteredData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Transactions");
-    XLSX.writeFile(wb, "petty_cash_transactions.xlsx");
+    XLSX.writeFile(wb, "transactions.xlsx");
   };
 
   const handleExport = ({ key }) => {
@@ -270,7 +270,7 @@ const TransactionTable = () => {
       doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
       doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
       doc.text("Contact: 0112 751 757", 10, 30); // Email address line
-      doc.text(`Date: ${today}`, pageWidth - 10, 35); // Align right
+      doc.text(`Date: ${today}`, 10, 35); // Align right
       
 
       if (logoDataURL) {
@@ -294,7 +294,7 @@ const TransactionTable = () => {
     // Title of the report
     
     doc.setFontSize(22);
-    doc.text("Cash Book", 65, 45); // Adjust y-coordinate to start below header
+    doc.text("Cash Book", 65, 48); // Adjust y-coordinate to start below header
 
     // First Table: Overview Details
     const overviewHeaders = [["Detail", "Value"]];
