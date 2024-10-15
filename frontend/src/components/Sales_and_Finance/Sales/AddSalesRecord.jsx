@@ -49,9 +49,17 @@ const AddSalesRecord = () => {
       setQuantityError("");
     }
 
-    const filteredValue = value.replace(/[^0-9]/g, "");
+    let filteredValue = value.replace(/[^0-9]/g, "");
+    
+    if(parseInt(filteredValue) > totalQuantity) {
+      filteredValue = filteredValue.slice(0, -1);
+      setQuantityError("Sold quantity cannot exceed total quantity");
+      setSubmitDisabled(true);
+    }
+    
     setSoldQuantity(filteredValue);
     form.setFieldsValue({ soldQuantity: filteredValue });
+
 
     if (filteredValue > totalQuantity) {
       setQuantityError("Sold quantity cannot exceed total quantity");

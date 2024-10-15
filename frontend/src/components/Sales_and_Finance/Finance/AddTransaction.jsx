@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { DatePicker } from "antd";
 import Swal from "sweetalert2";
+import { Link, useParams } from "react-router-dom";
 
 export default function AddTransaction() {
   const [date, setDate] = useState("");
@@ -406,12 +407,20 @@ export default function AddTransaction() {
 
   return (
     <SnackbarProvider>
-      <form className="flex flex-col items-center justify-center p-8 bg-white border border-gray-300 rounded-lg shadow-lg">
-        <div className="w-full space-y-6">
-          <h1 className="text-5xl font-bold text-center text-black mb-11">
+          <h1 className="font-bold ext-black ftext-center mb-11">
             Add Transaction
           </h1>
+      <form className="flex flex-col items-center justify-center p-8 bg-white border border-gray-300 rounded-lg shadow-lg">
+        <div className="w-full space-y-6">
           <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-6">
+            <div>
+              <Link
+                to="/salesAndFinance/finance/viewSalaryRecord"
+                className="flex-none rounded-full bg-lime-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-lime-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black float-right"
+              >
+                View All record <span aria-hidden="true">&rarr;</span>
+              </Link>
+            </div>
             <fieldset className="sm:col-span-4">
               <legend className="text-base font-medium text-black">
                 Transaction Type
