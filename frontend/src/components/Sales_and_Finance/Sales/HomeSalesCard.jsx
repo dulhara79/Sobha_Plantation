@@ -20,7 +20,7 @@ const HomeSalesCard = () => {
 
   
   return (
-    <div className="p-4 mt-8 mb-8 bg-white rounded-lg shadow-xl">
+    <div className={`p-4 mt-8 mb-8 bg-white rounded-lg shadow-xl bg-gradient-to-r from-white from-10% via-[#e8ffee] via-50% to-[#fff0f0] to-90%`}>
       <h3 className="text-lg font-semibold">Sales Overview</h3>
         <div className="mt-8">
           <h4 className="text-xl font-semibold">
