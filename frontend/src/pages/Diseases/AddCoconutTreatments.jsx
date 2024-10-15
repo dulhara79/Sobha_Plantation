@@ -260,16 +260,27 @@ const handleAlphanumericKeyPress = (e) => {
               </Form.Item>
 
               <Form.Item
-                label="Notes"
-                name="notes"
-                rules={alphabeticNumericRule}
-              >
-                <Input
-                  placeholder="If treatments are over, press More and add a detailed overview"
-                  disabled={!fieldValidity.treatedBy}
-                  onKeyPress={handleAlphanumericKeyPress}
-                />
-              </Form.Item>
+  label="Notes"
+  name="notes"
+  rules={[
+    {
+      required: true, // Add this if the field is required
+      message: 'Notes are required!',
+    },
+    {
+      max: 50,
+      message: 'Notes cannot exceed 50 characters.',
+    },
+  ]}
+>
+  <Input
+    placeholder="If treatments are over, press More and add a detailed overview"
+    disabled={!fieldValidity.treatedBy}
+    onKeyPress={handleAlphanumericKeyPress}
+    maxLength={50} // Restrict input to 50 characters
+  />
+</Form.Item>
+
 
               <div className="flex justify-center mt-4 space-x-4">
                 <Button
