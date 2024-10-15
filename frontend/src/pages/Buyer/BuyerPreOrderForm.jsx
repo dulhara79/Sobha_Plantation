@@ -21,32 +21,10 @@ const AddPreOrderRecords = () => {
   const [isProductQuantityEnabled, setIsProductQuantityEnabled] = useState(false);
   const [isOrderDateEnabled, setIsOrderDateEnabled] = useState(false);
 
-  const alphabeticNumericRule = [
-    {
-      pattern: /^[a-zA-Z0-9\s]*$/,
-      message: "Only alphabetic characters and numbers are allowed.",
-    },
-    {
-      required: true,
-      message: "This field is required.",
-    },
-  ];
-
   const alphabeticRule = [
     {
       pattern: /^[a-zA-Z\s]*$/,
       message: "Only alphabetic characters are allowed.",
-    },
-    {
-      required: true,
-      message: "This field is required.",
-    },
-  ];
-
-  const numericRule = [
-    {
-      pattern: /^[0-9]*$/,
-      message: "Only numbers are allowed.",
     },
     {
       required: true,
@@ -69,6 +47,12 @@ const AddPreOrderRecords = () => {
     {
       required: true,
       message: "This field is required.",
+    },
+    {
+      validator: (_, value) =>
+        value && parseInt(value, 10) > 999
+          ? Promise.reject(new Error("Quantity cannot exceed 999"))
+          : Promise.resolve(),
     },
   ];
 
@@ -141,28 +125,6 @@ const AddPreOrderRecords = () => {
     }
   };
 
-  const restrictInputToAlphanumeric = (e) => {
-    const key = e.key;
-    if (!/^[a-zA-Z0-9]*$/.test(key)) {
-      e.preventDefault();
-    }
-  };
-
-  const preventNonNumericPaste = (e) => {
-    const clipboardData = e.clipboardData.getData("Text");
-    if (!/^[0-9]*$/.test(clipboardData)) {
-      e.preventDefault();
-    }
-  };
-
-  const preventNonAlphabeticPaste = (e) => {
-    const clipboardData = e.clipboardData.getData("Text");
-    if (!/^[a-zA-Z\s]*$/.test(clipboardData)) {
-      e.preventDefault();
-    }
-  };
-
-  // Address field input handler: allows letters, numbers, spaces, and "/"
   const restrictInputForAddress = (e) => {
     const char = String.fromCharCode(e.which);
     if (!/[a-zA-Z0-9/\s]/.test(char)) {
@@ -230,7 +192,6 @@ const AddPreOrderRecords = () => {
                   placeholder="Enter Name" 
                   onChange={handleNameChange} 
                   onKeyPress={restrictInputToLetters} 
-                  onPaste={preventNonAlphabeticPaste} 
                 />
               </Form.Item>
               
@@ -244,7 +205,6 @@ const AddPreOrderRecords = () => {
                   disabled={!isPhoneNumberEnabled}
                   onChange={handlePhoneNumberChange}
                   onKeyPress={restrictInputToNumbers}
-                  onPaste={preventNonNumericPaste} 
                   maxLength={10}
                 />
               </Form.Item>  
@@ -296,7 +256,7 @@ const AddPreOrderRecords = () => {
                   disabled={!isProductQuantityEnabled}
                   onChange={handleProductQuantityChange}
                   onKeyPress={restrictInputToNumbers}
-                  onPaste={preventNonNumericPaste} 
+                  maxLength={3} // Limit input to 3 digits
                 />
               </Form.Item>
 
