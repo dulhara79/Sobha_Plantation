@@ -41,6 +41,12 @@ const AddCoconutTreatments = () => {
     return current && current > moment().endOf("day");
   };
 
+  const disableFutureAndPastDates = (current) => {
+    // Allow only past dates up to 3 months ago
+    const threeMonthsAgo = moment().subtract(3, 'months');
+    return current && (current > moment().endOf('day') || current < threeMonthsAgo.startOf('day'));
+  };
+
   const alphabeticNumericRule = [
     {
       pattern: /^[a-zA-Z0-9\s]*$/,
@@ -183,7 +189,7 @@ const handleAlphanumericKeyPress = (e) => {
               onFinish={handleSubmit}
               onValuesChange={(_, values) => handleFieldChange(values)}
             >
-              <Form.Item
+              {/* <Form.Item
                 label="Date of Treatment"
                 name="dateOfTreatment"
                 rules={[
@@ -209,7 +215,35 @@ const handleAlphanumericKeyPress = (e) => {
                     }
                   }}
                 />
-              </Form.Item>
+              </Form.Item> */}
+
+              <Form.Item
+  label="Date of Treatment"
+  name="dateOfTreatment"
+  rules={[
+    {
+      required: true,
+      message: "Please select a date of treatment.",
+    },
+  ]}
+>
+  <DatePicker
+    style={{ width: "100%" }}
+    disabledDate={disableFutureAndPastDates}
+    onChange={(date, dateString) => {
+      if (date && date > moment()) {
+        form.setFields([
+          {
+            name: "dateOfTreatment",
+            errors: [
+              "Please select a date that is not in the future.",
+            ],
+          },
+        ]);
+      }
+    }}
+  />
+</Form.Item>
 
               <Form.Item
                 label="Pest or Disease"
