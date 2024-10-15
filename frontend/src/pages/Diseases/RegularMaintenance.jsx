@@ -137,69 +137,104 @@ const RegularMaintenance = () => {
       });
     }
   };
-
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      img.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
   const generatePDF = async () => {
     const doc = new jsPDF();
   
-    // Define the columns for the table
-    const columns = [
-     { title: "Date of Maintenance", dataKey: "dateOfMaintenance" },
-     { title: "Task", dataKey: "task" },
-     { title: "Manager in Charge", dataKey: "managerInCharge" },
-     { title: "Progress", dataKey: "progress" },
+    // Load the logo image
+    const logoUrl = "../src/assets/logo.png";
+    let logoDataURL;
+    try {
+      logoDataURL = await getImageDataURL(logoUrl);
+    } catch (error) {
+      console.error("Failed to load the logo image:", error);
+    }
+
+    // Function to draw header and footer
+    const drawHeaderFooter = (data) => {
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+
+      // Header
+      doc.setFontSize(14);
+      doc.text("Sobha Plantation", 10, 10);
+  
+      doc.setFontSize(10);
+      doc.text("317/23, Nikaweratiya,", 10, 15);
+      doc.text("Kurunagala, Sri Lanka.", 10, 20);
+      doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25);
+      doc.text("Contact: 0112 751 757", 10, 30);
+
+      // Header with logo
+      if (logoDataURL) {
+        doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10);
+      }
+      doc.line(10, 35, pageWidth - 10, 35); // Header line
+  
+      // Footer with page number
+      doc.setFontSize(10);
+      doc.text(`Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`, pageWidth - 30, pageHeight - 10);
+    };
+
+    // Title for the report
+    const title = "Maintenance Schedule Report";
+    doc.setFontSize(22);
+    const titleWidth = doc.getTextWidth(title);
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const xPosition = (pageWidth - titleWidth) / 2;
+    doc.text(title, xPosition, 48); 
+
+    // Define the columns for the table (replacing the undefined `tableColumn`)
+    const tableColumn = [
+      "Date of Maintenance",
+      "Task",
+      "Manager in Charge",
+      "Progress",
     ];
-  
-    // Get the data from the inspections state
-    const rows = filteredRegularMaintenance.map(regularMaintenance => ({
-      dateOfMaintenance: moment(regularMaintenance.dateOfMaintenance).format("YYYY-MM-DD"),
-      task: regularMaintenance.task,
-      managerInCharge: regularMaintenance.managerInCharge,
-      progress: regularMaintenance.progress,
-    }));
-  
-    // Add title (lowered y-coordinate)
-    doc.setFontSize(18);
-    const titleY = 24; // Adjust this value to lower the title
-    doc.text("Maintenance Report", 75, titleY);
-  
-    // Add table (adjusted startY)
+
+    // Get the data from the filteredRegularMaintenance state (replacing the undefined `tableRows`)
+    const tableRows = filteredRegularMaintenance.map((regularMaintenance) => [
+      moment(regularMaintenance.dateOfMaintenance).format("YYYY-MM-DD"),
+      regularMaintenance.task,
+      regularMaintenance.managerInCharge,
+      regularMaintenance.progress,
+    ]);
+
+    // Add table to the PDF
     doc.autoTable({
-      columns: columns,
-      body: rows,
-      startY: titleY + 13, // Adjust this value to set how far below the title the table starts
+      head: [tableColumn],
+      body: tableRows,
+      startY: 60,
       margin: { horizontal: 10 },
-      styles: {
-        fontSize: 10,
-        minCellHeight: 17, // Adjust this value for desired row height
-        halign: 'left',    // Left-align content horizontally
-      valign: 'middle',    // Center content vertically
-      },
+      styles: { fontSize: 10 },
       headStyles: {
         fillColor: [64, 133, 126],
         textColor: [255, 255, 255],
         fontSize: 12,
       },
-      theme: 'striped',
+      theme: "striped",
+      didDrawPage: drawHeaderFooter,
     });
-  
-      // Add footer with a horizontal line and logo
-      const footerY = doc.internal.pageSize.height - 30;
-  
-      doc.setDrawColor(0);
-      doc.setLineWidth(0.5);
-      doc.line(10, footerY, doc.internal.pageSize.width - 10, footerY); // Horizontal line
-  
-      // Add logo to the footer
-      const logoData = LogoImage; // Replace with the path to your logo
-      const logoWidth = 40;
-      const logoHeight = 20;
-      const xPosition = (doc.internal.pageSize.width - logoWidth) / 2;
-      const yPosition = footerY - logoHeight - (-10); // Adjust margin as needed
-  
-      doc.addImage(logoData, "PNG", xPosition, yPosition, logoWidth, logoHeight);
 
-      doc.save("Maintenance_Report.pdf");
-  };
+    doc.save("Maintenance_Report.pdf");
+};
+
 
   // Data for the bar chart
   const [chartData, setChartData] = useState({
