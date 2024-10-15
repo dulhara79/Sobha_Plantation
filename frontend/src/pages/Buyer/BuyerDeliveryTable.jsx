@@ -133,6 +133,7 @@ const getImageDataURL = (url) => {
   //pdf generation
   const generatePDF = async () => {
     const doc = new jsPDF();
+    const today = moment().format("YYYY-MM-DD");
 
     const logoUrl = '../src/assets/logo.png';
   let logoDataURL;
@@ -156,13 +157,14 @@ const getImageDataURL = (url) => {
     doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
     doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address line
     doc.text("Contact: 0112 751 757", 10, 30); // Email address line
+    doc.text(`Date: ${today}`, 10, 35);
     
     // Header with logo
     if (logoDataURL) {
       doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right (adjust the x position as needed)
     }
 
-    doc.line(10, 35, pageWidth - 10, 35); // Header line
+    doc.line(10, 38, pageWidth - 10, 38); // Header line
 
     // Footer with page number
     doc.setFontSize(10);
