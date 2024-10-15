@@ -164,6 +164,7 @@ const VarietySchedule = () => {
 
   const generateReport = async () => {
     const doc = new jsPDF();
+    const today = moment().format("YYYY-MM-DD");
 
     // Load the logo image
     const logoUrl = '../src/assets/logo.png'; // Adjust the path to your logo as necessary
@@ -183,12 +184,13 @@ const VarietySchedule = () => {
     doc.text("Kurunagala, Sri Lanka.", 10, 20); // Address line 2
     doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25); // Email address
     doc.text("Contact: 0112 751 757", 10, 30); // Contact
+    doc.text(`Date: ${today}`, 10, 35);
 
     // Add logo if it exists
     if (logoDataURL) {
         doc.addImage(logoDataURL, 'PNG', pageWidth - 50, 10, 40, 10); // Align right
     }
-    doc.line(10, 35, pageWidth - 10, 35); // Header line
+    doc.line(10, 38, pageWidth - 10, 38); // Header line
 
     // Define the table columns
     const columns = [
@@ -351,7 +353,7 @@ const VarietySchedule = () => {
           <FieldViewNavbar />
 
           {/* Page Header */}
-          <div className="bg-white shadow-md rounded-lg p-4 my-4">
+          <div className="p-4 my-4 bg-white rounded-lg shadow-md">
             <h2 className="text-xl font-semibold">Planting Schedule</h2>
           </div>
           
@@ -376,13 +378,13 @@ const VarietySchedule = () => {
             </div>
            {/* Button container for alignment */}
            <div style={{ display: 'flex', gap: '8px' }}>
-              <button type="primary" className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onClick={() => navigate('/scheduleForm')}>
+              <button type="primary" className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600" onClick={() => navigate('/scheduleForm')}>
                 Add Schedule
               </button>
               <button
                 type="primary"
                 onClick={generateReport}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600"
               >
                 Generate Report
               </button>
