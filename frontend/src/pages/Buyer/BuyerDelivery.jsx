@@ -12,7 +12,6 @@ const AddDeliveryRecords = () => {
   const [loading, setLoading] = useState(false);
 
   // State to track which fields are enabled
-  
   const [isLastNameEnabled, setIsLastNameEnabled] = useState(false);
   const [isEmailEnabled, setIsEmailEnabled] = useState(false);
   const [isAddressEnabled, setIsAddressEnabled] = useState(false);
@@ -22,6 +21,7 @@ const AddDeliveryRecords = () => {
   const [isPhoneEnabled, setIsPhoneEnabled] = useState(false);
   const [contactNumber, setContactNumber] = useState("");
 
+  // Define validation rules
   const alphabeticNumericRule = [
     {
       pattern: /^[a-zA-Z0-9\s]*$/,
@@ -55,11 +55,10 @@ const AddDeliveryRecords = () => {
     },
   ];
 
-  // Phone rule with exactly 10 digits required
   const phoneRule = [
     {
-      pattern: /^[0-9]{10}$/,
-      message: "Phone number must be exactly 10 digits.",
+      pattern: /^[0][0-9]{9}$/, // Must start with 0 and have exactly 10 digits
+      message: "Phone number must start with 0 and be exactly 10 digits.",
     },
     {
       required: true,
@@ -67,6 +66,18 @@ const AddDeliveryRecords = () => {
     },
   ];
 
+  const emailRule = [
+    {
+      pattern: /^[a-zA-Z0-9@.]*$/,
+      message: "Only letters, numbers, '@', and '.' are allowed.",
+    },
+    {
+      required: true,
+      message: "Please enter your email",
+    },
+  ];
+
+  // Submit form handler
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
@@ -100,6 +111,7 @@ const AddDeliveryRecords = () => {
     }
   };
 
+  // Field enablement handlers
   const handleFirstNameChange = (e) => {
     setIsLastNameEnabled(!!e.target.value);
   };
@@ -132,73 +144,67 @@ const AddDeliveryRecords = () => {
     navigate("/Bdeliverytable");
   };
 
-  // Helper functions to lock key presses for specific fields
+  // Helper functions to restrict input and paste
   const restrictInputToNumbers = (e) => {
     const key = e.key;
     if (!/[0-9]/.test(key)) {
       e.preventDefault(); // Prevent any non-numeric key
     }
-    
-    // Prevent input if the value already has 10 digits
-    if (contactNumber.length >= 10 && /[0-9]/.test(key)) {
-      e.preventDefault();
+  };
+
+  const restrictInputToLetters = (e) => {
+    const key = e.key;
+    if (!/[a-zA-Z]/.test(key)) {
+      e.preventDefault(); // Prevent non-letter keys
     }
   };
-  
+
+  const restrictInputToAlphanumeric = (e) => {
+    const key = e.key;
+    if (!/^[a-zA-Z0-9]*$/.test(key)) {
+      e.preventDefault(); // Prevent non-alphanumeric keys
+    }
+  };
+
+  const restrictInputToEmailChars = (e) => {
+    const key = e.key;
+    if (!/[a-zA-Z0-9@.]/.test(key)) {
+      e.preventDefault(); // Prevent invalid email characters
+    }
+  };
+
   const handlePhoneChange = (e) => {
     const value = e.target.value;
-  
-    // Restrict to 10 digits only
-    if (value.length <= 10) {
-      setContactNumber(value);
-    }
-  };
-  
-
-const restrictInputToLetters = (e) => {
-    const key = e.key;
-   
-    if (!/[a-zA-Z]/.test(key)) {
-      e.preventDefault();
-    }
-};
-
-const restrictInputToAlphanumeric = (e) => {
-    const key = e.key;
-     
-    if (!/^[a-zA-Z0-9]*$/.test(key)) {
-      e.preventDefault();
-    }
-};
-
-  
-  // To prevent non-numeric values from being pasted into numeric fields
-  const preventNonNumericPaste = (e) => {
-    const clipboardData = e.clipboardData.getData("Text");
-    if (!/^[0-9]*$/.test(clipboardData)) {
-      e.preventDefault();
+    if (value.startsWith("0") && value.length <= 10) {
+      setContactNumber(value); // Only allow 10 digits starting with 0
     }
   };
 
-  // To prevent non-letter values from being pasted into letter-only fields
   const preventNonAlphabeticPaste = (e) => {
-    const clipboardData = e.clipboardData.getData("Text");
-    if (!/^[a-zA-Z\s]*$/.test(clipboardData)) {
-      e.preventDefault();
+    const paste = e.clipboardData.getData("text");
+    if (!/^[a-zA-Z\s]*$/.test(paste)) {
+      e.preventDefault(); // Prevent non-alphabetic pastes
     }
   };
-  // Address field input handler: allows letters, numbers, spaces, and "/"
+
+  const preventNonNumericPaste = (e) => {
+    const paste = e.clipboardData.getData("text");
+    if (!/^[0-9]*$/.test(paste)) {
+      e.preventDefault(); // Prevent non-numeric pastes
+    }
+  };
+
   const restrictInputForAddress = (e) => {
-    const char = String.fromCharCode(e.which);
-    if (!/[a-zA-Z0-9/\s]/.test(char)) {
-      e.preventDefault();
+    const key = e.key;
+    if (!/^[a-zA-Z0-9/\s]*$/.test(key)) {
+      e.preventDefault(); // Prevent non-alphanumeric characters in address
     }
   };
 
   const preventInvalidAddressPaste = (e) => {
-    const clipboardData = e.clipboardData.getData("text/plain");
-    if (!/^[a-zA-Z0-9/\s]*$/.test(clipboardData)) {
-      e.preventDefault();
+    const paste = e.clipboardData.getData("text");
+    if (!/^[a-zA-Z0-9\s]*$/.test(paste)) {
+      e.preventDefault(); // Prevent invalid address paste
     }
   };
 
@@ -215,9 +221,6 @@ const restrictInputToAlphanumeric = (e) => {
             >
               <LeftOutlined className="text-xl" />
             </button>
-            <div className="flex space-x-4">
-              {/* Your navigation links */}
-            </div>
           </nav>
 
           <div className="mt-4">
@@ -250,13 +253,11 @@ const restrictInputToAlphanumeric = (e) => {
                 label="First Name"
                 name="firstName"
                 rules={alphabeticRule}
-                
               >
-                <Input 
-                  placeholder="Enter first name" 
-                  onChange={handleFirstNameChange} 
-                  onKeyPress={restrictInputToLetters} 
-                onPaste={preventNonAlphabeticPaste} 
+                <Input
+                  placeholder="Enter first name"
+                  onChange={handleFirstNameChange}
+                  onKeyPress={restrictInputToLetters}
                 />
               </Form.Item>
 
@@ -269,29 +270,20 @@ const restrictInputToAlphanumeric = (e) => {
                   placeholder="Enter last name"
                   onChange={handleLastNameChange}
                   disabled={!isLastNameEnabled}
-                  onKeyPress={restrictInputToLetters} 
-                  onPaste={preventNonAlphabeticPaste} 
+                  onKeyPress={restrictInputToLetters}
                 />
               </Form.Item>
 
               <Form.Item
                 label="Email"
                 name="email"
-                rules={[
-                  {
-                    type: "email",
-                    message: "Please enter a valid email address",
-                  },
-                  {
-                    required: true,
-                    message: "Please enter your email",
-                  },
-                ]}
+                rules={emailRule}
               >
                 <Input
                   placeholder="Enter email"
                   onChange={handleEmailChange}
                   disabled={!isEmailEnabled}
+                  onKeyPress={restrictInputToEmailChars}
                 />
               </Form.Item>
 
@@ -336,8 +328,8 @@ const restrictInputToAlphanumeric = (e) => {
                   placeholder="Enter your country"
                   onChange={handleCountryChange}
                   disabled={!isCountryEnabled}
-                  onKeyPress={restrictInputToLetters} // Only allow letters
-                  onPaste={preventNonAlphabeticPaste} // Prevent non-letter paste
+                  onKeyPress={restrictInputToLetters}
+                  onPaste={preventNonAlphabeticPaste} 
                 />
               </Form.Item>
 
@@ -350,46 +342,37 @@ const restrictInputToAlphanumeric = (e) => {
                   placeholder="Enter your postal code"
                   onChange={handlePostalCodeChange}
                   disabled={!isPostalCodeEnabled}
-                  onKeyPress={restrictInputToNumbers} // Only allow numbers
-                  onPaste={preventNonNumericPaste} // Prevent non-numeric paste
+                  onKeyPress={restrictInputToNumbers} 
+                  onPaste={preventNonNumericPaste} 
                   maxLength={5} 
                 />
               </Form.Item>
 
               <Form.Item
-  label="Phone"
-  name="phone"
-  rules={phoneRule}
->
-  <Input
-    placeholder="Enter your phone number"
-    disabled={!isPhoneEnabled}
-    onKeyPress={restrictInputToNumbers} // Restrict to numbers only and prevent more than 10 digits
-    maxLength={10} // Limit to 10 digits
-    onPaste={preventNonNumericPaste}    // Prevent non-numeric paste
-    value={contactNumber}               // Controlled input for the phone number
-    onChange={handlePhoneChange}        // Update the state with valid input
-  />
-</Form.Item>
+                label="Phone number"
+                name="phone"
+                rules={phoneRule}
+              >
+                <Input
+                  placeholder="Enter phone number"
+                  value={contactNumber}
+                  onChange={handlePhoneChange}
+                  disabled={!isPhoneEnabled}
+                  maxLength={10}
+                  onKeyPress={restrictInputToNumbers}
+                />
+              </Form.Item>
 
-
-              <Form.Item>
-  <Button
-    type="primary"
-    htmlType="submit"
-    loading={loading}
-    style={{ backgroundColor: "#236A64", color: "#fff", padding: '0 24px' }} // Padding to adjust button width
-  >
-    Submit
-  </Button>
-  <Button
-    type="default"
-    onClick={handleCancel}
-    style={{ marginLeft: '16px', padding: '0 24px' }} // Add space between buttons and padding
-  >
-    Cancel
-  </Button>
-</Form.Item>
+              <div className="flex justify-between mt-6">
+                <Button onClick={handleCancel}>Cancel</Button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                >
+                  Submit
+                </Button>
+              </div>
             </Form>
           </div>
         </div>
