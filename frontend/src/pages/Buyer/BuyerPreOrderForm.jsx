@@ -19,18 +19,7 @@ const AddPreOrderRecords = () => {
   const [isAddressEnabled, setIsAddressEnabled] = useState(false);
   const [isProductTypeEnabled, setIsProductTypeEnabled] = useState(false);
   const [isProductQuantityEnabled, setIsProductQuantityEnabled] = useState(false);
-  const [isorderDateEnabled, setIsorderDateEnabled] = useState(false);
-
-  const alphabeticNumericRule = [
-    {
-      pattern: /^[a-zA-Z0-9\s]*$/,
-      message: "Only alphabetic characters and numbers are allowed.",
-    },
-    {
-      required: true,
-      message: "This field is required.",
-    },
-  ];
+  const [isOrderDateEnabled, setIsOrderDateEnabled] = useState(false);
 
   const alphabeticRule = [
     {
@@ -43,10 +32,10 @@ const AddPreOrderRecords = () => {
     },
   ];
 
-  const numericRule = [
+  const phoneRule = [
     {
-      pattern: /^[0-9]*$/,
-      message: "Only numbers are allowed.",
+      pattern: /^0[0-9]{9}$/,
+      message: "Phone number must start with 0 and be exactly 10 digits.",
     },
     {
       required: true,
@@ -54,14 +43,16 @@ const AddPreOrderRecords = () => {
     },
   ];
 
-  const phoneRule = [
-    {
-      pattern: /^[0-9]{10}$/,
-      message: "Phone number must be exactly 10 digits.",
-    },
+  const productQuantityRule = [
     {
       required: true,
       message: "This field is required.",
+    },
+    {
+      validator: (_, value) =>
+        value && parseInt(value, 10) > 999
+          ? Promise.reject(new Error("Quantity cannot exceed 999"))
+          : Promise.resolve(),
     },
   ];
 
@@ -113,7 +104,7 @@ const AddPreOrderRecords = () => {
   };
 
   const handleProductQuantityChange = (e) => {
-    setIsorderDateEnabled(!!e.target.value);
+    setIsOrderDateEnabled(!!e.target.value);
   };
 
   const handleCancel = () => {
@@ -134,28 +125,6 @@ const AddPreOrderRecords = () => {
     }
   };
 
-  const restrictInputToAlphanumeric = (e) => {
-    const key = e.key;
-    if (!/^[a-zA-Z0-9]*$/.test(key)) {
-      e.preventDefault();
-    }
-  };
-
-  const preventNonNumericPaste = (e) => {
-    const clipboardData = e.clipboardData.getData("Text");
-    if (!/^[0-9]*$/.test(clipboardData)) {
-      e.preventDefault();
-    }
-  };
-
-  const preventNonAlphabeticPaste = (e) => {
-    const clipboardData = e.clipboardData.getData("Text");
-    if (!/^[a-zA-Z\s]*$/.test(clipboardData)) {
-      e.preventDefault();
-    }
-  };
-
-  // Address field input handler: allows letters, numbers, spaces, and "/"
   const restrictInputForAddress = (e) => {
     const char = String.fromCharCode(e.which);
     if (!/[a-zA-Z0-9/\s]/.test(char)) {
@@ -223,7 +192,6 @@ const AddPreOrderRecords = () => {
                   placeholder="Enter Name" 
                   onChange={handleNameChange} 
                   onKeyPress={restrictInputToLetters} 
-                  onPaste={preventNonAlphabeticPaste} 
                 />
               </Form.Item>
               
@@ -237,7 +205,6 @@ const AddPreOrderRecords = () => {
                   disabled={!isPhoneNumberEnabled}
                   onChange={handlePhoneNumberChange}
                   onKeyPress={restrictInputToNumbers}
-                  onPaste={preventNonNumericPaste} 
                   maxLength={10}
                 />
               </Form.Item>  
@@ -258,7 +225,6 @@ const AddPreOrderRecords = () => {
                   onChange={handleAddressChange}
                   onKeyPress={restrictInputForAddress} 
                   onPaste={preventInvalidAddressPaste} 
-                  
                 />
               </Form.Item>
 
@@ -283,14 +249,14 @@ const AddPreOrderRecords = () => {
               <Form.Item
                 label="Product Quantity (Kg)"
                 name="productQuantity"
-                rules={numericRule}
+                rules={productQuantityRule}
               >
                 <Input
                   placeholder="Enter product quantity"
                   disabled={!isProductQuantityEnabled}
                   onChange={handleProductQuantityChange}
                   onKeyPress={restrictInputToNumbers}
-                  onPaste={preventNonNumericPaste} 
+                  maxLength={3} // Limit input to 3 digits
                 />
               </Form.Item>
 
@@ -304,6 +270,12 @@ const AddPreOrderRecords = () => {
                   },
                   {
                     validator: (_, value) =>
+                      value && dayjs(value).isAfter(dayjs().add(6, "month"), "day")
+                        ? Promise.reject(new Error("Order date cannot be more than 6 months from today"))
+                        : Promise.resolve(),
+                  },
+                  {
+                    validator: (_, value) =>
                       value && dayjs(value).isBefore(dayjs().add(1, "day"), "day")
                         ? Promise.reject(new Error("Past dates and today's date are not allowed"))
                         : Promise.resolve(),
@@ -312,8 +284,9 @@ const AddPreOrderRecords = () => {
               >
                 <Input
                   type="date"
-                  disabled={!isorderDateEnabled}
+                  disabled={!isOrderDateEnabled}
                   min={dayjs().add(1, "day").format("YYYY-MM-DD")}
+                  max={dayjs().add(6, "month").format("YYYY-MM-DD")}
                 />
               </Form.Item>
 

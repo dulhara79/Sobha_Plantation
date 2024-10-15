@@ -172,12 +172,12 @@ const BuyerPreOrderTable = () => {
   
       // Define the columns for the table
       const columns = [
-        "name",
-        "phoneNumber",
-        "address", 
-        "productType",
-         "productQuantity",
-        "orderDate",
+        "Name",
+        "Phone Number",
+        "Address", 
+        "Product Type",
+         "Product Quantity",
+        "Order Date",
         
       ]; 
       

@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Breadcrumb } from "antd";
-import { HomeOutlined, UserOutlined } from "@ant-design/icons";
-// import Add from "@mui/icons-material/Add";
-// import List from "@mui/icons-material/List";
-// import Assessment from "@mui/icons-material/Assessment";
-// import AttachMoneyIcon from "@mui/icons-material/AttachMoney"; // Use this or another suitable icon for Budget
-// import Analytics from "@mui/icons-material/Analytics";
+import { HomeOutlined, UserOutlined, FileExclamationOutlined } from "@ant-design/icons";
 import Header from "../../../components/Header";
 import Sidebar from "../../../components/Sidebar";
 import NavigationButtons from "../../../components/Sales_and_Finance/NavigationButtons";
-import {Add, List, Assessment, AttachMoney, Analytics} from "@mui/icons-material";
+import {Add, List, Assessment, AttachMoney, Analytics, DriveFileMove} from "@mui/icons-material";
 
 import NewLoadingScreen from '../../../components/LoadingDots'
 
@@ -68,17 +63,17 @@ const SalesDashboard = () => {
           <div className="grid grid-cols-2 gap-4">
             <div
               className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
-              onClick={() => navigateTo("/salesAndFinance/finance/add-transaction")}
+              onClick={() => navigateTo("/salesAndFinance/finance/transaction-display")}
             >
               <Add fontSize="large" className="mb-8 mr-2 size-24" />
-              <span className="text-xl font-semibold">Add Transaction</span>
+              <span className="text-xl font-semibold">Transaction</span>
             </div>
             <div
               className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
-              onClick={() => navigateTo("/salesAndFinance/finance/add-minortransaction")}
+              onClick={() => navigateTo("/salesAndFinance/finance/minortransaction-display")}
             >
               <List fontSize="large" className="mb-8 mr-2 size-24" />
-              <span className="text-xl font-semibold">Add Minor Transactions</span>
+              <span className="text-xl font-semibold">Minor Transactions</span>
             </div>
             <div
               className="flex flex-col items-center justify-center h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
@@ -101,6 +96,14 @@ const SalesDashboard = () => {
               <AttachMoney fontSize="large" className="mb-8 mr-2 size-24" />
               <span className="text-xl font-semibold">Budget</span>
             </div> */}
+            <div 
+              className="flex flex-col items-center justify-center col-span-2 h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
+              onClick={() => navigateTo("/salesAndFinance/finance/finance-format-tables")}
+            >
+              {/* <AttachMoney fontSize="large" className="mb-8 mr-2 size-24" /> */}
+              <DriveFileMove fontSize="large" className="mb-8 mr-2 size-24" />
+              <span className="text-xl font-semibold">Tables</span>
+            </div>
             <div 
               className="flex flex-col items-center justify-center col-span-2 h-72 p-8 bg-[#7ff587] rounded-lg cursor-pointer hover:bg-[#39cc63]"
               onClick={() => navigateTo("/salesAndFinance/finance/employeeSalary")}

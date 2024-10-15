@@ -56,10 +56,7 @@ const AddNewValuationPage = () => {
             ]}
           />
           <NavigationButtons />
-          <div className="w-10/12 mt-10 ml-30">
-            <h1 className="my-4 ml-20 text-3xl font-bold text-gray-800">
-              Add New Valuation Record
-            </h1>
+          <div className="grid content-center max-w-full grid-flow-col mt-10 bg-white bg-center shadow-md">
             <ValuationForm />
           </div>
         </div>

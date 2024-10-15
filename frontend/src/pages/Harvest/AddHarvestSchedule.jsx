@@ -45,7 +45,7 @@ const AddHarvestSchedule = () => {
   // Function to disable past dates
   const disablePastAndFutureDates = (current) => {
     // Disable dates before today and after the end of the current year
-    return current && (current < moment().startOf('nextday') || current > moment().endOf('year'));
+    return current && (current < moment().startOf('day') || current > moment().endOf('year'));
   };
   // Confirm submission
   const handleSubmit = async (values) => {
