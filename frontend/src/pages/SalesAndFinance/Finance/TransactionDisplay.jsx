@@ -55,7 +55,7 @@ const TransactionDisplay = () => {
           ]}
         />
         <NavigationButtons />
-        <div className={`ml-[50px] pt-3 w-[1000px]`}>
+        <div className={`ml-[50px] pt-3 max-w-full mr-8`}>
           <h1 className="mb-6 text-3xl font-semibold">Finance Dashboard</h1>
           <TransactionSummaryCard />
         </div>
