@@ -222,7 +222,24 @@ export default function Valuation() {
     },
   ];
 
-  const handleDownloadPDF = () => {
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "Anonymous"; // Ensure cross-origin images are handled
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  };
+
+  const handleDownloadPDF = async () => {
     const sortedRecords = ValuationRecords.sort((a, b) => {
       if (sortBy === "date") {
         return sortOrder === "asc"
@@ -230,7 +247,7 @@ export default function Valuation() {
           : moment(b.date) - moment(a.date);
       }
     });
-
+  
     const filteredRecords = sortedRecords.filter((valuation) => {
       const transactionDate = moment(valuation.date);
       return (
@@ -238,10 +255,55 @@ export default function Valuation() {
         transactionDate <= selectedDates[1]
       );
     });
-
+  
     const doc = new jsPDF();
-    doc.text("Valuation Records Report", 10, 10);
-
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+  
+    // Load the logo image
+    const logoUrl = "../../../../src/assets/logo.png";
+    let logoDataURL;
+    try {
+      logoDataURL = await getImageDataURL(logoUrl);
+    } catch (error) {
+      console.error("Failed to load the logo image:", error);
+    }
+  
+    // Function to draw header and footer
+    const drawHeaderFooter = (data) => {
+      // Header
+      doc.setFontSize(14);
+      doc.text("Sobha Plantation", 10, 10);
+      doc.setFontSize(10);
+      doc.text("317/23, Nikaweratiya,", 10, 15);
+      doc.text("Kurunagala, Sri Lanka.", 10, 20);
+      doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25);
+      doc.text("Contact: 0112 751 757", 10, 30);
+  
+      if (logoDataURL) {
+        doc.addImage(logoDataURL, "PNG", pageWidth - 50, 10, 40, 10);
+      }
+  
+      doc.line(10, 35, pageWidth - 10, 35); // Header line
+  
+      // Footer
+      doc.setFontSize(10);
+      doc.text(
+        `Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`,
+        pageWidth - 30,
+        pageHeight - 10
+      );
+    };
+  
+    // Set margins
+    const marginTop = 40;
+    const marginBottom = 20;
+  
+    // Title
+    doc.setFontSize(16);
+    doc.text("Valuation Records Report", pageWidth / 2, 45, { align: "center" });
+  
+    // Table settings
     const headers = [
       [
         "Date",
@@ -256,7 +318,7 @@ export default function Valuation() {
       ],
     ];
     const data = filteredRecords.map((valuation) => [
-      valuation.date,
+      moment(valuation.date).format("YYYY-MM-DD"),
       valuation.type,
       valuation.subtype,
       valuation.quantity,
@@ -266,15 +328,20 @@ export default function Valuation() {
       valuation.appreciationOrDepreciation,
       valuation.quantity * valuation.price,
     ]);
-
+  
     doc.autoTable({
+      startY: 60,
       head: headers,
       body: data,
-      startY: 20,
+      margin: { top: marginTop, bottom: marginBottom, left: 10 },
+      styles: { fontSize: 8, cellPadding: 1 },
+      headStyles: { fillColor: [64, 133, 126], textColor: [255, 255, 255], fontSize: 9 },
+      didDrawPage: drawHeaderFooter, // Ensure header and footer on each page
     });
-
+  
     doc.save("valuation_records_report.pdf");
   };
+  
 
   return (
     <div className={`max-w-full`}>

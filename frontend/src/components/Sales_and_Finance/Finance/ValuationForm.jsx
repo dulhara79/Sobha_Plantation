@@ -335,11 +335,16 @@ const ValuationForm = () => {
 
   return (
     <div className="flex flex-col items-center">
+
+<h1 className="my-4 ml-20 font-bold text-gray-800">
+              Add New Valuation Record
+            </h1>
+      
       {/* View All Valuations Link */}
       <div className="flex justify-end w-full pr-8 mb-4">
         <Link
           to="/salesAndFinance/finance/valuation-dashboard"
-          className="flex-none px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 bg-gray-900 rounded-full shadow-md cursor-pointer hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+          className="flex-none px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 rounded-full shadow-md cursor-pointer bg-lime-600 hover:bg-lime-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
         >
           View All Valuations
         </Link>
