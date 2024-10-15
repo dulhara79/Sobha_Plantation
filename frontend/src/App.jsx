@@ -48,6 +48,7 @@ import EditEmployeeSalaryRecords from "./pages/SalesAndFinance/Finance/EditEmplo
 import CashBook from "./pages/SalesAndFinance/Finance/CashBook.jsx";
 import BalanceSheet from "./pages/SalesAndFinance/Finance/BalanceSheet.jsx";
 import PettyCash from "./pages/SalesAndFinance/Finance/PettyCash.jsx";
+import AllFinanceFormatTables from "./pages/SalesAndFinance/Finance/AllFinanceFormatTables.jsx";
 
 // inventory
 import FertilizerRecords from "./pages/Inventory/FertilizerRecords.jsx";
@@ -310,6 +311,10 @@ export default function App() {
           <Route
             path="/salesAndFinance/finance/petty-cash"
             element={<PettyCash />}
+          />
+          <Route
+            path="/salesAndFinance/finance/finance-format-tables"
+            element={<AllFinanceFormatTables />}
           />
 
           {/* inventory */}
