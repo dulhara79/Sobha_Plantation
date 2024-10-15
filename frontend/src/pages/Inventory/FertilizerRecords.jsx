@@ -271,12 +271,12 @@ const FertilizerRecords = () => {
      if (total === 0) {
       notification.warning({
         message: 'Low Stock Alert',
-        description: `Stock level for ${selectedItem} is low (0 units remaining). Please restock soon.`,
+        description: `Stock level for ${selectedItem} is low (${unit} remaining). Please restock soon.`,
       });
     } else {
       notification.success({
         message: 'Stock Level',
-        description: `Total quantity for ${selectedItem} is ${total}.`,
+        description: `Total quantity for ${selectedItem} is ${total} ${unit}.`,
       });
     }
 
