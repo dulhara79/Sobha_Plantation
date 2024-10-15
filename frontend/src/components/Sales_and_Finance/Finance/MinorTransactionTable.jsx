@@ -558,6 +558,11 @@ import { DeleteOutlined, EditOutlined, InfoCircleOutlined, DownloadOutlined, Sea
 import { format } from 'date-fns';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import moment from 'moment';
+import Papa from 'papaparse';
+import * as XLSX from 'xlsx';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -566,6 +571,8 @@ const ModernTransactionTable = () => {
   const [transactions, setTransactions] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpense, setTotalExpense] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dateRange, setDateRange] = useState([]);
@@ -587,7 +594,7 @@ const ModernTransactionTable = () => {
       const data = response.data.data;
       setTransactions(data);
       setFilteredData(data);
-      calculateTotal(data);
+      calculateTotals(data);
     } catch (error) {
       setError("Error fetching transactions");
       console.error(error);
@@ -596,9 +603,19 @@ const ModernTransactionTable = () => {
     }
   };
 
-  const calculateTotal = (data) => {
-    const total = data.reduce((sum, tx) => tx.type === 'income' ? sum + tx.amount : sum - tx.amount, 0);
-    setTotalAmount(total);
+  const calculateTotals = (data) => {
+    let income = 0;
+    let expense = 0;
+    data.forEach(tx => {
+      if (tx.type === 'income') {
+        income += tx.amount;
+      } else {
+        expense += tx.amount;
+      }
+    });
+    setTotalIncome(income);
+    setTotalExpense(expense);
+    setTotalAmount(income - expense);
   };
 
   const applyFilters = () => {
@@ -606,7 +623,6 @@ const ModernTransactionTable = () => {
   
     let filtered = [...transactions];
   
-    // Check if `dateRange` has valid start and end dates before filtering by date range
     if (dateRange && dateRange.length === 2 && dateRange[0] && dateRange[1]) {
       const [startDate, endDate] = dateRange;
       filtered = filtered.filter(
@@ -616,12 +632,10 @@ const ModernTransactionTable = () => {
       );
     }
   
-    // Apply type filter
     if (typeFilter) {
       filtered = filtered.filter((transaction) => transaction.type === typeFilter);
     }
   
-    // Apply search term filter
     if (searchTerm) {
       filtered = filtered.filter((transaction) =>
         Object.values(transaction).some((value) =>
@@ -631,19 +645,149 @@ const ModernTransactionTable = () => {
     }
   
     setFilteredData(filtered);
-    calculateTotal(filtered);
+    calculateTotals(filtered);
   };
-  
+
+  const getImageDataURL = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "Anonymous";
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  };
+
+  const exportToPDF = async () => {
+    const doc = new jsPDF();
+    const today = moment().format("YYYY-MM-DD");
+
+    // Load the logo image
+    const logoUrl = "../../../../src/assets/logo.png";
+    let logoDataURL;
+    try {
+      logoDataURL = await getImageDataURL(logoUrl);
+    } catch (error) {
+      console.error("Failed to load the logo image:", error);
+    }
+
+    // Function to draw header, footer, and horizontal line
+    const drawHeaderFooter = (data) => {
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
+
+      doc.setFontSize(14);
+      doc.text("Sobha Plantation", 10, 10);
+
+      doc.setFontSize(10);
+      doc.text("317/23, Nikaweratiya,", 10, 15);
+      doc.text("Kurunagala, Sri Lanka.", 10, 20);
+      doc.text("Email: sobhaplantationsltd@gmail.com", 10, 25);
+      doc.text("Contact: 0112 751 757", 10, 30);
+      doc.text(`Date: ${today}`, 10, 35);
+
+      if (logoDataURL) {
+        doc.addImage(logoDataURL, "PNG", pageWidth - 50, 10, 40, 10);
+      }
+
+      doc.line(10, 40, pageWidth - 10, 40);
+
+      doc.setFontSize(10);
+      doc.text(
+        `Page ${data.pageNumber} of ${doc.internal.getNumberOfPages()}`,
+        pageWidth - 30,
+        pageHeight - 10
+      );
+    };
+
+    const marginTop = 30;
+    const marginBottom = 20;
+
+    doc.setFontSize(22);
+    doc.text("Transaction Report", 65, 55);
+
+    // First Table: Overview Details
+    const overviewHeaders = [["Detail", "Value"]];
+    const overviewRows = [
+      ["Total Transactions Count", `${filteredData.length}`],
+      ["Total Income", `${totalIncome.toFixed(2)}`],
+      ["Total Expense", `${totalExpense.toFixed(2)}`],
+      ["Total Balance", `${totalAmount.toFixed(2)}`],
+    ];
+
+    doc.autoTable({
+      startY: marginTop + 30,
+      head: overviewHeaders,
+      body: overviewRows,
+      margin: { top: marginTop, bottom: marginBottom, horizontal: 10 },
+      styles: { fontSize: 10 },
+      headStyles: {
+        fillColor: [64, 133, 126],
+        textColor: [255, 255, 255],
+        fontSize: 12,
+      },
+      theme: "grid",
+      didDrawPage: drawHeaderFooter,
+    });
+
+    // Second Table: Transaction Data
+    const transactionRows = filteredData.map((tx) => [
+      format(new Date(tx.date), "yyyy-MM-dd"),
+      tx.description,
+      tx.payer_payee,
+      tx.type === 'income' ? tx.amount.toFixed(2) : '-',
+      tx.type === 'expense' ? tx.amount.toFixed(2) : '-',
+    ]);
+
+    const transactionHeaders = [
+      ["Date", "Description", "Payer/Payee", "Income", "Expense"],
+    ];
+
+    let finalY = doc.lastAutoTable.finalY + 10;
+
+    if (transactionRows.length > 0) {
+      doc.autoTable({
+        startY: finalY,
+        head: transactionHeaders,
+        body: transactionRows,
+        margin: { top: marginTop, bottom: marginBottom, horizontal: 10 },
+        styles: { fontSize: 10 },
+        headStyles: {
+          fillColor: [64, 133, 126],
+          textColor: [255, 255, 255],
+          fontSize: 12,
+        },
+        theme: "striped",
+        didDrawPage: drawHeaderFooter,
+      });
+    } else {
+      doc.setFontSize(10);
+      doc.text("No transaction data available.", 10, finalY + 10);
+    }
+
+    doc.save("transaction_report.pdf");
+  };
+
   const handleExport = ({ key }) => {
     switch (key) {
       case 'pdf':
         console.log('Exporting to PDF...');
+        exportToPDF();
         break;
       case 'csv':
         console.log('Exporting to CSV...');
+        exportToCSV();
         break;
       case 'excel':
         console.log('Exporting to Excel...');
+        exportToExcel();
         break;
       default:
         break;
