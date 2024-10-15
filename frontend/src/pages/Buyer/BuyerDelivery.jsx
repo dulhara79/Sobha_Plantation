@@ -77,6 +77,11 @@ const AddDeliveryRecords = () => {
     },
   ];
 
+  // Capitalize first letter of names
+  const capitalizeFirstLetter = (value) => {
+    return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+  };
+
   // Submit form handler
   const handleSubmit = async (values) => {
     try {
@@ -84,8 +89,8 @@ const AddDeliveryRecords = () => {
       const { firstName, lastName, email, address, city, country, postalCode, phone } = values;
 
       await axios.post("http://localhost:5000/api/deliveryRecords", {
-        firstName,
-        lastName,
+        firstName: capitalizeFirstLetter(firstName),
+        lastName: capitalizeFirstLetter(lastName),
         email,
         address,
         city,
@@ -196,7 +201,7 @@ const AddDeliveryRecords = () => {
 
   const restrictInputForAddress = (e) => {
     const key = e.key;
-    if (!/^[a-zA-Z0-9/\s]*$/.test(key)) {
+    if (!/^[a-zA-Z0-9\s]*$/.test(key)) {
       e.preventDefault(); // Prevent non-alphanumeric characters in address
     }
   };
@@ -301,8 +306,8 @@ const AddDeliveryRecords = () => {
                   placeholder="Enter address"
                   onChange={handleAddressChange}
                   disabled={!isAddressEnabled}
-                  onKeyPress={restrictInputForAddress} 
-                  onPaste={preventInvalidAddressPaste} 
+                  onKeyPress={restrictInputForAddress}
+                  onPaste={preventInvalidAddressPaste}
                 />
               </Form.Item>
 
@@ -315,7 +320,7 @@ const AddDeliveryRecords = () => {
                   placeholder="Enter your city"
                   onChange={handleCityChange}
                   disabled={!isCityEnabled}
-                  onKeyPress={restrictInputToAlphanumeric} 
+                  onKeyPress={restrictInputToAlphanumeric}
                 />
               </Form.Item>
 
@@ -329,7 +334,7 @@ const AddDeliveryRecords = () => {
                   onChange={handleCountryChange}
                   disabled={!isCountryEnabled}
                   onKeyPress={restrictInputToLetters}
-                  onPaste={preventNonAlphabeticPaste} 
+                  onPaste={preventNonAlphabeticPaste}
                 />
               </Form.Item>
 
@@ -342,9 +347,9 @@ const AddDeliveryRecords = () => {
                   placeholder="Enter your postal code"
                   onChange={handlePostalCodeChange}
                   disabled={!isPostalCodeEnabled}
-                  onKeyPress={restrictInputToNumbers} 
-                  onPaste={preventNonNumericPaste} 
-                  maxLength={5} 
+                  onKeyPress={restrictInputToNumbers}
+                  onPaste={preventNonNumericPaste}
+                  maxLength={5}
                 />
               </Form.Item>
 
