@@ -108,7 +108,7 @@ const Home = () => {
   <h1 className="rotate-typing text-90px md:text-8xl lg:text-10xl"> 
     {Array.from("Sobha Plantations").map((letter, index) => (
       <span key={index} style={{ animationDelay: `${index * 0.2}s` }}>
-        {letter}
+        {letter === " " ? "\u00A0" : letter}
       </span>
     ))}
   </h1>
